@@ -13,20 +13,14 @@ class ClinicFlame extends events.EventEmitter {
     const argv = args.slice(1)
     const self = this
 
-    x({
+    callbackify(x({
       argv,
       onPort: this.detectPort ? onPort : undefined,
       pathToNodeBinary: args[0],
       collectOnly: true,
       outputDir: '{pid}.clinic-flame',
       workingDir: '.'
-    })
-      .then(function (dir) {
-        process.nextTick(cb, null, dir)
-      })
-      .catch(function (err) {
-        process.nextTick(cb, err)
-      })
+    }), cb)
 
     function onPort (port, cb) {
       self.emit('port', Number(port.toString()), null, cb)
@@ -34,17 +28,18 @@ class ClinicFlame extends events.EventEmitter {
   }
 
   visualize (outputDir, outputHtml, cb) {
-    x({
+    callbackify(x({
       visualizeOnly: outputDir,
       workingDir: '.'
+    }), function (err) {
+      if (err) return cb(err)
+      fs.rename(path.join(outputDir, 'flamegraph.html'), outputHtml, cb)
     })
-      .then(function () {
-        fs.rename(path.join(outputDir, 'flamegraph.html'), outputHtml, cb)
-      })
-      .catch(function (err) {
-        process.nextTick(cb, err)
-      })
   }
+}
+
+function callbackify (p, cb) {
+  p.then(val => process.nextTick(cb, null, val)).catch(err => process.nextTick(cb, err))
 }
 
 module.exports = ClinicFlame
