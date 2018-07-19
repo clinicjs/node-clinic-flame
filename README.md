@@ -39,5 +39,5 @@ Will consume the datafile specified by `dataFilename`, this datafile will be pro
 `flame.visualize` will then output a standalone HTML file to `outputFilename`. When completed the `callback` will be called with no extra arguments, except a possible error.
 
 ## License
-[Apache 2.0](https://tldrlegal.com/license/apache-license-2.0-(apache-2.0))
+[GPL 3.0](LICENSE)
 
