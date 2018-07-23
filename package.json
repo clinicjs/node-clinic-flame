@@ -1,5 +1,5 @@
 {
-  "name": "@nearform/clinic-flame",
+  "name": "@nearform/flame",
   "version": "2.0.0",
   "description": "Programmable interface to clinic flame",
   "repository": "nearform/node-clinic-flame",
