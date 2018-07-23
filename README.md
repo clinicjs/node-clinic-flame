@@ -5,7 +5,7 @@ Programmable interface to clinic flame
 ## Example
 
 ```js
-const ClinicFlame = require('clinic-flame')
+const ClinicFlame = require('@nearform/flame')
 const flame = new ClinicFlame()
 
 flame.collect(['node', './path-to-script.js'], function (err, filepath) {
@@ -20,7 +20,7 @@ flame.collect(['node', './path-to-script.js'], function (err, filepath) {
 ## Documentation
 
 ```js
-const ClinicFlame = require('clinic-flame')
+const ClinicFlame = require('@nearform/flame')
 const flame = new ClinicFlame()
 ```
 
