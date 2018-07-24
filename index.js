@@ -20,7 +20,12 @@ class ClinicFlame extends events.EventEmitter {
       collectOnly: true,
       outputDir: '{pid}.clinic-flame',
       workingDir: '.'
-    }), cb)
+    }), done)
+
+    function done (err, dir) {
+      if (err) return cb(err)
+      cb(null, path.basename(dir))
+    }
 
     function onPort (port, cb) {
       self.emit('port', Number(port.toString()), null, cb)
