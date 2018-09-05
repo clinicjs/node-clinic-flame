@@ -1,6 +1,6 @@
 # node-clinic-flame
 
-Programmable interface to clinic flame
+Programmable interface to clinic flame. Learn more about clinic: https://clinicjs.org/
 
 ## Example
 
