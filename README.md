@@ -5,6 +5,8 @@
 
 Programmable interface to [clinic][clinic-url] flame. Learn more about clinic: https://clinicjs.org/
 
+![banner](logo.png)
+
 ## Example
 
 ```js
