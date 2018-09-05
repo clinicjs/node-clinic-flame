@@ -7,6 +7,10 @@ Programmable interface to [clinic][clinic-url] flame. Learn more about clinic: h
 
 ![banner](logo.png)
 
+## Supported node versions
+
+* Node.js 8 and above
+
 ## Example
 
 ```js
@@ -33,15 +37,21 @@ const flame = new ClinicFlame()
 
 Starts a process by using [0x](https://github.com/davidmarkclements/0x)
 
-0x will produce a file in the current working directory, with the process PID in its filename. The filepath relative to the current working directory will be the value in the callback.
+0x will produce a file in the current working directory, with the process PID in
+its filename. The filepath relative to the current working directory will be the
+value in the callback.
 
-stdout, stderr, and stdin will be relayed to the calling process. As will the `SIGINT` event.
+`stdout`, `stderr`, and `stdin` will be relayed to the calling process. As will
+the `SIGINT` event.
 
 #### `flame.visualize(dataFilename, outputFilename, callback)`
 
-Will consume the datafile specified by `dataFilename`, this datafile will be produced by the sampler using `flame.collect`.
+Will consume the datafile specified by `dataFilename`, this datafile will be
+produced by the sampler using `flame.collect`.
 
-`flame.visualize` will then output a standalone HTML file to `outputFilename`. When completed the `callback` will be called with no extra arguments, except a possible error.
+`flame.visualize` will then output a standalone HTML file to `outputFilename`.
+When completed the `callback` will be called with no extra arguments, except a
+possible error.
 
 ## License
 [GPL 3.0](LICENSE)
