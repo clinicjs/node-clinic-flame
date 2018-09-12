@@ -5,7 +5,8 @@
   "repository": "nearform/node-clinic-flame",
   "main": "index.js",
   "scripts": {
-    "test": "standard"
+    "test": "standard",
+    "visualize-all": "node debug/visualize-all.js"
   },
   "author": "",
   "license": "GPL-3.0-or-later",
