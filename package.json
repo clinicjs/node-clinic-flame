@@ -5,7 +5,10 @@
   "repository": "nearform/node-clinic-flame",
   "main": "index.js",
   "scripts": {
-    "test": "standard"
+    "test": "npm run lint && tap --lines 94 test/*.test.js",
+    "ci-lint": "npm run lint",
+    "ci-test": "tap --lines 94 test/*.test.js",
+    "lint": "standard --fix | snazzy"
   },
   "author": "",
   "license": "GPL-3.0-or-later",
@@ -13,6 +16,9 @@
     "0x": "^4.1.0"
   },
   "devDependencies": {
-    "standard": "^11.0.1"
+    "rimraf": "^2.6.2",
+    "snazzy": "^8.0.0",
+    "standard": "^12.0.1",
+    "tap": "^12.0.0"
   }
 }
