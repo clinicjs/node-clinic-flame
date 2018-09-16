@@ -5,9 +5,9 @@
   "repository": "nearform/node-clinic-flame",
   "main": "index.js",
   "scripts": {
-    "test": "npm run lint && tap --lines 94 test/*.test.js",
+    "test": "npm run lint && tap --100 test/*.test.js",
     "ci-lint": "npm run lint",
-    "ci-test": "tap --lines 94 test/*.test.js",
+    "ci-test": "tap --100 test/*.test.js",
     "lint": "standard --fix | snazzy"
   },
   "author": "",
