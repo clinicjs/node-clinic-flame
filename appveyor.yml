@@ -17,6 +17,7 @@ install:
   - node -v
   - npm -v
   - npm config set package-lock false
+  - npm update --save-dev # https://github.com/npm/npm/issues/16901
   - npm update
 
 build: off
