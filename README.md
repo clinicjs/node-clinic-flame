@@ -33,6 +33,11 @@ const ClinicFlame = require('@nearform/flame')
 const flame = new ClinicFlame()
 ```
 
+### new ClinicFlame([settings])
+
+* settings [`<Object>`][]
+  * detectPort [`<boolean>`][] **Default**: false
+
 #### `flame.collect(args, callback)`
 
 Starts a process by using [0x](https://github.com/davidmarkclements/0x)
@@ -64,3 +69,5 @@ possible error.
 [lint-standard]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square
 [lint-standard-url]: https://github.com/feross/standard
 [clinic-url]: https://github.com/nearform/node-clinic
+[`<Object>`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
+[`<boolean>`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type
