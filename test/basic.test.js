@@ -19,6 +19,7 @@ test('cmd - test collect - data exists', function (t) {
         t.end()
       }
     }
+    t.match(dirname, /^[0-9]+\.clinic-flame$/)
     rimraf(dirname, callback)
     fs.unlink(dirname + '.html', callback)
   }
