@@ -33,7 +33,7 @@ const ClinicFlame = require('@nearform/flame')
 const flame = new ClinicFlame()
 ```
 
-### new ClinicDoctor([settings])
+### new ClinicFlame([settings])
 
 * settings [`<Object>`][]
   * detectPort [`<boolean>`][] **Default**: false
