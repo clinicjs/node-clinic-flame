@@ -56,3 +56,32 @@ test('cmd - test visualization - missing data', function (t) {
     }
   )
 })
+
+test('cmd - test collect - system info and 0x directory', function (t) {
+  const tool = new ClinicFlame()
+
+  function cleanup (err, dirname) {
+    t.ifError(err)
+    t.match(dirname, /^[0-9]+\.clinic-flame$/)
+    rimraf(dirname, (err) => {
+      t.ifError(err)
+      t.end()
+    })
+  }
+
+  tool.collect(
+    [process.execPath, path.join('test', 'fixtures', 'inspect.js')],
+    function (err, dirname) {
+      if (err) return cleanup(err, dirname)
+
+      const basename = path.basename(dirname)
+      const systeminfo = JSON.parse(fs.readFileSync(path.join(dirname, `${basename}-systeminfo`)))
+      // check that 0x's meta.json exists and is valid JSON
+      JSON.parse(fs.readFileSync(path.join(dirname, `${basename}-0x-data/meta.json`)))
+
+      t.ok(fs.statSync(systeminfo.mainDirectory).isDirectory())
+
+      cleanup(null, dirname)
+    }
+  )
+})
