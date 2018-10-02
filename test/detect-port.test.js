@@ -5,6 +5,7 @@ const http = require('http')
 const fs = require('fs')
 const rimraf = require('rimraf')
 const ClinicFlame = require('../index.js')
+const { containsData } = require('./util/validate-output.js')
 
 test('cmd - collect - detect server port', function (t) {
   const tool = new ClinicFlame({ detectPort: true })
@@ -43,7 +44,7 @@ test('cmd - collect - detect server port', function (t) {
         fs.readFile(dirname + '.html', function (err, content) {
           if (err) return cleanup(err, dirname)
 
-          t.ok(content.length > 1024 * 100)
+          t.ok(containsData(content))
           cleanup(null, dirname)
         })
       })

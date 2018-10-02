@@ -25,7 +25,7 @@ function systemInfo (zeroXDataPath) {
 
   return {
     mainDirectory,
-    pathSeperator: path.sep,
+    pathSeparator: path.sep,
 
     nodeVersions: process.versions,
     toolVersion

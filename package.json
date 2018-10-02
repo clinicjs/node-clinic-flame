@@ -14,7 +14,8 @@
   "author": "",
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "0x": "^4.4.1"
+    "0x": "^4.4.5",
+    "deepmerge": "^2.1.1"
   },
   "devDependencies": {
     "rimraf": "^2.6.2",

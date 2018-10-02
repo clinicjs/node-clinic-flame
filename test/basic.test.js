@@ -5,6 +5,7 @@ const path = require('path')
 const { test } = require('tap')
 const rimraf = require('rimraf')
 const ClinicFlame = require('../index.js')
+const { containsData } = require('./util/validate-output.js')
 
 test('cmd - test collect - data exists', function (t) {
   const tool = new ClinicFlame()
@@ -35,7 +36,7 @@ test('cmd - test collect - data exists', function (t) {
         fs.readFile(dirname + '.html', function (err, content) {
           if (err) return cleanup(err, dirname)
 
-          t.ok(content.length > 1024 * 100)
+          t.ok(containsData(content))
           cleanup(null, dirname)
         })
       })
@@ -50,14 +51,13 @@ test('cmd - test visualization - missing data', function (t) {
     'missing.clinic-flame',
     'missing.clinic-flame.html',
     function (err) {
-      // The message is set by 0x.
-      t.match(err.message, /Invalid data path provided/)
+      t.match(err.message, /ENOENT: no such file or directory/)
       t.end()
     }
   )
 })
 
-test('cmd - test collect - system info and 0x directory', function (t) {
+test('cmd - test collect - system info and data files', function (t) {
   const tool = new ClinicFlame()
 
   function cleanup (err, dirname) {
@@ -76,8 +76,9 @@ test('cmd - test collect - system info and 0x directory', function (t) {
 
       const basename = path.basename(dirname)
       const systeminfo = JSON.parse(fs.readFileSync(path.join(dirname, `${basename}-systeminfo`)))
-      // check that 0x's meta.json exists and is valid JSON
-      JSON.parse(fs.readFileSync(path.join(dirname, `${basename}-0x-data/meta.json`)))
+      // check that samples data and inlined function data exists and is valid JSON
+      JSON.parse(fs.readFileSync(path.join(dirname, `${basename}-samples`)))
+      JSON.parse(fs.readFileSync(path.join(dirname, `${basename}-inlinedfunctions`)))
 
       t.ok(fs.statSync(systeminfo.mainDirectory).isDirectory())
 

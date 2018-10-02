@@ -19,6 +19,8 @@ function getLoggingPaths (options = {}) {
 
   const dirname = `${basename}.clinic-flame`
   const systemInfoFilename = `${basename}.clinic-flame-systeminfo`
+  const inlinedFunctionsFilename = `${basename}.clinic-flame-inlinedfunctions`
+  const samplesFilename = `${basename}.clinic-flame-samples`
 
   // TODO: Deprecate this and write smaller .clinic-flame-{dataType} files, similar to other tools
   const zeroXDir = `${basename}.clinic-flame-0x-data`
@@ -26,6 +28,8 @@ function getLoggingPaths (options = {}) {
   return {
     '/': path.join(dirpath, dirname),
     '/systeminfo': path.join(dirpath, dirname, systemInfoFilename),
+    '/inlinedfunctions': path.join(dirpath, dirname, inlinedFunctionsFilename),
+    '/samples': path.join(dirpath, dirname, samplesFilename),
     '/0x-data/': path.join(dirpath, dirname, zeroXDir)
   }
 }
