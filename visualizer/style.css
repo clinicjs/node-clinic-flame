@@ -71,18 +71,19 @@ html * {
 #banner #main-logo,
 #banner #main-logo:link,
 #banner #main-logo:visited {
-  color: red;
+  color: var(--banner-logo-color);
   font-weight: bold;
-  font-size: 22px;
+  font-size: 23px;
   vertical-align: middle;
   text-decoration: none;
+  margin-top: 3px; /* temporary - just to align placeholder text */
 }
 
 #banner #company-logo svg {
   position: absolute;
-  height: 40px;
-  right: 28px;
-  top: 13px;
+  height: 65px;
+  right: 0;
+  top: 0;
 }
 
 #header {
