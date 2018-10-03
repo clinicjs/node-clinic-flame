@@ -1,0 +1,117 @@
+html {
+  /* Define colors */
+  --main-bg-color: rgb(27, 30, 39);
+  --main-bg-translucent: rgba(27, 30, 39, 0.94);
+  --overlay-bg-color: rgba(55, 61, 79, 0.94);
+
+  --banner-bg-color: rgb(41, 45, 57);
+  --banner-logo-color: rgba(255, 255, 255, 0.87);
+
+  --primary-grey: rgb(121,122,124);
+  --grey-highlight: rgb(191,192,194);
+
+  --max-contrast: rgb(255, 255, 255);
+
+  /* Define structurally important sizes */
+  --banner-height: 65px;
+}
+
+
+/* Main layout */
+
+html, body {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--main-bg-color);
+}
+
+/* Global */
+
+html {
+  font-family: sans-serif;
+}
+
+html * {
+  box-sizing: border-box;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Banner layout */
+
+#banner {
+  display: flex;
+  align-items: center;
+  height: var(--banner-height);
+  background: var(--banner-bg-color);
+  position: relative;
+}
+
+#banner #main-logo svg {
+  fill: var(--banner-logo-color);
+  margin-left: 12px;
+  stroke: var(--shortcut-stroke);
+  stroke-width: 4px;
+  paint-order: stroke fill;
+  /* PLACEHOLDER - DELETE */
+  height: 50px;
+  width: 50px;
+}
+#banner #main-logo svg,
+#banner #main-logo span {
+  display: inline-block;
+  vertical-align: middle;
+}
+#banner #main-logo,
+#banner #main-logo:link,
+#banner #main-logo:visited {
+  color: red;
+  font-weight: bold;
+  font-size: 22px;
+  vertical-align: middle;
+  text-decoration: none;
+}
+
+#banner #company-logo svg {
+  position: absolute;
+  height: 40px;
+  right: 28px;
+  top: 13px;
+}
+
+#header {
+  width: 100%;
+  margin: 0 24px;
+  border-bottom: 1px solid var(--cyan);
+  font-size: var(--main-text-size);
+  height: var(--header-height);
+  position: sticky;
+  top: 0;
+  z-index: 11;
+  background: var(--main-bg-color);
+}
+
+/* Flamegraph */
+
+#flame-main .flamegraph-outer {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  position: relative;
+  padding-left: 5%;
+  padding-right: 5%;
+  height: calc(100vh - 66px);
+}
+
+chart > div {
+  overflow: hidden;
+}
+
+chart > div > canvas {
+  margin-top: -700px;
+}

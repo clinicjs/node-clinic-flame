@@ -14,8 +14,17 @@
   "author": "",
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "0x": "^4.4.5",
-    "deepmerge": "^2.1.1"
+    "0x": "^4.5.0",
+    "brfs": "^2.0.1",
+    "browserify": "^16.2.2",
+    "d3": "^5.7.0",
+    "d3-fg": "^6.4.0",
+    "deepmerge": "^2.1.1",
+    "flame-gradient": "^1.0.0",
+    "loose-envify": "^1.4.0",
+    "minify-stream": "^1.2.0",
+    "pump": "^3.0.0",
+    "stream-template": "0.0.10"
   },
   "devDependencies": {
     "rimraf": "^2.6.2",

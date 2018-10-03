@@ -7,7 +7,7 @@ const rimraf = require('rimraf')
 const ClinicFlame = require('../index.js')
 const { containsData } = require('./util/validate-output.js')
 
-test('cmd - test collect - data exists', function (t) {
+test('cmd - test collect - data exists, html generated', function (t) {
   const tool = new ClinicFlame()
 
   function cleanup (err, dirname) {
@@ -30,14 +30,32 @@ test('cmd - test collect - data exists', function (t) {
     function (err, dirname) {
       if (err) return cleanup(err, dirname)
 
-      tool.visualize(dirname, dirname + '.html', function (err) {
+      let fileSizeDebug = 0
+      const htmlName = dirname + '.html'
+      tool.debug = true
+
+      tool.visualize(dirname, htmlName, function (err) {
         if (err) return cleanup(err, dirname)
 
-        fs.readFile(dirname + '.html', function (err, content) {
+        fileSizeDebug = fs.statSync(htmlName).size
+
+        fs.readFile(htmlName, function (err, content) {
           if (err) return cleanup(err, dirname)
 
           t.ok(containsData(content))
-          cleanup(null, dirname)
+
+          // Redo the html without debug setting
+          fs.unlinkSync(htmlName)
+          tool.debug = false
+          tool.visualize(
+            dirname,
+            htmlName,
+            function () {
+              // Check that disabling debug mode results in a smaller file
+              t.ok(fs.statSync(htmlName).size < fileSizeDebug)
+              cleanup(null, dirname)
+            }
+          )
         })
       })
     }
@@ -57,7 +75,7 @@ test('cmd - test visualization - missing data', function (t) {
   )
 })
 
-test('cmd - test collect - system info and data files', function (t) {
+test('cmd - test collect - system info, data files and html', function (t) {
   const tool = new ClinicFlame()
 
   function cleanup (err, dirname) {
@@ -81,7 +99,6 @@ test('cmd - test collect - system info and data files', function (t) {
       JSON.parse(fs.readFileSync(path.join(dirname, `${basename}-inlinedfunctions`)))
 
       t.ok(fs.statSync(systeminfo.mainDirectory).isDirectory())
-
       cleanup(null, dirname)
     }
   )

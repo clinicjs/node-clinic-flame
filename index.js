@@ -1,3 +1,5 @@
+'use strict'
+
 const events = require('events')
 const x = require('0x')
 const path = require('path')
@@ -7,11 +9,22 @@ const getLoggingPaths = require('./collect/get-logging-paths.js')
 const systemInfo = require('./collect/system-info.js')
 const inlinedFunctions = require('./collect/inlined-functions.js')
 const analyse = require('./analysis/index.js')
+const streamTemplate = require('stream-template')
+const pump = require('pump')
+const browserify = require('browserify')
+const envify = require('loose-envify/custom')
 
 class ClinicFlame extends events.EventEmitter {
-  constructor (opts) {
+  constructor (settings = {}) {
     super()
-    this.detectPort = !!(opts && opts.detectPort)
+
+    const {
+      detectPort = false,
+      debug = false
+    } = settings
+
+    this.detectPort = detectPort
+    this.debug = debug
   }
 
   collect (args, cb) {
@@ -66,24 +79,74 @@ class ClinicFlame extends events.EventEmitter {
     }
   }
 
-  visualize (outputDir, outputHtml, cb) {
+  visualize (outputDir, outputFilename, callback) {
     const paths = getLoggingPaths({ path: outputDir })
 
     callbackify(analyse(paths), (err, data) => {
-      if (err) return cb(err)
+      if (err) return callback(err)
       // data.merged → call tree where optimized and unoptimized versions of the same function are in a single frame
       // data.unmerged → call tree where optimized and unoptimized versions of the same function are in separate frames
 
-      // TODO remove this, it's just here to have a way to view the result
-      // of the analysis bc we don't have a visualizer yet
-      const html = `Inspect the 'trees' variable in the console. <script>trees = ${JSON.stringify(data)}</script>`
-      fs.writeFile(outputHtml, html, (err) => {
-        // istanbul ignore if
-        if (err) return cb(err)
-
-        cb(null, paths['/'])
-      })
+      this.writeHtml(data, outputFilename, callback)
     })
+  }
+
+  writeHtml (data, outputFilename, callback) {
+    // TODO: migrate most of this to clinic-common
+    const fakeDataPath = path.join(__dirname, 'visualizer', 'data.json')
+    const stylePath = path.join(__dirname, 'visualizer', 'style.css')
+    const scriptPath = path.join(__dirname, 'visualizer', 'main.js')
+    const logoPath = path.join(__dirname, 'visualizer', 'app-logo.svg')
+    const nearFormLogoPath = path.join(__dirname, 'visualizer', 'nearform-logo.svg')
+    const clinicFaviconPath = path.join(__dirname, 'visualizer', 'clinic-favicon.png.b64')
+
+    // add logos
+    const logoFile = fs.createReadStream(logoPath)
+    const nearFormLogoFile = fs.createReadStream(nearFormLogoPath)
+    const clinicFaviconBase64 = fs.createReadStream(clinicFaviconPath)
+
+    const b = browserify({
+      'basedir': __dirname,
+      'debug': this.debug,
+      'noParse': [fakeDataPath]
+    })
+    b.require({
+      'source': JSON.stringify(data),
+      'file': fakeDataPath
+    })
+    b.add(scriptPath)
+    b.transform('brfs')
+    b.transform(envify({ DEBUG_MODE: this.debug }))
+
+    let scriptFile = b.bundle()
+
+    // create style-file stream
+    const styleFile = fs.createReadStream(stylePath)
+
+    const outputFile = streamTemplate`
+      <!DOCTYPE html>
+      <meta charset="utf8">
+      <meta name="viewport" content="width=device-width">
+      <title>Clinic Flame</title>
+      <link rel="shortcut icon" type="image/png" href="${clinicFaviconBase64}">
+      <style>${styleFile}</style>
+      <div id="banner">
+        <a id="main-logo" href="https://github.com/nearform/node-clinic-bubbleprof" title="Clinic Bubbleprof on GitHub" target="_blank">
+          ${logoFile} <span>LOGO HERE</span>
+        </a>
+        <a id="company-logo" href="https://nearform.com" title="nearForm" target="_blank">
+          ${nearFormLogoFile}
+        </a>
+      </div>
+
+      <script>${scriptFile}</script>
+    `
+
+    pump(
+      outputFile,
+      fs.createWriteStream(outputFilename),
+      callback
+    )
   }
 }
 
