@@ -1,28 +1,55 @@
 html {
   /* Define colors */
-  --main-bg-color: rgb(27, 30, 39);
-  --main-bg-translucent: rgba(27, 30, 39, 0.94);
+
+  --main-bg-color-val: 27, 30, 39;
+  --max-contrast: rgb(255, 255, 255);
+  --light-glare: rgba(255, 255, 255, 0.1);
+
+  --main-bg-color: rgb(var(--main-bg-color-val));
+  --main-bg-translucent: rgba(var(--main-bg-color-val), 0.94);
   --overlay-bg-color: rgba(55, 61, 79, 0.94);
 
-  --banner-bg-color: rgb(41, 45, 57);
+  --banner-bg-color: rgba(255, 255, 255, 0.1);
   --banner-logo-color: rgba(255, 255, 255, 0.87);
 
-  --primary-grey: rgb(121,122,124);
-  --grey-highlight: rgb(191,192,194);
+  --footer-bg-color: rgba(255, 255, 255, 0.1);
+  --footer-color: rgba(255, 255, 255, 0.9);
 
-  --max-contrast: rgb(255, 255, 255);
+  --primary-grey: rgb(121, 122, 124);
+  --grey-highlight: rgb(191, 192, 194);
 
-  /* Define structurally important sizes */
+  /* scrollbars */
+  --scrollbar-primary-color-val: 145, 169, 179;
+  --scrollbar-primary-color: rgb(var(--scrollbar-primary-color-val));
+  --scrollbar-bg: var(--light-glare);
+  --scrollbar-shadow: rgba(0, 0, 0, 0.5);
+  --scrollbar-thumb: rgba(var(--scrollbar-primary-color-val), 0.2);
+  --scrollbar-thumb-outline: rgba(var(--scrollbar-primary-color-val), 0.849);
+
+  /* Define structurally-important sizes to use in calculations and/or adjust in media queries */
   --banner-height: 65px;
+  --toolbar-height: 65px;
+  --footer-height: 25px;
 }
 
+/* Overrides for light theme */
+/* just a poc for now... */
+html.light {
+  --main-bg-color-val: 197, 224, 239;
+  --banner-bg-color: rgb(0, 0, 0, 0.1);
+
+  --footer-bg-color: rgb(0, 0, 0, 0.1);
+  --footer-color: rgba(0, 0, 0, 0.9);
+}
 
 /* Main layout */
 
-html, body {
+html,
+body {
   border: 0;
   margin: 0;
   padding: 0;
+  height: 100vh;
 }
 
 body {
@@ -59,15 +86,17 @@ html * {
   stroke: var(--shortcut-stroke);
   stroke-width: 4px;
   paint-order: stroke fill;
-  /* PLACEHOLDER - DELETE */
+  /* PLACEHOLDER - delete when we have proper logo */
   height: 50px;
   width: 50px;
 }
+
 #banner #main-logo svg,
 #banner #main-logo span {
   display: inline-block;
   vertical-align: middle;
 }
+
 #banner #main-logo,
 #banner #main-logo:link,
 #banner #main-logo:visited {
@@ -87,32 +116,76 @@ html * {
 }
 
 #header {
-  width: 100%;
-  margin: 0 24px;
-  border-bottom: 1px solid var(--cyan);
-  font-size: var(--main-text-size);
-  height: var(--header-height);
-  position: sticky;
-  top: 0;
-  z-index: 11;
-  background: var(--main-bg-color);
+  display: flex;
+  flex-direction: column;
+}
+
+#tool-bar {
+  height: var(--toolbar-height);
+  padding: 20px;
+  background-color: rgba(110, 200, 228, 0.1); /* just a test */
+  color: white;
 }
 
 /* Flamegraph */
 
 #flame-main .flamegraph-outer {
-  overflow-y: scroll;
-  overflow-x: hidden;
   position: relative;
-  padding-left: 5%;
-  padding-right: 5%;
-  height: calc(100vh - 66px);
+  height: 100%;
+  display: block;
+}
+
+#flame-main canvas {
+  display: block;
+  margin: 0 auto;
 }
 
 chart > div {
-  overflow: hidden;
+  height: 100%;
 }
 
-chart > div > canvas {
-  margin-top: -700px;
+/* Footer */
+#footer {
+  height: var(--footer-height);
+  background-color: var(--footer-bg-color);
+  color: var(--footer-color);
+}
+
+/* Layout definition */
+#one-col-layout {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#one-col-layout > * {
+  flex-shrink: 0;
+}
+
+#one-col-layout > .scroll-container {
+  flex-grow: 1;
+  overflow: auto;
+  position: relative;
+  height: calc(100vh - var(--toolbar-height) - var(--banner-height) - var(--footer-height));
+}
+
+.scroll-container::-webkit-scrollbar {
+  width: 13px;
+  background-color: var(--scrollbar-bg);
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 2px var(--scrollbar-shadow);
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  outline: 1px solid var(--scrollbar-thumb-outline);
+  border-radius: 2px;
+  box-shadow: 4px 1px 6px -2px var(--light-glare) inset;
+}
+
+#flame-wrapper,
+#flame-main {
+  height: 100%;
 }

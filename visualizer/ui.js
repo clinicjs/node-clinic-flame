@@ -1,9 +1,10 @@
 'use strict'
 
 const htmlContentTypes = require('./html-content-types.js')
+const debounce = require('lodash.debounce')
 
 class Ui {
-  constructor () {
+  constructor (wrapperSelector) {
     // TODO: Similar to 0x but condense hidden state like an octal
     // not json as number of excludables varies between samples
     // this.hashHistory = new HashHistory()
@@ -11,38 +12,70 @@ class Ui {
     this.dataTree = null
     this.exclude = new Set(['cpp', 'regexp', 'v8', 'native', 'init'])
 
+    this.wrapperSelector = wrapperSelector
     this.sections = new Map()
     this.createContent()
   }
 
   createContent () {
-    this.mainContainer = new htmlContentTypes.HtmlContent(null, {
-      htmlElementType: 'main'
-    }, this)
+    this.mainElement = document.querySelector(this.wrapperSelector)
 
-    const flameWrapper = this.addSection('flame-wrapper')
-    flameWrapper.addContent('FlameGraph', { id: 'flame-main' })
+    this.uiContainer = new htmlContentTypes.HtmlContent(null, {
+      element: this.mainElement,
+      id: 'one-col-layout'
+    }, this, this.wrapperSelector)
 
+    const width = this.mainElement.clientWidth
+
+    this.uiContainer.addContent(undefined, {
+      id: 'tool-bar',
+      htmlElementType: 'section'
+    })
+    // TODO: add these ↴
+    // toolBar.addContent('StackedBar')
+    // toolBar.addContent('FrameInfo')
+    // toolBar.addContent('OptionsMenu')
+
+    const flameWrapper = this.uiContainer.addContent('FlameGraph', {
+      id: 'flame-main',
+      classNames: 'scroll-container',
+      width,
+      htmlElementType: 'section'
+    })
     // TODO: add these ↴
     // flameWrapper.addContent('FlameGraph', { id: 'flame-zoomed' })
     // flameWrapper.addContent('HoverBox')
     // flameWrapper.addContent('IndicatorArrow')
 
+    this.uiContainer.addContent(undefined, {
+      id: 'footer',
+      htmlElementType: 'section'
+    })
     // TODO: add these ↴
-    // const topPanel = this.addSection('top-panel')
-    // topPanel.addContent('StackedBar')
-    // topPanel.addContent('FrameInfo')
-    // topPanel.addContent('OptionsMenu')
+    // footer.addContent('FlameGraph', { id: 'flame-chronological' })
+    // footer.addContent('TimeFilter')
 
-    // TODO: add these ↴
-    // const chronologyPanel = this.addSection('chronology-panel')
-    // chronologyPanel.addContent('FlameGraph', { id: 'flame-chronological' })
-    // chronologyPanel.addContent('TimeFilter')
+    const scrollChartIntoView = debounce(() => {
+      const scrollElement = flameWrapper.d3Element.node()
+
+      scrollElement.scrollTo({
+        top: scrollElement.scrollHeight,
+        behavior: 'smooth'
+      })
+    }, 200)
+
+    window.addEventListener('resize', () => {
+      const width = this.mainElement.clientWidth
+      flameWrapper.resize(width)
+      scrollChartIntoView()
+    })
+
+    window.addEventListener('load', scrollChartIntoView)
   }
 
   addSection (id, options = {}) {
     options.id = id
-    const section = this.mainContainer.addContent('HtmlContent', options)
+    const section = this.uiContainer.addContent('HtmlContent', options)
     section.ui = this
     this.sections.set(id, section)
     return section
@@ -67,12 +100,12 @@ class Ui {
 
   initializeElements () {
     // Cascades down tree in addContent() append/prepend order
-    this.mainContainer.initializeElements()
+    this.uiContainer.initializeElements()
   }
 
   draw () {
     // Cascades down tree in addContent() append/prepend order
-    this.mainContainer.draw()
+    this.uiContainer.draw()
   }
 }
 

@@ -11,9 +11,11 @@ const d3 = require('d3')
 let counter = 0
 
 class HtmlContent {
-  constructor (parentContent = null, contentProperties = {}, ui = parentContent.ui) {
+  constructor (parentContent = null, contentProperties = {}, ui = parentContent.ui, wrapperSelector = 'body') {
     this.ui = ui
     this.parentContent = parentContent
+
+    this.wrapperSelector = wrapperSelector
 
     const defaultProperties = {
       id: null,
@@ -89,15 +91,17 @@ class HtmlContent {
     const {
       htmlContent,
       htmlElementType,
+      element,
       id,
       classNames,
       title,
       eventHandler
     } = this.contentProperties
 
-    const d3ParentElement = this.parentContent ? this.parentContent.d3ContentWrapper : d3.select('body')
+    const d3ParentElement = this.parentContent ? this.parentContent.d3ContentWrapper : d3.select(this.wrapperSelector)
 
-    this.d3Element = d3ParentElement.append(htmlElementType)
+    this.d3Element = element ? d3.select(element) : d3ParentElement.append(htmlElementType)
+
     this.d3ContentWrapper = this.d3Element
 
     if (this.collapseControl) {

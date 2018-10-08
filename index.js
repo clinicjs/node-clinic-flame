@@ -9,6 +9,9 @@ const getLoggingPaths = require('./collect/get-logging-paths.js')
 const systemInfo = require('./collect/system-info.js')
 const inlinedFunctions = require('./collect/inlined-functions.js')
 const analyse = require('./analysis/index.js')
+
+// TODO: These will likely be moved to a generic Clinic tool visualizer
+// const minifyStream = require('minify-stream')
 const streamTemplate = require('stream-template')
 const pump = require('pump')
 const browserify = require('browserify')
@@ -123,23 +126,34 @@ class ClinicFlame extends events.EventEmitter {
     // create style-file stream
     const styleFile = fs.createReadStream(stylePath)
 
+    // This basic HTML template will be migrated to node-clinic-common and shared between tools,
+    // piping in tool name, logo etc. Customise tool-specific html in node-clinic-toolname/visualizer
     const outputFile = streamTemplate`
       <!DOCTYPE html>
-      <meta charset="utf8">
-      <meta name="viewport" content="width=device-width">
-      <title>Clinic Flame</title>
-      <link rel="shortcut icon" type="image/png" href="${clinicFaviconBase64}">
-      <style>${styleFile}</style>
-      <div id="banner">
-        <a id="main-logo" href="https://github.com/nearform/node-clinic-bubbleprof" title="Clinic Bubbleprof on GitHub" target="_blank">
-          ${logoFile} <span>LOGO HERE</span>
-        </a>
-        <a id="company-logo" href="https://nearform.com" title="nearForm" target="_blank">
-          ${nearFormLogoFile}
-        </a>
-      </div>
+      <html>
+        <head>
+          <meta charset="utf8">
+          <meta name="viewport" content="width=device-width">
+          <title>Clinic Flame</title>
+          <link rel="shortcut icon" type="image/png" href="${clinicFaviconBase64}">
+          <style>${styleFile}</style>
+        </head>
+        <body>
+          <div id="header">
+            <div id="banner">
+              <a id="main-logo" href="https://github.com/nearform/node-clinic-flame" title="Clinic Flame on GitHub" target="_blank">
+                ${logoFile} <span>LOGO HERE</span>
+              </a>
+              <a id="company-logo" href="https://nearform.com" title="nearForm" target="_blank">
+                ${nearFormLogoFile}
+              </a>
+            </div>
+          </div>
 
-      <script>${scriptFile}</script>
+          <main></main>
+          <script>${scriptFile}</script>
+        </body>
+      </html>
     `
 
     pump(

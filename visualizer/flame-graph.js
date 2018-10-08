@@ -26,11 +26,15 @@ class FlameGraph extends HtmlContent {
   }
 
   initializeFromData () {
+    const { width, height } = this.contentProperties
+
     this.flameGraph = d3Fg({
       tree: this.ui.dataTree.unmerged,
       exclude: this.ui.exclude,
       element: this.d3Chart.node(),
-      topOffset: 55,
+      topOffset: 0,
+      width: width - 2 * this.contentProperties.padding,
+      height,
       colorHash: (stackTop, { d, decimalAdjust, allSamples, tiers }) => {
         // 0 = lowest unadjusted value, 1 = highest, can be <0 or >1 due to decimalAdjust
         const decimal = (this.getStackTop(d) / allSamples) * (decimalAdjust || 1)
@@ -48,11 +52,12 @@ class FlameGraph extends HtmlContent {
     return stackTop
   }
 
-  resize () {
+  resize (width) {
     const previousWidth = this.width
-    this.width = this.ui.width - 2 * this.contentProperties.padding
+    this.width = width - 2 * this.contentProperties.padding
     if (this.width !== previousWidth) {
       this.changedWidth = true
+      this.draw()
     }
   }
 
