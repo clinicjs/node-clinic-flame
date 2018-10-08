@@ -26,22 +26,55 @@ class FlameGraph extends HtmlContent {
   }
 
   initializeFromData () {
-    const { width, height } = this.contentProperties
+    const {
+      width,
+      height,
+      padding
+    } = this.contentProperties
+
+    // TODO rather than calculating this single value here, we should be walking through
+    // all the nodes and sorting high stackTop values, so we can
+    // 1) display a heat key at the top;
+    // 2) pick the highest value from that list for use here.
+    const highest = this.getHighestStackTop(this.ui.dataTree.unmerged)
 
     this.flameGraph = d3Fg({
       tree: this.ui.dataTree.unmerged,
       exclude: this.ui.exclude,
       element: this.d3Chart.node(),
-      topOffset: 0,
-      width: width - 2 * this.contentProperties.padding,
+      topOffset: 55,
+      cellHeight: 20,
+      heatBars: true,
+      frameColors: {
+        fill: '#000',
+        stroke: '#363b4c'
+      },
+      // We already categorized nodes during analysis
+      categorizer: (node) => ({ type: node.type }),
+      labelColors: {
+        default: '#fff',
+        app: '#cde3ff',
+        core: '#626467',
+        deps: '#3f7dc6'
+      },
+      width: width - 2 * padding,
       height,
       colorHash: (stackTop, { d, decimalAdjust, allSamples, tiers }) => {
         // 0 = lowest unadjusted value, 1 = highest, can be <0 or >1 due to decimalAdjust
-        const decimal = (this.getStackTop(d) / allSamples) * (decimalAdjust || 1)
+        const decimal = (this.getStackTop(d) / highest) * (decimalAdjust || 1)
         const rgb = flameGradient(decimal)
         return rgb
       }
     })
+  }
+
+  getHighestStackTop (tree) {
+    return tree.children
+      ? tree.children.reduce((highest, child) => {
+          const newValue = this.getHighestStackTop(child)
+          return newValue > highest ? newValue : highest
+        }, this.getStackTop(tree))
+      : 0
   }
 
   getStackTop (frame) {
