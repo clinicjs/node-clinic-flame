@@ -27,14 +27,26 @@ class Ui {
 
     const width = this.mainElement.clientWidth
 
-    this.uiContainer.addContent(undefined, {
-      id: 'tool-bar',
+    const toolbarOuter = this.uiContainer.addContent(undefined, {
+      id: 'toolbar-outer',
       htmlElementType: 'section'
+      // TODO: will probably need to make this collapsible for portrait view
     })
     // TODO: add these ↴
-    // toolBar.addContent('StackedBar')
-    // toolBar.addContent('FrameInfo')
-    // toolBar.addContent('OptionsMenu')
+    // toolbarOuter.addContent('StackedBar')
+
+    const toolbar = toolbarOuter.addContent('Toolbar', {
+      id: 'toolbar'
+    })
+
+    const toolbarSidePanel = toolbar.addContent(undefined, {
+      id: 'toolbar-side-panel',
+      classNames: 'toolbar-section'
+    })
+    toolbarSidePanel.addContent('AreaKey')
+    // TODO: add these ↴
+    // toolbarSidePanel.addContent('SearchBox')
+    // toolbarSidePanel.addContent('OptionsMenu')
 
     const flameWrapper = this.uiContainer.addContent('FlameGraph', {
       id: 'flame-main',

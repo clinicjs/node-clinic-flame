@@ -3,11 +3,12 @@ html {
 
   --main-bg-color-val: 27, 30, 39;
   --max-contrast: rgb(255, 255, 255);
+  --opposite-contrast: rgb(0, 0, 0);
   --light-glare: rgba(255, 255, 255, 0.1);
 
   --main-bg-color: rgb(var(--main-bg-color-val));
   --main-bg-translucent: rgba(var(--main-bg-color-val), 0.94);
-  --overlay-bg-color: rgba(55, 61, 79, 0.94);
+  --overlay-bg-color: rgba(67, 70, 81, 0.94);
 
   --banner-bg-color: rgba(255, 255, 255, 0.1);
   --banner-logo-color: rgba(255, 255, 255, 0.87);
@@ -28,16 +29,22 @@ html {
 
   /* Define structurally-important sizes to use in calculations and/or adjust in media queries */
   --banner-height: 65px;
-  --toolbar-height: 65px;
   --footer-height: 25px;
+
+  /* Define text sizes */
+  --main-text-size: 10pt;
+  --small-text-size: 8.5pt;
 }
 
 /* Overrides for light theme */
 /* just a poc for now... */
 html.light {
   --main-bg-color-val: 197, 224, 239;
-  --banner-bg-color: rgb(0, 0, 0, 0.1);
 
+  --max-contrast: rgb(0, 0, 0);
+  --opposite-contrast: rgb(255, 255, 255);
+
+  --banner-bg-color: rgb(0, 0, 0, 0.1);
   --footer-bg-color: rgb(0, 0, 0, 0.1);
   --footer-color: rgba(0, 0, 0, 0.9);
 }
@@ -120,11 +127,133 @@ html * {
   flex-direction: column;
 }
 
-#tool-bar {
-  height: var(--toolbar-height);
-  padding: 20px;
-  background-color: rgba(110, 200, 228, 0.1); /* just a test */
-  color: white;
+/* Arrows - size and color applied in context */
+
+.vertical-arrow {
+  position: absolute;
+  border-style: solid;
+  border-color: transparent;
+  width: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* Toolbar */
+
+#toolbar {
+  background-color: var(--overlay-bg-color);
+  margin: 14px 0; /* Gutter for up and down arrows */
+  position: relative;
+  flex-grow: 1;
+  padding: 8px;
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+#toolbar .vertical-arrow {
+  border-width: 10px;
+  left: 10px; /* default, overridden in JS */
+}
+
+
+#toolbar .vertical-arrow.down-arrow {
+  border-top-color: var(--overlay-bg-color);
+  bottom: -20px;
+}
+
+#toolbar .vertical-arrow.up-arrow {
+  border-bottom-color: var(--overlay-bg-color);
+  top: -20px;
+}
+
+#toolbar .panel {
+  padding: 8px;
+}
+
+#toolbar .toolbar-section {
+  margin: 0;
+}
+
+#toolbar-main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#toolbar-main .selection-controls {
+  padding-bottom: 8px;
+}
+
+#toolbar-main .hotness-selector {
+  height: 24px;
+  padding: 0px 8px;
+  margin: 0px 2px;
+  background-color: var(--opposite-contrast);
+  color: var(--max-contrast);
+  border: none;
+  cursor: pointer;
+}
+
+#toolbar-main .rank-wrapper {
+  margin: 0px 8px;
+}
+
+#toolbar-main input.hotness-selector {
+  width: 36px;
+  text-align: right;
+  padding-left: 0;
+}
+
+#toolbar-main .hotness-selector,
+#toolbar-main label {
+  font-size: var(--small-text-size);
+}
+
+#toolbar-main label {
+  color: var(--grey-highlight);
+}
+
+#toolbar-main .frame-info {
+  background-color: var(--main-bg-color); /* matches banner color using :before */
+  padding: 4px;
+  margin: 0;
+  color: var(--grey-highlight);
+  position: relative;
+}
+
+#toolbar-main .frame-info strong {
+  color: var(--max-contrast);
+}
+
+#toolbar-main .frame-info-item {
+  margin: 0 8px;
+}
+
+#toolbar #toolbar-side-panel {
+  padding: 8px;
+  flex-grow: 0;
+  min-width: 250px;
+  margin-left: 8px;
+  background-color: var(--main-bg-color);
+  position: relative;
+}
+
+#toolbar-side-panel .key-panel {
+  background-color: var(--main-bg-color);
+  position: relative;
+}
+
+#toolbar .frame-info:before,
+#toolbar #toolbar-side-panel:before {
+  /* Apply translucent background to element that resets solid background color */
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: var(--banner-bg-color);
 }
 
 /* Flamegraph */
@@ -156,6 +285,7 @@ chart > div {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  height: calc(100vh - var(--banner-height))
 }
 
 #one-col-layout > * {
@@ -164,9 +294,9 @@ chart > div {
 
 #one-col-layout > .scroll-container {
   flex-grow: 1;
+  flex-shrink: 1;
   overflow: auto;
   position: relative;
-  height: calc(100vh - var(--toolbar-height) - var(--banner-height) - var(--footer-height));
 }
 
 .scroll-container::-webkit-scrollbar {
@@ -183,9 +313,4 @@ chart > div {
   outline: 1px solid var(--scrollbar-thumb-outline);
   border-radius: 2px;
   box-shadow: 4px 1px 6px -2px var(--light-glare) inset;
-}
-
-#flame-wrapper,
-#flame-main {
-  height: 100%;
 }
