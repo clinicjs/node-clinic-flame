@@ -6,32 +6,60 @@ const d3Fg = require('d3-fg')
 const flameGradient = require('flame-gradient')
 const HtmlContent = require('./html-content.js')
 
+const Message = require('./message.js')
+const copy = require('copy-to-clipboard')
+
 class FlameGraph extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
-    const defaults = {
-      width: 1000, // For testing, usually overridden by window width
-      height: 600, // For testing, usually overridden by window width
-      padding: 12
-    }
-    contentProperties = Object.assign({}, defaults, contentProperties)
     super(parentContent, contentProperties)
 
+    this.hoveredNodeData = null
+    this.zoomedNodeData = null
     this.changedWidth = false
+
+    this.hideToolTip = this.hideToolTip.bind(this)
   }
 
   initializeElements () {
     super.initializeElements()
     this.d3Chart = this.d3Element.append('chart')
       .classed('flamegraph-outer', true)
+      .style('position', 'relative')
+
+    // creating the tooltip component
+    this.tooltip = this.d3Chart.append('div')
+      .classed('tooltip', true)
+    this.tooltipInner = this.tooltip.append('div')
+      .classed('tooltip-inner', true)
+    this.ttCopyBtn = this.tooltipInner.append('button')
+      .classed('tt-copy', true)
+      .html(`
+        <span class='icon'><img data-inline-svg class="my-icon" src="/visualizer/assets/icons/copy.svg" /></span>
+        <span>Copy</span>
+        <span>path</span>
+      `)
+      .on('click', () => {
+        var data = this.hoveredNodeData.name.split(' ')[1]
+        Message.info(`
+          <span>Path copied to the clipboard!</span>
+          <pre>${data}</pre>
+        `, 4000)
+        copy(data)
+      })
+    this.ttZoomBtn = this.tooltipInner.append('button')
+      .classed('tt-zoom', true)
+      .html(`        
+        <span class='icon'><img data-inline-svg class="my-icon" src="/visualizer/assets/icons/zoom.svg" /></span>
+        <span class='label'>Expand</span>
+      `)
+      .on('click', () => {
+        const zoomingOut = this.hoveredNodeData === this.zoomedNodeData
+        if (zoomingOut) this.zoomedNodeData = null
+        this.flameGraph.zoom(zoomingOut ? null : this.hoveredNodeData)
+      })
   }
 
   initializeFromData () {
-    const {
-      width,
-      height,
-      padding
-    } = this.contentProperties
-
     // TODO rather than calculating this single value here, we should be walking through
     // all the nodes and sorting high stackTop values, so we can
     // 1) display a heat key at the top;
@@ -57,8 +85,9 @@ class FlameGraph extends HtmlContent {
         core: '#626467',
         deps: '#3f7dc6'
       },
-      width: width - 2 * padding,
-      height,
+      width: this.d3Element.node().clientWidth,
+      height: undefined, // we need to improve the way the canvas height gets calculated in d3-fg
+      renderTooltip: null, // disabling the built-in tooltip
       colorHash: (stackTop, { d, decimalAdjust, allSamples, tiers }) => {
         // 0 = lowest unadjusted value, 1 = highest, can be <0 or >1 due to decimalAdjust
         const decimal = (this.getStackTop(d) / highest) * (decimalAdjust || 1)
@@ -66,14 +95,101 @@ class FlameGraph extends HtmlContent {
         return rgb
       }
     })
+
+    // tooltip
+    let tooltipHandler = null
+    const copyBtnChildren = this.ttCopyBtn.selectAll('span')
+    const zoomBtnChildren = this.ttZoomBtn.selectAll('span')
+
+    this.flameGraph.on('hoverin', (nodeData, rect, pointerCoords) => {
+      // adding a little delay if no tooltip is already displayed
+      const delay = this.hoveredNodeData === null ? 500 : 0
+
+      // return if it's hovering over the same node
+      if (this.hoveredNodeData === nodeData) return
+
+      clearTimeout(tooltipHandler)
+
+      tooltipHandler = setTimeout(
+        () => {
+          this.hoveredNodeData = nodeData
+
+          // the zoomBtn label is dynamic...
+          this.updateZoomBtnLabel(this)
+
+          const ttLeft = pointerCoords.x
+
+          // NB: 40 should be the width of the 2 icons (copy and zoom),
+          // please adjust this value when we get final design
+          const ttMinWidth = Math.max(rect.w, 40)
+          this.tooltip
+            .style('display', 'block')
+            .style('left', `${ttLeft}px`)
+            .style('top', `${rect.y}px`)
+
+          // showing only the part of the button label that fits in the available space
+          setTooltipChildVisibility(copyBtnChildren, ttMinWidth / 2)
+          setTooltipChildVisibility(zoomBtnChildren, ttMinWidth / 2)
+
+          // calculating the actual tooltip width
+          const ttWidth = this.tooltipInner.node().getBoundingClientRect().width
+
+          // positioning the tooltip content
+          // making sure that it doesn't go over the frame right edge
+          const alignRight = ttLeft + ttWidth - rect.x - rect.w
+          let deltaX = Math.max(alignRight, ttWidth / 2)
+
+          // then checking it doesn't overflow the frame left edge
+          deltaX = (ttLeft - deltaX < rect.x) ? ttLeft - rect.x : deltaX
+
+          // then checking the canvas right edge
+          const canvasWidth = this.d3Element.node().clientWidth
+          deltaX = (ttLeft - deltaX + ttWidth > canvasWidth) ? alignRight : deltaX
+
+          this.tooltipInner
+            .style('left', `-${deltaX}px`)
+        }
+
+        , delay)
+    })
+
+    this.flameGraph.on('hoverout', (node) => {
+      clearTimeout(tooltipHandler)
+      tooltipHandler = setTimeout(this.hideToolTip, 400)
+    })
+
+    this.tooltip.on('mouseover', () => {
+      clearTimeout(tooltipHandler)
+    })
+    this.tooltip.on('mouseout', () => {
+      clearTimeout(tooltipHandler)
+      tooltipHandler = setTimeout(this.hideToolTip, 200)
+    })
+
+    this.flameGraph.on('zoom', (nodeData) => {
+      this.hideToolTip()
+      this.zoomedNodeData = nodeData
+    })
+
+    this.flameGraph.on('animationEnd', () => {
+      // can come handy to have this cb...
+    })
+
+    // triggering the resize after the canvas rendered to take possible scrollbars into account
+    this.resize()
+  }
+
+  hideToolTip () {
+    this.hoveredNodeData = null
+    this.tooltip.style('display', 'none')
   }
 
   getHighestStackTop (tree) {
     return tree.children
       ? tree.children.reduce((highest, child) => {
-          const newValue = this.getHighestStackTop(child)
-          return newValue > highest ? newValue : highest
-        }, this.getStackTop(tree))
+        const newValue = this.getHighestStackTop(child)
+        return newValue > highest ? newValue : highest
+      }, this.getStackTop(tree))
       : 0
   }
 
@@ -85,9 +201,9 @@ class FlameGraph extends HtmlContent {
     return stackTop
   }
 
-  resize (width) {
+  resize () {
     const previousWidth = this.width
-    this.width = width - 2 * this.contentProperties.padding
+    this.width = this.d3Element.node().clientWidth
     if (this.width !== previousWidth) {
       this.changedWidth = true
       this.draw()
@@ -103,6 +219,19 @@ class FlameGraph extends HtmlContent {
       this.flameGraph.width(this.width)
     }
   }
+
+  updateZoomBtnLabel () {
+    this.ttZoomBtn.node().querySelector('.label').textContent = this.zoomedNodeData === this.hoveredNodeData ? 'Contract' : 'Expand'
+  }
 }
 
 module.exports = FlameGraph
+
+function setTooltipChildVisibility (elems, width) {
+  let totalWidth = 0
+  return elems.each(function () {
+    this.style.display = ''
+    totalWidth += this.getBoundingClientRect().width
+    this.style.display = totalWidth > width ? 'none' : ''
+  })
+}

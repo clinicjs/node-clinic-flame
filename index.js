@@ -9,6 +9,7 @@ const getLoggingPaths = require('./collect/get-logging-paths.js')
 const systemInfo = require('./collect/system-info.js')
 const inlinedFunctions = require('./collect/inlined-functions.js')
 const analyse = require('./analysis/index.js')
+var inlineSvg = require('browserify-inline-svg')
 
 // TODO: These will likely be moved to a generic Clinic tool visualizer
 // const minifyStream = require('minify-stream')
@@ -121,7 +122,11 @@ class ClinicFlame extends events.EventEmitter {
     b.transform('brfs')
     b.transform(envify({ DEBUG_MODE: this.debug }))
 
-    let scriptFile = b.bundle()
+    let scriptFile = b
+      .bundle()
+      .pipe(inlineSvg({
+        basePath: __dirname
+      }))
 
     // create style-file stream
     const styleFile = fs.createReadStream(stylePath)

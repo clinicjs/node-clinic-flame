@@ -25,8 +25,6 @@ class Ui {
       id: 'one-col-layout'
     }, this, this.wrapperSelector)
 
-    const width = this.mainElement.clientWidth
-
     const toolbarOuter = this.uiContainer.addContent(undefined, {
       id: 'toolbar-outer',
       htmlElementType: 'section'
@@ -51,7 +49,6 @@ class Ui {
     const flameWrapper = this.uiContainer.addContent('FlameGraph', {
       id: 'flame-main',
       classNames: 'scroll-container',
-      width,
       htmlElementType: 'section'
     })
     // TODO: add these ↴
@@ -67,9 +64,11 @@ class Ui {
     // footer.addContent('FlameGraph', { id: 'flame-chronological' })
     // footer.addContent('TimeFilter')
 
+    let scrollElement = null
     const scrollChartIntoView = debounce(() => {
-      const scrollElement = flameWrapper.d3Element.node()
-
+      if (!scrollElement) {
+        scrollElement = flameWrapper.d3Element.node()
+      }
       scrollElement.scrollTo({
         top: scrollElement.scrollHeight,
         behavior: 'smooth'
@@ -77,8 +76,7 @@ class Ui {
     }, 200)
 
     window.addEventListener('resize', () => {
-      const width = this.mainElement.clientWidth
-      flameWrapper.resize(width)
+      flameWrapper.resize()
       scrollChartIntoView()
     })
 
