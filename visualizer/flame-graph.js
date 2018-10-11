@@ -78,7 +78,7 @@ class FlameGraph extends HtmlContent {
   }
 
   getStackTop (frame) {
-    let stackTop = 0
+    let stackTop = frame.stackTop.base
     this.ui.exclude.forEach((excluded) => {
       stackTop += frame.stackTop[excluded]
     })
