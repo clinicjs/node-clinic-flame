@@ -27,14 +27,14 @@ class FlameGraph extends HtmlContent {
       .style('position', 'relative')
 
     // creating the tooltip component
-    this.tooltip = this.d3Chart.append('div')
+    this.d3Tooltip = this.d3Chart.append('div')
       .classed('tooltip', true)
-    this.tooltipInner = this.tooltip.append('div')
+    this.d3TooltipInner = this.d3Tooltip.append('div')
       .classed('tooltip-inner', true)
-    this.ttCopyBtn = this.tooltipInner.append('button')
+    this.d3CopyBtn = this.d3TooltipInner.append('button')
       .classed('tt-copy', true)
       .html(`
-        <span class='icon'><img data-inline-svg class="my-icon" src="/visualizer/assets/icons/copy.svg" /></span>
+        <span class='icon'><img data-inline-svg class="icon-img" src="/visualizer/assets/icons/copy.svg" /></span>
         <span>Copy</span>
         <span>path</span>
       `)
@@ -46,10 +46,10 @@ class FlameGraph extends HtmlContent {
         `, 4000)
         copy(data)
       })
-    this.ttZoomBtn = this.tooltipInner.append('button')
+    this.d3ZoomBtn = this.d3TooltipInner.append('button')
       .classed('tt-zoom', true)
-      .html(`        
-        <span class='icon'><img data-inline-svg class="my-icon" src="/visualizer/assets/icons/zoom.svg" /></span>
+      .html(`
+        <span class='icon'><img data-inline-svg class="icon-img" src="/visualizer/assets/icons/zoom.svg" /></span>
         <span class='label'>Expand</span>
       `)
       .on('click', () => {
@@ -98,8 +98,8 @@ class FlameGraph extends HtmlContent {
 
     // tooltip
     let tooltipHandler = null
-    const copyBtnChildren = this.ttCopyBtn.selectAll('span')
-    const zoomBtnChildren = this.ttZoomBtn.selectAll('span')
+    const copyBtnChildren = this.d3CopyBtn.selectAll('span')
+    const zoomBtnChildren = this.d3ZoomBtn.selectAll('span')
 
     this.flameGraph.on('hoverin', (nodeData, rect, pointerCoords) => {
       // adding a little delay if no tooltip is already displayed
@@ -122,7 +122,7 @@ class FlameGraph extends HtmlContent {
           // NB: 40 should be the width of the 2 icons (copy and zoom),
           // please adjust this value when we get final design
           const ttMinWidth = Math.max(rect.w, 40)
-          this.tooltip
+          this.d3Tooltip
             .style('display', 'block')
             .style('left', `${ttLeft}px`)
             .style('top', `${rect.y}px`)
@@ -132,7 +132,7 @@ class FlameGraph extends HtmlContent {
           setTooltipChildVisibility(zoomBtnChildren, ttMinWidth / 2)
 
           // calculating the actual tooltip width
-          const ttWidth = this.tooltipInner.node().getBoundingClientRect().width
+          const ttWidth = this.d3TooltipInner.node().getBoundingClientRect().width
 
           // positioning the tooltip content
           // making sure that it doesn't go over the frame right edge
@@ -146,7 +146,7 @@ class FlameGraph extends HtmlContent {
           const canvasWidth = this.d3Element.node().clientWidth
           deltaX = (ttLeft - deltaX + ttWidth > canvasWidth) ? alignRight : deltaX
 
-          this.tooltipInner
+          this.d3TooltipInner
             .style('left', `-${deltaX}px`)
         }
 
@@ -158,10 +158,10 @@ class FlameGraph extends HtmlContent {
       tooltipHandler = setTimeout(this.hideToolTip, 400)
     })
 
-    this.tooltip.on('mouseover', () => {
+    this.d3Tooltip.on('mouseover', () => {
       clearTimeout(tooltipHandler)
     })
-    this.tooltip.on('mouseout', () => {
+    this.d3Tooltip.on('mouseout', () => {
       clearTimeout(tooltipHandler)
       tooltipHandler = setTimeout(this.hideToolTip, 200)
     })
@@ -181,7 +181,7 @@ class FlameGraph extends HtmlContent {
 
   hideToolTip () {
     this.hoveredNodeData = null
-    this.tooltip.style('display', 'none')
+    this.d3Tooltip.style('display', 'none')
   }
 
   getHighestStackTop (tree) {
@@ -221,7 +221,8 @@ class FlameGraph extends HtmlContent {
   }
 
   updateZoomBtnLabel () {
-    this.ttZoomBtn.node().querySelector('.label').textContent = this.zoomedNodeData === this.hoveredNodeData ? 'Contract' : 'Expand'
+    const isZoomed = this.zoomedNodeData === this.hoveredNodeData
+    this.d3ZoomBtn.select('.label').text(isZoomed ? 'Contract' : 'Expand')
   }
 }
 
