@@ -11,40 +11,47 @@ lint: &lint
   name: Lint
   command: npm run ci-lint
 
-test: &test
-  name: Test
-  command: npm run ci-test
+test_cov: &test_cov
+  name: Test (with coverage)
+  command: npm run ci-test-cov
 
-build_and_test: &build_and_test
-  - checkout
+test_no_cov: &test_no_cov
+  name: Test (without coverage)
+  command: npm run ci-test-no-cov
 
-  - run:
-      name: Version check
-      command: node -v
+version_check: &version_check
+  name: Version check
+  command: node -v
 
-  - run:
-     name: Update dependencies
-     command: |
-       npm config set package-lock false
-       npm update --save-dev # https://github.com/npm/npm/issues/16901
-       npm update
-
-  - run: *lint
-
-  - run: *test
+update_deps: &update_deps
+  name: Update dependencies
+  command: |
+    npm config set package-lock false
+    npm update --save-dev # https://github.com/npm/npm/issues/16901
+    npm update
 
 jobs:
   node-v8:
     <<: *defaults
     docker:
       - image: node:8
-    steps: *build_and_test
+    steps:
+      - checkout
+      - run: *version_check
+      - run: *update_deps
+      - run: *lint
+      - run: *test_no_cov
 
   node-v10:
     <<: *defaults
     docker:
       - image: node:10
-    steps: *build_and_test
+    steps:
+      - checkout
+      - run: *version_check
+      - run: *update_deps
+      - run: *lint
+      - run: *test_cov
 
 workflows:
   version: 2
