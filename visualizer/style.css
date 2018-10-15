@@ -1,3 +1,8 @@
+@import "./toolbar.css";
+@import "./area-key.css";
+@import "./flame-graph.css";
+@import "./message.css";
+
 html {
   /* Define colors */
 
@@ -144,211 +149,6 @@ html * {
   padding: 0;
 }
 
-/* Toolbar */
-
-#toolbar {
-  background-color: var(--overlay-bg-color);
-  margin: 14px 0; /* Gutter for up and down arrows */
-  position: relative;
-  flex-grow: 1;
-  padding: 8px;
-  display: flex;
-  flex-direction: row-reverse;
-}
-
-#toolbar .vertical-arrow {
-  border-width: 10px;
-  left: 10px; /* default, overridden in JS */
-}
-
-
-#toolbar .vertical-arrow.down-arrow {
-  border-top-color: var(--overlay-bg-color);
-  bottom: -20px;
-}
-
-#toolbar .vertical-arrow.up-arrow {
-  border-bottom-color: var(--overlay-bg-color);
-  top: -20px;
-}
-
-#toolbar .panel {
-  padding: 8px;
-}
-
-#toolbar .toolbar-section {
-  margin: 0;
-}
-
-#toolbar-main {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-#toolbar-main .selection-controls {
-  padding-bottom: 8px;
-}
-
-#toolbar-main .hotness-selector {
-  height: 24px;
-  padding: 0px 8px;
-  margin: 0px 2px;
-  background-color: var(--opposite-contrast);
-  color: var(--max-contrast);
-  border: none;
-  cursor: pointer;
-}
-
-#toolbar-main .rank-wrapper {
-  margin: 0px 8px;
-}
-
-#toolbar-main input.hotness-selector {
-  width: 36px;
-  text-align: right;
-  padding-left: 0;
-}
-
-#toolbar-main .hotness-selector,
-#toolbar-main label {
-  font-size: var(--small-text-size);
-}
-
-#toolbar-main label {
-  color: var(--grey-highlight);
-}
-
-#toolbar-main .frame-info {
-  background-color: var(--main-bg-color); /* matches banner color using :before */
-  padding: 4px;
-  margin: 0;
-  color: var(--grey-highlight);
-  position: relative;
-}
-
-#toolbar-main .frame-info strong {
-  color: var(--max-contrast);
-}
-
-#toolbar-main .frame-info-item {
-  margin: 0 8px;
-}
-
-#toolbar #toolbar-side-panel {
-  padding: 8px;
-  flex-grow: 0;
-  min-width: 250px;
-  margin-left: 8px;
-  background-color: var(--main-bg-color);
-  position: relative;
-}
-
-#toolbar-side-panel .key-panel {
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  padding: 4px 8px;
-  background-color: var(--main-bg-color);
-  font-size: var(--small-text-size);
-}
-
-/* Adds the key color bars. */
-#toolbar-side-panel .key-panel .key::before {
-  content: ' ';
-  display: inline-block;
-  width: 12px;
-  background-color: currentColor; /* use the text color as the background */
-  margin-right: 6px;
-  /* Vertical size and position — hopefully the ems work well even if we change font size */
-  margin-bottom: 0.1em;
-  height: 0.4em;
-}
-
-/* Have some minimum distance between labels if there's not much space… */
-#toolbar-side-panel .key-panel .key:not(:last-child) {
-  margin-right: 6px;
-}
-
-#toolbar-side-panel .key-panel .key-app {
-  color: var(--area-color-app);
-}
-#toolbar-side-panel .key-panel .key-deps {
-  color: var(--area-color-deps);
-}
-#toolbar-side-panel .key-panel .key-core {
-  color: var(--area-color-core);
-}
-
-#toolbar .frame-info:before,
-#toolbar #toolbar-side-panel:before {
-  /* Apply translucent background to element that resets solid background color */
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  background-color: var(--banner-bg-color);
-}
-
-/* Flamegraph */
-
-#flame-main canvas {
-  display: block;
-}
-
-chart > div {
-  height: 100%;
-}
-
-.tooltip {
-  position: absolute;
-  display: none;
-  z-index: 9;
-  font-size: 14px;
-}
-
-.tooltip .tooltip-inner {
-  background-color: rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  color: white;
-  display: flex;
-  overflow: hidden;
-  position: absolute;
-  top: -1px;
-}
-
-.tooltip-inner button {
-  align-items: center;
-  background-color: transparent;
-  border-radius: 0;
-  border: none;
-  color: inherit;
-  cursor: pointer;
-  display: flex;
-  flex-basis: 50%;
-  font-size: inherit;
-  justify-content: center;
-  line-height: 1.2em;
-  margin: 2px;
-  outline: none;
-  padding: 0;
-}
-
-.tooltip-inner button:hover {
-  background-color: var(--light-glare);
-}
-
-.tooltip-inner span {
-  padding: 0 0.15em;
-}
-
-.tooltip-inner .icon {
-  display: flex;
-  align-items: center;
-}
-
 /* Footer */
 #footer {
   height: var(--footer-height);
@@ -395,7 +195,6 @@ chart > div {
   height: 100%;
 }
 
-
 /* SVG icons */
 svg.icon-img path {
   /* Default to same fill as adjacent text */
@@ -406,30 +205,4 @@ svg.icon-img {
   /* Default to same size as adjacent text */
   width: 1em;
   height: 1em;
-}
-
-/* message-component */
-#message-component {
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  top: 2px;
-  z-index: 99;
-}
-
-#message-component .message-text {
-  background-color: rgb(61, 165, 108);
-  color: '#fff';
-  padding: 2px 5px;
-  border-radius: 3px;
-  margin: 1px 0px;
-  font-size: 14px;
-  text-align: center;
-  color: rgba(0, 0, 0, 0.6);
-}
-
-#message-component pre {
-  color: #000000;
-  font-style: italic;
-  margin: 1em;
 }

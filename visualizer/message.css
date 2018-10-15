@@ -1,0 +1,24 @@
+#message-component {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 2px;
+  z-index: 99;
+}
+
+#message-component .message-text {
+  background-color: rgb(61, 165, 108);
+  color: '#fff';
+  padding: 2px 5px;
+  border-radius: 3px;
+  margin: 1px 0px;
+  font-size: 14px;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+#message-component pre {
+  color: #000000;
+  font-style: italic;
+  margin: 1em;
+}

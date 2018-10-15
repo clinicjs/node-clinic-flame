@@ -12,6 +12,10 @@ const analyse = require('./analysis/index.js')
 var inlineSvg = require('browserify-inline-svg')
 
 // TODO: These will likely be moved to a generic Clinic tool visualizer
+const { promisify } = require('util')
+const readFile = promisify(require('fs').readFile)
+const postcss = require('postcss')
+const postcssImport = require('postcss-import')
 // const minifyStream = require('minify-stream')
 const streamTemplate = require('stream-template')
 const pump = require('pump')
@@ -129,7 +133,17 @@ class ClinicFlame extends events.EventEmitter {
       }))
 
     // create style-file stream
-    const styleFile = fs.createReadStream(stylePath)
+    const processor = postcss([
+      postcssImport()
+    ])
+    const styleFile = readFile(stylePath, 'utf8')
+      .then((css) => processor.process(css, {
+        from: stylePath,
+        map: this.debug ? { inline: true } : false
+      }))
+      .then((result) => {
+        return result.css
+      })
 
     // This basic HTML template will be migrated to node-clinic-common and shared between tools,
     // piping in tool name, logo etc. Customise tool-specific html in node-clinic-toolname/visualizer
@@ -138,10 +152,10 @@ class ClinicFlame extends events.EventEmitter {
       <html>
         <head>
           <meta charset="utf8">
+          <style>${styleFile}</style>
           <meta name="viewport" content="width=device-width">
           <title>Clinic Flame</title>
           <link rel="shortcut icon" type="image/png" href="${clinicFaviconBase64}">
-          <style>${styleFile}</style>
         </head>
         <body>
           <div id="header">

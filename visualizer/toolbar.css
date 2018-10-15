@@ -1,0 +1,109 @@
+#toolbar {
+  background-color: var(--overlay-bg-color);
+  margin: 14px 0; /* Gutter for up and down arrows */
+  position: relative;
+  flex-grow: 1;
+  padding: 8px;
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+#toolbar .vertical-arrow {
+  border-width: 10px;
+  left: 10px; /* default, overridden in JS */
+}
+
+
+#toolbar .vertical-arrow.down-arrow {
+  border-top-color: var(--overlay-bg-color);
+  bottom: -20px;
+}
+
+#toolbar .vertical-arrow.up-arrow {
+  border-bottom-color: var(--overlay-bg-color);
+  top: -20px;
+}
+
+#toolbar .panel {
+  padding: 8px;
+}
+
+#toolbar .toolbar-section {
+  margin: 0;
+}
+
+#toolbar-main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#toolbar-main .selection-controls {
+  padding-bottom: 8px;
+}
+
+#toolbar-main .hotness-selector {
+  height: 24px;
+  padding: 0px 8px;
+  margin: 0px 2px;
+  background-color: var(--opposite-contrast);
+  color: var(--max-contrast);
+  border: none;
+  cursor: pointer;
+}
+
+#toolbar-main .rank-wrapper {
+  margin: 0px 8px;
+}
+
+#toolbar-main input.hotness-selector {
+  width: 36px;
+  text-align: right;
+  padding-left: 0;
+}
+
+#toolbar-main .hotness-selector,
+#toolbar-main label {
+  font-size: var(--small-text-size);
+}
+
+#toolbar-main label {
+  color: var(--grey-highlight);
+}
+
+#toolbar-main .frame-info {
+  background-color: var(--main-bg-color); /* matches banner color using :before */
+  padding: 4px;
+  margin: 0;
+  color: var(--grey-highlight);
+  position: relative;
+}
+
+#toolbar-main .frame-info strong {
+  color: var(--max-contrast);
+}
+
+#toolbar-main .frame-info-item {
+  margin: 0 8px;
+}
+
+#toolbar #toolbar-side-panel {
+  padding: 8px;
+  flex-grow: 0;
+  min-width: 250px;
+  margin-left: 8px;
+  background-color: var(--main-bg-color);
+  position: relative;
+}
+
+#toolbar .frame-info:before,
+#toolbar #toolbar-side-panel:before {
+  /* Apply translucent background to element that resets solid background color */
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: var(--banner-bg-color);
+}

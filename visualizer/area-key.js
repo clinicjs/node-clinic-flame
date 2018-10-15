@@ -5,7 +5,8 @@ const HtmlContent = require('./html-content.js')
 class AreaKey extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
     const defaults = {
-      classNames: 'key-panel panel'
+      id: 'area-key',
+      classNames: 'panel'
     }
     contentProperties = Object.assign({}, defaults, contentProperties)
     super(parentContent, contentProperties)

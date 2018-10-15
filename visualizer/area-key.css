@@ -1,0 +1,35 @@
+#area-key.panel {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 8px;
+  background-color: var(--main-bg-color);
+  font-size: var(--small-text-size);
+}
+
+/* Adds the key color bars. */
+#area-key .key::before {
+  content: ' ';
+  display: inline-block;
+  width: 12px;
+  background-color: currentColor; /* use the text color as the background */
+  margin-right: 6px;
+  /* Vertical size and position — hopefully the ems work well even if we change font size */
+  margin-bottom: 0.1em;
+  height: 0.4em;
+}
+
+/* Have some minimum distance between labels if there's not much space… */
+#area-key .key:not(:last-child) {
+  margin-right: 6px;
+}
+
+#area-key .key-app {
+  color: var(--area-color-app);
+}
+#area-key .key-deps {
+  color: var(--area-color-deps);
+}
+#area-key .key-core {
+  color: var(--area-color-core);
+}
