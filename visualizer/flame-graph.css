@@ -6,24 +6,15 @@ chart > div {
   height: 100%;
 }
 
-.tooltip {
-  position: absolute;
-  display: none;
-  z-index: 9;
+.fg-tooltip-actions {
+  display: flex;
+  background-color: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: white;  
   font-size: 14px;
 }
 
-.tooltip .tooltip-inner {
-  background-color: rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  color: white;
-  display: flex;
-  overflow: hidden;
-  position: absolute;
-  top: -1px;
-}
-
-.tooltip-inner button {
+.fg-tooltip-actions button {
   align-items: center;
   background-color: transparent;
   border-radius: 0;
@@ -40,15 +31,15 @@ chart > div {
   padding: 0;
 }
 
-.tooltip-inner button:hover {
+.fg-tooltip-actions button:hover {
   background-color: var(--light-glare);
 }
 
-.tooltip-inner span {
+.fg-tooltip-actions span {
   padding: 0 0.15em;
 }
 
-.tooltip-inner .icon {
+.fg-tooltip-actions .icon {
   display: flex;
   align-items: center;
 }

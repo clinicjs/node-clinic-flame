@@ -3,6 +3,7 @@
 @import "./search-box.css";
 @import "./flame-graph.css";
 @import "./message.css";
+@import "./tooltip.css";
 @import "./options-menu.css";
 
 html {

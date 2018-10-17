@@ -27,6 +27,13 @@ class Ui extends events.EventEmitter {
       id: 'one-col-layout'
     }, this, this.wrapperSelector)
 
+    // creating the tooltip instance that the Ui's components can share
+    const tooltip = this.uiContainer.addContent('Tooltip', {
+      htmlElementType: 'div',
+      id: 'ui-tooltip'
+    })
+    this.tooltip = tooltip
+
     const toolbarOuter = this.uiContainer.addContent(undefined, {
       id: 'toolbar-outer',
       htmlElementType: 'section'
@@ -36,7 +43,8 @@ class Ui extends events.EventEmitter {
     // toolbarOuter.addContent('StackedBar')
 
     const toolbar = toolbarOuter.addContent('Toolbar', {
-      id: 'toolbar'
+      id: 'toolbar',
+      customTooltip: tooltip
     })
 
     const toolbarSidePanel = toolbar.addContent(undefined, {
@@ -59,8 +67,11 @@ class Ui extends events.EventEmitter {
     const flameWrapper = this.uiContainer.addContent('FlameGraph', {
       id: 'flame-main',
       classNames: 'scroll-container',
-      htmlElementType: 'section'
+      htmlElementType: 'section',
+      customTooltip: tooltip
     })
+    this.flameWrapper = flameWrapper
+
     // TODO: add these ↴
     // flameWrapper.addContent('FlameGraph', { id: 'flame-zoomed' })
     // flameWrapper.addContent('HoverBox')
@@ -143,6 +154,10 @@ class Ui extends events.EventEmitter {
   initializeElements () {
     // Cascades down tree in addContent() append/prepend order
     this.uiContainer.initializeElements()
+
+    // hiding the tooltip on scroll
+    this.flameWrapper.d3Element.node().addEventListener('scroll', () => this.tooltip.hide({ delay: 0 }))
+    window.addEventListener('scroll', () => this.tooltip.hide({ delay: 0 }))
   }
 
   draw () {

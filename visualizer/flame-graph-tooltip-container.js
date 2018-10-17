@@ -1,0 +1,113 @@
+'use strict'
+const d3 = require('d3')
+
+class FgTooltipContainer {
+  constructor ({ tooltip, showDelay = 500, hideDelay = 200, onZoom, onCopyPath }) {
+    this.tooltip = tooltip
+
+    this.tooltipHandler = null
+
+    this.showDelay = showDelay
+    this.hideDelay = hideDelay
+    this.onZoom = onZoom
+    this.onCopyPath = onCopyPath
+
+    this.nodeData = null
+    this.frameIsZoomed = false
+
+    this.d3HiddenDiv = d3.select('body').insert('div', ':first-child')
+      .style('visibility', 'hidden')
+      .style('position', 'absolute')
+
+    this.d3TooltipHtml = this.d3HiddenDiv.append('div')
+      .classed('fg-tooltip-actions', true)
+      .html(`
+      <button class='copy-button'>
+        <span class='icon'><img data-inline-svg class="icon-img" src="/visualizer/assets/icons/copy.svg" /></span>
+        <span>Copy</span>
+        <span>path</span>      
+      </button>
+      <button class='zoom-button'>
+        <span class='icon'><img data-inline-svg class="icon-img" src="/visualizer/assets/icons/zoom.svg" /></span>
+        <span class='label'>Expand</span>
+      </button>
+    `)
+
+    this.d3TooltipCopyBtn = this.d3TooltipHtml.select('.copy-button')
+      .on('click', () => {
+        this.onCopyPath && this.onCopyPath(this.nodeData.name.split(' ')[1])
+      })
+
+    this.d3TooltipZoomBtn = this.d3TooltipHtml.select('.zoom-button')
+      .on('click', () => {
+        this.onZoom && this.onZoom(!this.frameIsZoomed && this.nodeData)
+      })
+
+    this.copyBtnChildren = this.d3TooltipCopyBtn.selectAll('span')
+    this.zoomBtnChildren = this.d3TooltipZoomBtn.selectAll('span')
+  }
+
+  show ({ nodeData, rect, pointerCoords, frameIsZoomed, wrapperNode }) {
+    // handling the timeout here because these calculations need to happen only when the tooltip gets actually displayed
+    clearTimeout(this.tooltipHandler)
+
+    this.tooltipHandler = setTimeout(() => {
+      this.frameIsZoomed = frameIsZoomed
+      this.nodeData = nodeData
+      const minWidth = Math.max(rect.width / 2, 20)
+
+      const wrapperRect = wrapperNode.getBoundingClientRect()
+
+      const offset = {
+        x: wrapperRect.x - wrapperNode.scrollLeft,
+        y: wrapperRect.y - wrapperNode.scrollTop
+      }
+
+      // moving the tooltip html into the hidden div to get its size
+      this.d3HiddenDiv.append(() => {
+        return this.d3TooltipHtml.remove().node()
+      })
+
+      setTooltipChildVisibility(this.copyBtnChildren, minWidth)
+      setTooltipChildVisibility(this.zoomBtnChildren, minWidth)
+
+      this.updateZoomBtnLabel()
+
+      const pointerPosition = {
+        x: pointerCoords.x - rect.x,
+        y: pointerCoords.y - rect.y
+      }
+
+      this.tooltip.show({
+        msg: this.d3TooltipHtml.node(),
+        targetRect: rect,
+        offset,
+        pointerCoords: pointerPosition,
+        outerRect: wrapperRect,
+        showDelay: 0,
+        verticalAlign: 'top'
+      })
+    }, this.showDelay)
+  }
+
+  hide () {
+    clearTimeout(this.tooltipHandler)
+    this.tooltip.hide()
+  }
+
+  updateZoomBtnLabel () {
+    this.d3TooltipZoomBtn.select('.label').text(this.frameIsZoomed ? 'Contract' : 'Expand')
+  }
+}
+
+function setTooltipChildVisibility (elems, width) {
+  let totalWidth = 0
+  elems.each(function () {
+    this.style.display = ''
+    totalWidth += this.getBoundingClientRect().width
+
+    this.style.display = totalWidth > width ? 'none' : ''
+  })
+}
+
+module.exports = FgTooltipContainer
