@@ -43,11 +43,17 @@ class Ui extends events.EventEmitter {
       id: 'toolbar-side-panel',
       classNames: 'toolbar-section'
     })
-    toolbarSidePanel.addContent('AreaKey')
-    // TODO: add these ↴
-    // toolbarSidePanel.addContent('SearchBox')
+    toolbarSidePanel.addContent('AreaKey', {
+      id: 'area-key',
+      classNames: 'panel'
+    })
+    toolbarSidePanel.addContent('SearchBox', {
+      id: 'search-box',
+      classNames: 'inline-panel'
+    })
     toolbarSidePanel.addContent('OptionsMenu', {
-      id: 'options-menu'
+      id: 'options-menu',
+      classNames: 'inline-panel'
     })
 
     const flameWrapper = this.uiContainer.addContent('FlameGraph', {
@@ -120,6 +126,18 @@ class Ui extends events.EventEmitter {
     if (dataTree !== previousDataTree) {
       this.draw()
     }
+  }
+
+  clearSearch () {
+    const flameWrapper = this.uiContainer.content.get('flame-main')
+    flameWrapper.clearSearch()
+  }
+
+  search (query) {
+    if (!query) return
+
+    const flameWrapper = this.uiContainer.content.get('flame-main')
+    flameWrapper.search(query)
   }
 
   initializeElements () {

@@ -1,10 +1,17 @@
 #options-menu .options-menu-toggle {
-  position: relative;
   font-size: var(--small-text-size);
 }
 
+/* options menu styles specific to the panel in the toolbar. */
+#options-menu.inline-panel {
+  float: right;
+}
+#options-menu.inline-panel .options-menu-toggle {
+  position: relative;
+}
+
 #options-menu .options {
-  margin-left: -8px;
+  right: 0;
   padding: 8px 0;
   width: 100%;
   font-size: var(--small-text-size);

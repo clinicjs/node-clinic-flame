@@ -13,6 +13,7 @@ class OptionsMenu extends HtmlContent {
 
     this.addCollapseControl(true, {
       classNames: 'options-menu-toggle',
+      htmlElementType: 'button',
       htmlContent: 'Options <span class="chevron">›</span>'
     })
   }

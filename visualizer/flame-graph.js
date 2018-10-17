@@ -9,6 +9,8 @@ const HtmlContent = require('./html-content.js')
 const Message = require('./message.js')
 const copy = require('copy-to-clipboard')
 
+const searchHighlightColor = 'orange'
+
 class FlameGraph extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
     const defaults = {
@@ -223,6 +225,14 @@ class FlameGraph extends HtmlContent {
       return this.ui.dataTree.merged
     }
     return this.ui.dataTree.unmerged
+  }
+
+  clearSearch () {
+    this.flameGraph.clear(searchHighlightColor)
+  }
+
+  search (query) {
+    this.flameGraph.search(query, searchHighlightColor)
   }
 
   draw () {

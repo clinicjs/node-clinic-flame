@@ -108,3 +108,7 @@
   right: 0;
   background-color: var(--banner-bg-color);
 }
+
+#toolbar #toolbar-side-panel .inline-panel {
+  display: inline-block;
+}

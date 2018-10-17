@@ -1,0 +1,12 @@
+#search-box.inline-panel {
+  position: relative;
+}
+
+#search-box input {
+  border: none;
+  background: black;
+  color: white;
+  font-family: inherit;
+  font-size: var(--small-text-size);
+  padding: 4px 8px;
+}
