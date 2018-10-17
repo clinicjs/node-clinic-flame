@@ -196,10 +196,6 @@ html * {
   box-shadow: 4px 1px 6px -2px var(--light-glare) inset;
 }
 
-#flame-main {
-  height: 100%;
-}
-
 /* SVG icons */
 svg.icon-img path {
   /* Default to same fill as adjacent text */
