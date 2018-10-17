@@ -1,0 +1,115 @@
+#options-menu .options-menu-toggle {
+  position: relative;
+  font-size: var(--small-text-size);
+}
+
+#options-menu .options {
+  margin-left: -8px;
+  padding: 8px 0;
+  width: 100%;
+  font-size: var(--small-text-size);
+  position: absolute;
+  z-index: 1;
+  background-color: var(--main-bg-translucent);
+}
+
+#options-menu .options .section {
+  border: none;
+  padding: 0;
+  margin: 0;
+  position: relative; /* forces this to show on _top_ of the .options element, else it's not clickable */
+}
+
+#options-menu .options .section {
+  margin-top: 16px;
+}
+
+#options-menu .options .section h2 {
+  width: 100%;
+  font-weight: bold;
+  font-size: var(--small-text-size);
+  color: white;
+  border-bottom: 3px solid var(--main-bg-color);
+  padding: 2px 8px 4px 8px;
+  margin: 0;
+  margin-bottom: 4px;
+}
+
+#options-menu .options ul {
+  margin: 0;
+  padding: 0 12px;
+  list-style: none;
+  color: var(--grey-highlight);
+}
+
+#options-menu .options ul ul {
+  padding: 0;
+  margin-left: 12px;
+  color: inherit;
+}
+
+#options-menu .options li {
+  white-space: nowrap;
+}
+
+#options-menu .options li label {
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  cursor: pointer;
+}
+
+#options-menu .options li.disabled {
+  opacity: 0.7;
+}
+#options-menu .options li.disabled label {
+  cursor: default;
+}
+
+#options-menu .options .name {
+  font-weight: bold;
+}
+#options-menu .options .description {
+  color: var(--primary-grey);
+  font-weight: normal;
+}
+
+#options-menu .options input {
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+#options-menu .options li[data-area="app"] {
+  color: var(--area-color-app);
+}
+
+#options-menu .options li[data-area="all-core"] {
+  color: var(--area-color-core);
+}
+
+#options-menu .options li[data-area="deps"] {
+  color: var(--area-color-deps);
+}
+
+#options-menu .options-menu-toggle {
+  background: #000;
+  color: white;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+#options-menu .options-menu-toggle .chevron {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 150%;
+  line-height: 1em;
+  color: white;
+  transform: rotate(90deg);
+}
+
+#options-menu.collapsed .options-menu-toggle .chevron {
+  transform: rotate(0deg);
+}

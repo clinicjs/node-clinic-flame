@@ -11,6 +11,11 @@ const copy = require('copy-to-clipboard')
 
 class FlameGraph extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
+    const defaults = {
+      useMergedTree: false,
+      showOptimizationStatus: false
+    }
+    contentProperties = Object.assign({}, defaults, contentProperties)
     super(parentContent, contentProperties)
 
     this.hoveredNodeData = null
@@ -60,14 +65,17 @@ class FlameGraph extends HtmlContent {
   }
 
   initializeFromData () {
+    this.renderedTree = this.getTree()
+
     // TODO rather than calculating this single value here, we should be walking through
     // all the nodes and sorting high stackTop values, so we can
     // 1) display a heat key at the top;
     // 2) pick the highest value from that list for use here.
-    const highest = this.getHighestStackTop(this.ui.dataTree.unmerged)
+    const highest = this.getHighestStackTop(this.renderedTree)
 
+    this.prevExclude = new Set(this.ui.exclude)
     this.flameGraph = d3Fg({
-      tree: this.ui.dataTree.unmerged,
+      tree: this.renderedTree,
       exclude: this.ui.exclude,
       element: this.d3Chart.node(),
       topOffset: 55,
@@ -210,6 +218,13 @@ class FlameGraph extends HtmlContent {
     }
   }
 
+  getTree () {
+    if (this.contentProperties.useMergedTree) {
+      return this.ui.dataTree.merged
+    }
+    return this.ui.dataTree.unmerged
+  }
+
   draw () {
     super.draw()
     if (!this.flameGraph) this.initializeFromData()
@@ -217,6 +232,39 @@ class FlameGraph extends HtmlContent {
     if (this.changedWidth) {
       this.changedWidth = false
       this.flameGraph.width(this.width)
+    }
+
+    if (this.renderedTree !== this.getTree()) {
+      this.renderedTree = this.getTree()
+      this.flameGraph.renderTree(this.renderedTree)
+    }
+
+    // Highlight optimized frames in a very aggressive yellow…
+    // TODO nicer styling, prob needs a d3-fg change to add some indicator element
+    // or we could pick a more subtle background color.
+    if (this.contentProperties.showOptimizationStatus) {
+      this.flameGraph.search(/^\*/, 'yellow')
+    } else {
+      this.flameGraph.clear('yellow')
+    }
+
+    const newExclude = this.ui.exclude
+    const changedExcludes = this.prevExclude.size !== newExclude.size ||
+      // Very hacky but easy way to check that their elements do not 100% intersect
+      Array.from(this.prevExclude).sort().join(',') !== Array.from(newExclude).sort().join(',')
+
+    if (changedExcludes) {
+      newExclude.forEach((name) => {
+        if (!this.prevExclude.has(name)) {
+          this.flameGraph.typeHide(name)
+        }
+      })
+      this.prevExclude.forEach((name) => {
+        if (!newExclude.has(name)) {
+          this.flameGraph.typeShow(name)
+        }
+      })
+      this.prevExclude = new Set(newExclude)
     }
   }
 

@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 const { promisify } = require('util')
 const ticksToTree = require('0x/lib/ticks-to-tree')
 const FrameNode = require('./frame-node.js')
@@ -14,6 +15,10 @@ async function analyse (paths) {
     readFile(paths['/inlinedfunctions'], 'utf8').then(JSON.parse)
   ])
 
+  /* istanbul ignore next */
+  const platformPath = systemInfo.pathSeparator === '\\' ? path.win32 : path.posix
+  const appName = platformPath.basename(systemInfo.mainDirectory)
+
   const steps = [
     (tree) => labelNodes(tree),
     (tree) => tree.walk((node) => node.categorise(systemInfo)),
@@ -28,7 +33,12 @@ async function analyse (paths) {
     step(merged)
     step(unmerged)
   })
-  return { merged, unmerged }
+
+  return {
+    appName,
+    merged,
+    unmerged
+  }
 }
 
 module.exports = analyse

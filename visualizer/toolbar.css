@@ -97,7 +97,8 @@
 }
 
 #toolbar .frame-info:before,
-#toolbar #toolbar-side-panel:before {
+#toolbar #toolbar-side-panel:before,
+#toolbar #options-menu .options:before {
   /* Apply translucent background to element that resets solid background color */
   content: '';
   position: absolute;

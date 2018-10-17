@@ -10,21 +10,41 @@ class AreaKey extends HtmlContent {
     }
     contentProperties = Object.assign({}, defaults, contentProperties)
     super(parentContent, contentProperties)
+
+    this.appName = 'app'
   }
 
   initializeElements () {
     super.initializeElements()
 
-    this.d3Element.append('div')
+    this.d3AppName = this.d3Element.append('div')
       .classed('key key-app', true)
-      // TODO Set this to the actual app name inside a setData() method once the analysis contains it.
-      .text('app')
+      .text(this.appName)
     this.d3Element.append('div')
       .classed('key key-deps', true)
       .text('dependencies')
     this.d3Element.append('div')
       .classed('key key-core', true)
       .text('node core')
+
+    this.ui.on('setData', () => {
+      this.setData()
+    })
+  }
+
+  setData () {
+    const {
+      appName = 'app'
+    } = this.ui.dataTree
+    this.appName = appName
+
+    this.draw()
+  }
+
+  draw () {
+    super.draw()
+
+    this.d3AppName.text(this.appName)
   }
 }
 

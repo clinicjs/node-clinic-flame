@@ -2,6 +2,7 @@
 @import "./area-key.css";
 @import "./flame-graph.css";
 @import "./message.css";
+@import "./options-menu.css";
 
 html {
   /* Define colors */
@@ -84,6 +85,10 @@ html * {
 }
 
 .hidden {
+  display: none;
+}
+
+.collapsed .collapsible-content-wrapper {
   display: none;
 }
 

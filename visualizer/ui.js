@@ -1,10 +1,12 @@
 'use strict'
 
+const events = require('events')
 const htmlContentTypes = require('./html-content-types.js')
 const debounce = require('lodash.debounce')
 
-class Ui {
+class Ui extends events.EventEmitter {
   constructor (wrapperSelector) {
+    super()
     // TODO: Similar to 0x but condense hidden state like an octal
     // not json as number of excludables varies between samples
     // this.hashHistory = new HashHistory()
@@ -44,7 +46,9 @@ class Ui {
     toolbarSidePanel.addContent('AreaKey')
     // TODO: add these ↴
     // toolbarSidePanel.addContent('SearchBox')
-    // toolbarSidePanel.addContent('OptionsMenu')
+    toolbarSidePanel.addContent('OptionsMenu', {
+      id: 'options-menu'
+    })
 
     const flameWrapper = this.uiContainer.addContent('FlameGraph', {
       id: 'flame-main',
@@ -100,9 +104,19 @@ class Ui {
     return ContentClass
   }
 
+  setCodeAreaVisibility (name, visible) {
+    if (visible) {
+      this.exclude.delete(name)
+    } else {
+      this.exclude.add(name)
+    }
+  }
+
   setData (dataTree) {
     const previousDataTree = this.dataTree
     this.dataTree = dataTree
+    this.emit('setData')
+
     if (dataTree !== previousDataTree) {
       this.draw()
     }
