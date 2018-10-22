@@ -14,3 +14,5 @@ chokidar
     console.log(event, path)
     v.visualize()
   })
+
+  v.visualize()

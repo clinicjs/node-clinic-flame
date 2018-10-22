@@ -12,7 +12,7 @@ module.exports = {
         file + '.html',
         function (err) {
           if (err) {
-            console.error(file, 'failed (' + err.message + ')')
+            throw err
           } else {
             console.log('Wrote', file + '.html')
           }
