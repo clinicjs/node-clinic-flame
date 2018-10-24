@@ -22,7 +22,7 @@ async function analyse (paths) {
   const steps = [
     (tree) => labelNodes(tree),
     (tree) => tree.walk((node) => node.categorise(systemInfo)),
-    (tree) => tree.walk((node) => node.anonymise(systemInfo)),
+    (tree) => tree.walk((node) => node.format(systemInfo)),
     (tree) => addStackTopValues(tree)
   ]
 

@@ -1,3 +1,9 @@
+#toolbar-outer {
+  /* Prevents pushing flamegraph down when showing long text content */
+  height: 88px;
+  z-index: 5;
+}
+
 #toolbar {
   background-color: var(--overlay-bg-color);
   margin: 14px 0; /* Gutter for up and down arrows */
@@ -72,15 +78,22 @@
 }
 
 #toolbar-main .frame-info {
-  background-color: var(--main-bg-color); /* matches banner color using :before */
+  background-color: var(--banner-bg-color); /* matches banner color using :before */
   padding: 4px;
   margin: 0;
   color: var(--grey-highlight);
   position: relative;
+  white-space: pre-wrap;
+  flex-grow: 1;
 }
 
 #toolbar-main .frame-info strong {
   color: var(--max-contrast);
+}
+
+#toolbar-main .frame-info em {
+  font-style: italic;
+  color: var(--primary-grey);
 }
 
 #toolbar-main .frame-info-item {
@@ -88,25 +101,12 @@
 }
 
 #toolbar #toolbar-side-panel {
-  padding: 8px;
+  padding: 6px;
   flex-grow: 0;
   min-width: 250px;
   margin-left: 8px;
-  background-color: var(--main-bg-color);
-  position: relative;
-}
-
-#toolbar .frame-info:before,
-#toolbar #toolbar-side-panel:before,
-#toolbar #options-menu .options:before {
-  /* Apply translucent background to element that resets solid background color */
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
   background-color: var(--banner-bg-color);
+  position: relative;
 }
 
 #toolbar #toolbar-side-panel .inline-panel {

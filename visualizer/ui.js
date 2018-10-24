@@ -3,6 +3,7 @@
 const events = require('events')
 const htmlContentTypes = require('./html-content-types.js')
 const debounce = require('lodash.debounce')
+const DataTree = require('./data-tree.js')
 
 class Ui extends events.EventEmitter {
   constructor (wrapperSelector) {
@@ -12,12 +13,51 @@ class Ui extends events.EventEmitter {
     // this.hashHistory = new HashHistory()
 
     this.dataTree = null
-    this.exclude = new Set(['cpp', 'regexp', 'v8', 'native', 'init'])
+    this.highlightedNode = null
+    this.selectedNode = null
+    this.zoomedNode = null
 
     this.wrapperSelector = wrapperSelector
     this.sections = new Map()
     this.createContent()
   }
+
+  /**
+  * Handling user interactions
+  **/
+
+  highlightNode (node = null) {
+    const changed = node !== this.highlightedNode
+    this.highlightedNode = node
+    if (changed) this.emit('highlightNode', node)
+  }
+
+  selectNode (node = null) {
+    const changed = node !== this.selectedNode
+    this.selectedNode = node
+    if (changed) this.emit('selectNode', node)
+  }
+
+  zoomNode (node = this.highlightedNode) {
+    const zoomingOut = !node || node === this.zoomedNode
+    this.emit('zoomNode', zoomingOut ? null : node)
+  }
+
+  clearSearch () {
+    const flameWrapper = this.uiContainer.content.get('flame-main')
+    flameWrapper.clearSearch()
+  }
+
+  search (query) {
+    if (!query) return
+
+    const flameWrapper = this.uiContainer.content.get('flame-main')
+    flameWrapper.search(query)
+  }
+
+  /**
+  * Sections and content
+  **/
 
   createContent () {
     this.mainElement = document.querySelector(this.wrapperSelector)
@@ -121,34 +161,29 @@ class Ui extends events.EventEmitter {
     return ContentClass
   }
 
-  setCodeAreaVisibility (name, visible) {
-    if (visible) {
-      this.exclude.delete(name)
-    } else {
-      this.exclude.add(name)
+  getLabelFromKey (key, singular = false) {
+    const keysToLabels = {
+      'app': 'profiled application',
+      'deps': singular ? 'dependency' : 'dependencies',
+      'all-core': 'core',
+
+      'core': 'Node JS',
+      'native': 'V8 native JS',
+      'v8': 'V8 runtime',
+      'cpp': 'V8 C++',
+      'regexp': 'RegExp',
+      'init': 'initialization'
     }
+    return keysToLabels[key] || key
   }
+
+  /**
+  * Initialization and draw
+  **/
 
   setData (dataTree) {
-    const previousDataTree = this.dataTree
-    this.dataTree = dataTree
-    this.emit('setData')
-
-    if (dataTree !== previousDataTree) {
-      this.draw()
-    }
-  }
-
-  clearSearch () {
-    const flameWrapper = this.uiContainer.content.get('flame-main')
-    flameWrapper.clearSearch()
-  }
-
-  search (query) {
-    if (!query) return
-
-    const flameWrapper = this.uiContainer.content.get('flame-main')
-    flameWrapper.search(query)
+    this.dataTree = new DataTree(dataTree)
+    this.draw()
   }
 
   initializeElements () {

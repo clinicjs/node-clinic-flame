@@ -24,6 +24,14 @@ class FlameGraph extends HtmlContent {
     this.hoveredNodeData = null
     this.changedWidth = false
     this.tooltip = contentProperties.customTooltip
+    this.showOptimizationStatus = this.contentProperties.showOptimizationStatus
+
+    this.ui.on('zoomNode', node => {
+      if (this.flameGraph) {
+        this.flameGraph.zoom(node)
+        this.hideToolTip()
+      }
+    })
   }
 
   initializeElements () {
@@ -58,12 +66,13 @@ class FlameGraph extends HtmlContent {
     // all the nodes and sorting high stackTop values, so we can
     // 1) display a heat key at the top;
     // 2) pick the highest value from that list for use here.
-    const highest = this.getHighestStackTop(this.renderedTree)
+    const dataTree = this.ui.dataTree
+    const highest = dataTree.getHighestStackTop()
 
-    this.prevExclude = new Set(this.ui.exclude)
+    this.prevExclude = new Set(this.ui.dataTree.exclude)
     this.flameGraph = d3Fg({
-      tree: this.renderedTree,
-      exclude: this.ui.exclude,
+      tree: dataTree.unmerged,
+      exclude: dataTree.exclude,
       element: this.d3Chart.node(),
       topOffset: 55,
       cellHeight: 20,
@@ -85,7 +94,7 @@ class FlameGraph extends HtmlContent {
       renderTooltip: this.tooltip && null, // disabling the built-in tooltip if another tooltip is defined
       colorHash: (stackTop, { d, decimalAdjust, allSamples, tiers }) => {
         // 0 = lowest unadjusted value, 1 = highest, can be <0 or >1 due to decimalAdjust
-        const decimal = (this.getStackTop(d) / highest) * (decimalAdjust || 1)
+        const decimal = (dataTree.getStackTop(d) / highest) * (decimalAdjust || 1)
         const rgb = flameGradient(decimal)
         return rgb
       }
@@ -94,6 +103,7 @@ class FlameGraph extends HtmlContent {
     if (this.tooltip) {
       const wrapperNode = this.d3ContentWrapper.node()
       this.flameGraph.on('hoverin', (nodeData, rect, pointerCoords) => {
+        this.ui.highlightNode(nodeData)
         this.tooltip.show({
           nodeData,
           rect: {
@@ -108,6 +118,7 @@ class FlameGraph extends HtmlContent {
         })
       })
       this.flameGraph.on('hoverout', (node) => {
+        this.ui.highlightNode(null)
         this.tooltip.hide()
       })
     }
@@ -123,23 +134,6 @@ class FlameGraph extends HtmlContent {
 
     // triggering the resize after the canvas rendered to take possible scrollbars into account
     this.resize()
-  }
-
-  getHighestStackTop (tree) {
-    return tree.children
-      ? tree.children.reduce((highest, child) => {
-        const newValue = this.getHighestStackTop(child)
-        return newValue > highest ? newValue : highest
-      }, this.getStackTop(tree))
-      : 0
-  }
-
-  getStackTop (frame) {
-    let stackTop = frame.stackTop.base
-    this.ui.exclude.forEach((excluded) => {
-      stackTop += frame.stackTop[excluded]
-    })
-    return stackTop
   }
 
   resize () {
@@ -183,13 +177,16 @@ class FlameGraph extends HtmlContent {
     // Highlight optimized frames in a very aggressive yellow…
     // TODO nicer styling, prob needs a d3-fg change to add some indicator element
     // or we could pick a more subtle background color.
-    if (this.contentProperties.showOptimizationStatus) {
-      this.flameGraph.search(/^\*/, 'yellow')
-    } else {
-      this.flameGraph.clear('yellow')
+    if (this.showOptimizationStatus !== this.ui.dataTree.showOptimizationStatus) {
+      this.showOptimizationStatus = this.ui.dataTree.showOptimizationStatus
+      if (this.showOptimizationStatus) {
+        this.flameGraph.search(/^\*/, 'yellow')
+      } else {
+        this.flameGraph.clear('yellow')
+      }
     }
 
-    const newExclude = this.ui.exclude
+    const newExclude = this.ui.dataTree.exclude
     const changedExcludes = this.prevExclude.size !== newExclude.size ||
       // Very hacky but easy way to check that their elements do not 100% intersect
       Array.from(this.prevExclude).sort().join(',') !== Array.from(newExclude).sort().join(',')

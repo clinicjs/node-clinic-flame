@@ -17,7 +17,7 @@
   font-size: var(--small-text-size);
   position: absolute;
   z-index: 1;
-  background-color: var(--main-bg-translucent);
+  background-color: var(--banner-bg-color);
 }
 
 #options-menu .options .section {

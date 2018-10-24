@@ -58,10 +58,8 @@ class OptionsMenu extends HtmlContent {
       name: 'Show optimization status',
       description: 'highlight frames based on whether they are optimized functions',
       onChange: (checked) => {
-        const flame = this.ui.uiContainer.content.get('flame-main')
-        flame.contentProperties.showOptimizationStatus = checked
-        flame.draw()
-        this.draw()
+        this.ui.dataTree.showOptimizationStatus = checked
+        this.ui.draw()
       }
     })
 
@@ -144,7 +142,7 @@ class OptionsMenu extends HtmlContent {
     function renderOptionElement (li) {
       li.attr('data-area', data => data.id)
       li.select('.name')
-        .text(data => data.title)
+        .text(data => ui.getLabelFromKey(data.id))
     }
 
     // Toggle a code area visibility setting.
@@ -153,10 +151,10 @@ class OptionsMenu extends HtmlContent {
 
       if (data.children) {
         data.children.forEach((child) => {
-          ui.setCodeAreaVisibility(child.id, checked)
+          ui.dataTree.setCodeAreaVisibility(child.id, checked)
         })
       } else {
-        ui.setCodeAreaVisibility(data.id, checked)
+        ui.dataTree.setCodeAreaVisibility(data.id, checked)
       }
       ui.draw()
     }
@@ -180,12 +178,12 @@ class OptionsMenu extends HtmlContent {
         title: 'core',
         description: 'operations from node.js',
         children: [
-          { id: 'core', title: 'node.js', description: 'operations from node\'s builtin javascript modules' },
-          { id: 'native', title: 'native modules' },
-          { id: 'v8', title: 'v8', description: 'v8 engine functions' },
-          { id: 'cpp', title: 'c++', description: 'underlying c++ native code' },
-          { id: 'regexp', title: 'regex', description: 'regular expressions' },
-          { id: 'init', title: 'init', description: 'initialization operations, like loading modules' }
+          { id: 'core', description: 'operations from node\'s builtin javascript modules' },
+          { id: 'native' },
+          { id: 'v8', description: 'v8 engine functions' },
+          { id: 'cpp', description: 'underlying c++ native code' },
+          { id: 'regexp', description: 'regular expressions' },
+          { id: 'init', description: 'initialization operations, like loading modules' }
         ] }
     ]
 
@@ -215,18 +213,17 @@ class OptionsMenu extends HtmlContent {
   draw () {
     super.draw()
 
-    const flame = this.ui.uiContainer.content.get('flame-main')
-    const { useMergedTree } = flame.contentProperties
+    const { useMerged } = this.ui.dataTree
     this.d3FgOptions.select('#option-showoptimizationstatus')
-      .classed('disabled', useMergedTree)
+      .classed('disabled', useMerged)
       .select('input')
-      .attr('disabled', useMergedTree ? 'disabled' : null)
+      .attr('disabled', useMerged ? 'disabled' : null)
 
     if (this.codeAreasChanged) {
       this.drawCodeAreaList()
     }
 
-    this.applyCodeVisibilityExclusions(this.ui.exclude)
+    this.applyCodeVisibilityExclusions(this.ui.dataTree.exclude)
   }
 }
 

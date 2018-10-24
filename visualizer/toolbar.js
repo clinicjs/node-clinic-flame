@@ -5,6 +5,16 @@ class Toolbar extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
     super(parentContent, contentProperties)
     this.tooltip = contentProperties.customTooltip
+
+    this.functionText = 'Loading…'
+    this.pathText = '[file location]'
+    this.areaText = '[node.js module]'
+
+    this.lastHighlightedNode = null
+
+    this.ui.on('highlightNode', node => {
+      this.highlightNode(node)
+    })
   }
 
   initializeElements () {
@@ -74,15 +84,33 @@ class Toolbar extends HtmlContent {
 
     this.d3FrameFunction = this.d3FrameInfo.append('strong')
       .classed('frame-info-item', true)
-      .text('Loading…') // Will be replaced when JS completes
 
     this.d3FramePath = this.d3FrameInfo.append('span')
       .classed('frame-info-item', true)
-      .text('[file location]') // Will be replaced when JS completes
 
-    this.d3FramePath = this.d3FrameInfo.append('span')
+    this.d3FrameArea = this.d3FrameInfo.append('em')
       .classed('frame-info-item', true)
-      .text('[node.js module]') // Will be replaced when JS completes
+  }
+
+  highlightNode (node) {
+    if (!node || node === this.lastHighlightedNode) return
+    this.functionText = node.functionName
+    this.pathText = node.fileName
+
+    // 'typeTEMP' key is temporary until d3-fg custom filter is complete
+    const typeLabel = this.ui.getLabelFromKey(node.typeTEMP || node.type, true)
+    const categoryLabel = this.ui.getLabelFromKey(node.category, true)
+    this.areaText = `In ${categoryLabel} (${typeLabel})`
+
+    this.lastHighlightedNode = node
+    this.draw()
+  }
+
+  draw () {
+    super.draw()
+    this.d3FrameFunction.text(this.functionText)
+    this.d3FramePath.text(this.pathText)
+    this.d3FrameArea.text(this.areaText)
   }
 }
 

@@ -4,6 +4,7 @@ const d3 = require('d3')
 class FgTooltipContainer {
   constructor ({ tooltip, showDelay = 500, hideDelay = 200, onZoom, onCopyPath }) {
     this.tooltip = tooltip
+    this.ui = tooltip.ui
 
     this.tooltipHandler = null
 
@@ -22,20 +23,20 @@ class FgTooltipContainer {
     this.d3TooltipHtml = this.d3HiddenDiv.append('div')
       .classed('fg-tooltip-actions', true)
       .html(`
-      <button class='copy-button'>
-        <span class='icon'><img data-inline-svg class="icon-img" src="/visualizer/assets/icons/copy.svg" /></span>
-        <span>Copy</span>
-        <span>path</span>      
-      </button>
       <button class='zoom-button'>
         <span class='icon'><img data-inline-svg class="icon-img" src="/visualizer/assets/icons/zoom.svg" /></span>
         <span class='label'>Expand</span>
+      </button>
+      <button class='copy-button'>
+        <span class='icon'><img data-inline-svg class="icon-img" src="/visualizer/assets/icons/copy.svg" /></span>
+        <span>Copy</span>
+        <span>path</span>
       </button>
     `)
 
     this.d3TooltipCopyBtn = this.d3TooltipHtml.select('.copy-button')
       .on('click', () => {
-        this.onCopyPath && this.onCopyPath(this.nodeData.name.split(' ')[1])
+        this.onCopyPath && this.onCopyPath(this.nodeData.target)
       })
 
     this.d3TooltipZoomBtn = this.d3TooltipHtml.select('.zoom-button')
@@ -54,7 +55,9 @@ class FgTooltipContainer {
     this.tooltipHandler = setTimeout(() => {
       this.frameIsZoomed = frameIsZoomed
       this.nodeData = nodeData
-      const minWidth = Math.max(rect.width / 2, 20)
+
+      const hideCopyButton = !nodeData.target
+      const minWidth = Math.max(rect.width / (hideCopyButton ? 1 : 2), 20)
 
       const wrapperRect = wrapperNode.getBoundingClientRect()
 
@@ -68,8 +71,9 @@ class FgTooltipContainer {
         return this.d3TooltipHtml.remove().node()
       })
 
-      setTooltipChildVisibility(this.copyBtnChildren, minWidth)
       setTooltipChildVisibility(this.zoomBtnChildren, minWidth)
+      if (!hideCopyButton) setTooltipChildVisibility(this.copyBtnChildren, minWidth)
+      this.d3TooltipCopyBtn.classed('hidden', hideCopyButton)
 
       this.updateZoomBtnLabel()
 
