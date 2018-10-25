@@ -15,4 +15,4 @@ chokidar
     v.visualize()
   })
 
-  v.visualize()
+v.visualize()

@@ -29,13 +29,14 @@ class Ui extends events.EventEmitter {
   highlightNode (node = null) {
     const changed = node !== this.highlightedNode
     this.highlightedNode = node
-    if (changed) this.emit('highlightNode', node)
+    if (changed) this.emit('highlightNode', node || this.selectedNode)
   }
 
   selectNode (node = null) {
     const changed = node !== this.selectedNode
     this.selectedNode = node
     if (changed) this.emit('selectNode', node)
+    if (!this.highlightedNode) this.emit('highlightNode', node)
   }
 
   zoomNode (node = this.highlightedNode) {
@@ -80,7 +81,9 @@ class Ui extends events.EventEmitter {
       // TODO: will probably need to make this collapsible for portrait view
     })
     // TODO: add these ↴
-    // toolbarOuter.addContent('StackedBar')
+    toolbarOuter.addContent('StackBar', {
+      id: 'stack-bar'
+    })
 
     const toolbar = toolbarOuter.addContent('Toolbar', {
       id: 'toolbar',
@@ -181,11 +184,6 @@ class Ui extends events.EventEmitter {
   * Initialization and draw
   **/
 
-  setData (dataTree) {
-    this.dataTree = new DataTree(dataTree)
-    this.draw()
-  }
-
   initializeElements () {
     // Cascades down tree in addContent() append/prepend order
     this.uiContainer.initializeElements()
@@ -193,6 +191,11 @@ class Ui extends events.EventEmitter {
     // hiding the tooltip on scroll
     this.flameWrapper.d3Element.node().addEventListener('scroll', () => this.tooltip.hide({ delay: 0 }))
     window.addEventListener('scroll', () => this.tooltip.hide({ delay: 0 }))
+  }
+
+  setData (dataTree) {
+    this.dataTree = new DataTree(dataTree)
+    this.draw()
   }
 
   draw () {

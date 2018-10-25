@@ -12,12 +12,12 @@ module.exports = {
   Toolbar: require('./toolbar.js'),
   Tooltip: require('./tooltip.js'),
   OptionsMenu: require('./options-menu.js'),
-  SearchBox: require('./search-box.js')
+  SearchBox: require('./search-box.js'),
+  StackBar: require('./stack-bar.js')
 
   // TODO: add these ↴
   // FrameInfo: require('./frame-info.js'),
   // HoverBox: require('./hover-box.js'),
   // IndicatorArrow: require('./indicator-arrow.js'),
-  // StackedBar: require('./stacked-bar.js'),
   // TimeFilter: require('./time-filter.js'),
 }

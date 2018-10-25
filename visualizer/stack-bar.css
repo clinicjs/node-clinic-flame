@@ -1,0 +1,9 @@
+#stack-bar {
+  height: 6px;
+}
+
+#stack-bar .stack-frame {
+  height: 100%;
+  display: inline-block;
+  margin-right: 2px;
+}

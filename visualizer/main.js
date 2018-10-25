@@ -10,4 +10,13 @@ ui.initializeElements()
 setTimeout(() => {
   const dataTree = require('./data.json')
   ui.setData(dataTree)
+
+  // Select hottest frame, after frame visibility has been set in d3-fg
+  ui.dataTree.sortFramesByHottest()
+  ui.selectNode(ui.dataTree.flatByHottest[0])
+  ui.draw()
 })
+
+if (process.env.DEBUG_MODE) {
+  window.ui = ui
+}

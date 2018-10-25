@@ -10,8 +10,12 @@ class DataTree {
     this.showOptimizationStatus = false
     this.exclude = new Set(['cpp', 'regexp', 'v8', 'native', 'init'])
 
-    // TODO: Implement this, test performance; if it's slow, keep merged and unmerged flat arrays
-    // this.flat = this.flatten().sort(sortByStackTop)
+    this.flatByHottest = null // Set after d3-fg sets .hide on frames. TODO: bring this forward
+  }
+
+  sortFramesByHottest () {
+    // Flattened tree, sorted hottest first, excluding the 'all stacks' root node
+    this.flatByHottest = this.getFlattenedSorted(this.getStackTopSorter())
   }
 
   activeTree () {
@@ -26,7 +30,15 @@ class DataTree {
     }
   }
 
+  getFlattenedSorted (sorter) {
+    const arr = getFlatArray(this.activeTree().children)
+    const filtered = arr.filter(node => !node.hide)
+    return filtered.sort(sorter)
+  }
+
   getHighestStackTop (tree = this.activeTree()) {
+    if (this.flatByHottest) return this.getStackTop(this.flatByHottest[0])
+
     return tree.children
       ? tree.children.reduce((highest, child) => {
         const newValue = this.getHighestStackTop(child)
@@ -42,6 +54,23 @@ class DataTree {
     })
     return stackTop
   }
+
+  getStackTopSorter () {
+    return (nodeA, nodeB) => {
+      const topA = this.getStackTop(nodeA)
+      const topB = this.getStackTop(nodeB)
+
+      // Sort highest first, treating equal as equal
+      return topA === topB ? 0 : topA > topB ? -1 : 1
+    }
+  }
+}
+
+function getFlatArray (children) {
+  // Flatten the tree, excluding the root node itself (i.e. the 'all stacks' node)
+  return [...children].concat(children.reduce((arr, child) => {
+    if (child.children) return arr.concat(getFlatArray(child.children))
+  }, []))
 }
 
 module.exports = DataTree
