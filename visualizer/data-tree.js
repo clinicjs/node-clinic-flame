@@ -13,6 +13,22 @@ class DataTree {
     this.flatByHottest = null // Set after d3-fg sets .hide on frames. TODO: bring this forward
   }
 
+  show (name) {
+    if (this.exclude.has(name)) {
+      this.exclude.delete(name)
+      return true
+    }
+    return false
+  }
+
+  hide (name) {
+    if (!this.exclude.has(name)) {
+      this.exclude.add(name)
+      return true
+    }
+    return false
+  }
+
   sortFramesByHottest () {
     // Flattened tree, sorted hottest first, excluding the 'all stacks' root node
     this.flatByHottest = this.getFlattenedSorted(this.getStackTopSorter())
@@ -20,14 +36,6 @@ class DataTree {
 
   activeTree () {
     return this.useMerged ? this.merged : this.unmerged
-  }
-
-  setCodeAreaVisibility (name, visible) {
-    if (visible) {
-      this.exclude.delete(name)
-    } else {
-      this.exclude.add(name)
-    }
   }
 
   getFlattenedSorted (sorter) {
@@ -47,6 +55,11 @@ class DataTree {
       : 0
   }
 
+  getFrameByRank (rank, arr = this.flatByHottest) {
+    if (!this.flatByHottest) return null
+    return this.flatByHottest[rank] || null
+  }
+
   getStackTop (frame) {
     let stackTop = frame.stackTop.base
     this.exclude.forEach((excluded) => {
@@ -63,6 +76,14 @@ class DataTree {
       // Sort highest first, treating equal as equal
       return topA === topB ? 0 : topA > topB ? -1 : 1
     }
+  }
+
+  getSortPosition (node, arr = this.flatByHottest) {
+    return arr.indexOf(node)
+  }
+
+  countFrames (arr = this.flatByHottest) {
+    return arr.length
   }
 }
 

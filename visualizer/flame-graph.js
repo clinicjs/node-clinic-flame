@@ -26,6 +26,10 @@ class FlameGraph extends HtmlContent {
     this.tooltip = contentProperties.customTooltip
     this.showOptimizationStatus = this.contentProperties.showOptimizationStatus
 
+    this.ui.on('setData', () => {
+      this.initializeFromData()
+    })
+
     this.ui.on('zoomNode', node => {
       if (this.flameGraph) {
         this.flameGraph.zoom(node)
@@ -162,7 +166,6 @@ class FlameGraph extends HtmlContent {
 
   draw () {
     super.draw()
-    if (!this.flameGraph) this.initializeFromData()
 
     if (this.changedWidth) {
       this.changedWidth = false
@@ -186,23 +189,17 @@ class FlameGraph extends HtmlContent {
       }
     }
 
-    const newExclude = this.ui.dataTree.exclude
-    const changedExcludes = this.prevExclude.size !== newExclude.size ||
-      // Very hacky but easy way to check that their elements do not 100% intersect
-      Array.from(this.prevExclude).sort().join(',') !== Array.from(newExclude).sort().join(',')
+    const { toHide, toShow } = this.ui.changedExclusions
 
-    if (changedExcludes) {
-      newExclude.forEach((name) => {
-        if (!this.prevExclude.has(name)) {
-          this.flameGraph.typeHide(name)
-        }
+    if (toHide.size > 0) {
+      toHide.forEach((name) => {
+        this.flameGraph.typeHide(name)
       })
-      this.prevExclude.forEach((name) => {
-        if (!newExclude.has(name)) {
-          this.flameGraph.typeShow(name)
-        }
+    }
+    if (toShow.size > 0) {
+      toShow.forEach((name) => {
+        this.flameGraph.typeShow(name)
       })
-      this.prevExclude = new Set(newExclude)
     }
   }
 }

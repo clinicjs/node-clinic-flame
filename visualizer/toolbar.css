@@ -48,6 +48,10 @@
   padding-bottom: 8px;
 }
 
+#toolbar-main .selection-controls :disabled {
+  color: var(--primary-grey);
+}
+
 #toolbar-main .hotness-selector {
   height: 24px;
   padding: 0px 8px;

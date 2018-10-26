@@ -16,6 +16,10 @@ class Ui extends events.EventEmitter {
     this.highlightedNode = null
     this.selectedNode = null
     this.zoomedNode = null
+    this.changedExclusions = {
+      toHide: new Set(),
+      toShow: new Set()
+    }
 
     this.wrapperSelector = wrapperSelector
     this.sections = new Map()
@@ -180,6 +184,31 @@ class Ui extends events.EventEmitter {
     return keysToLabels[key] || key
   }
 
+  setCodeAreaVisibility (name, visible) {
+    let isChanged = false
+
+    if (visible) {
+      isChanged = this.dataTree.show(name)
+      if (isChanged) this.changedExclusions.toShow.add(name)
+    } else {
+      isChanged = this.dataTree.hide(name)
+      if (isChanged) this.changedExclusions.toHide.add(name)
+    }
+
+    if (isChanged) this.updateExclusions()
+  }
+
+  updateExclusions () {
+    this.emit('updateExclusions')
+  }
+
+  setData (dataTree) {
+    this.dataTree = new DataTree(dataTree)
+    this.emit('setData')
+    this.dataTree.sortFramesByHottest()
+    this.updateExclusions()
+  }
+
   /**
   * Initialization and draw
   **/
@@ -193,14 +222,12 @@ class Ui extends events.EventEmitter {
     window.addEventListener('scroll', () => this.tooltip.hide({ delay: 0 }))
   }
 
-  setData (dataTree) {
-    this.dataTree = new DataTree(dataTree)
-    this.draw()
-  }
-
   draw () {
     // Cascades down tree in addContent() append/prepend order
     this.uiContainer.draw()
+
+    this.changedExclusions.toHide.clear()
+    this.changedExclusions.toShow.clear()
   }
 }
 

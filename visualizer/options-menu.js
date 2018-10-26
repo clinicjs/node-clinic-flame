@@ -151,10 +151,10 @@ class OptionsMenu extends HtmlContent {
 
       if (data.children) {
         data.children.forEach((child) => {
-          ui.dataTree.setCodeAreaVisibility(child.id, checked)
+          ui.setCodeAreaVisibility(child.id, checked)
         })
       } else {
-        ui.dataTree.setCodeAreaVisibility(data.id, checked)
+        ui.setCodeAreaVisibility(data.id, checked)
       }
       ui.draw()
     }
