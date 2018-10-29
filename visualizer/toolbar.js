@@ -26,17 +26,9 @@ class Toolbar extends HtmlContent {
     super.initializeElements()
 
     // Content in toolbar - full width
-    this.d3UpArrow = this.d3Element.append('div')
-      .classed('vertical-arrow', true)
-      .classed('up-arrow', true)
-
     this.d3ToolbarMain = this.d3Element.append('div')
       .attr('id', 'toolbar-main')
       .classed('toolbar-section', true)
-
-    this.d3DownArrow = this.d3ToolbarMain.append('div')
-      .classed('vertical-arrow', true)
-      .classed('down-arrow', true)
 
     // Initialize controls
     this.d3SelectionControls = this.d3ToolbarMain.append('div')

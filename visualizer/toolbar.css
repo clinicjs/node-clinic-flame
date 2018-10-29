@@ -1,33 +1,16 @@
 #toolbar-outer {
   /* Prevents pushing flamegraph down when showing long text content */
-  height: 88px;
+  height: 94px;
   z-index: 5;
 }
 
 #toolbar {
   background-color: var(--overlay-bg-color);
-  margin: 14px 0; /* Gutter for up and down arrows */
   position: relative;
   flex-grow: 1;
   padding: 8px;
   display: flex;
   flex-direction: row-reverse;
-}
-
-#toolbar .vertical-arrow {
-  border-width: 10px;
-  left: 10px; /* default, overridden in JS */
-}
-
-
-#toolbar .vertical-arrow.down-arrow {
-  border-top-color: var(--overlay-bg-color);
-  bottom: -20px;
-}
-
-#toolbar .vertical-arrow.up-arrow {
-  border-bottom-color: var(--overlay-bg-color);
-  top: -20px;
 }
 
 #toolbar .panel {

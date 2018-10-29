@@ -12,8 +12,8 @@ setTimeout(() => {
   ui.setData(dataTree)
 
   // Select hottest frame, after frame visibility has been set in d3-fg
-  ui.selectNode(ui.dataTree.flatByHottest[0])
   ui.draw()
+  ui.selectNode(ui.dataTree.flatByHottest[0])
 })
 
 if (process.env.DEBUG_MODE) {

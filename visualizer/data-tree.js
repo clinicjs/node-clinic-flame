@@ -38,6 +38,11 @@ class DataTree {
     return this.useMerged ? this.merged : this.unmerged
   }
 
+  setActiveTree (useMerged = false) {
+    this.useMerged = useMerged === true
+    this.sortFramesByHottest()
+  }
+
   getFlattenedSorted (sorter) {
     const arr = getFlatArray(this.activeTree().children)
     const filtered = arr.filter(node => !node.hide)

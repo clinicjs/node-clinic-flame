@@ -15,7 +15,6 @@ const searchHighlightColor = 'orange'
 class FlameGraph extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
     const defaults = {
-      useMergedTree: false,
       showOptimizationStatus: false
     }
     contentProperties = Object.assign({}, defaults, contentProperties)
@@ -26,6 +25,7 @@ class FlameGraph extends HtmlContent {
     this.tooltip = contentProperties.customTooltip
     this.showOptimizationStatus = this.contentProperties.showOptimizationStatus
 
+    this.highlightNodeTimeoutHandler = null
     this.ui.on('setData', () => {
       this.initializeFromData()
     })
@@ -42,12 +42,23 @@ class FlameGraph extends HtmlContent {
     super.initializeElements()
     this.d3Chart = this.d3Element.append('chart')
       .classed('flamegraph-outer', true)
+      .classed('scroll-container', true)
       .style('position', 'relative')
+
+    // creating the component to highlight the hovered node on the flame graph
+    this.d3Highlighter = this.d3Element.append('div')
+      .classed('node-highlighter', true)
+    this.d3HighlighterDownArrow = this.d3Highlighter.append('div')
+      .classed('down-arrow', true)
+    this.d3HighlighterVerticalLine = this.d3Highlighter.append('div')
+      .classed('vertical-line', true)
+    this.d3HighlighterBox = this.d3Element.append('div')
+      .classed('highlighter-box', true)
 
     if (this.tooltip) {
       this.tooltip = new FgTooltipContainer({
         tooltip: this.tooltip,
-        showDelay: 500,
+        showDelay: 800,
         hideDelay: 400,
         onZoom: (nodeData) => {
           this.flameGraph.zoom(nodeData)
@@ -61,6 +72,23 @@ class FlameGraph extends HtmlContent {
         }
       })
     }
+
+    // listening for `highlightNode` event
+    this.ui.on('highlightNode', node => {
+      this.hoveredNodeData = node
+      this.highlightHoveredNodeOnGraph()
+    })
+
+    this.ui.on('option.merge', (checked) => {
+      this.draw()
+      this.highlightHoveredNodeOnGraph()
+    })
+
+    // hiding the tooltip on scroll and moving the box
+    this.d3Chart.node().addEventListener('scroll', () => {
+      this.tooltip.hide({ delay: 0 })
+      this.highlightHoveredNodeOnGraph()
+    })
   }
 
   initializeFromData () {
@@ -104,31 +132,38 @@ class FlameGraph extends HtmlContent {
       }
     })
 
-    if (this.tooltip) {
-      const wrapperNode = this.d3ContentWrapper.node()
-      this.flameGraph.on('hoverin', (nodeData, rect, pointerCoords) => {
+    const wrapperNode = this.d3Chart.node()
+    this.flameGraph.on('hoverin', (nodeData, rect, pointerCoords) => {
+      clearTimeout(this.highlightNodeTimeoutHandler)
+      // triggering the highlightNode event
+      this.highlightNodeTimeoutHandler = setTimeout(() => {
+        this.hoveredNodeData = nodeData
         this.ui.highlightNode(nodeData)
+      }, 200)
+
+      if (this.tooltip) {
         this.tooltip.show({
           nodeData,
-          rect: {
-            x: rect.x,
-            y: rect.y,
-            width: rect.w,
-            height: rect.h
-          },
+          rect,
           pointerCoords,
           frameIsZoomed: this.zoomedNodeData === nodeData,
           wrapperNode
         })
-      })
-      this.flameGraph.on('hoverout', (node) => {
-        this.ui.highlightNode(null)
+      }
+    })
+
+    this.flameGraph.on('hoverout', (node) => {
+      clearTimeout(this.highlightNodeTimeoutHandler)
+
+      if (this.tooltip) {
         this.tooltip.hide()
-      })
-    }
+      }
+    })
 
     this.flameGraph.on('zoom', (nodeData) => {
       this.tooltip && this.tooltip.hide()
+
+      this.highlightHoveredNodeOnGraph()
       this.zoomedNodeData = nodeData
     })
 
@@ -140,20 +175,45 @@ class FlameGraph extends HtmlContent {
     this.resize()
   }
 
+  highlightHoveredNodeOnGraph () {
+    if (this.hoveredNodeData === null) {
+      this.d3Highlighter.classed('show', false)
+      this.d3HighlighterBox.classed('show', false)
+      return
+    }
+
+    const rect = this.flameGraph.getNodeRect(this.hoveredNodeData)
+    if (rect) {
+      this.d3Highlighter
+        .classed('show', true)
+        .style('width', rect.width + 'px')
+        .style('height', `${rect.y - this.d3Chart.node().scrollTop - rect.height}px`)
+        .style('transform', `translateX(${rect.x}px)`)
+
+      this.d3HighlighterBox
+        .classed('show', true)
+        .style('width', rect.width + 'px')
+        .style('height', `${rect.height}px`)
+        .style('transform', `translate3d(${rect.x}px, ${rect.y - this.d3Chart.node().scrollTop - rect.height}px, 0)`)
+    } else {
+      this.d3Highlighter.classed('show', false)
+      this.d3HighlighterBox.classed('show', false)
+    }
+  }
+
   resize () {
     const previousWidth = this.width
-    this.width = this.d3Element.node().clientWidth
+    this.width = this.d3Chart.node().clientWidth
     if (this.width !== previousWidth) {
       this.changedWidth = true
       this.draw()
     }
+
+    this.highlightHoveredNodeOnGraph()
   }
 
   getTree () {
-    if (this.contentProperties.useMergedTree) {
-      return this.ui.dataTree.merged
-    }
-    return this.ui.dataTree.unmerged
+    return this.ui.dataTree.activeTree()
   }
 
   clearSearch () {

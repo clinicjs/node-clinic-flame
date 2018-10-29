@@ -3,11 +3,59 @@ const HtmlContent = require('./html-content.js')
 const flameGradient = require('flame-gradient')
 
 class StackBar extends HtmlContent {
+  constructor (parentContent, contentProperties = {}) {
+    super(parentContent, contentProperties)
+
+    this.highlightedNode = null
+
+    this.ui.on('highlightNode', node => {
+      this.highlightedNode = node
+      this.draw()
+    })
+    this.ui.on('option.merge', () => { this.draw() })
+  }
+
   initializeElements () {
     super.initializeElements()
+
+    this.d3StacksWrapper = this.d3Element.append('div')
+      .classed('stacks-wrapper', true)
+
+    this.d3Pointer = this.d3Element.append('div')
+      .classed('pointer', true)
+  }
+
+  getNodePosition (node) {
+    let found = false
+    let isInRemaining = false
+    let left = 0
+    let margin = 0
+    let i = 0
+    let frames = this.frames
+    let totalWidth = this.d3StacksWrapper.node().getBoundingClientRect().width
+    if (!frames || !node) return '0px'
+
+    while (!found && i < frames.length - 1) {
+      const frame = frames[i]
+      found = node.id === frame.d.id
+
+      margin += found ? 0 : frame.margin
+      left += found ? frame.width / 2 : frame.width
+      i++
+    }
+
+    if (!found) {
+      isInRemaining = frames[frames.length - 1].remaining.some((smallFrame) => smallFrame.id === node.id)
+    }
+
+    return found || isInRemaining ? `${left * totalWidth + margin}px` : '-20px'
   }
 
   prepareFrames () {
+    if (process.env.DEBUG_MODE) {
+      console.time('StackBar.prepareFrames')
+    }
+
     const { dataTree } = this.ui
     const rootNode = dataTree.activeTree()
     const highest = dataTree.getHighestStackTop()
@@ -16,6 +64,7 @@ class StackBar extends HtmlContent {
 
     const frames = []
     let usedWidth = 0.0
+
     for (let i = 0; i < dataTree.flatByHottest.length; i++) {
       const d = dataTree.flatByHottest[i]
       const stackTop = dataTree.getStackTop(d)
@@ -35,7 +84,9 @@ class StackBar extends HtmlContent {
         break
       }
     }
-
+    if (process.env.DEBUG_MODE) {
+      console.timeEnd('StackBar.prepareFrames')
+    }
     return frames
   }
 
@@ -43,6 +94,7 @@ class StackBar extends HtmlContent {
     super.draw()
 
     const { dataTree } = this.ui
+
     if (dataTree.flatByHottest === null) {
       return
     }
@@ -51,20 +103,41 @@ class StackBar extends HtmlContent {
       console.time('StackBar.draw')
     }
 
-    const frames = this.prepareFrames()
-    const update = this.d3Element.selectAll('div')
-      .data(frames)
+    // const rootNode = dataTree.activeTree()
+    this.frames = this.prepareFrames()
+    const Ui = this.ui
+
+    // const highest = dataTree.getHighestStackTop()
+    const update = this.d3StacksWrapper.selectAll('div')
+      .data(this.frames)
     update.exit().remove()
+
+    const self = this
 
     update.enter().append('div')
       .classed('stack-frame', true)
       .merge(update)
-      .each(function ({ width, margin, colorValue }) {
+      .each(function (data) {
+        const { width, margin, colorValue } = data
+
+        const isHighlighted = data.d && self.highlightedNode && (self.highlightedNode.id === data.d.id)
+
         d3.select(this)
+          .classed('selected', isHighlighted)
           .style('background-color', flameGradient(colorValue))
           .style('width', `${(width * 100).toFixed(3)}%`)
           .style('margin-right', `${margin}px`)
       })
+      .on('mouseover', data => {
+        // triggering the `highlightNode` event on Ui
+        Ui.highlightNode(data.d)
+      })
+
+    // moving the selector over the bar
+    const left = this.getNodePosition(self.highlightedNode)
+    this.d3Pointer.style('transform', `translateX(${left})`)
+
+    this.d3Pointer.classed('hidden', left === null)
 
     if (process.env.DEBUG_MODE) {
       console.timeEnd('StackBar.draw')

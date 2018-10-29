@@ -29,7 +29,18 @@ class Ui extends events.EventEmitter {
   /**
   * Handling user interactions
   **/
+  optionsChange (optName, args) {
+    switch (optName) {
+      case 'merge':
+        this.dataTree.setActiveTree(args)
+        break
 
+      default:
+        break
+    }
+
+    this.emit(`option.${optName}`, args)
+  }
   highlightNode (node = null) {
     const changed = node !== this.highlightedNode
     this.highlightedNode = node
@@ -40,7 +51,7 @@ class Ui extends events.EventEmitter {
     const changed = node !== this.selectedNode
     this.selectedNode = node
     if (changed) this.emit('selectNode', node)
-    if (!this.highlightedNode) this.emit('highlightNode', node)
+    if (!this.highlightedNode) this.highlightNode(node)
   }
 
   zoomNode (node = this.highlightedNode) {
@@ -85,7 +96,7 @@ class Ui extends events.EventEmitter {
       // TODO: will probably need to make this collapsible for portrait view
     })
     // TODO: add these ↴
-    toolbarOuter.addContent('StackBar', {
+    this.stackBar = toolbarOuter.addContent('StackBar', {
       id: 'stack-bar'
     })
 
@@ -113,7 +124,6 @@ class Ui extends events.EventEmitter {
 
     const flameWrapper = this.uiContainer.addContent('FlameGraph', {
       id: 'flame-main',
-      classNames: 'scroll-container',
       htmlElementType: 'section',
       customTooltip: tooltip
     })
@@ -132,11 +142,14 @@ class Ui extends events.EventEmitter {
     // footer.addContent('FlameGraph', { id: 'flame-chronological' })
     // footer.addContent('TimeFilter')
 
+    let reDrawStackBar = debounce(() => this.stackBar.draw(this.highlightedNode), 200)
+
     let scrollElement = null
     const scrollChartIntoView = debounce(() => {
       if (!scrollElement) {
-        scrollElement = flameWrapper.d3Element.node()
+        scrollElement = flameWrapper.d3Element.select('.scroll-container').node()
       }
+
       scrollElement.scrollTo({
         top: scrollElement.scrollHeight,
         behavior: 'smooth'
@@ -146,6 +159,7 @@ class Ui extends events.EventEmitter {
     window.addEventListener('resize', () => {
       flameWrapper.resize()
       scrollChartIntoView()
+      reDrawStackBar()
     })
 
     window.addEventListener('load', scrollChartIntoView)
@@ -216,10 +230,6 @@ class Ui extends events.EventEmitter {
   initializeElements () {
     // Cascades down tree in addContent() append/prepend order
     this.uiContainer.initializeElements()
-
-    // hiding the tooltip on scroll
-    this.flameWrapper.d3Element.node().addEventListener('scroll', () => this.tooltip.hide({ delay: 0 }))
-    window.addEventListener('scroll', () => this.tooltip.hide({ delay: 0 }))
   }
 
   draw () {

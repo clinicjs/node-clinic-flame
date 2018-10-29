@@ -1,9 +1,36 @@
 #stack-bar {
-  height: 6px;
+  position: relative;
+  cursor: context-menu;
+  box-shadow: 0px -1px 0px rgba(255, 255, 255, 0.3) inset;
 }
 
 #stack-bar .stack-frame {
-  height: 100%;
-  display: inline-block;
-  margin-right: 2px;
+  height: 6px;
+  transition: transform 0.3s cubic-bezier(0.42, 0, 0.46, 1.79);
+  transform-origin: 50%;
+}
+
+#stack-bar .stack-frame.selected{
+  transform: scaleY(2)
+}
+
+#stack-bar .stacks-wrapper{
+  display: flex;
+  height: 18px;
+  align-items: center;
+}
+
+
+#stack-bar .pointer {
+  border-color: transparent;
+  border-bottom-color: var(--overlay-bg-color);
+  border-style: solid;
+  border-width: 10px;
+  bottom: 0px;
+  left: 0px;
+  margin-left: -10px;
+  pointer-events: none;
+  position: absolute;
+  transition: transform .5s cubic-bezier(0.65, 0.05, 0.36, 1);
+  filter: drop-shadow(0px -1px 0px rgba(255, 255, 255, 0.5));
 }

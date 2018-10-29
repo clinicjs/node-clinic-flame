@@ -46,9 +46,7 @@ class OptionsMenu extends HtmlContent {
       name: 'Merge',
       description: 'joins optimized and unoptimized versions of frames',
       onChange: (checked) => {
-        const flame = this.ui.uiContainer.content.get('flame-main')
-        flame.contentProperties.useMergedTree = checked
-        flame.draw()
+        this.ui.optionsChange('merge', checked)
         this.draw()
       }
     })
