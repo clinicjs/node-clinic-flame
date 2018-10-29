@@ -7,7 +7,7 @@ class Tooltip extends HtmlContent {
     super(parentContent, Object.assign({ hidden: true }, contentProperties))
 
     this.tooltipHandler = null
-    this.showDelay = contentProperties.showDelay || 500
+    this.showDelay = contentProperties.showDelay || 1500
     this.hideDelay = contentProperties.hideDelay || 200
 
     this.contentProperties = contentProperties
@@ -33,7 +33,16 @@ class Tooltip extends HtmlContent {
     })
   }
 
-  show ({ msg, d3TargetElement, targetRect, outerRect, offset, pointerCoords, showDelay = this.showDelay, verticalAlign = 'bottom' }) {
+  attach (options) {
+    options.d3TargetElement
+      .on('mouseover', () => this.show(options))
+      .on('mouseout', () => this.hide(options))
+
+      // replicating the default tooltip behaviour
+      .on('click', () => this.hide(options))
+  }
+
+  show ({ msg, d3TargetElement, targetRect, outerRect = document.body.getBoundingClientRect(), offset, pointerCoords, showDelay = this.showDelay, verticalAlign = 'bottom' }) {
     // adding the delay if no tooltip is already displayed, or a shorter delay
     // if the tooltip is already there
     const delay = this.nodeData === null ? showDelay : showDelay / 2
@@ -63,6 +72,7 @@ class Tooltip extends HtmlContent {
     this.tooltipHandler = setTimeout(
       () => {
         let ttLeft = innerRect.x + innerRect.width / 2
+        let ttTop = innerRect.y + (verticalAlign === 'bottom' ? innerRect.height : 0)
 
         if (pointerCoords) {
           // centering on the mouse pointer horizontally
@@ -71,7 +81,7 @@ class Tooltip extends HtmlContent {
 
         this.d3Tooltip
           .style('left', `${ttLeft}px`)
-          .style('top', `${innerRect.y}px`)
+          .style('top', `${ttTop}px`)
 
         this.d3TooltipInner.selectAll(function () { return this.childNodes })
           .remove()
@@ -98,6 +108,7 @@ class Tooltip extends HtmlContent {
 
         this.d3TooltipInner
           .style('left', `-${deltaX}px`)
+          .style('max-width', outerRect ? `${outerRect.width}px` : 'auto')
       }, delay)
   }
 

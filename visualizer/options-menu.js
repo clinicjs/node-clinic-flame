@@ -54,7 +54,7 @@ class OptionsMenu extends HtmlContent {
     this.addFgOptionCheckbox({
       id: 'option-showoptimizationstatus',
       name: 'Show optimization status',
-      description: 'highlight frames based on whether they are optimized functions',
+      description: 'highlight frames that are optimized functions',
       onChange: (checked) => {
         this.ui.dataTree.showOptimizationStatus = checked
         this.ui.draw()
@@ -84,10 +84,13 @@ class OptionsMenu extends HtmlContent {
         const { checked } = d3.event.target
         onChange(checked)
       })
-    label.append('strong')
+
+    const copyWrapper = label.append('span')
+      .classed('copy-wrapper', true)
+    copyWrapper.append('span')
       .classed('name', true)
       .text(name)
-    label.append('span')
+    copyWrapper.append('span')
       .classed('description', true)
       .text(` - ${description}`)
   }
@@ -116,21 +119,23 @@ class OptionsMenu extends HtmlContent {
       .selectAll('li').data(d => d)
     d3SubListItems.exit().remove()
     d3SubListItems.enter().append('li')
-      .call(createOptionElement)
+      .call(createOptionElement, this)
       // Update the labels for both new and existing items.
       .merge(d3SubListItems)
       .call(renderOptionElement)
 
     // Insert a new filter option element,
     // for use with a d3.enter() selection.
-    function createOptionElement (li) {
+    function createOptionElement (li, self) {
       const label = li.append('label')
       label.append('input')
         .attr('type', 'checkbox')
         .on('change', onchange)
-      label.append('span')
+      const copyWrapper = label.append('span')
+        .classed('copy-wrapper', true)
+      copyWrapper.append('span')
         .classed('name', true)
-      label.append('description')
+      copyWrapper.append('description')
         .classed('description', true)
         .text(d => d.description ? ` - ${d.description}` : '')
     }

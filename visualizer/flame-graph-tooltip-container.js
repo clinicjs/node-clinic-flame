@@ -63,7 +63,7 @@ class FgTooltipContainer {
 
       const offset = {
         x: wrapperRect.x - wrapperNode.scrollLeft,
-        y: wrapperRect.y - wrapperNode.scrollTop
+        y: wrapperRect.y - wrapperNode.scrollTop - rect.height
       }
 
       // moving the tooltip html into the hidden div to get its size
@@ -89,7 +89,7 @@ class FgTooltipContainer {
         pointerCoords: pointerPosition,
         outerRect: wrapperRect,
         showDelay: 0,
-        verticalAlign: 'top'
+        verticalAlign: 'bottom'
       })
     }, this.showDelay)
   }

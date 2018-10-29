@@ -18,17 +18,19 @@
   position: absolute;
   z-index: 1;
   background-color: var(--banner-bg-color);
+  margin-top: 6px;
+
 }
 
 #options-menu .options .section {
   border: none;
   padding: 0;
-  margin: 0;
+  margin: 0 0 10px 0;
   position: relative; /* forces this to show on _top_ of the .options element, else it's not clickable */
 }
 
-#options-menu .options .section {
-  margin-top: 16px;
+#options-menu .options .section:last-child {
+  margin-bottom: 4px;
 }
 
 #options-menu .options .section h2 {
@@ -37,21 +39,21 @@
   font-size: var(--small-text-size);
   color: white;
   border-bottom: 3px solid var(--main-bg-color);
-  padding: 2px 8px 4px 8px;
+  padding: 2px 8px 6px 8px;
   margin: 0;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 
 #options-menu .options ul {
   margin: 0;
-  padding: 0 12px;
+  padding: 0 10px;
   list-style: none;
   color: var(--grey-highlight);
 }
 
 #options-menu .options ul ul {
   padding: 0;
-  margin-left: 12px;
+  margin-left: 10px;
   color: inherit;
 }
 
@@ -59,12 +61,19 @@
   white-space: nowrap;
 }
 
+#options-menu .options label:hover {
+  white-space: normal;
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
 #options-menu .options li label {
-  display: inline-block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
+  opacity: 0.8;
+  display: flex;
+  align-items: center;
   cursor: pointer;
+  height: 2.6em;
+  line-height: 1.1;
+  padding: 0 5px;
 }
 
 #options-menu .options li.disabled {
@@ -74,16 +83,24 @@
   cursor: default;
 }
 
+#options-menu .options .copy-wrapper{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
 #options-menu .options .name {
   font-weight: bold;
 }
+
+
 #options-menu .options .description {
   color: var(--primary-grey);
   font-weight: normal;
 }
 
 #options-menu .options input {
-  margin-right: 8px;
+  margin: 0 8px 0 0;
   vertical-align: middle;
 }
 

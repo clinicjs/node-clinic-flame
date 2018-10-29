@@ -119,7 +119,8 @@ class Ui extends events.EventEmitter {
     })
     toolbarSidePanel.addContent('OptionsMenu', {
       id: 'options-menu',
-      classNames: 'inline-panel'
+      classNames: 'inline-panel',
+      customTooltip: tooltip
     })
 
     const flameWrapper = this.uiContainer.addContent('FlameGraph', {

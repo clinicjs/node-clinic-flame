@@ -73,15 +73,17 @@ class Toolbar extends HtmlContent {
     this.d3SelectCooler = this.d3SelectionControls.append('button')
       .classed('hotness-selector', true)
       .text('Next hottest ›') // TODO: replace unicode char with proper SVG icon
-      .on('mouseover', () => {
-        this.showButtonTooltip('Select the frame after the selected frame when ranked from hottest to coldest', this.d3SelectCooler)
-      })
-      .on('mouseout', () => {
-        this.hideButtonTooltip()
-      })
       .on('click', () => {
         this.selectByRank(this.rankNumber + 1)
       })
+
+    this.tooltip.attach({
+      msg: 'Select the frame after the selected frame when ranked from hottest to coldest',
+      d3TargetElement: this.d3SelectCooler,
+      offset: {
+        y: 2
+      }
+    })
 
     this.d3SelectColdest = this.d3SelectionControls.append('button')
       .classed('hotness-selector', true)
