@@ -14,8 +14,14 @@ class Toolbar extends HtmlContent {
 
     this.lastHighlightedNode = null
 
-    this.ui.on('highlightNode', node => {
-      if (node) this.highlightNode(node)
+    // Show content for highlightedNode, or selectedNode when nothing is highlighted
+    // so content falls back to most recent selection on frame mouseout etc
+    this.ui.on('highlightNode', (node) => {
+      if (!node) node = this.ui.selectedNode
+      if (node) this.contentFromNode(node)
+    })
+    this.ui.on('selectNode', node => {
+      if (node) this.contentFromNode(node)
     })
     this.ui.on('updateExclusions', () => {
       this.countFrames()
@@ -37,28 +43,30 @@ class Toolbar extends HtmlContent {
     this.d3SelectHottest = this.d3SelectionControls.append('button')
       .classed('hotness-selector', true)
       .text('«') // TODO: replace with proper SVG icon
-      .on('mouseover', () => {
-        this.showButtonTooltip('Select the hottest frame (meaning, most time at the top of the stack)', this.d3SelectHottest)
-      })
-      .on('mouseout', () => {
-        this.hideButtonTooltip()
-      })
       .on('click', () => {
         this.selectByRank(0)
       })
+    this.tooltip.attach({
+      msg: 'Select the hottest frame (meaning, most time at the top of the stack)',
+      d3TargetElement: this.d3SelectHottest,
+      offset: {
+        y: 2
+      }
+    })
 
     this.d3SelectHotter = this.d3SelectionControls.append('button')
       .classed('hotness-selector', true)
       .text('‹') // TODO: replace with proper SVG icon
-      .on('mouseover', () => {
-        this.showButtonTooltip('Select the frame before the selected frame when ranked from hottest to coldest', this.d3SelectHotter)
-      })
-      .on('mouseout', () => {
-        this.hideButtonTooltip()
-      })
       .on('click', () => {
         this.selectByRank(this.rankNumber - 1)
       })
+    this.tooltip.attach({
+      msg: 'Select the frame before the selected frame when ranked from hottest to coldest',
+      d3TargetElement: this.d3SelectHotter,
+      offset: {
+        y: 2
+      }
+    })
 
     const d3RankWrapper = this.d3SelectionControls.append('span')
       .classed('rank-wrapper', true)
@@ -76,7 +84,6 @@ class Toolbar extends HtmlContent {
       .on('click', () => {
         this.selectByRank(this.rankNumber + 1)
       })
-
     this.tooltip.attach({
       msg: 'Select the frame after the selected frame when ranked from hottest to coldest',
       d3TargetElement: this.d3SelectCooler,
@@ -88,15 +95,16 @@ class Toolbar extends HtmlContent {
     this.d3SelectColdest = this.d3SelectionControls.append('button')
       .classed('hotness-selector', true)
       .text('»') // TODO: replace with proper SVG icon
-      .on('mouseover', () => {
-        this.showButtonTooltip('Select the coldest frame (meaning, least time at the top of the stack)', this.d3SelectColdest)
-      })
-      .on('mouseout', () => {
-        this.hideButtonTooltip()
-      })
       .on('click', () => {
         this.selectByRank('last')
       })
+    this.tooltip.attach({
+      msg: 'Select the coldest frame (meaning, least time at the top of the stack)',
+      d3TargetElement: this.d3SelectColdest,
+      offset: {
+        y: 2
+      }
+    })
 
     // Initialize frame info
     this.d3FrameInfo = this.d3ToolbarMain.append('pre')
@@ -113,22 +121,7 @@ class Toolbar extends HtmlContent {
       .classed('frame-info-item', true)
   }
 
-  showButtonTooltip (msg, d3TargetElement) {
-    const config = {
-      msg,
-      d3TargetElement,
-      offset: {
-        y: -3
-      }
-    }
-    this.tooltip.show(config)
-  }
-
-  hideButtonTooltip () {
-    if (this.tooltip) this.tooltip.hide()
-  }
-
-  highlightNode (node) {
+  contentFromNode (node) {
     if (!node || node === this.lastHighlightedNode) return
     this.functionText = node.functionName
     this.pathText = node.fileName
@@ -147,6 +140,7 @@ class Toolbar extends HtmlContent {
     if (rank === 'last') {
       if (typeof this.framesCount !== 'number' || !this.framesCount) return
       this.ui.selectNode(this.ui.dataTree.getFrameByRank(this.framesCount - 1))
+      return
     }
     this.ui.selectNode(this.ui.dataTree.getFrameByRank(rank))
   }

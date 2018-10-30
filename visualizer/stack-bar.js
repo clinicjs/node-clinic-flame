@@ -9,9 +9,13 @@ class StackBar extends HtmlContent {
     this.highlightedNode = null
 
     this.ui.on('highlightNode', node => {
-      this.highlightedNode = node
-      this.draw()
+      this.pointToNode(node || this.ui.selectedNode)
     })
+
+    this.ui.on('selectNode', node => {
+      this.pointToNode(node)
+    })
+
     this.ui.on('option.merge', () => { this.draw() })
   }
 
@@ -23,6 +27,11 @@ class StackBar extends HtmlContent {
 
     this.d3Pointer = this.d3Element.append('div')
       .classed('pointer', true)
+  }
+
+  pointToNode (node) {
+    this.highlightedNode = node
+    this.draw()
   }
 
   getNodePosition (node) {
@@ -105,7 +114,7 @@ class StackBar extends HtmlContent {
 
     // const rootNode = dataTree.activeTree()
     this.frames = this.prepareFrames()
-    const Ui = this.ui
+    const ui = this.ui
 
     // const highest = dataTree.getHighestStackTop()
     const update = this.d3StacksWrapper.selectAll('div')
@@ -129,8 +138,12 @@ class StackBar extends HtmlContent {
           .style('margin-right', `${margin}px`)
       })
       .on('mouseover', data => {
-        // triggering the `highlightNode` event on Ui
-        Ui.highlightNode(data.d)
+        // triggering the `highlightNode` event on ui
+        ui.highlightNode(data.d)
+      })
+      .on('mouseout', () => {
+        // triggering the `highlightNode` event on ui
+        ui.highlightNode(null)
       })
 
     // moving the selector over the bar

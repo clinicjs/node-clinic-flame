@@ -41,17 +41,19 @@ class Ui extends events.EventEmitter {
 
     this.emit(`option.${optName}`, args)
   }
+
+  // Temporary e.g. on mouseover, erased on mouseout
   highlightNode (node = null) {
     const changed = node !== this.highlightedNode
     this.highlightedNode = node
-    if (changed) this.emit('highlightNode', node || this.selectedNode)
+    if (changed) this.emit('highlightNode', node)
   }
 
+  // Persistent e.g. on click, then falls back to this after mouseout
   selectNode (node = null) {
     const changed = node !== this.selectedNode
     this.selectedNode = node
     if (changed) this.emit('selectNode', node)
-    if (!this.highlightedNode) this.highlightNode(node)
   }
 
   zoomNode (node = this.highlightedNode) {
@@ -86,6 +88,7 @@ class Ui extends events.EventEmitter {
     // creating the tooltip instance that the Ui's components can share
     const tooltip = this.uiContainer.addContent('Tooltip', {
       htmlElementType: 'div',
+      isHoverOverridden: true,
       id: 'ui-tooltip'
     })
     this.tooltip = tooltip

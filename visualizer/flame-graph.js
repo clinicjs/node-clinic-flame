@@ -25,7 +25,6 @@ class FlameGraph extends HtmlContent {
     this.tooltip = contentProperties.customTooltip
     this.showOptimizationStatus = this.contentProperties.showOptimizationStatus
 
-    this.highlightNodeTimeoutHandler = null
     this.ui.on('setData', () => {
       this.initializeFromData()
     })
@@ -75,6 +74,11 @@ class FlameGraph extends HtmlContent {
 
     // listening for `highlightNode` event
     this.ui.on('highlightNode', node => {
+      this.hoveredNodeData = node || this.ui.selectedNode
+      this.highlightHoveredNodeOnGraph()
+    })
+
+    this.ui.on('selectNode', node => {
       this.hoveredNodeData = node
       this.highlightHoveredNodeOnGraph()
     })
@@ -134,12 +138,8 @@ class FlameGraph extends HtmlContent {
 
     const wrapperNode = this.d3Chart.node()
     this.flameGraph.on('hoverin', (nodeData, rect, pointerCoords) => {
-      clearTimeout(this.highlightNodeTimeoutHandler)
-      // triggering the highlightNode event
-      this.highlightNodeTimeoutHandler = setTimeout(() => {
-        this.hoveredNodeData = nodeData
-        this.ui.highlightNode(nodeData)
-      }, 200)
+      this.hoveredNodeData = nodeData
+      this.ui.highlightNode(nodeData)
 
       if (this.tooltip) {
         this.tooltip.show({
@@ -153,8 +153,6 @@ class FlameGraph extends HtmlContent {
     })
 
     this.flameGraph.on('hoverout', (node) => {
-      clearTimeout(this.highlightNodeTimeoutHandler)
-
       if (this.tooltip) {
         this.tooltip.hide()
       }

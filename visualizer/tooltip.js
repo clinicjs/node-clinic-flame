@@ -10,6 +10,8 @@ class Tooltip extends HtmlContent {
     this.showDelay = contentProperties.showDelay || 1500
     this.hideDelay = contentProperties.hideDelay || 200
 
+    this.onHideCallback = null
+
     this.contentProperties = contentProperties
   }
 
@@ -35,11 +37,11 @@ class Tooltip extends HtmlContent {
 
   attach (options) {
     options.d3TargetElement
-      .on('mouseover', () => this.show(options))
-      .on('mouseout', () => this.hide(options))
+      .on('mouseover.tooltip', () => this.show(options))
+      .on('mouseout.tooltip', () => this.hide(options))
 
       // replicating the default tooltip behaviour
-      .on('click', () => this.hide(options))
+      .on('click.tooltip', () => this.hide(options))
   }
 
   show ({ msg, d3TargetElement, targetRect, outerRect = document.body.getBoundingClientRect(), offset, pointerCoords, showDelay = this.showDelay, verticalAlign = 'bottom' }) {
@@ -112,12 +114,20 @@ class Tooltip extends HtmlContent {
       }, delay)
   }
 
-  hide ({ delay } = { delay: this.hideDelay }) {
+  // If nothing is passed in, or { delay } === undefined, use default delay
+  hide ({ delay = this.hideDelay, callback } = {}) {
     clearTimeout(this.tooltipHandler)
+
+    // Callback will be called on next hide, even if this timeout cleared, e.g. moving mouse from frame to tooltip
+    if (callback) this.onHideCallback = callback
 
     this.tooltipHandler = setTimeout(() => {
       this.isHidden = true
       this.draw()
+      if (this.onHideCallback) {
+        this.onHideCallback()
+        this.onHideCallback = null
+      }
     }, delay)
   }
 

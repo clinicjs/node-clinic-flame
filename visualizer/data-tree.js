@@ -61,8 +61,8 @@ class DataTree {
   }
 
   getFrameByRank (rank, arr = this.flatByHottest) {
-    if (!this.flatByHottest) return null
-    return this.flatByHottest[rank] || null
+    if (!arr) return null
+    return arr[rank] || null
   }
 
   getStackTop (frame) {

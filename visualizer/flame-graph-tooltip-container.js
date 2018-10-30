@@ -52,9 +52,13 @@ class FgTooltipContainer {
     // handling the timeout here because these calculations need to happen only when the tooltip gets actually displayed
     clearTimeout(this.tooltipHandler)
 
+    // Cancel any pending highlight clearing callback e.g. from recent mouseout events
+    this.tooltip.onHideCallback = null
+
+    this.nodeData = nodeData
+
     this.tooltipHandler = setTimeout(() => {
       this.frameIsZoomed = frameIsZoomed
-      this.nodeData = nodeData
 
       const hideCopyButton = !nodeData.target
       const minWidth = Math.max(rect.width / (hideCopyButton ? 1 : 2), 20)
@@ -94,9 +98,13 @@ class FgTooltipContainer {
     }, this.showDelay)
   }
 
-  hide () {
+  hide (args = {}) {
     clearTimeout(this.tooltipHandler)
-    this.tooltip.hide()
+    this.tooltip.hide(Object.assign({
+      callback: () => {
+        if (this.nodeData === this.ui.highlightedNode) this.ui.highlightNode(null)
+      }
+    }, args))
   }
 
   updateZoomBtnLabel () {
