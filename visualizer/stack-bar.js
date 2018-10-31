@@ -22,8 +22,24 @@ class StackBar extends HtmlContent {
   initializeElements () {
     super.initializeElements()
 
+    const ui = this.ui
+
     this.d3StacksWrapper = this.d3Element.append('div')
       .classed('stacks-wrapper', true)
+      .on('mouseover', function () {
+        if (d3.event.target === this) return
+        const d3Hover = d3.select(d3.event.target)
+        const nodeData = d3Hover.datum()
+        if (nodeData) {
+          ui.highlightNode(nodeData.d)
+        }
+      })
+      .on('mouseout', function () {
+        // Ignore mouseout events from child nodes
+        if (d3.event.target === this) {
+          ui.highlightNode(null)
+        }
+      })
 
     this.d3Pointer = this.d3Element.append('div')
       .classed('pointer', true)
@@ -114,7 +130,6 @@ class StackBar extends HtmlContent {
 
     // const rootNode = dataTree.activeTree()
     this.frames = this.prepareFrames()
-    const ui = this.ui
 
     // const highest = dataTree.getHighestStackTop()
     const update = this.d3StacksWrapper.selectAll('div')
@@ -136,14 +151,6 @@ class StackBar extends HtmlContent {
           .style('background-color', flameGradient(colorValue))
           .style('width', `${(width * 100).toFixed(3)}%`)
           .style('margin-right', `${margin}px`)
-      })
-      .on('mouseover', data => {
-        // triggering the `highlightNode` event on ui
-        ui.highlightNode(data.d)
-      })
-      .on('mouseout', () => {
-        // triggering the `highlightNode` event on ui
-        ui.highlightNode(null)
       })
 
     // moving the selector over the bar
