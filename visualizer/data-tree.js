@@ -4,7 +4,10 @@ class DataTree {
   constructor (tree) {
     this.merged = tree.merged
     this.unmerged = tree.unmerged
-    // TODO: system info etc
+
+    // Set a reasonable upper limit to displayed name; exact name matching is done in analysis
+    this.appName = tree.appName.length > 30 ? tree.appName.slice(0, 30) + '…' : tree.appName
+    this.pathSeparator = tree.pathSeparator
 
     this.useMerged = false
     this.showOptimizationStatus = false

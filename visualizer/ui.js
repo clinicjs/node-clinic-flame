@@ -22,6 +22,9 @@ class Ui extends events.EventEmitter {
     }
 
     this.wrapperSelector = wrapperSelector
+    this.exposedCSS = null
+    this.setExposedCSS()
+
     this.sections = new Map()
     this.createContent()
   }
@@ -230,6 +233,16 @@ class Ui extends events.EventEmitter {
   /**
   * Initialization and draw
   **/
+
+  setExposedCSS () {
+    // TODO: When light / dark theme switch implemented, call this after each switch, before redraw
+    const computedStyle = window.getComputedStyle(document.body)
+    this.exposedCSS = {
+      app: computedStyle.getPropertyValue('--area-color-app').trim(),
+      deps: computedStyle.getPropertyValue('--area-color-deps').trim(),
+      'all-core': computedStyle.getPropertyValue('--area-color-core').trim()
+    }
+  }
 
   initializeElements () {
     // Cascades down tree in addContent() append/prepend order

@@ -18,6 +18,7 @@ async function analyse (paths) {
   /* istanbul ignore next */
   const platformPath = systemInfo.pathSeparator === '\\' ? path.win32 : path.posix
   const appName = platformPath.basename(systemInfo.mainDirectory)
+  const pathSeparator = systemInfo.pathSeparator
 
   const steps = [
     (tree) => labelNodes(tree),
@@ -36,6 +37,7 @@ async function analyse (paths) {
 
   return {
     appName,
+    pathSeparator,
     merged,
     unmerged
   }

@@ -9,21 +9,28 @@ const HtmlContent = require('./html-content.js')
 const FgTooltipContainer = require('./flame-graph-tooltip-container')
 const Message = require('./message.js')
 const copy = require('copy-to-clipboard')
+const getLabelRenderer = require('./flame-graph-label.js')
 
 const searchHighlightColor = 'orange'
 
 class FlameGraph extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
     const defaults = {
-      showOptimizationStatus: false
+      showOptimizationStatus: false,
+      labelFont: 'Verdana, sans-serif',
+      labelPadding: 3
     }
     contentProperties = Object.assign({}, defaults, contentProperties)
     super(parentContent, contentProperties)
 
     this.hoveredNodeData = null
     this.changedWidth = false
+
     this.tooltip = contentProperties.customTooltip
-    this.showOptimizationStatus = this.contentProperties.showOptimizationStatus
+    this.showOptimizationStatus = contentProperties.showOptimizationStatus
+
+    this.labelFont = contentProperties.labelFont
+    this.labelPadding = contentProperties.labelPadding
 
     this.ui.on('setData', () => {
       this.initializeFromData()
@@ -119,12 +126,6 @@ class FlameGraph extends HtmlContent {
       },
       // We already categorized nodes during analysis
       categorizer: (node) => ({ type: node.type }),
-      labelColors: {
-        default: '#fff',
-        app: '#cde3ff',
-        core: '#626467',
-        deps: '#3f7dc6'
-      },
       width: this.d3Element.node().clientWidth,
       height: undefined, // we need to improve the way the canvas height gets calculated in d3-fg
       renderTooltip: this.tooltip && null, // disabling the built-in tooltip if another tooltip is defined
@@ -133,7 +134,8 @@ class FlameGraph extends HtmlContent {
         const decimal = (dataTree.getStackTop(d) / highest) * (decimalAdjust || 1)
         const rgb = flameGradient(decimal)
         return rgb
-      }
+      },
+      renderLabel: getLabelRenderer(this)
     })
 
     const wrapperNode = this.d3Chart.node()
