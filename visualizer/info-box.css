@@ -1,0 +1,39 @@
+#info-box .frame-info {
+  background-color: var(--banner-bg-color);
+  color: var(--grey-highlight);
+  display: flex;
+  font-size: var(--normal-text-size);
+  height: 2.9em;
+  margin: 0;
+  overflow: hidden;
+  padding: 2px 8px;
+  white-space: normal;
+}
+
+#info-box .frame-info:hover {
+  height: auto;
+  min-height: 2.9em;
+}
+
+#info-box .frame-info strong {
+  color: var(--max-contrast);
+  word-break: break-word;
+}
+
+#info-box .frame-info em {
+  font-style: italic;
+  color: var(--primary-grey);
+  word-break: break-word;
+}
+
+#info-box .frame-info-item {
+  margin: 0 8px;
+}
+
+#info-box .frame-info .frame-path {
+  flex-grow: 1;
+  overflow: hidden;
+  word-break: break-word;
+  flex-basis: 55%; /* sort of magic number I know... */
+  flex-shrink: 0;
+}

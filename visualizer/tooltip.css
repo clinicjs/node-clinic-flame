@@ -5,7 +5,7 @@
 
 .tooltip .tooltip-default-message{ /* Temporary style, will be replaced */
   padding: 0.2em 0.5em;
-  font-size: 12px;
+  font-size: var(--small-text-size);
   background-color: rgb(214, 214, 214);
   color: #333;  
   width: 33vw;      

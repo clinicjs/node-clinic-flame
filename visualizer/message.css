@@ -12,7 +12,7 @@
   padding: 2px 5px;
   border-radius: 3px;
   margin: 1px 0px;
-  font-size: 14px;
+  font-size: var(--small-text-size);
   text-align: center;
   color: rgba(0, 0, 0, 0.6);
 }
@@ -21,4 +21,6 @@
   color: #000000;
   font-style: italic;
   margin: 1em;
+  word-break: break-word;
+  white-space: normal
 }

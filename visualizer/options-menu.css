@@ -1,15 +1,3 @@
-#options-menu .options-menu-toggle {
-  font-size: var(--small-text-size);
-}
-
-/* options menu styles specific to the panel in the toolbar. */
-#options-menu.inline-panel {
-  float: right;
-}
-#options-menu.inline-panel .options-menu-toggle {
-  position: relative;
-}
-
 #options-menu .options {
   right: 0;
   padding: 8px 0;
@@ -117,23 +105,32 @@
 }
 
 #options-menu .options-menu-toggle {
+  align-items: center;
   background: #000;
-  color: white;
   border: none;
-  font-weight: bold;
+  color: white;
   cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--small-text-size);  
+  font-weight: bold;
   padding: 2px 6px;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  position: relative;
 }
 
 #options-menu .options-menu-toggle .chevron {
-  display: inline-block;
-  margin-left: 6px;
-  font-size: 150%;
-  line-height: 1em;
+  position: absolute;
+  right: 5px;
+  font-size: 2em;
   color: white;
-  transform: rotate(90deg);
+  transition: transform 0.6s cubic-bezier(0.42, 0, 0.23, 1.65);
+  transform-origin: 50%;
+  transform: rotateZ(0deg)
 }
 
 #options-menu.collapsed .options-menu-toggle .chevron {
-  transform: rotate(0deg);
+  transform: rotateZ(180deg)
 }

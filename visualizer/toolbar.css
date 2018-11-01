@@ -1,101 +1,55 @@
-#toolbar-outer {
-  /* Prevents pushing flamegraph down when showing long text content */
-  height: 94px;
-  z-index: 5;
-}
-
 #toolbar {
   background-color: var(--overlay-bg-color);
+  z-index: 5;
   position: relative;
-  flex-grow: 1;
-  padding: 8px;
+}
+
+#info-box {
+  margin: 8px;
+}
+
+#toolbar-top-panel {
   display: flex;
-  flex-direction: row-reverse;
+  justify-content: center;
+  margin: 8px;
+  flex-wrap: wrap;
 }
 
-#toolbar .panel {
-  padding: 8px;
+#selection-controls,
+#toolbar-side-panel {
+  margin: 8px 8px 0px;
 }
 
-#toolbar .toolbar-section {
-  margin: 0;
-}
-
-#toolbar-main {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-#toolbar-main .selection-controls {
-  padding-bottom: 8px;
-}
-
-#toolbar-main .selection-controls :disabled {
-  color: var(--primary-grey);
-}
-
-#toolbar-main .hotness-selector {
-  height: 24px;
-  padding: 0px 8px;
-  margin: 0px 2px;
-  background-color: var(--opposite-contrast);
-  color: var(--max-contrast);
-  border: none;
-  cursor: pointer;
-}
-
-#toolbar-main .rank-wrapper {
-  margin: 0px 8px;
-}
-
-#toolbar-main input.hotness-selector {
-  width: 36px;
-  text-align: right;
-  padding-left: 0;
-}
-
-#toolbar-main .hotness-selector,
-#toolbar-main label {
-  font-size: var(--small-text-size);
-}
-
-#toolbar-main label {
-  color: var(--grey-highlight);
-}
-
-#toolbar-main .frame-info {
-  background-color: var(--banner-bg-color); /* matches banner color using :before */
-  padding: 4px;
-  margin: 0;
-  color: var(--grey-highlight);
-  position: relative;
-  white-space: pre-wrap;
-  flex-grow: 1;
-}
-
-#toolbar-main .frame-info strong {
-  color: var(--max-contrast);
-}
-
-#toolbar-main .frame-info em {
-  font-style: italic;
-  color: var(--primary-grey);
-}
-
-#toolbar-main .frame-info-item {
-  margin: 0 8px;
-}
-
-#toolbar #toolbar-side-panel {
+#toolbar-side-panel {
   padding: 6px;
   flex-grow: 0;
-  min-width: 250px;
-  margin-left: 8px;
+  display: flex;
   background-color: var(--banner-bg-color);
   position: relative;
+  min-width: 25em;
 }
 
-#toolbar #toolbar-side-panel .inline-panel {
-  display: inline-block;
+#toolbar-side-panel #options-menu{
+  flex-grow: 1;
+}
+
+#toolbar-side-panel #search-box{
+  flex-shrink: 0;
+}
+
+
+@media screen and (min-width: 500px) {
+  #selection-controls,
+  #toolbar-side-panel {
+    margin: 0px;
+  }
+  #toolbar-top-panel {
+    justify-content: space-between;
+  } 
+}
+
+@media screen and (min-width: 720px) {
+  #info-box .frame-info {
+    font-size: var(--small-text-size);
+  }
 }

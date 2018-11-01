@@ -7,6 +7,7 @@ class StackBar extends HtmlContent {
     super(parentContent, contentProperties)
 
     this.highlightedNode = null
+    this.timeoutHandler = null
 
     this.ui.on('highlightNode', node => {
       this.pointToNode(node || this.ui.selectedNode)
@@ -27,6 +28,8 @@ class StackBar extends HtmlContent {
     this.d3StacksWrapper = this.d3Element.append('div')
       .classed('stacks-wrapper', true)
       .on('mouseover', function () {
+        clearTimeout(this.timeoutHandler)
+
         if (d3.event.target === this) return
         const d3Hover = d3.select(d3.event.target)
         const nodeData = d3Hover.datum()
@@ -35,10 +38,10 @@ class StackBar extends HtmlContent {
         }
       })
       .on('mouseout', function () {
-        // Ignore mouseout events from child nodes
-        if (d3.event.target === this) {
+        clearTimeout(this.timeoutHandler)
+        this.timeoutHandler = setTimeout(() => {
           ui.highlightNode(null)
-        }
+        }, 200)
       })
 
     this.d3Pointer = this.d3Element.append('div')
@@ -151,6 +154,10 @@ class StackBar extends HtmlContent {
           .style('background-color', flameGradient(colorValue))
           .style('width', `${(width * 100).toFixed(3)}%`)
           .style('margin-right', `${margin}px`)
+          .on('click', data => {
+            // selecting the node
+            self.ui.selectNode(data.d)
+          })
       })
 
     // moving the selector over the bar

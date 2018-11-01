@@ -6,6 +6,26 @@
 @import "./message.css";
 @import "./tooltip.css";
 @import "./options-menu.css";
+@import "./selection-controls.css";
+@import "./info-box.css";
+
+html {
+  font-family: sans-serif;
+  font-size: 62.5%;
+}
+
+/* 
+  fixing monospaced font issue
+  reference : http://code.iamkate.com/html-and-css/fixing-browsers-broken-monospace-font-handling/ 
+*/
+pre,
+code,
+kbd,
+samp,
+tt{
+  font-family:monospace,monospace;
+  font-size:1em;
+}
 
 html {
   /* Define colors */
@@ -22,7 +42,7 @@ html {
   --banner-bg-color: rgba(50, 53, 61);
   --banner-logo-color: rgba(255, 255, 255, 0.87);
 
-  --footer-bg-color: rgba(255, 255, 255, 0.1);
+  --footer-bg-color: rgb(15, 18, 26);
   --footer-color: rgba(255, 255, 255, 0.9);
 
   --cyan: rgb(63, 125, 198);
@@ -41,13 +61,9 @@ html {
   --scrollbar-thumb: rgba(var(--scrollbar-primary-color-val), 0.2);
   --scrollbar-thumb-outline: rgba(var(--scrollbar-primary-color-val), 0.849);
 
-  /* Define structurally-important sizes to use in calculations and/or adjust in media queries */
-  --banner-height: 65px;
-  --footer-height: 25px;
-
   /* Define text sizes */
-  --main-text-size: 10pt;
-  --small-text-size: 8.5pt;
+  --main-text-size: 1.2rem;
+  --small-text-size: 1rem;
 }
 
 /* Overrides for light theme */
@@ -75,13 +91,11 @@ body {
 
 body {
   background: var(--main-bg-color);
+  display: flex;
+  flex-direction: column;
 }
 
 /* Global */
-
-html {
-  font-family: sans-serif;
-}
 
 html * {
   box-sizing: border-box;
@@ -101,26 +115,19 @@ html * {
 #banner {
   display: flex;
   align-items: center;
-  height: var(--banner-height);
   background: var(--banner-bg-color);
   position: relative;
+  justify-content: space-between;
 }
 
 #banner #main-logo svg {
-  fill: var(--banner-logo-color);
   margin-left: 12px;
-  stroke: var(--shortcut-stroke);
-  stroke-width: 4px;
-  paint-order: stroke fill;
-  /* PLACEHOLDER - delete when we have proper logo */
   height: 50px;
-  width: 50px;
 }
 
-#banner #main-logo svg,
-#banner #main-logo span {
-  display: inline-block;
-  vertical-align: middle;
+#banner #main-logo {
+  display: flex;
+  align-items: center;
 }
 
 #banner #main-logo,
@@ -129,13 +136,10 @@ html * {
   color: var(--banner-logo-color);
   font-weight: bold;
   font-size: 23px;
-  vertical-align: middle;
   text-decoration: none;
-  margin-top: 3px; /* temporary - just to align placeholder text */
 }
 
 #banner #company-logo svg {
-  position: absolute;
   height: 65px;
   right: 0;
   top: 0;
@@ -144,33 +148,26 @@ html * {
 #header {
   display: flex;
   flex-direction: column;
-}
-
-/* Arrows - size and color applied in context */
-
-.vertical-arrow {
-  position: absolute;
-  border-style: solid;
-  border-color: transparent;
-  width: 0;
-  height: 0;
-  margin: 0;
-  padding: 0;
+  flex-shrink: 0;
 }
 
 /* Footer */
 #footer {
-  height: var(--footer-height);
   background-color: var(--footer-bg-color);
   color: var(--footer-color);
+  flex-shrink: 0;
+  padding: 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.5);
 }
 
 /* Layout definition */
 #one-col-layout {
+
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: calc(100vh - var(--banner-height))
+  flex-grow: 1;
+  min-height: 1px;  /* apparently this is needed to fix FireFox */
 }
 
 #one-col-layout > * {
@@ -201,6 +198,11 @@ html * {
   box-shadow: 4px 1px 6px -2px var(--light-glare) inset;
 }
 
+@media (pointer: coarse) {
+  .scroll-container::-webkit-scrollbar {
+    width: 30px;
+  }
+}
 /* SVG icons */
 svg.icon-img path {
   /* Default to same fill as adjacent text */

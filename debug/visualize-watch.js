@@ -11,7 +11,8 @@ const debVisualize = debounce(v.visualize, 100)
 chokidar
   .watch([
     'visualizer/**/*.css',
-    'visualizer/**/*.js'
+    'visualizer/**/*.js',
+    'index.js'
   ], {
     ignoreInitial: true
   })

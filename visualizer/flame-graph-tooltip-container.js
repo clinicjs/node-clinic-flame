@@ -16,23 +16,26 @@ class FgTooltipContainer {
     this.nodeData = null
     this.frameIsZoomed = false
 
+    this.svgPath = '/visualizer/assets/icons/'
+
+    const html = `
+    <button class='zoom-button'>
+      <span class='icon'><img data-inline-svg class="icon-img zoom-in" src="/visualizer/assets/icons/zoom-in.svg" /><img data-inline-svg class="icon-img zoom-out" src="/visualizer/assets/icons/zoom-out.svg" /></span>
+      <span class='label'>Expand</span>
+    </button>
+    <button class='copy-button'>
+      <span class='icon'><img data-inline-svg class="icon-img" src="/visualizer/assets/icons/copy.svg" /></span>
+      <span>Copy</span>
+      <span>path</span>
+    </button>
+  `
     this.d3HiddenDiv = d3.select('body').insert('div', ':first-child')
       .style('visibility', 'hidden')
       .style('position', 'absolute')
 
     this.d3TooltipHtml = this.d3HiddenDiv.append('div')
       .classed('fg-tooltip-actions', true)
-      .html(`
-      <button class='zoom-button'>
-        <span class='icon'><img data-inline-svg class="icon-img" src="/visualizer/assets/icons/zoom.svg" /></span>
-        <span class='label'>Expand</span>
-      </button>
-      <button class='copy-button'>
-        <span class='icon'><img data-inline-svg class="icon-img" src="/visualizer/assets/icons/copy.svg" /></span>
-        <span>Copy</span>
-        <span>path</span>
-      </button>
-    `)
+      .html(html)
 
     this.d3TooltipCopyBtn = this.d3TooltipHtml.select('.copy-button')
       .on('click', () => {
@@ -109,6 +112,9 @@ class FgTooltipContainer {
 
   updateZoomBtnLabel () {
     this.d3TooltipZoomBtn.select('.label').text(this.frameIsZoomed ? 'Contract' : 'Expand')
+
+    this.d3TooltipZoomBtn.classed('zoom-in', !this.frameIsZoomed)
+    this.d3TooltipZoomBtn.classed('zoom-out', this.frameIsZoomed)
   }
 }
 

@@ -117,9 +117,9 @@ class FlameGraph extends HtmlContent {
       tree: dataTree.unmerged,
       exclude: dataTree.exclude,
       element: this.d3Chart.node(),
-      topOffset: 55,
       cellHeight: 20,
       heatBars: true,
+      minHeight: window.screen.availHeight,
       frameColors: {
         fill: '#000',
         stroke: '#363b4c'

@@ -104,7 +104,7 @@ class ClinicFlame extends events.EventEmitter {
     const fakeDataPath = path.join(__dirname, 'visualizer', 'data.json')
     const stylePath = path.join(__dirname, 'visualizer', 'style.css')
     const scriptPath = path.join(__dirname, 'visualizer', 'main.js')
-    const logoPath = path.join(__dirname, 'visualizer', 'app-logo.svg')
+    const logoPath = path.join(__dirname, 'visualizer/assets', 'flame-logo.svg')
     const nearFormLogoPath = path.join(__dirname, 'visualizer', 'nearform-logo.svg')
     const clinicFaviconPath = path.join(__dirname, 'visualizer', 'clinic-favicon.png.b64')
 
@@ -161,7 +161,7 @@ class ClinicFlame extends events.EventEmitter {
           <div id="header">
             <div id="banner">
               <a id="main-logo" href="https://github.com/nearform/node-clinic-flame" title="Clinic Flame on GitHub" target="_blank">
-                ${logoFile} <span>LOGO HERE</span>
+                ${logoFile}<span>Flame</span>
               </a>
               <a id="company-logo" href="https://nearform.com" title="nearForm" target="_blank">
                 ${nearFormLogoFile}

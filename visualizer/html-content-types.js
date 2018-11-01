@@ -9,11 +9,12 @@ module.exports = {
   // Sub classes which extend HtmlContent
   AreaKey: require('./area-key.js'),
   FlameGraph: require('./flame-graph.js'),
-  Toolbar: require('./toolbar.js'),
   Tooltip: require('./tooltip.js'),
   OptionsMenu: require('./options-menu.js'),
   SearchBox: require('./search-box.js'),
-  StackBar: require('./stack-bar.js')
+  StackBar: require('./stack-bar.js'),
+  SelectionControls: require('./selection-controls.js'),
+  InfoBox: require('./info-box.js')
 
   // TODO: add these ↴
   // FrameInfo: require('./frame-info.js'),

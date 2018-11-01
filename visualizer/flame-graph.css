@@ -1,9 +1,10 @@
 section#flame-main {
-  flex-shrink: 1;
   display: flex;
   flex-direction: column;
-  position: relative;
+  flex-grow: 1;
+  flex-shrink: 1;
   overflow: hidden;
+  position: relative;
 }
 #flame-main canvas {
   display: block;
@@ -73,7 +74,7 @@ chart > div {
   background-color: rgba(0, 0, 0, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.5);
   color: white;  
-  font-size: 14px;
+  font-size: var(--normal-text-size);;
 }
 
 .fg-tooltip-actions button {
@@ -95,6 +96,18 @@ chart > div {
 
 .fg-tooltip-actions button:hover {
   background-color: var(--light-glare);
+}
+
+.fg-tooltip-actions .zoom-button svg {
+  display: none;
+}
+
+.fg-tooltip-actions .zoom-button.zoom-in .zoom-in {
+  display: initial;
+}
+
+.fg-tooltip-actions .zoom-button.zoom-out .zoom-out {
+  display: initial;
 }
 
 .fg-tooltip-actions span {

@@ -50,6 +50,8 @@ class Ui extends events.EventEmitter {
     const changed = node !== this.highlightedNode
     this.highlightedNode = node
     if (changed) this.emit('highlightNode', node)
+
+    this.showNodeInfo(node || this.selectedNode)
   }
 
   // Persistent e.g. on click, then falls back to this after mouseout
@@ -57,6 +59,9 @@ class Ui extends events.EventEmitter {
     const changed = node !== this.selectedNode
     this.selectedNode = node
     if (changed) this.emit('selectNode', node)
+
+    this.showNodeInfo(node)
+    this.highlightNode(node)
   }
 
   zoomNode (node = this.highlightedNode) {
@@ -96,28 +101,33 @@ class Ui extends events.EventEmitter {
     })
     this.tooltip = tooltip
 
-    const toolbarOuter = this.uiContainer.addContent(undefined, {
-      id: 'toolbar-outer',
+    const toolbar = this.uiContainer.addContent(undefined, {
+      id: 'toolbar',
       htmlElementType: 'section'
       // TODO: will probably need to make this collapsible for portrait view
     })
     // TODO: add these ↴
-    this.stackBar = toolbarOuter.addContent('StackBar', {
+    this.stackBar = toolbar.addContent('StackBar', {
       id: 'stack-bar'
     })
 
-    const toolbar = toolbarOuter.addContent('Toolbar', {
-      id: 'toolbar',
+    const toolbarTopPanel = toolbar.addContent(undefined, {
+      id: 'toolbar-top-panel'
+    })
+
+    toolbarTopPanel.addContent('SelectionControls', {
+      id: 'selection-controls',
       customTooltip: tooltip
     })
 
-    const toolbarSidePanel = toolbar.addContent(undefined, {
+    this.infoBox = toolbar.addContent('InfoBox', {
+      id: 'info-box',
+      customTooltip: tooltip
+    })
+
+    const toolbarSidePanel = toolbarTopPanel.addContent(undefined, {
       id: 'toolbar-side-panel',
       classNames: 'toolbar-section'
-    })
-    toolbarSidePanel.addContent('AreaKey', {
-      id: 'area-key',
-      classNames: 'panel'
     })
     toolbarSidePanel.addContent('SearchBox', {
       id: 'search-box',
@@ -141,9 +151,13 @@ class Ui extends events.EventEmitter {
     // flameWrapper.addContent('HoverBox')
     // flameWrapper.addContent('IndicatorArrow')
 
-    this.uiContainer.addContent(undefined, {
+    const footer = this.uiContainer.addContent(undefined, {
       id: 'footer',
       htmlElementType: 'section'
+    })
+    footer.addContent('AreaKey', {
+      id: 'area-key',
+      classNames: 'panel'
     })
     // TODO: add these ↴
     // footer.addContent('FlameGraph', { id: 'flame-chronological' })
@@ -163,10 +177,24 @@ class Ui extends events.EventEmitter {
       })
     }, 200)
 
+    const setFontSize = () => {
+      // increasing the font-size as the screen gets wider...
+      // as long as the width / height proportion equals to 16/9
+      const minWidth = 600
+
+      if (window.innerWidth > minWidth) {
+        const size = Math.min(window.innerWidth, window.innerHeight * 16 / 9)
+        document.documentElement.style.fontSize = 0.625 + (size - minWidth) / 250 / 16 + 'em'
+      }
+    }
+
+    setFontSize()
+
     window.addEventListener('resize', () => {
       flameWrapper.resize()
       scrollChartIntoView()
       reDrawStackBar()
+      setFontSize()
     })
 
     window.addEventListener('load', scrollChartIntoView)
@@ -228,6 +256,10 @@ class Ui extends events.EventEmitter {
     this.emit('setData')
     this.dataTree.sortFramesByHottest()
     this.updateExclusions()
+  }
+
+  showNodeInfo (nodeData) {
+    this.infoBox.showNodeInfo(nodeData)
   }
 
   /**
