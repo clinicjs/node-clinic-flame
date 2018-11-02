@@ -106,11 +106,11 @@ class FrameNode {
     }
 
     // Some core types have files that can be linked to in the appropriate Node build
-    const nodeVersion = systemInfo.nodeVersions.node
-
     if (this.type === 'core') {
+      const nodeVersion = systemInfo.nodeVersions.node
       return `https://github.com/nodejs/node/blob/v${nodeVersion}/lib/${this.fileName}#L${this.lineNumber}`
     }
+
     // TODO: add more cases like this
   }
 
