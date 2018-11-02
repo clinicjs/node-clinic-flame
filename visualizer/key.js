@@ -2,7 +2,7 @@
 
 const HtmlContent = require('./html-content.js')
 
-class AreaKey extends HtmlContent {
+class Key extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
     super(parentContent, contentProperties)
 
@@ -11,6 +11,9 @@ class AreaKey extends HtmlContent {
 
   initializeElements () {
     super.initializeElements()
+
+    this.d3Title = this.d3Element.append('div')
+      .classed('key-title', true)
 
     this.d3AppName = this.d3Element.append('div')
       .classed('key key-app', true)
@@ -40,7 +43,10 @@ class AreaKey extends HtmlContent {
     super.draw()
 
     this.d3AppName.text(this.appName)
+
+    const titleHTML = `Call stacks in <em>${this.appName}</em>, grouped, by time spent on stack`
+    this.d3Title.html(titleHTML)
   }
 }
 
-module.exports = AreaKey
+module.exports = Key

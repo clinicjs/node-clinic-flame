@@ -7,7 +7,7 @@ module.exports = {
   HtmlContent: require('./html-content.js'),
 
   // Sub classes which extend HtmlContent
-  AreaKey: require('./area-key.js'),
+  Key: require('./key.js'),
   FlameGraph: require('./flame-graph.js'),
   Tooltip: require('./tooltip.js'),
   OptionsMenu: require('./options-menu.js'),

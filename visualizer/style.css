@@ -1,6 +1,6 @@
 @import "./toolbar.css";
 @import "./stack-bar.css";
-@import "./area-key.css";
+@import "./key.css";
 @import "./search-box.css";
 @import "./flame-graph.css";
 @import "./message.css";
@@ -154,10 +154,10 @@ html * {
 
 /* Footer */
 #footer {
-  background-color: var(--footer-bg-color);
+  background-color: var(--opposite-contrast);
   color: var(--footer-color);
   flex-shrink: 0;
-  padding: 8px;
+  padding: 0 8px 6px;
   border-top: 1px solid rgba(0, 0, 0, 0.5);
 }
 

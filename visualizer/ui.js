@@ -111,9 +111,8 @@ class Ui extends events.EventEmitter {
     const toolbar = this.uiContainer.addContent(undefined, {
       id: 'toolbar',
       htmlElementType: 'section'
-      // TODO: will probably need to make this collapsible for portrait view
     })
-    // TODO: add these ↴
+
     this.stackBar = toolbar.addContent('StackBar', {
       id: 'stack-bar'
     })
@@ -153,19 +152,15 @@ class Ui extends events.EventEmitter {
     })
     this.flameWrapper = flameWrapper
 
-    // TODO: add these ↴
-    // flameWrapper.addContent('FlameGraph', { id: 'flame-zoomed' })
-    // flameWrapper.addContent('HoverBox')
-    // flameWrapper.addContent('IndicatorArrow')
-
     const footer = this.uiContainer.addContent(undefined, {
       id: 'footer',
       htmlElementType: 'section'
     })
-    footer.addContent('AreaKey', {
-      id: 'area-key',
+    footer.addContent('Key', {
+      id: 'key-panel',
       classNames: 'panel'
     })
+
     // TODO: add these ↴
     // footer.addContent('FlameGraph', { id: 'flame-chronological' })
     // footer.addContent('TimeFilter')

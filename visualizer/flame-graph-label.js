@@ -26,8 +26,10 @@ function renderLabel (frameHeight, options) {
   context.font = `${fontSize}px ${this.labelFont}`
   context.fillStyle = this.ui.exposedCSS[nodeData.category]
 
-  // Handle root node differently (base of flame graph, 'all stacks' in d3-fg / 0x)
+  // Use root node as a zoom out button, blank when not zoomed in
   if (nodeData.id === 0) {
+    if (!this.ui.zoomedNode) return
+
     const availableWidth = width - this.labelPadding * 2
     const xMid = x + availableWidth / 2 + this.labelPadding
     rootNodeLabel(context, xMid, yBottom, availableWidth, this.ui.dataTree.appName)
@@ -120,8 +122,7 @@ function drawLabel (context, functionName, fileName, coords) {
 function rootNodeLabel (context, xMid, y, availableWidth, appName) {
   context.textAlign = 'center'
 
-  // TODO: update this after changing sort order to say how it's sorted
-  let label = `All call stacks in '${appName}', grouped` // Add: ` and sorted by time on the stack`
+  let label = 'Return to main view'
   const labelWidth = context.measureText(label).width
 
   if (labelWidth > availableWidth) label = truncateFunctionName(context, availableWidth, label, labelWidth)

@@ -159,6 +159,12 @@ class FlameGraph extends HtmlContent {
     const wrapperNode = this.d3Chart.node()
     this.flameGraph.on('click', (nodeData, rect, pointerCoords) => {
       if (nodeData) {
+        // Treat root node as a zoom out button
+        if (nodeData.id === 0) {
+          if (this.ui.zoomedNode) this.ui.zoomNode(null)
+          return
+        }
+
         // Show (and hide) tooltip instantly on click, no waiting for timeouts
         if (this.tooltip) {
           this.tooltip.show({
@@ -180,6 +186,8 @@ class FlameGraph extends HtmlContent {
     })
 
     this.flameGraph.on('hoverin', (nodeData, rect, pointerCoords) => {
+      if (nodeData.id === 0) return
+
       this.hoveredNodeData = nodeData
       this.ui.highlightNode(nodeData)
 

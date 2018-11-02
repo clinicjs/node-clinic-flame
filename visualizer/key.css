@@ -1,4 +1,4 @@
-#area-key.panel {
+#key-panel.panel {
   display: flex;
   justify-content: flex-end;
   padding: 6px 12px;
@@ -8,11 +8,11 @@
 
 /* Adds the key color bars. */
 
-#area-key .key {
+#key-panel .key {
   display: flex;
   align-items: center;
 }
-#area-key .key::before {
+#key-panel .key::before {
   content: ' ';
   display: inline-block;
   width: 1em;
@@ -22,19 +22,31 @@
   margin-right: 6px;
   /* Vertical size and position — hopefully the ems work well even if we change font size */
   margin-bottom: 0.1em;
+  flex-shrink: 0
 }
 
 /* Have some minimum distance between labels if there's not much space… */
-#area-key .key:not(:last-child) {
+#key-panel .key:not(:last-child),
+#key-panel .key-title {
   margin-right: 16px;
 }
 
-#area-key .key-app {
+#key-panel .key-title {
+  flex-grow: 1;
+  color: var(--primary-grey);
+}
+
+#key-panel .key-title em {
+  font-style: italic;
+  white-space: nowrap;
+}
+
+#key-panel .key-app {
   color: var(--area-color-app);
 }
-#area-key .key-deps {
+#key-panel .key-deps {
   color: var(--area-color-deps);
 }
-#area-key .key-core {
+#key-panel .key-core {
   color: var(--area-color-core);
 }
