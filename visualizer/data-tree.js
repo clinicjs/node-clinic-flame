@@ -40,6 +40,7 @@ class DataTree {
     this.mean = d3.mean(this.flatByHottest, node => node.onStackTop.asViewed)
     this.highestStackTop = this.flatByHottest[0].onStackTop.asViewed
     this.calculateRoots()
+    this.computeGroupedSortValues()
   }
 
   show (name) {
@@ -148,11 +149,40 @@ class DataTree {
 
   getFilteredStackSorter () {
     return (nodeA, nodeB) => {
+      const groupA = this.groupedSortValues.get(nodeA)
+      const groupB = this.groupedSortValues.get(nodeB)
+      if (groupA > groupB) return -1
+      if (groupA < groupB) return 1
+
       const valueA = this.getNodeValue(nodeA)
       const valueB = this.getNodeValue(nodeB)
 
       return valueA === valueB ? 0 : valueA > valueB ? -1 : 1
     }
+  }
+
+  computeGroupedSortValues () {
+    this.groupedSortValues = new Map()
+
+    const walk = (node) => {
+      if (!node.children) return
+      const group = Object.create(null)
+      node.children.forEach((child) => {
+        const value = this.getSortValue(child)
+        if (child.type in group) {
+          group[child.type] += value
+        } else {
+          group[child.type] = value
+        }
+      })
+
+      node.children.forEach((child) => {
+        this.groupedSortValues.set(child, group[child.type])
+        walk(child)
+      })
+    }
+
+    walk(this.activeTree())
   }
 
   getNodeValue (node) {
@@ -162,7 +192,6 @@ class DataTree {
         return acc + this.getNodeValue(child)
       }, 0) : 0
     }
-
     // d3-fg sets `value` to 0 to hide off-screen nodes.
     // there's no other property to indicate this but the original value is stored on `.original`.
     if (node.value === 0 && typeof node.original === 'number') {
