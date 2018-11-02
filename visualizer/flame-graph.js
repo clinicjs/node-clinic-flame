@@ -123,12 +123,15 @@ class FlameGraph extends HtmlContent {
     const dataTree = this.ui.dataTree
     const highest = dataTree.getHighestStackTop()
 
+    const sorter = dataTree.getFilteredStackSorter()
+
     this.prevExclude = new Set(this.ui.dataTree.exclude)
     this.flameGraph = d3Fg({
       tree: dataTree.unmerged,
       exclude: dataTree.exclude,
       element: this.d3Chart.node(),
       cellHeight: 20,
+      collapseHiddenNodeWidths: true,
       heatBars: true,
       minHeight: window.screen.availHeight,
       frameColors: {
@@ -148,6 +151,9 @@ class FlameGraph extends HtmlContent {
       },
       clickHandler: null,
       renderLabel: getLabelRenderer(this)
+    })
+    this.flameGraph.sort((a, b) => {
+      return sorter(a.data, b.data)
     })
 
     const wrapperNode = this.d3Chart.node()
