@@ -91,6 +91,9 @@ class FlameGraph extends HtmlContent {
               <pre>${path}</pre>
             `, 4000)
           copy(path)
+        },
+        onOpenPath: (url) => {
+          window.open(url, '_blank')
         }
       })
     }

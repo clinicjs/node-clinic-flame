@@ -2,7 +2,7 @@
 const d3 = require('d3')
 
 class FgTooltipContainer {
-  constructor ({ tooltip, showDelay = 700, hideDelay = 200, onCopyPath }) {
+  constructor ({ tooltip, showDelay = 700, hideDelay = 200, onCopyPath, onOpenPath }) {
     this.tooltip = tooltip
     this.ui = tooltip.ui
 
@@ -11,6 +11,7 @@ class FgTooltipContainer {
     this.showDelay = showDelay
     this.hideDelay = hideDelay
     this.onCopyPath = onCopyPath
+    this.onOpenPath = onOpenPath
 
     this.nodeData = null
     this.frameIsZoomed = false
@@ -21,6 +22,11 @@ class FgTooltipContainer {
     <button class='zoom-button'>
       <span class='icon'><img data-inline-svg class="icon-img zoom-in" src="/visualizer/assets/icons/zoom-in.svg" /><img data-inline-svg class="icon-img zoom-out" src="/visualizer/assets/icons/zoom-out.svg" /></span>
       <span class='label'>Expand</span>
+    </button>
+    <button class='link-button'>
+      <span class='icon'><img data-inline-svg class="icon-img" src="/visualizer/assets/icons/link.svg" /></span>
+      <span>Open</span>
+      <span style="white-space: nowrap">in browser</span>
     </button>
     <button class='copy-button'>
       <span class='icon'><img data-inline-svg class="icon-img" src="/visualizer/assets/icons/copy.svg" /></span>
@@ -39,6 +45,11 @@ class FgTooltipContainer {
     this.d3TooltipCopyBtn = this.d3TooltipHtml.select('.copy-button')
       .on('click', () => {
         this.onCopyPath && this.onCopyPath(this.nodeData.target)
+      })
+
+    this.d3TooltipLinkBtn = this.d3TooltipHtml.select('.link-button')
+      .on('click', () => {
+        this.onOpenPath && this.onOpenPath(this.nodeData.target)
       })
 
     this.d3TooltipZoomBtn = this.d3TooltipHtml.select('.zoom-button')
@@ -108,6 +119,10 @@ class FgTooltipContainer {
   }
 
   updateZoomBtnLabel () {
+    const isLink = /^https?:\/\//.test(this.nodeData.target)
+    this.d3TooltipCopyBtn.classed('hidden', isLink)
+    this.d3TooltipLinkBtn.classed('hidden', !isLink)
+
     this.d3TooltipZoomBtn.select('.label').text(this.frameIsZoomed ? 'Contract' : 'Expand')
 
     this.d3TooltipZoomBtn.classed('zoom-in', !this.frameIsZoomed)
