@@ -41,6 +41,11 @@ function renderLabel (frameHeight, options) {
   let fileName = nodeData.fileName
   let functionName = nodeData.functionName
 
+  if (fileName === null) {
+    if (nodeData.type === 'v8') fileName = 'Compiled V8 C++'
+    if (nodeData.type === 'cpp') fileName = 'Compiled C++'
+  }
+
   const funcNameWidth = context.measureText(functionName).width
   const fileNameWidth = context.measureText(fileName).width
 
@@ -49,10 +54,13 @@ function renderLabel (frameHeight, options) {
 
   if (fullTextWidth <= width) {
     // There's enough space. See if there's even space for :line:col like some/path/file.js:123:12
-    const lineAndColumn = `:${nodeData.lineNumber}:${nodeData.columnNumber}`
-    const extraTextWidth = fullTextWidth + context.measureText(lineAndColumn).width
+    // (C++ frames don't have line numbers)
+    if (nodeData.lineNumber != null) {
+      const lineAndColumn = `:${nodeData.lineNumber}:${nodeData.columnNumber}`
+      const extraTextWidth = fullTextWidth + context.measureText(lineAndColumn).width
 
-    fileName = extraTextWidth < width ? nodeData.fileName + lineAndColumn : nodeData.fileName
+      fileName = extraTextWidth < width ? nodeData.fileName + lineAndColumn : nodeData.fileName
+    }
   } else if (this.labelPadding * 4 + funcNameWidth > width) {
     // No file name at all if there's no space for more than one padding width's worth
     fileName = ''

@@ -40,6 +40,12 @@ test('analysis - anonymise nodes - remove mainDir in app code', (t) => {
   parentDirNode.anonymise(sysinfo)
   t.strictEqual(parentDirNode.name, '(anonymous) ../browserify/index.js:808:29')
 
+  const anonymousFunctionNode = new FrameNode({
+    name: 'module.exports.(anonymous function) /home/clinic/code/app/node_modules/restify/lib/errors/rest_error.js:33:50'
+  })
+  anonymousFunctionNode.anonymise(sysinfo)
+  t.strictEqual(anonymousFunctionNode.name, 'module.exports.(anonymous function) ./node_modules/restify/lib/errors/rest_error.js:33:50')
+
   t.end()
 })
 

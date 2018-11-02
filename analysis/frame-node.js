@@ -1,6 +1,9 @@
 const path = require('path')
 
-const frameRx = /^(\S+) (?:native )?(.*?):(\d+):(\d+)$/
+const jsFrameRx = /^([~*])?((?:\S+?\(anonymous function\)|\S+)?(?: [a-zA-Z]+)*) (.*?):(\d+):(\d+)( \[INIT])?( \[INLINABLE])?$/
+// This one has the /m flag because regexes may contain \n
+const cppFrameRx = /^(.*) (\[CPP]|\[SHARED_LIB]|\[CODE:\w+])( \[INIT])?$/m
+
 class FrameNode {
   constructor (data) {
     this.id = null
@@ -14,27 +17,56 @@ class FrameNode {
       ? data.children.map((frame) => new FrameNode(frame))
       : []
 
+    this.functionName = null
+    this.fileName = null
+    this.fullFileName = null
+    this.lineNumber = null
+    this.columnNumber = null
+
+    // Don't try to identify anything for the root node.
+    if (this.name === 'all stacks') {
+      return this
+    }
+
     // C++ and v8 functions don't match, but they don't need to
-    const m = frameRx.exec(this.name)
+    const m = this.name.match(jsFrameRx)
     if (m) {
       const [
         input, // eslint-disable-line no-unused-vars
+        optimizationFlag,
         functionName,
         fileName,
         lineNumber,
-        columnNumber
+        columnNumber,
+        isInit,
+        isInlinable
       ] = m
       this.functionName = functionName
       this.fileName = fileName
       this.fullFileName = fileName
       this.lineNumber = parseInt(lineNumber, 10)
       this.columnNumber = parseInt(columnNumber, 10)
+      this.isInit = isInit != null
+      this.isInlinable = isInlinable != null
+      this.isOptimised = optimizationFlag === '~'
+      this.isOptimisable = optimizationFlag === '*'
     } else {
-      this.functionName = null
-      this.fileName = null
-      this.fullFileName = null
-      this.lineNumber = null
-      this.columnNumber = null
+      const m = this.name.match(cppFrameRx)
+      /* istanbul ignore else: Only triggers if there's a bug */
+      if (m) {
+        const [
+          input, // eslint-disable-line no-unused-vars
+          functionName,
+          tag,
+          isInit
+        ] = m
+        const isSharedLib = tag === '[SHARED_LIB]'
+        this.functionName = isSharedLib ? '[SHARED_LIB]' : functionName
+        this.fileName = isSharedLib ? functionName : null
+        this.isInit = isInit != null
+      } else {
+        throw new Error(`Encountered an unparseable frame "${this.name}"`)
+      }
     }
   }
 
@@ -61,6 +93,10 @@ class FrameNode {
     this.category = category // Top level filters: 'app' or 'deps' or 'all-core'
     this.type = type // Second-level filters; core are static, app and deps depend on app
     this.typeTEMP = typeTEMP // Temporary access to dependency name or app directory
+
+    if (type === 'regexp') {
+      this.formatRegExpName()
+    }
   }
 
   getTarget (systemInfo) {
@@ -82,11 +118,9 @@ class FrameNode {
   getCoreType (name, systemInfo) {
     let type
 
-    // TODO: Delete 'init' and 'inlinable' conditions here when adding custom d3-fg filter on properties
+    // TODO: Delete 'init' condition here when adding custom d3-fg filter on properties
     if (/\[INIT]$/.test(name)) {
       type = 'init'
-    } else if (/\[INLINABLE]$/.test(name)) {
-      type = 'inlinable'
     } else if (!/\.m?js/.test(name)) {
       if (/\[CODE:RegExp]$/.test(name)) {
         type = 'regexp'
@@ -136,18 +170,22 @@ class FrameNode {
     const platformPath = getPlatformPath(systemInfo)
 
     const parentDir = platformPath.join(systemInfo.mainDirectory, `..${systemInfo.pathSeparator}`)
-    let fileName = this.fileName || this.parseName(name, systemInfo).fileName
 
     return {
       // TODO: use this type after adding custom d3-fg filter on properties including category
-      typeTEMP: platformPath.relative(parentDir, platformPath.dirname(fileName)),
+      typeTEMP: platformPath.relative(parentDir, platformPath.dirname(this.fileName)),
       type: 'app', // Temporary until d3-fg custom property filter complete
       category: 'app'
     }
   }
 
   anonymise (systemInfo) {
-    if (!this.fileName || this.isNodeCore(systemInfo) || this.category === 'all-core') return
+    if (!this.fileName || this.isNodeCore(systemInfo) ||
+        // Init frames are in the all-core category but may be part of the app.
+        // TODO Remove the `init` after adding custom d3-fg filter on properties like `isInit`
+        (this.category === 'all-core' && this.type !== 'init')) {
+      return
+    }
 
     const platformPath = getPlatformPath(systemInfo)
     const { pathSeparator, mainDirectory } = systemInfo
@@ -163,67 +201,16 @@ class FrameNode {
   }
 
   format (systemInfo) {
-    const {
-      functionName,
-      fileName,
-      isOptimised,
-      isOptimisable,
-      isInlinable,
-      isInit
-    } = this.parseName(this.name, systemInfo)
-
-    this.functionName = functionName // Uses equivalents where needed. No ~ or * from 0x
-    this.fileName = fileName // Relative file path or equivalent, without line / column numbers or 0x-added flags like [INIT]
-
-    this.isOptimised = isOptimised // JS frames only,
-    this.isOptimisable = isOptimisable // JS frames only; true if JS && !this.isOptimised
-    this.isInlinable = isInlinable // A flag, unlike in 0x.visualize() where it overrides type
-    this.isInit = isInit // Also a type in 0x.visualize(); so inlinable init frames are passed in as init only
-
     this.anonymise(systemInfo)
     this.target = this.getTarget(systemInfo) // Optional; where a user can view the source (e.g. path, url...)
   }
 
-  parseName (name, systemInfo) {
-    let functionName = this.functionName || name.split(' ')[0]
-    let fileName = this.fileName || this.name.replace(functionName + ' ', '')
-
-    if (this.type === 'regexp' && name.includes('[CODE:RegExp]')) {
-      // Regex may contain any number of spaces; wrap in / / to show whitespace
-      functionName = `/${name.replace(/ \[CODE:RegExp\].*$/, '')}/`
-      fileName = '[CODE:RegExp]'
-    } else {
-      // Add keywords if not already accounted for by 0x and frameRx
-      const functionFlagMatch = name.match(/(?<=^.+? )([a-zA-Z]+ )+/)
-
-      if (functionFlagMatch) {
-        const functionFlagStr = functionFlagMatch[0].trim()
-
-        functionName += ` ${functionFlagStr}`
-        fileName = fileName.replace(functionFlagStr, '').trim()
-      }
-    }
-
-    const isOptimised = functionName.charAt(0) === '~'
-    const isOptimisable = functionName.charAt(0) === '*'
-    if (isOptimised || isOptimisable) functionName = functionName.slice(1)
-
-    // This will replace init and inlinable types; requires custom d3-fg filter
-    const isInlinable = /\[INLINABLE]$/.test(fileName)
-    /* istanbul ignore next: TEMP, test sample inconsistantly contains inlinable, will add proper test when removing inlinable type */
-    if (isInlinable) fileName = fileName.replace(/\s?\[INLINABLE]$/, '')
-
-    const isInit = /\[INIT]$/.test(fileName)
-    if (isInit) fileName = fileName.replace(/\s?\[INIT\]$/, '')
-
-    return {
-      functionName,
-      fileName,
-      isOptimised,
-      isOptimisable,
-      isInlinable,
-      isInit
-    }
+  // Formats file and function names, for user-friendly regexes
+  // This cannot be done in the constructor because we don't know the node category yet.
+  formatRegExpName () {
+    // Regex may contain any number of spaces; wrap in / / to show whitespace
+    this.functionName = `/${this.name.replace(/ \[CODE:RegExp\].*$/, '')}/`
+    this.fileName = '[CODE:RegExp]'
   }
 
   walk (visit) {
