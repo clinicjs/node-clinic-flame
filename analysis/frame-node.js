@@ -104,15 +104,14 @@ class FrameNode {
     if (this.category === 'app' || this.category === 'deps') {
       return this.fileName
     }
-    // Some core types have files that can be linked to in the appropriate Node build
-    if (this.category === 'all-core') {
-      const nodeVersion = systemInfo.nodeVersions.node
 
-      if (this.type === 'core') {
-        return `https://github.com/nodejs/node/blob/v${nodeVersion}/lib/${this.fileName}#L${this.lineNumber}`
-      }
-      // TODO: add more cases like this
+    // Some core types have files that can be linked to in the appropriate Node build
+    const nodeVersion = systemInfo.nodeVersions.node
+
+    if (this.type === 'core') {
+      return `https://github.com/nodejs/node/blob/v${nodeVersion}/lib/${this.fileName}#L${this.lineNumber}`
     }
+    // TODO: add more cases like this
   }
 
   getCoreType (name, systemInfo) {
