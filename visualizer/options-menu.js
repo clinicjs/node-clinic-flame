@@ -46,8 +46,7 @@ class OptionsMenu extends HtmlContent {
       name: 'Merge',
       description: 'joins optimized and unoptimized versions of frames',
       onChange: (checked) => {
-        this.ui.optionsChange('merge', checked)
-        this.draw()
+        this.ui.setUseMergedTree(checked)
       }
     })
 
@@ -56,8 +55,7 @@ class OptionsMenu extends HtmlContent {
       name: 'Show optimization status',
       description: 'highlight frames that are optimized functions',
       onChange: (checked) => {
-        this.ui.dataTree.showOptimizationStatus = checked
-        this.ui.draw()
+        this.ui.setShowOptimizationStatus(checked)
       }
     })
 
@@ -159,6 +157,7 @@ class OptionsMenu extends HtmlContent {
       } else {
         ui.setCodeAreaVisibility(data.id, checked)
       }
+      ui.updateExclusions()
       ui.draw()
     }
 
@@ -216,11 +215,16 @@ class OptionsMenu extends HtmlContent {
   draw () {
     super.draw()
 
-    const { useMerged } = this.ui.dataTree
+    // Update option checkbox values.
+    const { useMerged, showOptimizationStatus } = this.ui.dataTree
+    this.d3FgOptions.select('#option-usemergedtree')
+      .select('input')
+      .property('checked', useMerged)
     this.d3FgOptions.select('#option-showoptimizationstatus')
       .classed('disabled', useMerged)
       .select('input')
       .attr('disabled', useMerged ? 'disabled' : null)
+      .property('checked', showOptimizationStatus)
 
     if (this.codeAreasChanged) {
       this.drawCodeAreaList()

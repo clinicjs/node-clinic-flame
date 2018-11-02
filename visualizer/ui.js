@@ -4,13 +4,13 @@ const events = require('events')
 const htmlContentTypes = require('./html-content-types.js')
 const debounce = require('lodash.debounce')
 const DataTree = require('./data-tree.js')
+const History = require('./history.js')
 
 class Ui extends events.EventEmitter {
   constructor (wrapperSelector) {
     super()
-    // TODO: Similar to 0x but condense hidden state like an octal
-    // not json as number of excludables varies between samples
-    // this.hashHistory = new HashHistory()
+
+    this.history = new History()
 
     this.dataTree = null
     this.highlightedNode = null
@@ -27,22 +27,42 @@ class Ui extends events.EventEmitter {
 
     this.sections = new Map()
     this.createContent()
+
+    this.history.on('change', (data) => {
+      this.updateFromHistory(data)
+    })
   }
 
-  /**
-  * Handling user interactions
-  **/
-  optionsChange (optName, args) {
-    switch (optName) {
-      case 'merge':
-        this.dataTree.setActiveTree(args)
-        break
+  pushHistory () {
+    this.history.push({
+      selectedNodeId: this.selectedNode && this.selectedNode.id,
+      zoomedNodeId: this.zoomedNode && this.zoomedNode.id,
+      useMerged: this.dataTree.useMerged,
+      showOptimizationStatus: this.dataTree.showOptimizationStatus,
+      exclude: this.dataTree.exclude
+    })
+  }
 
-      default:
-        break
-    }
+  updateFromHistory (data) {
+    this.dataTree.useMerged = data.useMerged
+    this.dataTree.showOptimizationStatus = data.showOptimizationStatus
 
-    this.emit(`option.${optName}`, args)
+    // Diff exclusion setting so FlameGraph can update.
+    data.exclude.forEach((name) => {
+      if (this.dataTree.exclude.has(name)) return
+      this.changedExclusions.toHide.add(name)
+    })
+    this.dataTree.exclude.forEach((name) => {
+      if (data.exclude.has(name)) return
+      this.changedExclusions.toShow.add(name)
+    })
+    this.dataTree.exclude = data.exclude
+
+    // Redraw before zooming to make sure these nodes are visible in the flame graph.
+    this.draw()
+
+    this.selectNode(this.dataTree.getNodeById(data.selectedNodeId), { pushState: false })
+    this.zoomNode(this.dataTree.getNodeById(data.zoomedNodeId), { pushState: false })
   }
 
   // Temporary e.g. on mouseover, erased on mouseout
@@ -56,7 +76,7 @@ class Ui extends events.EventEmitter {
   }
 
   // Persistent e.g. on click, then falls back to this after mouseout
-  selectNode (node = null) {
+  selectNode (node = null, { pushState = true } = {}) {
     if (node && node.id === 0) return
     const changed = node !== this.selectedNode
     this.selectedNode = node
@@ -64,28 +84,41 @@ class Ui extends events.EventEmitter {
 
     this.showNodeInfo(node)
     this.highlightNode(node)
+
+    if (pushState) this.pushHistory()
   }
 
-  zoomNode (node = null) {
+  selectHottestNode (opts) {
+    this.selectNode(this.dataTree.flatByHottest[0], opts)
+  }
+
+  zoomNode (node = null, { pushState = true } = {}) {
     if (!node && !this.zoomedNode) return
 
     // Zoom out if zooming in on already-zoomed node
     node = (!node || node === this.zoomedNode) ? null : node
     this.zoomedNode = node
     this.emit('zoomNode', node)
-    if (node && node !== this.selectedNode) this.selectNode(node)
+    if (node && node !== this.selectedNode) {
+      this.selectNode(node, { pushState })
+    } else if (pushState) {
+      this.pushHistory()
+    }
   }
 
   clearSearch () {
-    const flameWrapper = this.uiContainer.content.get('flame-main')
-    flameWrapper.clearSearch()
+    this.flameWrapper.clearSearch()
   }
 
   search (query) {
     if (!query) return
 
-    const flameWrapper = this.uiContainer.content.get('flame-main')
-    flameWrapper.search(query)
+    this.flameWrapper.search(query)
+    // TODO add to hash URL
+    // This may be called while the user is still typing; ideally we'd have a single history entry for a single query.
+    // A way to approach that is to keep track of the prev value, and do
+    // `query.startsWith(prevQuery)`
+    // if that matches, use replaceState() instead of pushState().
   }
 
   /**
@@ -245,19 +278,40 @@ class Ui extends events.EventEmitter {
       isChanged = this.dataTree.hide(name)
       if (isChanged) this.changedExclusions.toHide.add(name)
     }
-
-    if (isChanged) this.updateExclusions()
   }
 
-  updateExclusions () {
+  updateExclusions ({ pushState = true } = {}) {
     this.emit('updateExclusions')
+    if (pushState) {
+      this.pushHistory()
+    }
+  }
+
+  setUseMergedTree (useMerged) {
+    if (this.dataTree.useMerged === useMerged) {
+      return
+    }
+
+    this.dataTree.setActiveTree(useMerged)
+
+    this.draw()
+    this.selectHottestNode()
+
+    this.pushHistory()
+  }
+
+  setShowOptimizationStatus (showOptimizationStatus) {
+    this.dataTree.showOptimizationStatus = showOptimizationStatus
+    this.draw()
+    this.pushHistory()
   }
 
   setData (dataTree) {
     this.dataTree = new DataTree(dataTree)
     this.emit('setData')
     this.dataTree.sortFramesByHottest()
-    this.updateExclusions()
+    this.updateExclusions({ pushState: false })
+    this.history.setData(dataTree)
   }
 
   showNodeInfo (nodeData) {

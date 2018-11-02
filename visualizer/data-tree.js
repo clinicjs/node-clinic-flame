@@ -9,6 +9,9 @@ class DataTree {
     this.appName = tree.appName.length > 30 ? tree.appName.slice(0, 30) + '…' : tree.appName
     this.pathSeparator = tree.pathSeparator
 
+    this.mergedNodes = getFlatArray(this.merged.children)
+    this.unmergedNodes = getFlatArray(this.unmerged.children)
+
     this.useMerged = false
     this.showOptimizationStatus = false
     this.exclude = new Set(['cpp', 'regexp', 'v8', 'native', 'init'])
@@ -41,13 +44,17 @@ class DataTree {
     return this.useMerged ? this.merged : this.unmerged
   }
 
+  activeNodes () {
+    return this.useMerged ? this.mergedNodes : this.unmergedNodes
+  }
+
   setActiveTree (useMerged = false) {
     this.useMerged = useMerged === true
     this.sortFramesByHottest()
   }
 
   getFlattenedSorted (sorter) {
-    const arr = getFlatArray(this.activeTree().children)
+    const arr = this.activeNodes()
     const filtered = arr.filter(node => !node.hide)
     return filtered.sort(sorter)
   }
@@ -119,6 +126,11 @@ class DataTree {
 
   countFrames (arr = this.flatByHottest) {
     return arr.length
+  }
+
+  getNodeById (id) {
+    const arr = this.activeNodes()
+    return arr.find((node) => node.id === id)
   }
 }
 

@@ -91,7 +91,6 @@ class FlameGraph extends HtmlContent {
       })
     }
 
-    // listening for `highlightNode` event
     this.ui.on('highlightNode', node => {
       this.hoveredNodeData = node || this.ui.selectedNode
       this.highlightHoveredNodeOnGraph()
@@ -104,11 +103,6 @@ class FlameGraph extends HtmlContent {
       this.markNodeAsSelected(node)
     })
 
-    this.ui.on('option.merge', (checked) => {
-      this.draw()
-      this.highlightHoveredNodeOnGraph()
-    })
-
     // hiding the tooltip on scroll and moving the box
     this.d3Chart.node().addEventListener('scroll', () => {
       this.tooltip.hide({ delay: 0 })
@@ -117,20 +111,14 @@ class FlameGraph extends HtmlContent {
   }
 
   initializeFromData () {
-    this.renderedTree = this.getTree()
+    const { dataTree } = this.ui
 
-    // TODO rather than calculating this single value here, we should be walking through
-    // all the nodes and sorting high stackTop values, so we can
-    // 1) display a heat key at the top;
-    // 2) pick the highest value from that list for use here.
-    const dataTree = this.ui.dataTree
     const highest = dataTree.getHighestStackTop()
-
     const sorter = dataTree.getFilteredStackSorter()
 
-    this.prevExclude = new Set(this.ui.dataTree.exclude)
+    this.renderedTree = dataTree.activeTree()
     this.flameGraph = d3Fg({
-      tree: dataTree.unmerged,
+      tree: dataTree.activeTree(),
       exclude: dataTree.exclude,
       element: this.d3Chart.node(),
       cellHeight: 20,
@@ -322,10 +310,6 @@ class FlameGraph extends HtmlContent {
     this.updateMarkerBoxes()
   }
 
-  getTree () {
-    return this.ui.dataTree.activeTree()
-  }
-
   clearSearch () {
     this.flameGraph.clear(searchHighlightColor)
   }
@@ -337,13 +321,15 @@ class FlameGraph extends HtmlContent {
   draw () {
     super.draw()
 
+    const { dataTree } = this.ui
+
     if (this.changedWidth) {
       this.changedWidth = false
       this.flameGraph.width(this.width)
     }
 
-    if (this.renderedTree !== this.getTree()) {
-      this.renderedTree = this.getTree()
+    if (this.renderedTree !== dataTree.activeTree()) {
+      this.renderedTree = dataTree.activeTree()
       this.flameGraph.renderTree(this.renderedTree)
     }
 
