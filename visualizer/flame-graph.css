@@ -54,7 +54,7 @@ chart > div {
   flex-shrink: 0;
 }
 
-.node-highlighter .vertical-line {  
+.node-highlighter .vertical-line {
   flex-grow: 1;
   width: 100%;
   display: flex;
@@ -69,11 +69,26 @@ chart > div {
   border-left: 1px dotted rgba(255, 255, 255, 0.5);
 }
 
+.selection-box {
+  position: absolute;
+  pointer-events: none;
+  background-color: rgba(var(--grey-highlight-color-val), 0.05);
+  border: 1px solid rgba(var(--grey-highlight-color-val), 0.25);
+}
+
+.zoom-underline {
+  position: absolute;
+  pointer-events: none;
+  border-top: 2px solid var(--main-bg-color);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0));
+}
+
+
 .fg-tooltip-actions {
   display: flex;
   background-color: rgba(0, 0, 0, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.5);
-  color: white;  
+  color: white;
   font-size: var(--normal-text-size);;
 }
 

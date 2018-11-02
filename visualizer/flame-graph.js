@@ -38,8 +38,15 @@ class FlameGraph extends HtmlContent {
 
     this.ui.on('zoomNode', node => {
       if (this.flameGraph) {
-        this.flameGraph.zoom(node)
-        this.hideToolTip()
+        this.zoomedNodeData = node
+
+        // Hide tooltip and highlight box / pointer until .on('animationEnd')
+        this.tooltip.hide()
+        this.hoveredNodeData = null
+        this.highlightHoveredNodeOnGraph()
+        this.markNodeAsSelected(null)
+        this.markNodeAsZoomed(null)
+        this.flameGraph.zoom(node || this.ui.dataTree.activeTree())
       }
     })
   }
@@ -61,14 +68,16 @@ class FlameGraph extends HtmlContent {
     this.d3HighlighterBox = this.d3Element.append('div')
       .classed('highlighter-box', true)
 
+    this.d3SelectionMarker = this.d3Element.append('div')
+      .classed('selection-box', true)
+
+    this.d3ZoomMarker = this.d3Element.append('div')
+      .classed('zoom-underline', true)
+      .classed('hidden', true)
+
     if (this.tooltip) {
       this.tooltip = new FgTooltipContainer({
         tooltip: this.tooltip,
-        showDelay: 800,
-        hideDelay: 400,
-        onZoom: (nodeData) => {
-          this.flameGraph.zoom(nodeData)
-        },
         onCopyPath: (path) => {
           Message.info(`
               <span>Path copied to the clipboard!</span>
@@ -88,6 +97,8 @@ class FlameGraph extends HtmlContent {
     this.ui.on('selectNode', node => {
       this.hoveredNodeData = node
       this.highlightHoveredNodeOnGraph()
+
+      this.markNodeAsSelected(node)
     })
 
     this.ui.on('option.merge', (checked) => {
@@ -98,7 +109,7 @@ class FlameGraph extends HtmlContent {
     // hiding the tooltip on scroll and moving the box
     this.d3Chart.node().addEventListener('scroll', () => {
       this.tooltip.hide({ delay: 0 })
-      this.highlightHoveredNodeOnGraph()
+      this.updateMarkerBoxes()
     })
   }
 
@@ -135,10 +146,33 @@ class FlameGraph extends HtmlContent {
         const rgb = flameGradient(decimal)
         return rgb
       },
+      clickHandler: null,
       renderLabel: getLabelRenderer(this)
     })
 
     const wrapperNode = this.d3Chart.node()
+    this.flameGraph.on('click', (nodeData, rect, pointerCoords) => {
+      if (nodeData) {
+        // Show (and hide) tooltip instantly on click, no waiting for timeouts
+        if (this.tooltip) {
+          this.tooltip.show({
+            nodeData,
+            rect,
+            pointerCoords,
+            frameIsZoomed: this.zoomedNodeData === nodeData,
+            wrapperNode,
+            delay: 0
+          })
+        }
+
+        this.ui.selectNode(nodeData)
+      } else {
+        if (this.tooltip) this.tooltip.hide({ delay: 0 })
+
+        this.ui.zoomNode(null)
+      }
+    })
+
     this.flameGraph.on('hoverin', (nodeData, rect, pointerCoords) => {
       this.hoveredNodeData = nodeData
       this.ui.highlightNode(nodeData)
@@ -160,15 +194,32 @@ class FlameGraph extends HtmlContent {
       }
     })
 
-    this.flameGraph.on('zoom', (nodeData) => {
-      this.tooltip && this.tooltip.hide()
-
-      this.highlightHoveredNodeOnGraph()
-      this.zoomedNodeData = nodeData
-    })
-
     this.flameGraph.on('animationEnd', () => {
-      // can come handy to have this cb...
+      // Update selection marker with new node position and size
+      this.markNodeAsSelected(this.ui.selectedNode)
+
+      // Show tooltip and highlight box for zoomed node after zoom completes
+      if (this.ui.zoomedNode && this.ui.zoomedNode.id !== 0) {
+        if (this.tooltip) {
+          const rect = this.flameGraph.getNodeRect(this.ui.zoomedNode)
+          this.tooltip.show({
+            nodeData: this.ui.zoomedNode,
+            rect,
+            frameIsZoomed: true,
+            wrapperNode: this.d3Chart.node(),
+            pointerCoords: {
+              x: rect.x + rect.width / 2,
+              y: rect.y + rect.height
+            },
+            delay: 100
+          })
+        }
+        this.ui.highlightNode(this.ui.zoomedNode)
+        this.markNodeAsZoomed(this.ui.zoomedNode)
+      } else {
+        this.hoveredNodeData = this.ui.highlightedNode || this.ui.selectedNode
+        this.highlightHoveredNodeOnGraph()
+      }
     })
 
     // triggering the resize after the canvas rendered to take possible scrollbars into account
@@ -184,21 +235,57 @@ class FlameGraph extends HtmlContent {
 
     const rect = this.flameGraph.getNodeRect(this.hoveredNodeData)
     if (rect) {
-      this.d3Highlighter
-        .classed('show', true)
-        .style('width', rect.width + 'px')
-        .style('height', `${rect.y - this.d3Chart.node().scrollTop - rect.height}px`)
-        .style('transform', `translateX(${rect.x}px)`)
+      this.d3Highlighter.classed('show', true)
+      this.applyRectToDiv(this.d3Highlighter, rect, true)
 
-      this.d3HighlighterBox
-        .classed('show', true)
-        .style('width', rect.width + 'px')
-        .style('height', `${rect.height}px`)
-        .style('transform', `translate3d(${rect.x}px, ${rect.y - this.d3Chart.node().scrollTop - rect.height}px, 0)`)
+      this.d3HighlighterBox.classed('show', true)
+      this.applyRectToDiv(this.d3HighlighterBox, rect)
     } else {
       this.d3Highlighter.classed('show', false)
       this.d3HighlighterBox.classed('show', false)
     }
+  }
+
+  markNodeAsSelected (node = null) {
+    this.d3SelectionMarker.classed('hidden', !node)
+
+    if (node) {
+      const rect = this.flameGraph.getNodeRect(node)
+      this.applyRectToDiv(this.d3SelectionMarker, rect)
+    }
+  }
+
+  markNodeAsZoomed (node = null) {
+    this.d3ZoomMarker.classed('hidden', !node)
+
+    if (node) {
+      const rect = this.flameGraph.getNodeRect(node)
+      this.applyRectToDiv(this.d3ZoomMarker, {
+        x: rect.x,
+        y: rect.y + rect.height * 3,
+        width: rect.width,
+        height: rect.height * 3
+      })
+    }
+  }
+
+  applyRectToDiv (d3Div, rect, aboveRect = false) {
+    const scrollTop = this.d3Chart.node().scrollTop
+
+    // If aboveRect flag is true, draws this div extending up from the top of the rectangle
+    const translate = aboveRect ? `translateX(${rect.x}px)` : `translate3d(${rect.x}px, ${rect.y - scrollTop - rect.height}px, 0)`
+    const height = aboveRect ? rect.y - scrollTop - rect.height : rect.height
+
+    d3Div
+      .style('width', rect.width + 'px')
+      .style('height', height + 'px')
+      .style('transform', translate)
+  }
+
+  updateMarkerBoxes () {
+    this.highlightHoveredNodeOnGraph()
+    this.markNodeAsSelected(this.ui.selectedNode)
+    if (this.ui.zoomedNode) this.markNodeAsZoomed(this.ui.zoomedNode)
   }
 
   resize () {
@@ -208,8 +295,7 @@ class FlameGraph extends HtmlContent {
       this.changedWidth = true
       this.draw()
     }
-
-    this.highlightHoveredNodeOnGraph()
+    this.updateMarkerBoxes()
   }
 
   getTree () {

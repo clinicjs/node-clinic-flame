@@ -1,6 +1,6 @@
 #stack-bar {
   position: relative;
-  cursor: context-menu;
+  cursor: pointer;
   box-shadow: 0px -1px 0px rgba(255, 255, 255, 0.3) inset;
 }
 
@@ -10,8 +10,12 @@
   transform-origin: 50%;
 }
 
-#stack-bar .stack-frame.selected{
+#stack-bar .stack-frame.highlighted{
   transform: scaleY(2)
+}
+
+#stack-bar .stack-frame.selected{
+  outline: 1px solid rgba(var(--grey-highlight-color-val), 0.25);
 }
 
 #stack-bar .stacks-wrapper{

@@ -31,17 +31,18 @@ class StackBar extends HtmlContent {
         clearTimeout(this.timeoutHandler)
 
         if (d3.event.target === this) return
-        const d3Hover = d3.select(d3.event.target)
-        const nodeData = d3Hover.datum()
-        if (nodeData) {
-          ui.highlightNode(nodeData.d)
-        }
+        const nodeData = getNodeDataFromEvent()
+        if (nodeData) ui.highlightNode(nodeData.d)
       })
       .on('mouseout', function () {
         clearTimeout(this.timeoutHandler)
         this.timeoutHandler = setTimeout(() => {
           ui.highlightNode(null)
         }, 200)
+      })
+      .on('click', function () {
+        const nodeData = getNodeDataFromEvent()
+        if (nodeData) ui.selectNode(nodeData.d)
       })
 
     this.d3Pointer = this.d3Element.append('div')
@@ -148,9 +149,11 @@ class StackBar extends HtmlContent {
         const { width, margin, colorValue } = data
 
         const isHighlighted = data.d && self.highlightedNode && (self.highlightedNode.id === data.d.id)
+        const isSelected = data.d && self.ui.selectedNode && (self.ui.selectedNode.id === data.d.id)
 
         d3.select(this)
-          .classed('selected', isHighlighted)
+          .classed('highlighted', isHighlighted)
+          .classed('selected', isSelected)
           .style('background-color', flameGradient(colorValue))
           .style('width', `${(width * 100).toFixed(3)}%`)
           .style('margin-right', `${margin}px`)
@@ -170,6 +173,12 @@ class StackBar extends HtmlContent {
       console.timeEnd('StackBar.draw')
     }
   }
+}
+
+function getNodeDataFromEvent () {
+  const d3Hover = d3.select(d3.event.target)
+  const nodeData = d3Hover.datum()
+  return nodeData
 }
 
 module.exports = StackBar

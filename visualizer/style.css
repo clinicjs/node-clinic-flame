@@ -47,7 +47,8 @@ html {
 
   --cyan: rgb(63, 125, 198);
   --primary-grey: rgb(121, 122, 124);
-  --grey-highlight: rgb(191, 192, 194);
+  --grey-highlight-color-val: 191, 192, 194;
+  --grey-highlight: rgb(var(--grey-highlight-color-val));
 
   --area-color-app: var(--max-contrast);
   --area-color-deps: var(--cyan);

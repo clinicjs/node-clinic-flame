@@ -2,7 +2,7 @@
 const d3 = require('d3')
 
 class FgTooltipContainer {
-  constructor ({ tooltip, showDelay = 500, hideDelay = 200, onZoom, onCopyPath }) {
+  constructor ({ tooltip, showDelay = 700, hideDelay = 200, onCopyPath }) {
     this.tooltip = tooltip
     this.ui = tooltip.ui
 
@@ -10,7 +10,6 @@ class FgTooltipContainer {
 
     this.showDelay = showDelay
     this.hideDelay = hideDelay
-    this.onZoom = onZoom
     this.onCopyPath = onCopyPath
 
     this.nodeData = null
@@ -44,14 +43,14 @@ class FgTooltipContainer {
 
     this.d3TooltipZoomBtn = this.d3TooltipHtml.select('.zoom-button')
       .on('click', () => {
-        this.onZoom && this.onZoom(!this.frameIsZoomed && this.nodeData)
+        this.ui.zoomNode(this.nodeData)
       })
 
     this.copyBtnChildren = this.d3TooltipCopyBtn.selectAll('span')
     this.zoomBtnChildren = this.d3TooltipZoomBtn.selectAll('span')
   }
 
-  show ({ nodeData, rect, pointerCoords, frameIsZoomed, wrapperNode }) {
+  show ({ nodeData, rect, pointerCoords, frameIsZoomed, wrapperNode, delay = null }) {
     // handling the timeout here because these calculations need to happen only when the tooltip gets actually displayed
     clearTimeout(this.tooltipHandler)
 
@@ -64,7 +63,6 @@ class FgTooltipContainer {
       this.frameIsZoomed = frameIsZoomed
 
       const hideCopyButton = !nodeData.target
-      const minWidth = Math.max(rect.width / (hideCopyButton ? 1 : 2), 20)
 
       const wrapperRect = wrapperNode.getBoundingClientRect()
 
@@ -78,8 +76,6 @@ class FgTooltipContainer {
         return this.d3TooltipHtml.remove().node()
       })
 
-      setTooltipChildVisibility(this.zoomBtnChildren, minWidth)
-      if (!hideCopyButton) setTooltipChildVisibility(this.copyBtnChildren, minWidth)
       this.d3TooltipCopyBtn.classed('hidden', hideCopyButton)
 
       this.updateZoomBtnLabel()
@@ -98,11 +94,12 @@ class FgTooltipContainer {
         showDelay: 0,
         verticalAlign: 'bottom'
       })
-    }, this.showDelay)
+    }, typeof delay === 'number' ? delay : this.showDelay)
   }
 
   hide (args = {}) {
     clearTimeout(this.tooltipHandler)
+
     this.tooltip.hide(Object.assign({
       callback: () => {
         if (this.nodeData === this.ui.highlightedNode) this.ui.highlightNode(null)
@@ -116,16 +113,6 @@ class FgTooltipContainer {
     this.d3TooltipZoomBtn.classed('zoom-in', !this.frameIsZoomed)
     this.d3TooltipZoomBtn.classed('zoom-out', this.frameIsZoomed)
   }
-}
-
-function setTooltipChildVisibility (elems, width) {
-  let totalWidth = 0
-  elems.each(function () {
-    this.style.display = ''
-    totalWidth += this.getBoundingClientRect().width
-
-    this.style.display = totalWidth > width ? 'none' : ''
-  })
 }
 
 module.exports = FgTooltipContainer

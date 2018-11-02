@@ -47,6 +47,7 @@ class Ui extends events.EventEmitter {
 
   // Temporary e.g. on mouseover, erased on mouseout
   highlightNode (node = null) {
+    if (node && node.id === 0) return
     const changed = node !== this.highlightedNode
     this.highlightedNode = node
     if (changed) this.emit('highlightNode', node)
@@ -56,6 +57,7 @@ class Ui extends events.EventEmitter {
 
   // Persistent e.g. on click, then falls back to this after mouseout
   selectNode (node = null) {
+    if (node && node.id === 0) return
     const changed = node !== this.selectedNode
     this.selectedNode = node
     if (changed) this.emit('selectNode', node)
@@ -64,9 +66,14 @@ class Ui extends events.EventEmitter {
     this.highlightNode(node)
   }
 
-  zoomNode (node = this.highlightedNode) {
-    const zoomingOut = !node || node === this.zoomedNode
-    this.emit('zoomNode', zoomingOut ? null : node)
+  zoomNode (node = null) {
+    if (!node && !this.zoomedNode) return
+
+    // Zoom out if zooming in on already-zoomed node
+    node = (!node || node === this.zoomedNode) ? null : node
+    this.zoomedNode = node
+    this.emit('zoomNode', node)
+    if (node && node !== this.selectedNode) this.selectNode(node)
   }
 
   clearSearch () {
