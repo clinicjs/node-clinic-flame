@@ -346,17 +346,21 @@ class FlameGraph extends HtmlContent {
     }
 
     const { toHide, toShow } = this.ui.changedExclusions
+    let isChanged = false
 
     if (toHide.size > 0) {
       toHide.forEach((name) => {
         this.flameGraph.typeHide(name)
       })
+      isChanged = true
     }
     if (toShow.size > 0) {
       toShow.forEach((name) => {
         this.flameGraph.typeShow(name)
       })
+      isChanged = true
     }
+    if (isChanged) this.updateMarkerBoxes()
   }
 }
 

@@ -55,7 +55,7 @@ class DataTree {
 
   getFlattenedSorted (sorter) {
     const arr = this.activeNodes()
-    const filtered = arr.filter(node => !node.hide)
+    const filtered = arr.filter(node => !this.exclude.has(node.type))
     return filtered.sort(sorter)
   }
 
@@ -125,7 +125,7 @@ class DataTree {
   }
 
   countFrames (arr = this.flatByHottest) {
-    return arr.length
+    return arr ? arr.length : 0
   }
 
   getNodeById (id) {

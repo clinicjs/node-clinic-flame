@@ -16,6 +16,10 @@ class StackBar extends HtmlContent {
     this.ui.on('selectNode', node => {
       this.pointToNode(node)
     })
+
+    this.ui.on('updateExclusions', node => {
+      this.draw()
+    })
   }
 
   initializeElements () {

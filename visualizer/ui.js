@@ -47,16 +47,22 @@ class Ui extends events.EventEmitter {
     this.dataTree.useMerged = data.useMerged
     this.dataTree.showOptimizationStatus = data.showOptimizationStatus
 
+    let anyChanges = false
+
     // Diff exclusion setting so FlameGraph can update.
     data.exclude.forEach((name) => {
       if (this.dataTree.exclude.has(name)) return
       this.changedExclusions.toHide.add(name)
+      anyChanges = true
     })
     this.dataTree.exclude.forEach((name) => {
       if (data.exclude.has(name)) return
       this.changedExclusions.toShow.add(name)
+      anyChanges = true
     })
     this.dataTree.exclude = data.exclude
+
+    if (anyChanges) this.updateExclusions({ pushState: false })
 
     // Redraw before zooming to make sure these nodes are visible in the flame graph.
     this.draw()
@@ -89,7 +95,7 @@ class Ui extends events.EventEmitter {
   }
 
   selectHottestNode (opts) {
-    this.selectNode(this.dataTree.flatByHottest[0], opts)
+    this.selectNode(this.dataTree.getFrameByRank(0), opts)
   }
 
   zoomNode (node = null, { pushState = true } = {}) {
@@ -268,7 +274,8 @@ class Ui extends events.EventEmitter {
     return keysToLabels[key] || key
   }
 
-  setCodeAreaVisibility (name, visible) {
+  setCodeAreaVisibility (name, visible, manyTimes) {
+    // Apply a single possible change to dataTree.exclude, updating what's necessary
     let isChanged = false
 
     if (visible) {
@@ -278,9 +285,19 @@ class Ui extends events.EventEmitter {
       isChanged = this.dataTree.hide(name)
       if (isChanged) this.changedExclusions.toHide.add(name)
     }
+
+    if (isChanged && !manyTimes) this.updateExclusions()
+
+    return isChanged
   }
 
   updateExclusions ({ pushState = true } = {}) {
+    this.dataTree.sortFramesByHottest()
+
+    if (this.selectedNode && this.dataTree.exclude.has(this.selectedNode.type)) {
+      this.selectHottestNode()
+    }
+
     this.emit('updateExclusions')
     if (pushState) {
       this.pushHistory()
@@ -309,7 +326,6 @@ class Ui extends events.EventEmitter {
   setData (dataTree) {
     this.dataTree = new DataTree(dataTree)
     this.emit('setData')
-    this.dataTree.sortFramesByHottest()
     this.updateExclusions({ pushState: false })
     this.history.setData(dataTree)
   }

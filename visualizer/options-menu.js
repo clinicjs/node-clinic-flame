@@ -151,13 +151,16 @@ class OptionsMenu extends HtmlContent {
       const { checked } = d3.event.target
 
       if (data.children) {
+        let anyChanges = false
         data.children.forEach((child) => {
-          ui.setCodeAreaVisibility(child.id, checked)
+          // Pass flag to only call ui.updateExclusions() when all changes are made
+          const isChanged = ui.setCodeAreaVisibility(child.id, checked, true)
+          if (isChanged) anyChanges = true
         })
+        if (anyChanges) ui.updateExclusions()
       } else {
         ui.setCodeAreaVisibility(data.id, checked)
       }
-      ui.updateExclusions()
       ui.draw()
     }
 
