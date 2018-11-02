@@ -10,6 +10,7 @@ const FgTooltipContainer = require('./flame-graph-tooltip-container')
 const Message = require('./message.js')
 const copy = require('copy-to-clipboard')
 const getLabelRenderer = require('./flame-graph-label.js')
+const getFrameRenderer = require('./flame-graph-frame.js')
 
 const searchHighlightColor = 'orange'
 
@@ -25,6 +26,7 @@ class FlameGraph extends HtmlContent {
 
     this.hoveredNodeData = null
     this.changedWidth = false
+    this.isAnimating = false
 
     this.tooltip = contentProperties.customTooltip
     this.showOptimizationStatus = contentProperties.showOptimizationStatus
@@ -38,6 +40,7 @@ class FlameGraph extends HtmlContent {
 
     this.ui.on('zoomNode', node => {
       if (this.flameGraph) {
+        this.isAnimating = true
         this.zoomedNodeData = node
 
         // Hide tooltip and highlight box / pointer until .on('animationEnd')
@@ -132,7 +135,6 @@ class FlameGraph extends HtmlContent {
       element: this.d3Chart.node(),
       cellHeight: 20,
       collapseHiddenNodeWidths: true,
-      heatBars: true,
       minHeight: window.screen.availHeight,
       frameColors: {
         fill: '#000',
@@ -150,7 +152,8 @@ class FlameGraph extends HtmlContent {
         return rgb
       },
       clickHandler: null,
-      renderLabel: getLabelRenderer(this)
+      renderLabel: getLabelRenderer(this),
+      renderStackFrameBox: getFrameRenderer(this)
     })
     this.flameGraph.sort((a, b) => {
       return sorter(a.data, b.data)
@@ -211,6 +214,7 @@ class FlameGraph extends HtmlContent {
     this.flameGraph.on('animationEnd', () => {
       // Update selection marker with new node position and size
       this.markNodeAsSelected(this.ui.selectedNode)
+      this.isAnimating = false
 
       // Show tooltip and highlight box for zoomed node after zoom completes
       if (this.ui.zoomedNode && this.ui.zoomedNode.id !== 0) {
@@ -253,7 +257,10 @@ class FlameGraph extends HtmlContent {
       this.applyRectToDiv(this.d3Highlighter, rect, true)
 
       this.d3HighlighterBox.classed('show', true)
-      this.applyRectToDiv(this.d3HighlighterBox, rect)
+      this.applyRectToDiv(this.d3HighlighterBox, Object.assign({}, rect, {
+        // Align border with horizontal lines and tooltip edge
+        y: rect.y + 1
+      }))
     } else {
       this.d3Highlighter.classed('show', false)
       this.d3HighlighterBox.classed('show', false)
@@ -265,7 +272,10 @@ class FlameGraph extends HtmlContent {
 
     if (node) {
       const rect = this.flameGraph.getNodeRect(node)
-      this.applyRectToDiv(this.d3SelectionMarker, rect)
+      this.applyRectToDiv(this.d3SelectionMarker, Object.assign({}, {
+        // Ensure marker is visible on tiny frames
+        width: rect.width < 2 ? 2 : rect.width
+      }, rect))
     }
   }
 
@@ -276,9 +286,9 @@ class FlameGraph extends HtmlContent {
       const rect = this.flameGraph.getNodeRect(node)
       this.applyRectToDiv(this.d3ZoomMarker, {
         x: rect.x,
-        y: rect.y + rect.height * 3,
+        y: rect.y + rect.height * 4,
         width: rect.width,
-        height: rect.height * 3
+        height: rect.height * 4
       })
     }
   }

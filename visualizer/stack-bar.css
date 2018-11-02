@@ -15,13 +15,19 @@
 }
 
 #stack-bar .stack-frame.selected{
-  outline: 1px solid rgba(var(--grey-highlight-color-val), 0.25);
+  border-top: 1px solid var(--main-bg-color);
+  border-bottom: 1px solid var(--main-bg-color);
+  box-shadow: 0 0 3px rgba(var(--grey-highlight-color-val), 0.5);
+
+  /* Make shadow/glow extend around border, while border doesn't cut into box size */
+  box-sizing: content-box;
 }
 
 #stack-bar .stacks-wrapper{
   display: flex;
   height: 18px;
   align-items: center;
+  background: var(--main-bg-color);
 }
 
 
