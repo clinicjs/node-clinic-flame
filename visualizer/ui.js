@@ -212,10 +212,15 @@ class Ui extends events.EventEmitter {
         scrollElement = flameWrapper.d3Element.select('.scroll-container').node()
       }
 
-      scrollElement.scrollTo({
-        top: scrollElement.scrollHeight,
-        behavior: 'smooth'
-      })
+      if (scrollElement.scrollTo) {
+        scrollElement.scrollTo({
+          top: scrollElement.scrollHeight,
+          behavior: 'smooth'
+        })
+      } else {
+        // Fallback for MS Edge
+        scrollElement.scrollTop = scrollElement.scrollHeight
+      }
     }, 200)
 
     const setFontSize = () => {
