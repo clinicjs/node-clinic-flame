@@ -1,5 +1,7 @@
 'use strict'
 
+const shared = require('../shared.js')
+
 class DataTree {
   constructor (tree) {
     this.merged = tree.merged
@@ -17,6 +19,9 @@ class DataTree {
     this.exclude = new Set(['cpp', 'regexp', 'v8', 'native', 'init'])
 
     this.flatByHottest = null // Set after d3-fg sets .hide on frames. TODO: bring this forward
+
+    this.getStackTop = shared.getStackTop.bind(this)
+    this.isNodeExcluded = shared.isNodeExcluded.bind(this)
   }
 
   show (name) {
@@ -73,14 +78,6 @@ class DataTree {
   getFrameByRank (rank, arr = this.flatByHottest) {
     if (!arr) return null
     return arr[rank] || null
-  }
-
-  getStackTop (frame) {
-    let stackTop = frame.stackTop.base
-    this.exclude.forEach((excluded) => {
-      stackTop += frame.stackTop[excluded]
-    })
-    return stackTop
   }
 
   getStackTopSorter () {
