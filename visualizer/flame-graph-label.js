@@ -24,7 +24,9 @@ function renderLabel (frameHeight, options) {
   const yBottom = y + frameHeight - btmOffset
 
   context.font = `${fontSize}px ${this.labelFont}`
-  context.fillStyle = this.ui.exposedCSS[nodeData.category]
+
+  // Reverse text and background for any current search matches
+  context.fillStyle = this.ui.exposedCSS[nodeData.highlight ? 'opposite-contrast' : nodeData.category]
 
   // Use root node as a zoom out button, blank when not zoomed in
   if (nodeData.id === 0) {

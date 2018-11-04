@@ -349,7 +349,8 @@ class Ui extends events.EventEmitter {
     this.exposedCSS = {
       app: computedStyle.getPropertyValue('--area-color-app').trim(),
       deps: computedStyle.getPropertyValue('--area-color-deps').trim(),
-      'all-core': computedStyle.getPropertyValue('--area-color-core').trim()
+      'all-core': computedStyle.getPropertyValue('--area-color-core').trim(),
+      'opposite-contrast': computedStyle.getPropertyValue('--opposite-contrast').trim()
     }
   }
 

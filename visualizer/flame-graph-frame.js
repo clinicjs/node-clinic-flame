@@ -7,7 +7,6 @@ function getFrameRenderer (bindTo) {
 function renderStackFrame (globals, locals, rect) {
   const {
     colorHash,
-    frameColors,
     STATE_IDLE
   } = globals
   const {
@@ -46,9 +45,14 @@ function renderStackFrame (globals, locals, rect) {
     height: roundedHeight
   }
 
+  const categoryColor = this.ui.exposedCSS[nodeData.category]
+
+  // Reverse text and background for any current search matches
+  const bkgColor = this.ui.exposedCSS[nodeData.highlight ? nodeData.category : 'opposite-contrast']
+
   // For really tiny frames, draw a 1px thick pixel-aligned 'matchstick' line
   if (width <= 1.5) {
-    renderAsLine(context, rect, frameColors.fill, this.ui.exposedCSS[nodeData.category], colorHash(nodeData))
+    renderAsLine(context, rect, bkgColor, categoryColor, nodeData.highlight)
     return
   }
 
@@ -57,8 +61,8 @@ function renderStackFrame (globals, locals, rect) {
 
   // Give rect an initial solid stroke using fill color so things behind
   // e.g. heat bar don't show through
-  context.fillStyle = frameColors.fill
-  context.strokeStyle = frameColors.fill
+  context.fillStyle = bkgColor
+  context.strokeStyle = bkgColor
 
   context.beginPath()
   context.rect(left, top, alignDown(width) - 1, alignDown(height))
@@ -92,7 +96,7 @@ function renderHeatBar (context, nodeData, colorHash, rect) {
   context.stroke()
 }
 
-function renderAsLine (context, rect, fillCol, areaCol) {
+function renderAsLine (context, rect, fillCol, areaCol, isHighlighted) {
   const {
     x,
     y,
@@ -108,7 +112,9 @@ function renderAsLine (context, rect, fillCol, areaCol) {
 
   // Add code area tint to the appropriate part of the line
   context.save()
-  context.globalAlpha = 0.2
+
+  // Bolden any tiny active search matches
+  context.globalAlpha = isHighlighted ? 0.9 : 0.2
   context.strokeStyle = areaCol
   context.beginPath()
   context.moveTo(x, y)
