@@ -223,7 +223,10 @@ class FrameNode {
   toJSON () {
     return {
       id: this.id,
-      name: this.name,
+
+      // Used for search matching. '(inlinable)' added at start without spaces based on d3-fg search string parsing
+      name: this.isInlinable ? '(inlinable)' + this.name : this.name,
+
       fileName: this.fileName,
       functionName: this.functionName,
       lineNumber: this.lineNumber,
