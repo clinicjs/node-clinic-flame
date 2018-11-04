@@ -98,7 +98,7 @@ class StackBar extends HtmlContent {
 
     for (let i = 0; i < dataTree.flatByHottest.length; i++) {
       const d = dataTree.flatByHottest[i]
-      const stackTop = dataTree.getStackTop(d)
+      const stackTop = d.onStackTop.asViewed
       const highestFraction = stackTop / highest
       const totalFraction = Math.max(onePxPercent, stackTop / rootNode.value)
 
@@ -110,7 +110,7 @@ class StackBar extends HtmlContent {
       usedWidth += width + (margin / availableWidth)
       if (usedWidth >= 0.98) {
         const remaining = dataTree.flatByHottest.slice(i + 1)
-        const remainingFraction = dataTree.getStackTop(remaining[0]) / highest
+        const remainingFraction = remaining[0].onStackTop.asViewed / highest
         frames.push({ remaining, width: 1 - usedWidth, margin: 0, colorValue: remainingFraction })
         break
       }

@@ -26,7 +26,8 @@ class DataTree {
     this.isNodeExcluded = shared.isNodeExcluded.bind(this)
   }
 
-  update () {
+  update (initial) {
+    if (!initial) this.updateActiveNodes()
     this.sortFramesByHottest()
     this.updateHighestStackTop()
   }
@@ -60,6 +61,15 @@ class DataTree {
     return this.useMerged ? this.mergedNodes : this.unmergedNodes
   }
 
+  updateActiveNodes () {
+    console.log('updateActiveNodes.......')
+    const arr = this.activeNodes()
+    const len = arr.length
+    for (var i = 0; i < len; i++) {
+      arr[i].onStackTop.asViewed = this.getStackTop(arr[i])
+    }
+  }
+
   setActiveTree (useMerged = false) {
     this.useMerged = useMerged === true
     this.update()
@@ -72,7 +82,7 @@ class DataTree {
   }
 
   updateHighestStackTop () {
-    this.highestStackTop = this.getStackTop(this.flatByHottest[0])
+    this.highestStackTop = this.flatByHottest[0].onStackTop.asViewed
   }
 
   getFrameByRank (rank, arr = this.flatByHottest) {
@@ -82,8 +92,8 @@ class DataTree {
 
   getStackTopSorter () {
     return (nodeA, nodeB) => {
-      const topA = this.getStackTop(nodeA)
-      const topB = this.getStackTop(nodeB)
+      const topA = nodeA.onStackTop.asViewed
+      const topB = nodeB.onStackTop.asViewed
 
       // Sort highest first, treating equal as equal
       return topA === topB ? 0 : topA > topB ? -1 : 1

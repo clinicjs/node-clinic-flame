@@ -113,7 +113,6 @@ class FlameGraph extends HtmlContent {
   initializeFromData () {
     const { dataTree } = this.ui
 
-    const highest = dataTree.highestStackTop
     const sorter = dataTree.getFilteredStackSorter()
 
     this.renderedTree = dataTree.activeTree()
@@ -135,7 +134,7 @@ class FlameGraph extends HtmlContent {
       renderTooltip: this.tooltip && null, // disabling the built-in tooltip if another tooltip is defined
       colorHash: (stackTop, { d, decimalAdjust, allSamples, tiers }) => {
         // 0 = lowest unadjusted value, 1 = highest, can be <0 or >1 due to decimalAdjust
-        const decimal = (dataTree.getStackTop(d) / this.ui.dataTree.highestStackTop) * (decimalAdjust || 1)
+        const decimal = (d.onStackTop.asViewed / this.ui.dataTree.highestStackTop) * (decimalAdjust || 1)
         const rgb = flameGradient(decimal)
         return rgb
       },
