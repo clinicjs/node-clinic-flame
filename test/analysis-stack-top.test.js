@@ -1,6 +1,5 @@
 const test = require('tap').test
 const FrameNode = require('../analysis/frame-node.js')
-const addStackTopValues = require('../analysis/add-stack-top-values.js')
 const {
   setStackTop,
   defaultExclude
@@ -27,7 +26,7 @@ test('analysis - stack top - base value is node.top', (t) => {
     }]
   }
 
-  addStackTopValues(tree)
+  setStackTop(tree, defaultExclude)
   t.match(tree.toJSON(), expected)
 
   t.end()
