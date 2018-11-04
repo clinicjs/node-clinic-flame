@@ -14,7 +14,7 @@ class DataTree {
     this.mergedNodes = getFlatArray(this.merged.children)
     this.unmergedNodes = getFlatArray(this.unmerged.children)
 
-    this.useMerged = false
+    this.useMerged = true
     this.showOptimizationStatus = false
     this.exclude = new Set(['cpp', 'regexp', 'v8', 'native', 'init'])
 
@@ -63,6 +63,10 @@ class DataTree {
 
   setActiveTree (useMerged = false) {
     this.useMerged = useMerged === true
+
+    // Showing optimization status doesn't make any sense on merged tree
+    if (useMerged) this.showOptimizationStatus = false
+
     this.update()
   }
 
