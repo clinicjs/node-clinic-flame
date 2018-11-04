@@ -50,6 +50,10 @@ class DataTree {
 
   setActiveTree (useMerged = false) {
     this.useMerged = useMerged === true
+
+    // Showing optimization status doesn't make any sense on merged tree
+    if (useMerged) this.showOptimizationStatus = false
+
     this.sortFramesByHottest()
   }
 
