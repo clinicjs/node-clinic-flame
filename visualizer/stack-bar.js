@@ -89,7 +89,7 @@ class StackBar extends HtmlContent {
 
     const { dataTree } = this.ui
     const rootNode = dataTree.activeTree()
-    const highest = dataTree.getHighestStackTop()
+    const highest = dataTree.highestStackTop
     const availableWidth = this.d3Element.node().getBoundingClientRect().width
     const onePxPercent = 1 / availableWidth
 
@@ -98,7 +98,7 @@ class StackBar extends HtmlContent {
 
     for (let i = 0; i < dataTree.flatByHottest.length; i++) {
       const d = dataTree.flatByHottest[i]
-      const stackTop = dataTree.getStackTop(d)
+      const stackTop = d.onStackTop.asViewed
       const highestFraction = stackTop / highest
       const totalFraction = Math.max(onePxPercent, stackTop / rootNode.value)
 
@@ -110,7 +110,7 @@ class StackBar extends HtmlContent {
       usedWidth += width + (margin / availableWidth)
       if (usedWidth >= 0.98) {
         const remaining = dataTree.flatByHottest.slice(i + 1)
-        const remainingFraction = dataTree.getStackTop(remaining[0]) / highest
+        const remainingFraction = remaining[0].onStackTop.asViewed / highest
         frames.push({ remaining, width: 1 - usedWidth, margin: 0, colorValue: remainingFraction })
         break
       }
@@ -137,7 +137,6 @@ class StackBar extends HtmlContent {
     // const rootNode = dataTree.activeTree()
     this.frames = this.prepareFrames()
 
-    // const highest = dataTree.getHighestStackTop()
     const update = this.d3StacksWrapper.selectAll('div')
       .data(this.frames)
     update.exit().remove()

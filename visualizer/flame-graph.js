@@ -52,6 +52,10 @@ class FlameGraph extends HtmlContent {
         this.flameGraph.zoom(node || this.ui.dataTree.activeTree())
       }
     })
+
+    this.ui.on('updateExclusions', () => {
+      this.sort()
+    })
   }
 
   initializeElements () {
@@ -113,9 +117,6 @@ class FlameGraph extends HtmlContent {
   initializeFromData () {
     const { dataTree } = this.ui
 
-    const highest = dataTree.getHighestStackTop()
-    const sorter = dataTree.getFilteredStackSorter()
-
     this.renderedTree = dataTree.activeTree()
     this.flameGraph = d3Fg({
       tree: dataTree.activeTree(),
@@ -135,7 +136,7 @@ class FlameGraph extends HtmlContent {
       renderTooltip: this.tooltip && null, // disabling the built-in tooltip if another tooltip is defined
       colorHash: (stackTop, { d, decimalAdjust, allSamples, tiers }) => {
         // 0 = lowest unadjusted value, 1 = highest, can be <0 or >1 due to decimalAdjust
-        const decimal = (dataTree.getStackTop(d) / highest) * (decimalAdjust || 1)
+        const decimal = (d.onStackTop.asViewed / this.ui.dataTree.highestStackTop) * (decimalAdjust || 1)
         const rgb = flameGradient(decimal)
         return rgb
       },
@@ -143,9 +144,8 @@ class FlameGraph extends HtmlContent {
       renderLabel: getLabelRenderer(this),
       renderStackFrameBox: getFrameRenderer(this)
     })
-    this.flameGraph.sort((a, b) => {
-      return sorter(a.data, b.data)
-    })
+
+    this.sort()
 
     const wrapperNode = this.d3Chart.node()
     this.flameGraph.on('click', (nodeData, rect, pointerCoords) => {
@@ -316,6 +316,13 @@ class FlameGraph extends HtmlContent {
 
   search (query) {
     this.flameGraph.search(query, searchHighlightColor)
+  }
+
+  sort () {
+    const sorter = this.ui.dataTree.getFilteredStackSorter()
+    if (this.flameGraph) this.flameGraph.sort((a, b) => {
+      return sorter(a.data, b.data)
+    })
   }
 
   draw () {

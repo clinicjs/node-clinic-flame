@@ -4,7 +4,10 @@ const { promisify } = require('util')
 const ticksToTree = require('0x/lib/ticks-to-tree')
 const FrameNode = require('./frame-node.js')
 const labelNodes = require('./label-nodes.js')
-const addStackTopValues = require('./add-stack-top-values.js')
+const {
+  setStackTop,
+  defaultExclude
+} = require('../shared.js')
 
 const readFile = promisify(fs.readFile)
 
@@ -22,9 +25,11 @@ async function analyse (paths) {
 
   const steps = [
     (tree) => labelNodes(tree),
-    (tree) => tree.walk((node) => node.categorise(systemInfo)),
-    (tree) => tree.walk((node) => node.format(systemInfo)),
-    (tree) => addStackTopValues(tree)
+    (tree) => tree.walk((node) => {
+      node.categorise(systemInfo)
+      node.format(systemInfo)
+    }),
+    (tree) => setStackTop(tree, defaultExclude)
   ]
 
   const trees = ticksToTree(ticks, { inlined })

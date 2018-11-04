@@ -296,14 +296,14 @@ class Ui extends events.EventEmitter {
     return isChanged
   }
 
-  updateExclusions ({ pushState = true } = {}) {
-    this.dataTree.sortFramesByHottest()
+  updateExclusions ({ initial, pushState = true } = {}) {
+    this.dataTree.update(initial)
 
     if (this.selectedNode && this.dataTree.exclude.has(this.selectedNode.type)) {
       this.selectHottestNode()
     }
 
-    this.emit('updateExclusions')
+    if (!initial) this.emit('updateExclusions')
     if (pushState) {
       this.pushHistory()
     }
@@ -330,8 +330,8 @@ class Ui extends events.EventEmitter {
 
   setData (dataTree) {
     this.dataTree = new DataTree(dataTree)
+    this.updateExclusions({ pushState: false, initial: true })
     this.emit('setData')
-    this.updateExclusions({ pushState: false })
     this.history.setData(dataTree)
   }
 

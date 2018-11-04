@@ -240,7 +240,7 @@ class FrameNode {
       isInit: this.isInit,
 
       value: this.onStack,
-      stackTop: this.onStackTop,
+      onStackTop: this.onStackTop,
       children: this.children.map((node) => node.toJSON())
     }
   }
