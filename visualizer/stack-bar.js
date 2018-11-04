@@ -89,7 +89,7 @@ class StackBar extends HtmlContent {
 
     const { dataTree } = this.ui
     const rootNode = dataTree.activeTree()
-    const highest = dataTree.getHighestStackTop()
+    const highest = dataTree.highestStackTop
     const availableWidth = this.d3Element.node().getBoundingClientRect().width
     const onePxPercent = 1 / availableWidth
 
@@ -137,7 +137,6 @@ class StackBar extends HtmlContent {
     // const rootNode = dataTree.activeTree()
     this.frames = this.prepareFrames()
 
-    // const highest = dataTree.getHighestStackTop()
     const update = this.d3StacksWrapper.selectAll('div')
       .data(this.frames)
     update.exit().remove()

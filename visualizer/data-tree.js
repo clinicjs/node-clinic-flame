@@ -18,10 +18,17 @@ class DataTree {
     this.showOptimizationStatus = false
     this.exclude = new Set(['cpp', 'regexp', 'v8', 'native', 'init'])
 
-    this.flatByHottest = null // Set after d3-fg sets .hide on frames. TODO: bring this forward
+    // Set and updated in .update()
+    this.flatByHottest = null
+    this.highestStackTop = null
 
     this.getStackTop = shared.getStackTop.bind(this)
     this.isNodeExcluded = shared.isNodeExcluded.bind(this)
+  }
+
+  update () {
+    this.sortFramesByHottest()
+    this.updateHighestStackTop()
   }
 
   show (name) {
@@ -55,7 +62,7 @@ class DataTree {
 
   setActiveTree (useMerged = false) {
     this.useMerged = useMerged === true
-    this.sortFramesByHottest()
+    this.update()
   }
 
   getFlattenedSorted (sorter) {
@@ -64,15 +71,8 @@ class DataTree {
     return filtered.sort(sorter)
   }
 
-  getHighestStackTop (tree = this.activeTree()) {
-    if (this.flatByHottest) return this.getStackTop(this.flatByHottest[0])
-
-    return tree.children
-      ? tree.children.reduce((highest, child) => {
-        const newValue = this.getHighestStackTop(child)
-        return newValue > highest ? newValue : highest
-      }, this.getStackTop(tree))
-      : 0
+  updateHighestStackTop () {
+    this.highestStackTop = this.getStackTop(this.flatByHottest[0])
   }
 
   getFrameByRank (rank, arr = this.flatByHottest) {
