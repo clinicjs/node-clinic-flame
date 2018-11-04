@@ -7,7 +7,7 @@
   margin: 0;
   overflow: hidden;
   padding: 2px 8px;
-  white-space: normal;
+  white-space: pre-wrap;
 }
 
 #info-box .frame-info:hover {
@@ -20,20 +20,42 @@
   word-break: break-word;
 }
 
-#info-box .frame-info em {
-  font-style: italic;
+#info-box span.frame-info-item {
+  flex-grow: 1;
+}
+
+#info-box .frame-info .frame-area {
   color: var(--primary-grey);
   word-break: break-word;
+  text-align: right;
 }
 
 #info-box .frame-info-item {
-  margin: 0 8px;
+  padding: 0 8px;
 }
 
 #info-box .frame-info .frame-path {
-  flex-grow: 1;
   overflow: hidden;
   word-break: break-word;
-  flex-basis: 55%; /* sort of magic number I know... */
   flex-shrink: 0;
+}
+
+/* Share space, with the file path always starting in a consistent position, */
+/* unless function name is unusually long, in which case it shrinks to fit */
+#info-box .frame-function {
+  flex-grow: 0;
+}
+
+#info-box .frame-path,
+#info-box .frame-area {
+  flex-grow: 1;
+}
+
+#info-box .frame-function,
+#info-box .frame-area {
+  min-width: 16.67%;
+}
+
+#info-box .frame-path {
+  max-width: 66.67%;
 }
