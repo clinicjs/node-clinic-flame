@@ -1,26 +1,30 @@
 const test = require('tap').test
 const FrameNode = require('../analysis/frame-node.js')
+const {
+  isNodeExcluded,
+  defaultExclude
+} = require('../shared.js')
 
-test('analysis - categorise nodes', (t) => {
+const linux = {
+  mainDirectory: '/root',
+  pathSeparator: '/'
+}
+
+const windows = {
+  mainDirectory: 'C:\\Documents\\Contains spaces',
+  pathSeparator: '\\'
+}
+
+function byProps (properties, sysinfo) {
+  const node = new FrameNode(properties)
+  node.categorise(sysinfo)
+  return node
+}
+
+test('analysis - categorise node names', (t) => {
   function byName (name, sysinfo) {
     const { type } = byProps({ name }, sysinfo)
     return type
-  }
-
-  function byProps (properties, sysinfo) {
-    const node = new FrameNode(properties)
-    node.categorise(sysinfo)
-    return node
-  }
-
-  const linux = {
-    mainDirectory: '/root',
-    pathSeparator: '/'
-  }
-
-  const windows = {
-    mainDirectory: 'C:\\Documents\\Contains spaces',
-    pathSeparator: '\\'
   }
 
   t.equal(byName('NativeModule.compile internal/bootstrap/loaders.js:236:44 [INIT]', linux), 'init')
@@ -37,6 +41,18 @@ test('analysis - categorise nodes', (t) => {
   t.equal(byName('InnerArraySort native array.js:486:24', linux), 'native')
   t.equal(byName('[\u0000zA-Z\u0000#$%&\'*+.|~]+$ [CODE:RegExp]', linux), 'regexp')
 
+  t.end()
+})
+
+test('analysis - categorise node properties', (t) => {
+  class DummyDataTree {
+    constructor () {
+      this.exclude = defaultExclude
+      this.isNodeExcluded = isNodeExcluded.bind(this)
+    }
+  }
+  const dataTree = new DummyDataTree()
+
   // Handle multiple unexpected custom flags
   const customNode = byProps({
     name: '~Unexpected multiple customFlags C:\\Documents\\Contains spaces\\sub_dir\\index.js:1:1'
@@ -50,6 +66,7 @@ test('analysis - categorise nodes', (t) => {
   t.equal(customNode.fileName, '.\\sub_dir\\index.js')
   t.ok(customNode.isOptimised)
   t.notOk(customNode.isOptimisable)
+  t.notOk(dataTree.isNodeExcluded(customNode))
 
   const depNode = byProps({
     name: '*Funcname C:\\Documents\\Contains spaces\\node_modules\\some-module\\index.js:1:2'
@@ -65,6 +82,9 @@ test('analysis - categorise nodes', (t) => {
   t.equal(depNode.columnNumber, 2)
   t.notOk(depNode.isOptimised)
   t.ok(depNode.isOptimisable)
+  t.notOk(dataTree.isNodeExcluded(depNode))
+  dataTree.exclude.add('deps')
+  t.ok(dataTree.isNodeExcluded(depNode))
 
   // Format regular expressions
   const regexpNode = byProps({
@@ -79,6 +99,7 @@ test('analysis - categorise nodes', (t) => {
   t.equal(regexpNode.fileName, '[CODE:RegExp]')
   t.notOk(regexpNode.isOptimised)
   t.notOk(regexpNode.isOptimisable)
+  t.ok(dataTree.isNodeExcluded(regexpNode))
 
   // Handle INIT and INLINABLE frames
   // (temporary quick coverage because INIT / INLINABLE types are to be replaced with flags)
@@ -94,6 +115,9 @@ test('analysis - categorise nodes', (t) => {
   t.notOk(inlinableNode.isInit)
   t.notOk(inlinableNode.isOptimised)
   t.notOk(inlinableNode.isOptimisable)
+  t.notOk(dataTree.isNodeExcluded(inlinableNode))
+  dataTree.exclude.add('inlinable')
+  t.ok(dataTree.isNodeExcluded(inlinableNode))
 
   const initNode = byProps({
     name: '*Funcname /root/0x/examples/dummy.js:1:1 [INIT]'
@@ -107,6 +131,8 @@ test('analysis - categorise nodes', (t) => {
   t.notOk(initNode.isInlinable)
   t.notOk(initNode.isOptimised)
   t.ok(initNode.isOptimisable)
+
+  t.ok(dataTree.isNodeExcluded(initNode))
 
   const sharedNode = byProps({
     name: 'C:\\Program Files\\nodejs\\node.exe [SHARED_LIB]'

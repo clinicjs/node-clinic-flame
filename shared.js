@@ -4,7 +4,7 @@
  */
 
 function setStackTop (node, exclude = this.exclude) {
-  const childCount = node.children ? node.children.length : 0
+  const childCount = node.children.length
   const nodeIsExcluded = isNodeExcluded(node, exclude)
   let topTotal = node.onStackTop.base
 

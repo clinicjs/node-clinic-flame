@@ -1,5 +1,7 @@
 'use strict'
 
+// Causes timeout, needs optimizing or replacing
+
 const dataJsonRegex = new RegExp(
   // Check for presence of these expected stringified-JSON segments, with or without " around keys.
   // This is the expected order, but there's no need to strictly enforce JSON key order.
@@ -22,7 +24,7 @@ const dataJsonRegex = new RegExp(
 )
 
 function containsData (contentString) {
-  return dataJsonRegex.test(contentString)
+  return dataJsonRegex.test(JSON.stringify(contentString))
 }
 
 // More exports will be added to this file, so this function should be required by name
