@@ -52,6 +52,10 @@ class FlameGraph extends HtmlContent {
         this.flameGraph.zoom(node || this.ui.dataTree.activeTree())
       }
     })
+
+    this.ui.on('updateExclusions', () => {
+      this.sort()
+    })
   }
 
   initializeElements () {
@@ -113,8 +117,6 @@ class FlameGraph extends HtmlContent {
   initializeFromData () {
     const { dataTree } = this.ui
 
-    const sorter = dataTree.getFilteredStackSorter()
-
     this.renderedTree = dataTree.activeTree()
     this.flameGraph = d3Fg({
       tree: dataTree.activeTree(),
@@ -142,9 +144,8 @@ class FlameGraph extends HtmlContent {
       renderLabel: getLabelRenderer(this),
       renderStackFrameBox: getFrameRenderer(this)
     })
-    this.flameGraph.sort((a, b) => {
-      return sorter(a.data, b.data)
-    })
+
+    this.sort()
 
     const wrapperNode = this.d3Chart.node()
     this.flameGraph.on('click', (nodeData, rect, pointerCoords) => {
@@ -315,6 +316,13 @@ class FlameGraph extends HtmlContent {
 
   search (query) {
     this.flameGraph.search(query, searchHighlightColor)
+  }
+
+  sort () {
+    const sorter = this.ui.dataTree.getFilteredStackSorter()
+    if (this.flameGraph) this.flameGraph.sort((a, b) => {
+      return sorter(a.data, b.data)
+    })
   }
 
   draw () {

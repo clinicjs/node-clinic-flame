@@ -303,7 +303,7 @@ class Ui extends events.EventEmitter {
       this.selectHottestNode()
     }
 
-    this.emit('updateExclusions')
+    if (!initial) this.emit('updateExclusions')
     if (pushState) {
       this.pushHistory()
     }
