@@ -20,13 +20,15 @@ class InfoBox extends HtmlContent {
 
     this.d3FrameFunction = this.d3FrameInfo.append('strong')
       .classed('frame-info-item', true)
+      .classed('frame-function', true)
 
     this.d3FramePath = this.d3FrameInfo.append('span')
       .classed('frame-info-item', true)
       .classed('frame-path', true)
 
-    this.d3FrameArea = this.d3FrameInfo.append('em')
+    this.d3FrameArea = this.d3FrameInfo.append('span')
       .classed('frame-info-item', true)
+      .classed('frame-area', true)
   }
 
   contentFromNode (node) {
