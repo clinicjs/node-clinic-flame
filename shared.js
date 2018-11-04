@@ -3,16 +3,18 @@
  * Functions shared between frontend (visualizer) and backend (analysis)
  */
 
-function getStackTop (node, exclude = this.exclude) {
+function setStackTop (node, exclude = this.exclude) {
   const childCount = node.children ? node.children.length : 0
+  const nodeIsExcluded = isNodeExcluded(node, exclude)
   let topTotal = node.onStackTop.base
 
   // Will be called many many times in browser, use vanilla for/i for speed
   for (var i = 0; i < childCount; i++) {
     // Add stack top of excluded children and chains of excluded descendents
-    if (isNodeExcluded(node.children[i], exclude)) topTotal += getStackTop(node.children[i], exclude)
+    topTotal += setStackTop(node.children[i], exclude)
   }
-  return topTotal
+  node.onStackTop.asViewed = nodeIsExcluded ? 0 : topTotal
+  return nodeIsExcluded ? topTotal : 0
 }
 
 function isNodeExcluded (node, exclude = this.exclude) {
@@ -34,7 +36,7 @@ const defaultExclude = new Set([
 ])
 
 module.exports = {
-  getStackTop,
+  setStackTop,
   isNodeExcluded,
   defaultExclude
 }

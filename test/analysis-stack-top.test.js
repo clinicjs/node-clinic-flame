@@ -17,13 +17,13 @@ test('analysis - stack top - base value is node.top', (t) => {
   }))
 
   const expected = {
-    stackTop: { base: 10 },
+    onStackTop: { base: 10 },
     children: [{
-      stackTop: { base: 25 }
+      onStackTop: { base: 25 }
     }]
   }
 
-  addStackTopValues(tree)
+  tree.walk(node => addStackTopValues(node))
   t.match(tree.toJSON(), expected)
 
   t.end()
@@ -73,28 +73,28 @@ test('analysis - stack top - nested', (t) => {
 
   const expected = {
     // test
-    stackTop: { base: 10, app: 25, cpp: 718 },
+    onStackTop: { base: 10, asViewed: 728 },
     children: [{
       // test2
-      stackTop: { base: 25, cpp: 3 },
+      onStackTop: { base: 25, asViewed: 28 },
       children: [{
-        stackTop: { base: 3 }
+        onStackTop: { base: 3, asViewed: 0 }
       }]
     }, {
-      stackTop: { base: 700, app: 60, cpp: 18 },
+      onStackTop: { base: 700, asViewed: 0 },
       children: [{
-        stackTop: { base: 18 }
+        onStackTop: { base: 18, asViewed: 0 }
       }, {
         // test3
-        stackTop: { base: 60, cpp: 10000 },
+        onStackTop: { base: 60, asViewed: 10060 },
         children: [{
-          stackTop: { base: 10000 }
+          onStackTop: { base: 10000, asViewed: 0 }
         }]
       }]
     }]
   }
 
-  addStackTopValues(tree)
+  tree.walk(node => addStackTopValues(node))
   t.match(tree.toJSON(), expected)
 
   t.end()

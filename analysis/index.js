@@ -22,9 +22,11 @@ async function analyse (paths) {
 
   const steps = [
     (tree) => labelNodes(tree),
-    (tree) => tree.walk((node) => node.categorise(systemInfo)),
-    (tree) => tree.walk((node) => node.format(systemInfo)),
-    (tree) => tree.walk((node) => addStackTopValues(node))
+    (tree) => tree.walk(node => {
+      node.categorise(systemInfo)
+      node.format(systemInfo)
+    }),
+    (tree) => addStackTopValues(tree)
   ]
 
   const trees = ticksToTree(ticks, { inlined })

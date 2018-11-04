@@ -22,12 +22,12 @@ class DataTree {
     this.flatByHottest = null
     this.highestStackTop = null
 
-    this.getStackTop = shared.getStackTop.bind(this)
+    this.setStackTop = shared.setStackTop.bind(this)
     this.isNodeExcluded = shared.isNodeExcluded.bind(this)
   }
 
   update (initial) {
-    if (!initial) this.updateActiveNodes()
+    if (!initial) this.setStackTop(this.activeTree())
     this.sortFramesByHottest()
     this.updateHighestStackTop()
   }
@@ -59,15 +59,6 @@ class DataTree {
 
   activeNodes () {
     return this.useMerged ? this.mergedNodes : this.unmergedNodes
-  }
-
-  updateActiveNodes () {
-    console.log('updateActiveNodes.......')
-    const arr = this.activeNodes()
-    const len = arr.length
-    for (var i = 0; i < len; i++) {
-      arr[i].onStackTop.asViewed = this.getStackTop(arr[i])
-    }
   }
 
   setActiveTree (useMerged = false) {

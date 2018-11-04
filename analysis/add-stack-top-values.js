@@ -5,18 +5,12 @@
  */
 
 const {
-  getStackTop,
-  isNodeExcluded,
+  setStackTop,
   defaultExclude
 } = require('../shared.js')
 
-function addStackTopValues (node) {
-  if (isNodeExcluded(node, defaultExclude)) {
-    node.onStackTop.asViewed = 0
-  } else {
-    node.onStackTop.asViewed = getStackTop(node, defaultExclude)
-  }
-  return node
+function addStackTopValues (tree) {
+  setStackTop(tree, defaultExclude)
 }
 
 module.exports = addStackTopValues
