@@ -46,6 +46,7 @@ html {
   --footer-color: rgba(255, 255, 255, 0.9);
 
   --cyan: rgb(63, 125, 198);
+  --grey-blue: rgb(76, 92, 138);
   --primary-grey: rgb(121, 122, 124);
   --grey-highlight-color-val: 191, 192, 194;
   --grey-highlight: rgb(var(--grey-highlight-color-val));
