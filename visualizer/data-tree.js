@@ -1,5 +1,7 @@
 'use strict'
 
+const shared = require('../shared.js')
+
 class DataTree {
   constructor (tree) {
     this.merged = tree.merged
@@ -16,7 +18,18 @@ class DataTree {
     this.showOptimizationStatus = false
     this.exclude = new Set(['cpp', 'regexp', 'v8', 'native', 'init'])
 
-    this.flatByHottest = null // Set after d3-fg sets .hide on frames. TODO: bring this forward
+    // Set and updated in .update()
+    this.flatByHottest = null
+    this.highestStackTop = null
+
+    this.setStackTop = shared.setStackTop.bind(this)
+    this.isNodeExcluded = shared.isNodeExcluded.bind(this)
+  }
+
+  update (initial) {
+    if (!initial) this.setStackTop(this.activeTree())
+    this.sortFramesByHottest()
+    this.updateHighestStackTop()
   }
 
   show (name) {
@@ -54,7 +67,7 @@ class DataTree {
     // Showing optimization status doesn't make any sense on merged tree
     if (useMerged) this.showOptimizationStatus = false
 
-    this.sortFramesByHottest()
+    this.update()
   }
 
   getFlattenedSorted (sorter) {
@@ -63,15 +76,8 @@ class DataTree {
     return filtered.sort(sorter)
   }
 
-  getHighestStackTop (tree = this.activeTree()) {
-    if (this.flatByHottest) return this.getStackTop(this.flatByHottest[0])
-
-    return tree.children
-      ? tree.children.reduce((highest, child) => {
-        const newValue = this.getHighestStackTop(child)
-        return newValue > highest ? newValue : highest
-      }, this.getStackTop(tree))
-      : 0
+  updateHighestStackTop () {
+    this.highestStackTop = this.flatByHottest[0].onStackTop.asViewed
   }
 
   getFrameByRank (rank, arr = this.flatByHottest) {
@@ -79,18 +85,10 @@ class DataTree {
     return arr[rank] || null
   }
 
-  getStackTop (frame) {
-    let stackTop = frame.stackTop.base
-    this.exclude.forEach((excluded) => {
-      stackTop += frame.stackTop[excluded]
-    })
-    return stackTop
-  }
-
   getStackTopSorter () {
     return (nodeA, nodeB) => {
-      const topA = this.getStackTop(nodeA)
-      const topB = this.getStackTop(nodeB)
+      const topA = nodeA.onStackTop.asViewed
+      const topB = nodeB.onStackTop.asViewed
 
       // Sort highest first, treating equal as equal
       return topA === topB ? 0 : topA > topB ? -1 : 1

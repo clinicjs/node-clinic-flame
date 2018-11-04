@@ -24,7 +24,9 @@ function renderLabel (frameHeight, options) {
   const yBottom = y + frameHeight - btmOffset
 
   context.font = `${fontSize}px ${this.labelFont}`
-  context.fillStyle = this.ui.exposedCSS[nodeData.category]
+
+  // Reverse text and background for any current search matches
+  context.fillStyle = this.ui.getFrameColor(nodeData, 'foreground')
 
   // Use root node as a zoom out button, blank when not zoomed in
   if (nodeData.id === 0) {
@@ -40,6 +42,12 @@ function renderLabel (frameHeight, options) {
   // Must have implemented the bars for code area changes first
   let fileName = nodeData.fileName
   let functionName = nodeData.functionName
+
+  if (nodeData.isInlinable) functionName += ' (inlinable)'
+
+  if (this.ui.dataTree.showOptimizationStatus && (nodeData.isOptimised || nodeData.isOptimisable)) {
+    functionName += ` (${nodeData.isOptimised ? 'is optimized' : 'optimizable'})`
+  }
 
   if (fileName === null) {
     if (nodeData.type === 'v8') fileName = 'Compiled V8 C++'

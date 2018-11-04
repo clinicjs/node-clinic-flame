@@ -296,14 +296,14 @@ class Ui extends events.EventEmitter {
     return isChanged
   }
 
-  updateExclusions ({ pushState = true } = {}) {
-    this.dataTree.sortFramesByHottest()
+  updateExclusions ({ initial, pushState = true } = {}) {
+    this.dataTree.update(initial)
 
     if (this.selectedNode && this.dataTree.exclude.has(this.selectedNode.type)) {
       this.selectHottestNode()
     }
 
-    this.emit('updateExclusions')
+    if (!initial) this.emit('updateExclusions')
     if (pushState) {
       this.pushHistory()
     }
@@ -330,8 +330,8 @@ class Ui extends events.EventEmitter {
 
   setData (dataTree) {
     this.dataTree = new DataTree(dataTree)
+    this.updateExclusions({ pushState: false, initial: true })
     this.emit('setData')
-    this.updateExclusions({ pushState: false })
     this.history.setData(dataTree)
   }
 
@@ -340,8 +340,8 @@ class Ui extends events.EventEmitter {
   }
 
   /**
-  * Initialization and draw
-  **/
+   * Initialization and draw
+   **/
 
   setExposedCSS () {
     // TODO: When light / dark theme switch implemented, call this after each switch, before redraw
@@ -349,7 +349,26 @@ class Ui extends events.EventEmitter {
     this.exposedCSS = {
       app: computedStyle.getPropertyValue('--area-color-app').trim(),
       deps: computedStyle.getPropertyValue('--area-color-deps').trim(),
-      'all-core': computedStyle.getPropertyValue('--area-color-core').trim()
+      'all-core': computedStyle.getPropertyValue('--area-color-core').trim(),
+
+      'opposite-contrast': computedStyle.getPropertyValue('--opposite-contrast').trim(),
+      'max-contrast': computedStyle.getPropertyValue('--max-contrast').trim(),
+      'grey-blue': computedStyle.getPropertyValue('--grey-blue').trim(),
+      'primary-grey': computedStyle.getPropertyValue('--primary-grey').trim()
+    }
+  }
+
+  getFrameColor (nodeData, role, reverse = nodeData.highlight) {
+    if ((role === 'background' && !reverse) || (role === 'foreground' && reverse)) {
+      return this.exposedCSS['opposite-contrast']
+    }
+
+    if (this.dataTree.showOptimizationStatus) {
+      if (nodeData.isOptimisable) return this.exposedCSS['max-contrast']
+      if (nodeData.isOptimised) return this.exposedCSS['primary-grey']
+      return this.exposedCSS['grey-blue']
+    } else {
+      return this.exposedCSS[nodeData.category]
     }
   }
 

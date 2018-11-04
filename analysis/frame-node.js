@@ -221,9 +221,15 @@ class FrameNode {
   }
 
   toJSON () {
+    // Used for search matching. '(inlinable)' added at start without spaces based on d3-fg search string parsing
+    /* istanbul ignore next: inlinability is not always consistent between runs of the same test */
+    const name = this.isInlinable ? '(inlinable)' + this.name : this.name
+
     return {
       id: this.id,
-      name: this.name,
+
+      name,
+
       fileName: this.fileName,
       functionName: this.functionName,
       lineNumber: this.lineNumber,
@@ -240,7 +246,7 @@ class FrameNode {
       isInit: this.isInit,
 
       value: this.onStack,
-      stackTop: this.onStackTop,
+      onStackTop: this.onStackTop,
       children: this.children.map((node) => node.toJSON())
     }
   }

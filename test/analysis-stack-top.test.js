@@ -1,6 +1,9 @@
 const test = require('tap').test
 const FrameNode = require('../analysis/frame-node.js')
-const addStackTopValues = require('../analysis/add-stack-top-values.js')
+const {
+  setStackTop,
+  defaultExclude
+} = require('../shared.js')
 
 test('analysis - stack top - base value is node.top', (t) => {
   const tree = new FrameNode({
@@ -17,24 +20,31 @@ test('analysis - stack top - base value is node.top', (t) => {
   }))
 
   const expected = {
-    stackTop: { base: 10 },
+    onStackTop: { base: 10 },
     children: [{
-      stackTop: { base: 25 }
+      onStackTop: { base: 25 }
     }]
   }
 
-  addStackTopValues(tree)
+  setStackTop(tree, defaultExclude)
   t.match(tree.toJSON(), expected)
 
   t.end()
 })
 
-test('analysis - stack top - nested', (t) => {
+test('analysis - stack top - nested - bound', (t) => {
   // When hiding a stack type, eg. 'cpp', it has an effect on the number of samples where its parent stack frames were at the top of the stack.
   // Eg if a JS function called into C++, that JS function would now visually be at the top of the stack, for the duration of that C++ function call.
   // If C++ calls back into JS, that next JS function will still be on top as usual. If _that_ function calls back into C++, the C++ top time should be added to the topmost JS function, but not the initial JS function.
   // If C++ calls other C++ functions directly, those will also be hidden and should also be counted as "top of stack" samples for the closest JS function.
   // Essentially, all child C++ frames should be summed, _so long as_ they don't cross over a category boundary (eg. back into JS).
+
+  class DummyDataTree {
+    constructor () {
+      this.exclude = defaultExclude
+      this.setStackTop = setStackTop.bind(this)
+    }
+  }
 
   const tree = new FrameNode({
     name: 'test /home/app/project/app.js:10:1',
@@ -73,28 +83,29 @@ test('analysis - stack top - nested', (t) => {
 
   const expected = {
     // test
-    stackTop: { base: 10, app: 25, cpp: 718 },
+    onStackTop: { base: 10, asViewed: 728 },
     children: [{
       // test2
-      stackTop: { base: 25, cpp: 3 },
+      onStackTop: { base: 25, asViewed: 28 },
       children: [{
-        stackTop: { base: 3 }
+        onStackTop: { base: 3, asViewed: 0 }
       }]
     }, {
-      stackTop: { base: 700, app: 60, cpp: 18 },
+      onStackTop: { base: 700, asViewed: 0 },
       children: [{
-        stackTop: { base: 18 }
+        onStackTop: { base: 18, asViewed: 0 }
       }, {
         // test3
-        stackTop: { base: 60, cpp: 10000 },
+        onStackTop: { base: 60, asViewed: 10060 },
         children: [{
-          stackTop: { base: 10000 }
+          onStackTop: { base: 10000, asViewed: 0 }
         }]
       }]
     }]
   }
 
-  addStackTopValues(tree)
+  const dataTree = new DummyDataTree()
+  dataTree.setStackTop(tree)
   t.match(tree.toJSON(), expected)
 
   t.end()

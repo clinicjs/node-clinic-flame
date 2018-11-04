@@ -7,7 +7,6 @@ function getFrameRenderer (bindTo) {
 function renderStackFrame (globals, locals, rect) {
   const {
     colorHash,
-    frameColors,
     STATE_IDLE
   } = globals
   const {
@@ -48,17 +47,22 @@ function renderStackFrame (globals, locals, rect) {
 
   // For really tiny frames, draw a 1px thick pixel-aligned 'matchstick' line
   if (width <= 1.5) {
-    renderAsLine(context, rect, frameColors.fill, this.ui.exposedCSS[nodeData.category], colorHash(nodeData))
+    const backgroundColor = this.ui.getFrameColor(nodeData, 'background', false)
+    const foregroundColor = this.ui.getFrameColor(nodeData, 'foreground', false)
+    renderAsLine(context, rect, backgroundColor, foregroundColor, nodeData.highlight)
     return
   }
 
   // Don't redraw heat over previous paint on hover events, and don't draw for root node
   if (state === STATE_IDLE && nodeData.id !== 0) renderHeatBar(context, nodeData, colorHash, alignedRect)
 
+  const backgroundColor = this.ui.getFrameColor(nodeData, 'background')
+  const foregroundColor = this.ui.getFrameColor(nodeData, 'foreground')
+
   // Give rect an initial solid stroke using fill color so things behind
   // e.g. heat bar don't show through
-  context.fillStyle = frameColors.fill
-  context.strokeStyle = frameColors.fill
+  context.fillStyle = backgroundColor
+  context.strokeStyle = backgroundColor
 
   context.beginPath()
   context.rect(left, top, alignDown(width) - 1, alignDown(height))
@@ -68,7 +72,7 @@ function renderStackFrame (globals, locals, rect) {
   // Add a light stroke to left, bottom and right indicating code area
   context.save()
   context.globalAlpha = 0.2
-  context.strokeStyle = this.ui.exposedCSS[nodeData.category]
+  context.strokeStyle = foregroundColor
   context.beginPath()
   context.moveTo(left, top)
   context.lineTo(left, bottom)
@@ -92,7 +96,7 @@ function renderHeatBar (context, nodeData, colorHash, rect) {
   context.stroke()
 }
 
-function renderAsLine (context, rect, fillCol, areaCol) {
+function renderAsLine (context, rect, backgroundColor, foregroundColor, isHighlighted) {
   const {
     x,
     y,
@@ -100,7 +104,7 @@ function renderAsLine (context, rect, fillCol, areaCol) {
   } = rect
 
   // Black solid background line, including black heat area
-  context.strokeStyle = fillCol
+  context.strokeStyle = backgroundColor
   context.beginPath()
   context.moveTo(x, y - getHeatHeight(height))
   context.lineTo(x, y + height)
@@ -108,8 +112,10 @@ function renderAsLine (context, rect, fillCol, areaCol) {
 
   // Add code area tint to the appropriate part of the line
   context.save()
-  context.globalAlpha = 0.2
-  context.strokeStyle = areaCol
+
+  // Bolden any tiny active search matches
+  context.globalAlpha = isHighlighted ? 0.9 : 0.2
+  context.strokeStyle = foregroundColor
   context.beginPath()
   context.moveTo(x, y)
   context.lineTo(x, y + height)
