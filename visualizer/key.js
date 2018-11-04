@@ -6,7 +6,9 @@ class Key extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
     super(parentContent, contentProperties)
 
-    this.appName = 'app'
+    this.app = 'Profiled app'
+    this.deps = 'Dependencies'
+    this.core = 'Node Core'
   }
 
   initializeElements () {
@@ -15,15 +17,15 @@ class Key extends HtmlContent {
     this.d3Title = this.d3Element.append('div')
       .classed('key-title', true)
 
-    this.d3AppName = this.d3Element.append('div')
-      .classed('key key-app', true)
-      .text(this.appName)
-    this.d3Element.append('div')
-      .classed('key key-deps', true)
-      .text('dependencies')
-    this.d3Element.append('div')
-      .classed('key key-core', true)
-      .text('node core')
+    this.d3Key1 = this.d3Element.append('div')
+      .classed('key', true)
+      .text(this.app)
+    this.d3Key2 = this.d3Element.append('div')
+      .classed('key', true)
+      .text(this.deps)
+    this.d3Key3 = this.d3Element.append('div')
+      .classed('key', true)
+      .text(this.core)
 
     this.ui.on('setData', () => {
       this.setData()
@@ -42,7 +44,27 @@ class Key extends HtmlContent {
   draw () {
     super.draw()
 
-    this.d3AppName.text(this.appName)
+    const showOpt = this.ui.dataTree.showOptimizationStatus
+
+    this.d3Key1
+      .text(showOpt ? 'Optimizable' : this.appName)
+      .style('color', this.ui.getFrameColor({
+        category: 'app',
+        isOptimisable: true
+      }, 'foreground', false))
+
+    this.d3Key2
+      .text(showOpt ? 'Is optimized' : this.deps)
+      .style('color', this.ui.getFrameColor({
+        category: 'deps',
+        isOptimised: true
+      }, 'foreground', false))
+
+    this.d3Key3
+      .text(showOpt ? 'Not JavaScript' : this.core)
+      .style('color', this.ui.getFrameColor({
+        category: 'all-core'
+      }, 'foreground', false))
 
     const titleHTML = `Call stacks in <em>${this.appName}</em>, grouped, by time spent on stack`
     this.d3Title.html(titleHTML)

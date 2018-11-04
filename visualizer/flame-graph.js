@@ -335,21 +335,16 @@ class FlameGraph extends HtmlContent {
       this.flameGraph.width(this.width)
     }
 
+    let redrawGraph = false
+
     if (this.renderedTree !== dataTree.activeTree()) {
       this.renderedTree = dataTree.activeTree()
-      this.flameGraph.renderTree(this.renderedTree)
+      redrawGraph = true
     }
 
-    // Highlight optimized frames in a very aggressive yellow…
-    // TODO nicer styling, prob needs a d3-fg change to add some indicator element
-    // or we could pick a more subtle background color.
-    if (this.showOptimizationStatus !== this.ui.dataTree.showOptimizationStatus) {
-      this.showOptimizationStatus = this.ui.dataTree.showOptimizationStatus
-      if (this.showOptimizationStatus) {
-        this.flameGraph.search(/^\*/, 'yellow')
-      } else {
-        this.flameGraph.clear('yellow')
-      }
+    if (this.showOptimizationStatus !== dataTree.showOptimizationStatus) {
+      this.showOptimizationStatus = dataTree.showOptimizationStatus
+      redrawGraph = true
     }
 
     const { toHide, toShow } = this.ui.changedExclusions
@@ -358,16 +353,20 @@ class FlameGraph extends HtmlContent {
     if (toHide.size > 0) {
       toHide.forEach((name) => {
         this.flameGraph.typeHide(name)
+        redrawGraph = false
       })
       isChanged = true
     }
     if (toShow.size > 0) {
       toShow.forEach((name) => {
         this.flameGraph.typeShow(name)
+        redrawGraph = false
       })
       isChanged = true
     }
-    if (isChanged) this.updateMarkerBoxes()
+
+    if (isChanged || redrawGraph) this.updateMarkerBoxes()
+    if (redrawGraph) this.flameGraph.renderTree(this.renderedTree)
   }
 }
 

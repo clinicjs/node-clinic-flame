@@ -44,6 +44,11 @@ class InfoBox extends HtmlContent {
     const categoryLabel = this.ui.getLabelFromKey(node.category, true)
     this.areaText = `In ${categoryLabel} (${typeLabel})`
 
+    if (node.isInlinable) this.areaText += '. Inlinable'
+    if (node.isOptimisable) this.areaText += '. Optimizable'
+    if (node.isOptimised) this.areaText += '. Is optimized'
+    this.areaText += '.'
+
     this.draw()
   }
 
