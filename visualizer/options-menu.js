@@ -41,7 +41,7 @@ class OptionsMenu extends HtmlContent {
       .text('Merging and highlighting')
     this.d3FgOptions.append('ul')
 
-    this.addFgOptionCheckbox({
+    this.d3MergeCheckbox = this.addFgOptionCheckbox({
       id: 'option-usemergedtree',
       name: 'Merge',
       description: 'joins optimized and unoptimized versions of frames',
@@ -50,7 +50,7 @@ class OptionsMenu extends HtmlContent {
       }
     })
 
-    this.addFgOptionCheckbox({
+    this.d3OptCheckbox = this.addFgOptionCheckbox({
       id: 'option-showoptimizationstatus',
       name: 'Show optimization status',
       description: 'highlight frames that are optimized functions',
@@ -76,7 +76,7 @@ class OptionsMenu extends HtmlContent {
     const li = this.d3FgOptions.select('ul').append('li')
       .attr('id', id)
     const label = li.append('label')
-    label.append('input')
+    const d3Checkbox = label.append('input')
       .attr('type', 'checkbox')
       .on('click', () => {
         const { checked } = d3.event.target
@@ -91,6 +91,8 @@ class OptionsMenu extends HtmlContent {
     copyWrapper.append('span')
       .classed('description', true)
       .text(` - ${description}`)
+
+    return d3Checkbox
   }
 
   drawCodeAreaList () {
@@ -169,8 +171,13 @@ class OptionsMenu extends HtmlContent {
 
   setData () {
     const {
-      appName = 'app'
+      appName = 'app',
+      useMerged,
+      showOptimizationStatus
     } = this.ui.dataTree
+
+    this.d3MergeCheckbox.property('checked', useMerged)
+    this.d3OptCheckbox.property('checked', showOptimizationStatus)
 
     this.setCodeAreas({ appName })
   }
