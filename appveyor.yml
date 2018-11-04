@@ -24,8 +24,20 @@ build: off
 
 configuration: build-lint-test
 
-test_script:
-  - npm run ci-test
+for:
+  -
+    matrix:
+      only:
+        - nodejs_version: "8"
+    test_script:
+      - npm run ci-test-no-cov
+
+  -
+    matrix:
+      only:
+        - nodejs_version: "10"
+    test_script:
+      - npm run ci-test-cov
 
 # Do not build feature branch with open Pull Requests
 skip_branch_with_pr: true

@@ -5,8 +5,9 @@ const path = require('path')
 const { test } = require('tap')
 const rimraf = require('rimraf')
 const ClinicFlame = require('../index.js')
+const { containsData } = require('./util/validate-output.js')
 
-test('cmd - test collect - data exists', function (t) {
+test('cmd - test collect - data exists, html generated', function (t) {
   const tool = new ClinicFlame()
 
   function cleanup (err, dirname) {
@@ -29,14 +30,32 @@ test('cmd - test collect - data exists', function (t) {
     function (err, dirname) {
       if (err) return cleanup(err, dirname)
 
-      tool.visualize(dirname, dirname + '.html', function (err) {
+      let fileSizeDebug = 0
+      const htmlName = dirname + '.html'
+      tool.debug = true
+
+      tool.visualize(dirname, htmlName, function (err) {
         if (err) return cleanup(err, dirname)
 
-        fs.readFile(dirname + '.html', function (err, content) {
+        fileSizeDebug = fs.statSync(htmlName).size
+
+        fs.readFile(htmlName, function (err, content) {
           if (err) return cleanup(err, dirname)
 
-          t.ok(content.length > 1024 * 100)
-          cleanup(null, dirname)
+          t.ok(containsData(content))
+
+          // Redo the html without debug setting
+          fs.unlinkSync(htmlName)
+          tool.debug = false
+          tool.visualize(
+            dirname,
+            htmlName,
+            function () {
+              // Check that disabling debug mode results in a smaller file
+              t.ok(fs.statSync(htmlName).size < fileSizeDebug)
+              cleanup(null, dirname)
+            }
+          )
         })
       })
     }
@@ -50,9 +69,37 @@ test('cmd - test visualization - missing data', function (t) {
     'missing.clinic-flame',
     'missing.clinic-flame.html',
     function (err) {
-      // The message is set by 0x.
-      t.match(err.message, /Invalid data path provided/)
+      t.match(err.message, /ENOENT: no such file or directory/)
       t.end()
+    }
+  )
+})
+
+test('cmd - test collect - system info, data files and html', function (t) {
+  const tool = new ClinicFlame()
+
+  function cleanup (err, dirname) {
+    t.ifError(err)
+    t.match(dirname, /^[0-9]+\.clinic-flame$/)
+    rimraf(dirname, (err) => {
+      t.ifError(err)
+      t.end()
+    })
+  }
+
+  tool.collect(
+    [process.execPath, path.join('test', 'fixtures', 'inspect.js')],
+    function (err, dirname) {
+      if (err) return cleanup(err, dirname)
+
+      const basename = path.basename(dirname)
+      const systeminfo = JSON.parse(fs.readFileSync(path.join(dirname, `${basename}-systeminfo`)))
+      // check that samples data and inlined function data exists and is valid JSON
+      JSON.parse(fs.readFileSync(path.join(dirname, `${basename}-samples`)))
+      JSON.parse(fs.readFileSync(path.join(dirname, `${basename}-inlinedfunctions`)))
+
+      t.ok(fs.statSync(systeminfo.mainDirectory).isDirectory())
+      cleanup(null, dirname)
     }
   )
 })

@@ -1,0 +1,135 @@
+section#flame-main {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  flex-shrink: 1;
+  overflow: hidden;
+  position: relative;
+}
+#flame-main canvas {
+  display: block;
+  position: relative;
+}
+chart {
+  display: block;
+}
+chart > div {
+  height: 100%;
+}
+
+/* node-highlighter */
+.node-highlighter {
+  pointer-events: none;
+  position: absolute;
+  transition: transform .3s cubic-bezier(0.65, 0.05, 0.36, 1), width .3s cubic-bezier(0.65, 0.05, 0.36, 1);
+  top: 0px;
+  left: 0px;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+}
+.highlighter-box {
+  display: none;
+  /* transition: transform .2s cubic-bezier(0.65, 0.05, 0.36, 1), width .3s cubic-bezier(0.65, 0.05, 0.36, 1); */
+  top: 0px;
+  left: 0px;
+  border: 1px dotted rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+  position: absolute;
+}
+.highlighter-box.show{
+  display: block;
+}
+.node-highlighter.show {
+  display: flex;
+}
+
+.node-highlighter .down-arrow {
+  border-color: transparent;
+  border-top-color: var(--overlay-bg-color);
+  border-style: solid;
+  border-width: 10px;
+  filter: drop-shadow(0px 1px 0px rgba(255, 255, 255, 0.5));
+  margin:0 0 -8px;
+  flex-shrink: 0;
+}
+
+.node-highlighter .vertical-line {
+  flex-grow: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.node-highlighter .vertical-line::before {
+  content:"";
+  flex-grow: 1;
+  width: 0px;
+  border-left: 1px dotted rgba(255, 255, 255, 0.5);
+}
+
+.selection-box {
+  position: absolute;
+  pointer-events: none;
+  background-color: rgba(var(--grey-highlight-color-val), 0.12);
+  border: 1px solid transparent;
+  box-shadow: 0 1px 4px rgba(var(--grey-highlight-color-val), 0.2);
+}
+
+.zoom-underline {
+  position: absolute;
+  pointer-events: none;
+  border-top: 3px solid var(--main-bg-color);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0));
+}
+
+.fg-tooltip-actions {
+  display: flex;
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: white;
+  font-size: var(--normal-text-size);;
+}
+
+.fg-tooltip-actions button {
+  align-items: center;
+  background-color: transparent;
+  border-radius: 0;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-basis: 50%;
+  font-size: inherit;
+  justify-content: center;
+  line-height: 1.2em;
+  margin: 2px;
+  outline: none;
+  padding: 0;
+}
+
+.fg-tooltip-actions button:hover {
+  background-color: var(--light-glare);
+}
+
+.fg-tooltip-actions .zoom-button svg {
+  display: none;
+}
+
+.fg-tooltip-actions .zoom-button.zoom-in .zoom-in {
+  display: initial;
+}
+
+.fg-tooltip-actions .zoom-button.zoom-out .zoom-out {
+  display: initial;
+}
+
+.fg-tooltip-actions span {
+  padding: 0 0.15em;
+}
+
+.fg-tooltip-actions .icon {
+  display: flex;
+  align-items: center;
+}

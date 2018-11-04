@@ -1,0 +1,222 @@
+@import "./toolbar.css";
+@import "./stack-bar.css";
+@import "./key.css";
+@import "./search-box.css";
+@import "./flame-graph.css";
+@import "./message.css";
+@import "./tooltip.css";
+@import "./options-menu.css";
+@import "./selection-controls.css";
+@import "./info-box.css";
+
+html {
+  font-family: sans-serif;
+  font-size: 62.5%;
+}
+
+/*
+  fixing monospaced font issue
+  reference : http://code.iamkate.com/html-and-css/fixing-browsers-broken-monospace-font-handling/
+*/
+pre,
+code,
+kbd,
+samp,
+tt {
+  font-family:monospace,monospace;
+  font-size:1em;
+}
+
+html {
+  /* Define colors */
+
+  --main-bg-color-val: 27, 30, 39;
+  --max-contrast: rgb(255, 255, 255);
+  --opposite-contrast: rgb(0, 0, 0);
+  --light-glare: rgba(255, 255, 255, 0.1);
+
+  --main-bg-color: rgb(var(--main-bg-color-val));
+  --main-bg-translucent: rgba(var(--main-bg-color-val), 0.94);
+  --overlay-bg-color: rgba(67, 70, 81, 0.94);
+
+  --banner-bg-color: rgb(50, 53, 61);
+  --banner-logo-color: rgba(255, 255, 255, 0.87);
+
+  --footer-bg-color: rgb(15, 18, 26);
+  --footer-color: rgba(255, 255, 255, 0.9);
+
+  --cyan: rgb(63, 125, 198);
+  --primary-grey: rgb(121, 122, 124);
+  --grey-highlight-color-val: 191, 192, 194;
+  --grey-highlight: rgb(var(--grey-highlight-color-val));
+
+  --area-color-app: var(--max-contrast);
+  --area-color-deps: var(--cyan);
+  --area-color-core: var(--primary-grey);
+
+  /* scrollbars */
+  --scrollbar-primary-color-val: 145, 169, 179;
+  --scrollbar-primary-color: rgb(var(--scrollbar-primary-color-val));
+  --scrollbar-bg: var(--light-glare);
+  --scrollbar-shadow: rgba(0, 0, 0, 0.5);
+  --scrollbar-thumb: rgba(var(--scrollbar-primary-color-val), 0.2);
+  --scrollbar-thumb-outline: rgba(var(--scrollbar-primary-color-val), 0.849);
+
+  /* Define text sizes */
+  --main-text-size: 1.2rem;
+  --small-text-size: 1rem;
+}
+
+/* Overrides for light theme */
+/* just a poc for now... */
+html.light {
+  --main-bg-color-val: 197, 224, 239;
+
+  --max-contrast: rgb(0, 0, 0);
+  --opposite-contrast: rgb(255, 255, 255);
+
+  --banner-bg-color: rgba(0, 0, 0, 0.1);
+  --footer-bg-color: rgba(0, 0, 0, 0.1);
+  --footer-color: rgba(0, 0, 0, 0.9);
+}
+
+/* Main layout */
+
+html,
+body {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+}
+
+body {
+  background: var(--main-bg-color);
+  display: flex;
+  flex-direction: column;
+}
+
+/* MS Edge doesn't like background colors on body elements when devtools open */
+main {
+  background: var(--main-bg-color);
+}
+
+/* Global */
+
+html * {
+  box-sizing: border-box;
+}
+
+.hidden {
+  /* Hides elements even if display is defined for structural reasons */
+  display: none !important;
+}
+
+.collapsed .collapsible-content-wrapper {
+  display: none;
+}
+
+/* Banner layout */
+
+#banner {
+  display: flex;
+  align-items: center;
+  background: var(--banner-bg-color);
+  position: relative;
+  justify-content: space-between;
+}
+
+#banner #main-logo svg {
+  margin-left: 12px;
+  height: 50px;
+}
+
+#banner #main-logo {
+  display: flex;
+  align-items: center;
+}
+
+#banner #main-logo,
+#banner #main-logo:link,
+#banner #main-logo:visited {
+  color: var(--banner-logo-color);
+  font-weight: bold;
+  font-size: 23px;
+  text-decoration: none;
+}
+
+#banner #company-logo svg {
+  height: 65px;
+  right: 0;
+  top: 0;
+}
+
+#header {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+/* Footer */
+#footer {
+  background-color: var(--opposite-contrast);
+  color: var(--footer-color);
+  flex-shrink: 0;
+  padding: 0 8px 6px;
+  border-top: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+/* Layout definition */
+#one-col-layout {
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+  min-height: 1px;  /* apparently this is needed to fix FireFox */
+}
+
+#one-col-layout > * {
+  flex-shrink: 0;
+}
+
+#one-col-layout .scroll-container {
+  flex-grow: 1;
+  flex-shrink: 1;
+  overflow: auto;
+  position: relative;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.scroll-container::-webkit-scrollbar {
+  width: 13px;
+  background-color: var(--scrollbar-bg);
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 2px var(--scrollbar-shadow);
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  outline: 1px solid var(--scrollbar-thumb-outline);
+  border-radius: 2px;
+  box-shadow: 4px 1px 6px -2px var(--light-glare) inset;
+}
+
+@media (pointer: coarse) {
+  .scroll-container::-webkit-scrollbar {
+    width: 30px;
+  }
+}
+/* SVG icons */
+svg.icon-img path {
+  /* Default to same fill as adjacent text */
+  fill: currentColor;
+}
+
+svg.icon-img {
+  /* Default to same size as adjacent text */
+  width: 1em;
+  height: 1em;
+}
