@@ -290,7 +290,7 @@ class FlameGraph extends HtmlContent {
 
     d3Div
       .style('width', rect.width + 'px')
-      .style('height', height + 'px')
+      .style('height', (height < 0 ? 0 : height) + 'px')
       .style('transform', translate)
   }
 
