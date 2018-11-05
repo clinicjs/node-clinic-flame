@@ -148,6 +148,10 @@ class FlameGraph extends HtmlContent {
     this.sort()
 
     const wrapperNode = this.d3Chart.node()
+    this.flameGraph.on('dblClick', (nodeData) => {
+      this.ui.zoomNode(nodeData)
+    })
+
     this.flameGraph.on('click', (nodeData, rect, pointerCoords) => {
       if (nodeData) {
         // Treat root node as a zoom out button
