@@ -132,11 +132,11 @@ class OptionsMenu extends HtmlContent {
         .attr('type', 'checkbox')
         .on('change', onchange)
       label.append('span')
-        .classed('icon-wrapper show', true)
-        .html(`<img class="icon-img" data-inline-svg src="/visualizer/assets/icons/eye-show.svg" />`)
-      label.append('span')
-        .classed('icon-wrapper hide', true)
-        .html(`<img class="icon-img" data-inline-svg src="/visualizer/assets/icons/eye-hide.svg" />`)
+        .classed('icon-wrapper', true)
+        .html(`
+          <img class="icon-img check" data-inline-svg src="/visualizer/assets/icons/check.svg" />
+          <img class="icon-img dots" data-inline-svg src="/visualizer/assets/icons/horizontal-more.svg" />
+        `)
       const copyWrapper = label.append('span')
         .classed('copy-wrapper', true)
       copyWrapper.append('span')

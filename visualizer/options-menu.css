@@ -96,38 +96,41 @@
 }
 
 #options-menu .options .icon-wrapper {
-  font-size: 2em;
+  align-items: center;
+  border-radius: 3px;
+  border: 1px dotted;
+  display: flex;
+  font-size: 1.7em;
+  height: .8em;
   margin-right: 0.5em;
+  width: .8em;
+  flex-shrink: 0;
+  justify-content: center;
+  color: var(--checkbox-border-color);
+}
+#options-menu .options .icon-wrapper svg{
+  display: none;
 }
 
-#options-menu .options .icon-wrapper.show {
-  display: none;
+#options-menu .options :checked ~ .icon-wrapper{
   color: var(--max-contrast);
 }
 
-#options-menu .options .icon-wrapper.hide {
-  color: var(--primary-grey);
-}
-
-#options-menu .options :checked ~ .show {
+#options-menu .options :checked ~ .icon-wrapper .check{
   display: initial;
 }
 
-#options-menu .options :checked ~ .hide {
-  display: none;
-}
-
-#options-menu .options :indeterminate ~ .show {
-  display: initial;
+#options-menu .options :indeterminate ~ .icon-wrapper {
   color: var(--grey-highlight);
-  margin-right: -1em;
-  clip-path: inset(0px 50% 0px 0px);
 }
 
-#options-menu .options :indeterminate ~ .hide {
+#options-menu .options :indeterminate ~ .icon-wrapper .dots {
   display: initial;
-  clip-path: inset(0px 0px 0px 60%);
 }
+
+/* #options-menu .options :indeterminate ~ .icon-wrapper svg {
+  display: nonde;
+} */
 
 #options-menu .options li[data-area="app"] {
   color: var(--area-color-app);

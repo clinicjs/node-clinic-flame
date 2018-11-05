@@ -54,6 +54,8 @@ html {
   --grey-highlight-color-val: 191, 192, 194;
   --grey-highlight: rgb(var(--grey-highlight-color-val));
 
+  --checkbox-border-color: rgba(var(--grey-highlight-color-val), 0.9);
+
   --area-color-app: var(--max-contrast);
   --area-color-deps: var(--cyan);
   --area-color-core: var(--primary-grey);
