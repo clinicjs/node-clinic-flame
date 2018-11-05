@@ -5,7 +5,7 @@
   font-size: var(--small-text-size);
   position: absolute;
   z-index: 1;
-  background-color: var(--banner-bg-color);
+  background-color: var(--options-menu-bg-color);
   margin-top: 6px;
 
 }
@@ -54,7 +54,7 @@
   background-color: rgba(255, 255, 255, 0.06);
 }
 
-#options-menu .options li label {
+#options-menu .options label {
   opacity: 0.8;
   display: flex;
   align-items: center;
@@ -75,6 +75,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
+  display: flex;
+  align-items: center;
 }
 
 #options-menu .options .name {
@@ -90,6 +92,41 @@
 #options-menu .options input {
   margin: 0 8px 0 0;
   vertical-align: middle;
+  display: none;
+}
+
+#options-menu .options .icon-wrapper {
+  font-size: 2em;
+  margin-right: 0.5em;
+}
+
+#options-menu .options .icon-wrapper.show {
+  display: none;
+  color: var(--max-contrast);
+}
+
+#options-menu .options .icon-wrapper.hide {
+  color: var(--primary-grey);
+}
+
+#options-menu .options :checked ~ .show {
+  display: initial;
+}
+
+#options-menu .options :checked ~ .hide {
+  display: none;
+}
+
+#options-menu .options :indeterminate ~ .show {
+  display: initial;
+  color: var(--grey-highlight);
+  margin-right: -1em;
+  clip-path: inset(0px 50% 0px 0px);
+}
+
+#options-menu .options :indeterminate ~ .hide {
+  display: initial;
+  clip-path: inset(0px 0px 0px 60%);
 }
 
 #options-menu .options li[data-area="app"] {
