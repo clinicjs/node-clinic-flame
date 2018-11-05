@@ -65,18 +65,16 @@
 }
 
 #options-menu .options li.disabled {
-  opacity: 0.7;
+  opacity: 0.3;
 }
 #options-menu .options li.disabled label {
-  cursor: default;
+  pointer-events: none;
 }
 
 #options-menu .options .copy-wrapper{
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
-  display: flex;
-  align-items: center;
 }
 
 #options-menu .options .name {

@@ -83,6 +83,13 @@ class OptionsMenu extends HtmlContent {
         onChange(checked)
       })
 
+    label.append('span')
+      .classed('icon-wrapper', true)
+      .html(`
+        <img class="icon-img check" data-inline-svg src="/visualizer/assets/icons/check.svg" />
+        <img class="icon-img dots" data-inline-svg src="/visualizer/assets/icons/horizontal-more.svg" />
+      `)
+
     const copyWrapper = label.append('span')
       .classed('copy-wrapper', true)
     copyWrapper.append('span')
