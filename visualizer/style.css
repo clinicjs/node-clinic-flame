@@ -128,13 +128,15 @@ html * {
 }
 
 #banner #main-logo svg {
-  margin-left: 12px;
+  margin-right: 12px;
   height: 50px;
+  width: auto;
 }
 
 #banner #main-logo {
   display: flex;
   align-items: center;
+  margin-left: 12px;
 }
 
 #banner #main-logo,
@@ -150,6 +152,7 @@ html * {
   height: 65px;
   right: 0;
   top: 0;
+  display: block;
 }
 
 #header {
