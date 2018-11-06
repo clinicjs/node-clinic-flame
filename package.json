@@ -22,7 +22,7 @@
     "browserify-inline-svg": "^1.0.2",
     "copy-to-clipboard": "^3.0.8",
     "d3": "^5.7.0",
-    "d3-fg": "^6.10.0",
+    "d3-fg": "^6.11.0",
     "deepmerge": "^2.1.1",
     "flame-gradient": "^1.0.0",
     "lodash.debounce": "^4.0.8",
