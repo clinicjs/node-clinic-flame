@@ -16,6 +16,8 @@ class OptionsMenu extends HtmlContent {
       htmlElementType: 'button',
       htmlContent: `<span class="label">Options</span> <img class="icon-img chevron" data-inline-svg src="/visualizer/assets/icons/caret-up.svg" />`
     })
+
+    this.showMore = {}
   }
 
   initializeElements () {
@@ -69,7 +71,8 @@ class OptionsMenu extends HtmlContent {
           !this.d3Element.node().contains(event.target)) {
         this.collapseClose()
       }
-    })
+    },
+    true) // using useCapture here so that we can handle the event before `.showMore` button updates its content
   }
 
   addFgOptionCheckbox ({ id, name, description, onChange }) {
@@ -86,8 +89,9 @@ class OptionsMenu extends HtmlContent {
     label.append('span')
       .classed('icon-wrapper', true)
       .html(`
-        <img class="icon-img check" data-inline-svg src="/visualizer/assets/icons/check.svg" />
-        <img class="icon-img dots" data-inline-svg src="/visualizer/assets/icons/horizontal-more.svg" />
+      <img class="icon-img checked" data-inline-svg src="/visualizer/assets/icons/checkbox-checked.svg" />
+      <img class="icon-img unchecked" data-inline-svg src="/visualizer/assets/icons/checkbox-unchecked.svg" />
+      <img class="icon-img indetermined" data-inline-svg src="/visualizer/assets/icons/checkbox-indetermined.svg" />
       `)
 
     const copyWrapper = label.append('span')
@@ -104,11 +108,14 @@ class OptionsMenu extends HtmlContent {
 
   drawCodeAreaList () {
     const { ui } = this
+    const self = this
 
     // Create the top-level filter options, like "app" / "deps" / "node.js"
     const d3RootItems = this.d3VisibilityOptions.select('ul')
       .selectAll('li').data(this.codeAreas)
+      .classed('childrenVisibilityToggle', d => d.childrenVisibilityToggle === true)
     d3RootItems.exit().remove()
+
     const d3NewRootItems = d3RootItems.enter().append('li')
       .call(createOptionElement)
     d3NewRootItems.merge(d3RootItems)
@@ -126,14 +133,32 @@ class OptionsMenu extends HtmlContent {
       .selectAll('li').data(d => d)
     d3SubListItems.exit().remove()
     d3SubListItems.enter().append('li')
-      .call(createOptionElement, this)
+      .call(createOptionElement)
       // Update the labels for both new and existing items.
       .merge(d3SubListItems)
       .call(renderOptionElement)
 
+    // I am sure there's a better way to do this...
+    const caretIcon = `<img class="icon-img" data-inline-svg src="/visualizer/assets/icons/caret-down.svg" />`
+    this.d3VisibilityOptions.selectAll('.childrenVisibilityToggle')
+      .append('button')
+      .html(`<span>show more</span> ${caretIcon}`)
+      .classed('children-toggle-btn', true)
+      .on('click', function (d) {
+        const showMore = !(self.showMore[d.id] === true)
+
+        self.showMore[d.id] = showMore
+
+        const parent = d3.select(this.closest('.childrenVisibilityToggle'))
+        parent.classed('show-more', showMore)
+
+        d3.select(this).html(`<span>show ${showMore ? 'less' : 'more'}</span> ${caretIcon}`)
+      })
+
     // Insert a new filter option element,
     // for use with a d3.enter() selection.
-    function createOptionElement (li, self) {
+    function createOptionElement (li) {
+      li.classed('visible', d => d.visible === true)
       const label = li.append('label')
       label.append('input')
         .attr('type', 'checkbox')
@@ -141,8 +166,9 @@ class OptionsMenu extends HtmlContent {
       label.append('span')
         .classed('icon-wrapper', true)
         .html(`
-          <img class="icon-img check" data-inline-svg src="/visualizer/assets/icons/check.svg" />
-          <img class="icon-img dots" data-inline-svg src="/visualizer/assets/icons/horizontal-more.svg" />
+          <img class="icon-img checked" data-inline-svg src="/visualizer/assets/icons/checkbox-checked.svg" />
+          <img class="icon-img unchecked" data-inline-svg src="/visualizer/assets/icons/checkbox-unchecked.svg" />
+          <img class="icon-img indetermined" data-inline-svg src="/visualizer/assets/icons/checkbox-indetermined.svg" />
         `)
       const copyWrapper = label.append('span')
         .classed('copy-wrapper', true)
@@ -202,9 +228,10 @@ class OptionsMenu extends HtmlContent {
       { id: 'all-core',
         title: 'core',
         description: 'operations from node.js',
+        childrenVisibilityToggle: true,
         children: [
-          { id: 'core', description: 'operations from node\'s builtin javascript modules' },
-          { id: 'native' },
+          { id: 'core', description: 'operations from node\'s builtin javascript modules', visible: true },
+          { id: 'native', visible: true },
           { id: 'v8', description: 'v8 engine functions' },
           { id: 'cpp', description: 'underlying c++ native code' },
           { id: 'regexp', description: 'regular expressions' },
