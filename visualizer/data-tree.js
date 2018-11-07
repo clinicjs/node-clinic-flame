@@ -218,7 +218,10 @@ class DataTree {
 function getFlatArray (children) {
   // Flatten the tree, excluding the root node itself (i.e. the 'all stacks' node)
   return [...children].concat(children.reduce((arr, child) => {
-    if (child.children) return arr.concat(getFlatArray(child.children))
+    if (child.children) {
+      return arr.concat(getFlatArray(child.children))
+    }
+    return arr
   }, []))
 }
 
