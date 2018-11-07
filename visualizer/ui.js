@@ -488,7 +488,6 @@ class Ui extends events.EventEmitter {
   setData (dataTree) {
     this.dataTree = new DataTree(dataTree)
     this.updateExclusions({ pushState: false, initial: true })
-    this.dataTree.computeGroupedSortValues()
     this.emit('setData')
     this.history.setData(dataTree)
   }
