@@ -388,10 +388,6 @@ class FlameGraph extends HtmlContent {
     // Must re-render tree before applying exclusions, else error if tree and exclusions change at same time
     if (redrawGraph) this.flameGraph.renderTree(this.renderedTree)
 
-    if (toHide.size + toShow.size > 0) {
-      this.ui.dataTree.computeGroupedSortValues()
-    }
-
     if (toHide.size > 0) {
       toHide.forEach((name) => {
         this.flameGraph.typeHide(name)
