@@ -101,7 +101,7 @@ class OptionsMenu extends HtmlContent {
       .text(name)
     copyWrapper.append('span')
       .classed('description', true)
-      .text(` - ${description}`)
+      .html(` - ${description}`)
 
     return d3Checkbox
   }
@@ -160,6 +160,7 @@ class OptionsMenu extends HtmlContent {
     function createOptionElement (li) {
       li.classed('visible', d => d.visible === true)
       const label = li.append('label')
+        .attr('title', d => d.title)
       label.append('input')
         .attr('type', 'checkbox')
         .on('change', onchange)
@@ -176,7 +177,7 @@ class OptionsMenu extends HtmlContent {
         .classed('name', true)
       copyWrapper.append('description')
         .classed('description', true)
-        .text(d => d.description ? ` - ${d.description}` : '')
+        .html(d => d.description ? ` - ${d.description}` : '')
     }
 
     // Update an existing filter option element,
@@ -227,15 +228,15 @@ class OptionsMenu extends HtmlContent {
       { id: 'deps', title: 'dependencies' },
       { id: 'all-core',
         title: 'core',
-        description: 'operations from node.js',
+        description: 'The Node.js framework and its dependencies',
         childrenVisibilityToggle: true,
         children: [
-          { id: 'core', description: 'operations from node\'s builtin javascript modules', visible: true },
-          { id: 'native', visible: true },
-          { id: 'v8', description: 'v8 engine functions' },
-          { id: 'cpp', description: 'underlying c++ native code' },
-          { id: 'regexp', description: 'regular expressions' },
-          { id: 'init', description: 'initialization operations, like loading modules' }
+          { id: 'core', visible: true, description: `JS functions in core Node.js APIs. <a target="_blank" class="more-info href="https://clinicjs.org/flame/walkthrough/controls/#core">More info</a>` },
+          { id: 'native', visible: true, description: `JS compiled into V8, such as prototype methods and eval. <a target="_blank" class="more-info href="https://clinicjs.org/flame/walkthrough/controls/#native">More info</a>` },
+          { id: 'v8', description: `Operations in V8's implementation of JS. <a target="_blank" class="more-info href="https://clinicjs.org/flame/walkthrough/controls/#v8">More info</a>` },
+          { id: 'cpp', description: `Native C++ operations called by V8, including shared libraries. <a target="_blank" class="more-info href="https://clinicjs.org/flame/walkthrough/controls/#cpp">More info</a>` },
+          { id: 'regexp', description: `The RegExp notation is shown as the function name. <a target="_blank" class="more-info href="https://clinicjs.org/flame/walkthrough/controls/#rx">More info</a>` },
+          { id: 'init', description: `Any of the above that are repeated frequently during initialization. <a target="_blank" class="more-info href="https://clinicjs.org/flame/walkthrough/controls/#init">More info</a>` }
         ] }
     ]
 
@@ -266,7 +267,7 @@ class OptionsMenu extends HtmlContent {
     super.draw()
 
     // Update option checkbox values.
-    const { useMerged, showOptimizationStatus } = this.ui.dataTree
+    const { useMerged, showOptimizationStatus, appName } = this.ui.dataTree
     this.d3FgOptions.select('#option-usemergedtree')
       .select('input')
       .property('checked', useMerged)
@@ -276,6 +277,9 @@ class OptionsMenu extends HtmlContent {
       .attr('disabled', useMerged ? 'disabled' : null)
       .property('checked', showOptimizationStatus)
 
+    // Updating the app name
+    this.d3VisibilityOptions.select('.name')
+      .text(appName)
     if (this.codeAreasChanged) {
       this.drawCodeAreaList()
     }

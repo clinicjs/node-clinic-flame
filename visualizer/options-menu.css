@@ -125,6 +125,16 @@
   font-weight: normal;
 }
 
+#options-menu .options .description .more-info{
+  color: white;
+  opacity: 0.7;
+  text-decoration: none;
+}
+
+#options-menu .options .description .more-info:hover{
+  opacity: 1;
+}
+
 #options-menu .options input {
   margin: 0 8px 0 0;
   vertical-align: middle;
