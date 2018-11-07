@@ -5,9 +5,31 @@
   font-size: var(--small-text-size);
   position: absolute;
   z-index: 1;
-  background-color: var(--banner-bg-color);
+  background-color: var(--options-menu-bg-color);
   margin-top: 6px;
+}
 
+#options-menu .options .children-toggle-btn{
+  border: none;
+  padding: 0.2em 0.5em;
+  margin: 0.5em 0 0;
+  background-color: transparent;
+  color: inherit;
+  font-size: 1em;
+  cursor: pointer;
+  align-self: flex-end;
+  outline: none;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+#options-menu .options .children-toggle-btn svg{
+  font-size: 1.6em;
+}
+
+#options-menu .options .children-toggle-btn:hover {
+  background-color: rgba(255, 255, 255, 0.06);
 }
 
 #options-menu .options .section {
@@ -47,25 +69,41 @@
 
 #options-menu .options li {
   white-space: nowrap;
+  display: flex;
+  flex-direction: column;
 }
+
+#options-menu .options .childrenVisibilityToggle li {
+  display: none;
+}
+#options-menu .options .childrenVisibilityToggle.show-more li,
+#options-menu .options .childrenVisibilityToggle li.visible {
+  display: initial;
+}
+
+#options-menu .show-more .children-toggle-btn svg {
+  transform: rotateZ(180deg);
+  transform-origin: 50%;
+}
+
 
 #options-menu .options label:hover {
   white-space: normal;
   background-color: rgba(255, 255, 255, 0.06);
 }
 
-#options-menu .options li label {
+#options-menu .options label {
   opacity: 0.8;
   display: flex;
   align-items: center;
   cursor: pointer;
-  height: 2.6em;
-  line-height: 1.1;
+  height: 2.8em;
+  line-height: 1.3;
   padding: 0 5px;
 }
 
 #options-menu .options li.disabled {
-  opacity: 0.7;
+  opacity: 0.3;
 }
 #options-menu .options li.disabled label {
   cursor: default;
@@ -87,9 +125,62 @@
   font-weight: normal;
 }
 
+#options-menu .options .description .more-info{
+  color: white;
+  opacity: 0.7;
+  text-decoration: none;
+}
+
+#options-menu .options .description .more-info:hover{
+  opacity: 1;
+}
+
 #options-menu .options input {
   margin: 0 8px 0 0;
   vertical-align: middle;
+  display: none;
+}
+
+#options-menu .options .icon-wrapper {
+  align-items: center;
+  border-radius: 3px;
+  display: flex;
+  font-size: 1.4em;
+  margin-right: 0.5em;
+  flex-shrink: 0;
+  justify-content: center;
+  color: var(--checkbox-border-color);
+}
+#options-menu .options .icon-wrapper svg{
+  display: none;
+}
+#options-menu .options .icon-wrapper .unchecked{
+  display: initial;
+}
+
+#options-menu .options :checked ~ .icon-wrapper .unchecked{
+  display: none;
+}
+
+#options-menu .options :checked ~ .icon-wrapper{
+  color: var(--max-contrast);
+}
+
+#options-menu .options :checked ~ .icon-wrapper .checked{
+  display: initial;
+}
+
+#options-menu .options :indeterminate ~ .icon-wrapper {
+  color: var(--grey-highlight);
+}
+
+#options-menu .options :indeterminate ~ .icon-wrapper .indetermined {
+  display: initial;
+}
+
+#options-menu .options :indeterminate ~ .icon-wrapper .unchecked,
+#options-menu .options :indeterminate ~ .icon-wrapper .checked{
+  display: none;
 }
 
 #options-menu .options li[data-area="app"] {

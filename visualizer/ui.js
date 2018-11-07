@@ -266,15 +266,15 @@ class Ui extends events.EventEmitter {
   getLabelFromKey (key, singular = false) {
     const keysToLabels = {
       'app': 'profiled application',
-      'deps': singular ? 'dependency' : 'dependencies',
-      'all-core': 'core',
+      'deps': singular ? 'Dependency' : 'Dependencies',
+      'all-core': 'Core',
 
       'core': 'Node JS',
-      'native': 'V8 native JS',
+      'native': 'V8 native',
       'v8': 'V8 runtime',
       'cpp': 'V8 C++',
       'regexp': 'RegExp',
-      'init': 'initialization'
+      'init': 'Init'
     }
     return keysToLabels[key] || key
   }

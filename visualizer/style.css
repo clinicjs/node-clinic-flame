@@ -39,17 +39,22 @@ html {
   --main-bg-translucent: rgba(var(--main-bg-color-val), 0.94);
   --overlay-bg-color: rgba(67, 70, 81, 0.94);
 
-  --banner-bg-color: rgb(50, 53, 61);
+  --banner-bg-color-val: 50, 53, 61;
+  --banner-bg-color: rgb(var(--banner-bg-color-val));
   --banner-logo-color: rgba(255, 255, 255, 0.87);
 
   --footer-bg-color: rgb(15, 18, 26);
   --footer-color: rgba(255, 255, 255, 0.9);
+
+  --options-menu-bg-color: rgba(var(--banner-bg-color-val), 0.9);
 
   --cyan: rgb(63, 125, 198);
   --grey-blue: rgb(76, 92, 138);
   --primary-grey: rgb(121, 122, 124);
   --grey-highlight-color-val: 191, 192, 194;
   --grey-highlight: rgb(var(--grey-highlight-color-val));
+
+  --checkbox-border-color: rgba(var(--grey-highlight-color-val), 0.9);
 
   --area-color-app: var(--max-contrast);
   --area-color-deps: var(--cyan);
@@ -222,4 +227,5 @@ svg.icon-img {
   /* Default to same size as adjacent text */
   width: 1em;
   height: 1em;
+  display: block;
 }

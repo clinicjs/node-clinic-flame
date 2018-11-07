@@ -16,6 +16,8 @@ class OptionsMenu extends HtmlContent {
       htmlElementType: 'button',
       htmlContent: `<span class="label">Options</span> <img class="icon-img chevron" data-inline-svg src="/visualizer/assets/icons/caret-up.svg" />`
     })
+
+    this.showMore = {}
   }
 
   initializeElements () {
@@ -69,7 +71,8 @@ class OptionsMenu extends HtmlContent {
           !this.d3Element.node().contains(event.target)) {
         this.collapseClose()
       }
-    })
+    },
+    true) // using useCapture here so that we can handle the event before `.showMore` button updates its content
   }
 
   addFgOptionCheckbox ({ id, name, description, onChange }) {
@@ -83,6 +86,14 @@ class OptionsMenu extends HtmlContent {
         onChange(checked)
       })
 
+    label.append('span')
+      .classed('icon-wrapper', true)
+      .html(`
+      <img class="icon-img checked" data-inline-svg src="/visualizer/assets/icons/checkbox-checked.svg" />
+      <img class="icon-img unchecked" data-inline-svg src="/visualizer/assets/icons/checkbox-unchecked.svg" />
+      <img class="icon-img indetermined" data-inline-svg src="/visualizer/assets/icons/checkbox-indetermined.svg" />
+      `)
+
     const copyWrapper = label.append('span')
       .classed('copy-wrapper', true)
     copyWrapper.append('span')
@@ -90,18 +101,21 @@ class OptionsMenu extends HtmlContent {
       .text(name)
     copyWrapper.append('span')
       .classed('description', true)
-      .text(` - ${description}`)
+      .html(` - ${description}`)
 
     return d3Checkbox
   }
 
   drawCodeAreaList () {
     const { ui } = this
+    const self = this
 
     // Create the top-level filter options, like "app" / "deps" / "node.js"
     const d3RootItems = this.d3VisibilityOptions.select('ul')
       .selectAll('li').data(this.codeAreas)
+      .classed('childrenVisibilityToggle', d => d.childrenVisibilityToggle === true)
     d3RootItems.exit().remove()
+
     const d3NewRootItems = d3RootItems.enter().append('li')
       .call(createOptionElement)
     d3NewRootItems.merge(d3RootItems)
@@ -119,25 +133,51 @@ class OptionsMenu extends HtmlContent {
       .selectAll('li').data(d => d)
     d3SubListItems.exit().remove()
     d3SubListItems.enter().append('li')
-      .call(createOptionElement, this)
+      .call(createOptionElement)
       // Update the labels for both new and existing items.
       .merge(d3SubListItems)
       .call(renderOptionElement)
 
+    // I am sure there's a better way to do this...
+    const caretIcon = `<img class="icon-img" data-inline-svg src="/visualizer/assets/icons/caret-down.svg" />`
+    this.d3VisibilityOptions.selectAll('.childrenVisibilityToggle')
+      .append('button')
+      .html(`<span>show more</span> ${caretIcon}`)
+      .classed('children-toggle-btn', true)
+      .on('click', function (d) {
+        const showMore = !(self.showMore[d.id] === true)
+
+        self.showMore[d.id] = showMore
+
+        const parent = d3.select(this.closest('.childrenVisibilityToggle'))
+        parent.classed('show-more', showMore)
+
+        d3.select(this).html(`<span>show ${showMore ? 'less' : 'more'}</span> ${caretIcon}`)
+      })
+
     // Insert a new filter option element,
     // for use with a d3.enter() selection.
-    function createOptionElement (li, self) {
+    function createOptionElement (li) {
+      li.classed('visible', d => d.visible === true)
       const label = li.append('label')
+        .attr('title', d => d.title)
       label.append('input')
         .attr('type', 'checkbox')
         .on('change', onchange)
+      label.append('span')
+        .classed('icon-wrapper', true)
+        .html(`
+          <img class="icon-img checked" data-inline-svg src="/visualizer/assets/icons/checkbox-checked.svg" />
+          <img class="icon-img unchecked" data-inline-svg src="/visualizer/assets/icons/checkbox-unchecked.svg" />
+          <img class="icon-img indetermined" data-inline-svg src="/visualizer/assets/icons/checkbox-indetermined.svg" />
+        `)
       const copyWrapper = label.append('span')
         .classed('copy-wrapper', true)
       copyWrapper.append('span')
         .classed('name', true)
       copyWrapper.append('description')
         .classed('description', true)
-        .text(d => d.description ? ` - ${d.description}` : '')
+        .html(d => d.description ? ` - ${d.description}` : '')
     }
 
     // Update an existing filter option element,
@@ -188,14 +228,15 @@ class OptionsMenu extends HtmlContent {
       { id: 'deps', title: 'dependencies' },
       { id: 'all-core',
         title: 'core',
-        description: 'operations from node.js',
+        description: 'The Node.js framework and its dependencies',
+        childrenVisibilityToggle: true,
         children: [
-          { id: 'core', description: 'operations from node\'s builtin javascript modules' },
-          { id: 'native' },
-          { id: 'v8', description: 'v8 engine functions' },
-          { id: 'cpp', description: 'underlying c++ native code' },
-          { id: 'regexp', description: 'regular expressions' },
-          { id: 'init', description: 'initialization operations, like loading modules' }
+          { id: 'core', visible: true, description: `JS functions in core Node.js APIs. <a target="_blank" class="more-info href="https://clinicjs.org/flame/walkthrough/controls/#core">More info</a>` },
+          { id: 'native', visible: true, description: `JS compiled into V8, such as prototype methods and eval. <a target="_blank" class="more-info href="https://clinicjs.org/flame/walkthrough/controls/#native">More info</a>` },
+          { id: 'v8', description: `Operations in V8's implementation of JS. <a target="_blank" class="more-info href="https://clinicjs.org/flame/walkthrough/controls/#v8">More info</a>` },
+          { id: 'cpp', description: `Native C++ operations called by V8, including shared libraries. <a target="_blank" class="more-info href="https://clinicjs.org/flame/walkthrough/controls/#cpp">More info</a>` },
+          { id: 'regexp', description: `The RegExp notation is shown as the function name. <a target="_blank" class="more-info href="https://clinicjs.org/flame/walkthrough/controls/#rx">More info</a>` },
+          { id: 'init', description: `Any of the above that are repeated frequently during initialization. <a target="_blank" class="more-info href="https://clinicjs.org/flame/walkthrough/controls/#init">More info</a>` }
         ] }
     ]
 
@@ -226,7 +267,7 @@ class OptionsMenu extends HtmlContent {
     super.draw()
 
     // Update option checkbox values.
-    const { useMerged, showOptimizationStatus } = this.ui.dataTree
+    const { useMerged, showOptimizationStatus, appName } = this.ui.dataTree
     this.d3FgOptions.select('#option-usemergedtree')
       .select('input')
       .property('checked', useMerged)
@@ -236,6 +277,9 @@ class OptionsMenu extends HtmlContent {
       .attr('disabled', useMerged ? 'disabled' : null)
       .property('checked', showOptimizationStatus)
 
+    // Updating the app name
+    this.d3VisibilityOptions.select('.name')
+      .text(appName)
     if (this.codeAreasChanged) {
       this.drawCodeAreaList()
     }
