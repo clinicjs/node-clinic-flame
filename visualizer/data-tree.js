@@ -185,6 +185,11 @@ class DataTree {
     walk(this.activeTree())
   }
 
+  isOffScreen(node) {
+    // d3-fg sets `value` to 0 to hide off-screen nodes. The "real" value is stored on `.original`.
+    return node.value === 0 && typeof node.original === 'number'
+  }
+
   getNodeValue (node) {
     if (this.isNodeExcluded(node)) {
       // Value of hidden frames is the sum of their visible children
@@ -192,12 +197,8 @@ class DataTree {
         return acc + this.getNodeValue(child)
       }, 0) : 0
     }
-    // d3-fg sets `value` to 0 to hide off-screen nodes.
-    // there's no other property to indicate this but the original value is stored on `.original`.
-    if (node.value === 0 && typeof node.original === 'number') {
-      return node.original
-    }
-    return node.value
+
+    return this.isOffScreen(node) ? node.original : node.value
   }
 
   getSortPosition (node, arr = this.flatByHottest) {
