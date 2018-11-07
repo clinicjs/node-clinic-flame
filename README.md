@@ -1,9 +1,7 @@
-# node-clinic-flame-private
+# node-clinic-flame
 
 [![npm version][npm-version]][npm-url] [![Stability Stable][stability-stable]][stability-docs] [![CircleCI build status][circleci-status]][circleci-url] [![Appveyor build status][appveyor-status]][appveyor-url]
 [![Downloads][npm-downloads]][npm-url] [![Code style][lint-standard]][lint-standard-url]
-
-Downstream private fork of [clinic flame][clinic-flame-url], for developing confidential or breaking changes.
 
 Programmable interface to [clinic][clinic-url] flame. Learn more about clinic: https://clinicjs.org/
 
@@ -63,10 +61,10 @@ possible error.
 ## License
 [GPL 3.0](LICENSE)
 
-[appveyor-status]: https://ci.appveyor.com/api/projects/status/0gvllun6q2pcrl10?svg=true
-[appveyor-url]: https://ci.appveyor.com/project/nearForm/node-clinic-flame-private
-[circleci-status]: https://circleci.com/gh/nearform/node-clinic-flame-private/tree/master.svg?style=shield&circle-token=bd4aecae7e8266f1e13cdfafb70f92b9e449919a
-[circleci-url]: https://circleci.com/gh/nearform/node-clinic-flame-private
+[appveyor-status]: https://ci.appveyor.com/api/projects/status/3twvae268fobe442?svg=true
+[appveyor-url]: https://ci.appveyor.com/project/nearForm/node-clinic-flame
+[circleci-status]: https://circleci.com/gh/nearform/node-clinic-flame/tree/master.svg?style=shield
+[circleci-url]: https://circleci.com/gh/nearform/node-clinic-flame
 [stability-stable]: https://img.shields.io/badge/stability-stable-green.svg?style=flat-square
 [stability-docs]: https://nodejs.org/api/documentation.html#documentation_stability_index
 [npm-version]: https://img.shields.io/npm/v/@nearform/flame.svg?style=flat-square
@@ -75,6 +73,5 @@ possible error.
 [lint-standard]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square
 [lint-standard-url]: https://github.com/feross/standard
 [clinic-url]: https://github.com/nearform/node-clinic
-[clinic-flame-url]: https://github.com/nearform/node-clinic-flame
 [`<Object>`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
 [`<boolean>`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type
