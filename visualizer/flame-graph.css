@@ -102,6 +102,7 @@ chart > div {
   display: flex;
   flex-basis: 50%;
   font-size: inherit;
+  white-space: nowrap;
   justify-content: center;
   line-height: 1.2em;
   margin: 2px;
