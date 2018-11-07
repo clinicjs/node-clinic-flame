@@ -102,12 +102,15 @@ chart > div {
   display: flex;
   flex-basis: 50%;
   font-size: inherit;
-  white-space: nowrap;
   justify-content: center;
   line-height: 1.2em;
   margin: 2px;
   outline: none;
   padding: 0;
+}
+
+.fg-tooltip-actions .label {
+  white-space: nowrap;
 }
 
 .fg-tooltip-actions button:hover {

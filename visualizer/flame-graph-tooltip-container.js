@@ -25,11 +25,11 @@ class FgTooltipContainer {
       </button>
       <button class='link-button'>
         <span class='icon'><img data-inline-svg class="icon-img" src="/visualizer/assets/icons/link.svg" /></span>
-        <span>Open in browser</span>
+        <span class='label'>Open in browser</span>
       </button>
       <button class='copy-button'>
         <span class='icon'><img data-inline-svg class="icon-img" src="/visualizer/assets/icons/copy.svg" /></span>
-        <span>Copy path</span>
+        <span class='label'>Copy path</span>
       </button>
     `
     this.d3HiddenDiv = d3.select('body').insert('div', ':first-child')
