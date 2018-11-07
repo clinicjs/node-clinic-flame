@@ -7,12 +7,14 @@ const {
 
 const linux = {
   mainDirectory: '/root',
-  pathSeparator: '/'
+  pathSeparator: '/',
+  nodeVersions: { node: '8.13.0' }
 }
 
 const windows = {
   mainDirectory: 'C:\\Documents\\Contains spaces',
-  pathSeparator: '\\'
+  pathSeparator: '\\',
+  nodeVersions: { node: '8.13.0' }
 }
 
 function byProps (properties, sysinfo) {

@@ -2,7 +2,7 @@
 const d3 = require('d3')
 
 class FgTooltipContainer {
-  constructor ({ tooltip, showDelay = 700, hideDelay = 200, onCopyPath }) {
+  constructor ({ tooltip, showDelay = 700, hideDelay = 200, onCopyPath, onOpenPath }) {
     this.tooltip = tooltip
     this.ui = tooltip.ui
 
@@ -11,6 +11,7 @@ class FgTooltipContainer {
     this.showDelay = showDelay
     this.hideDelay = hideDelay
     this.onCopyPath = onCopyPath
+    this.onOpenPath = onOpenPath
 
     this.nodeData = null
     this.frameIsZoomed = false
@@ -18,16 +19,19 @@ class FgTooltipContainer {
     this.svgPath = '/visualizer/assets/icons/'
 
     const html = `
-    <button class='zoom-button'>
-      <span class='icon'><img data-inline-svg class="icon-img zoom-in" src="/visualizer/assets/icons/zoom-in.svg" /><img data-inline-svg class="icon-img zoom-out" src="/visualizer/assets/icons/zoom-out.svg" /></span>
-      <span class='label'>Expand</span>
-    </button>
-    <button class='copy-button'>
-      <span class='icon'><img data-inline-svg class="icon-img" src="/visualizer/assets/icons/copy.svg" /></span>
-      <span>Copy</span>
-      <span>path</span>
-    </button>
-  `
+      <button class='zoom-button'>
+        <span class='icon'><img data-inline-svg class="icon-img zoom-in" src="/visualizer/assets/icons/zoom-in.svg" /><img data-inline-svg class="icon-img zoom-out" src="/visualizer/assets/icons/zoom-out.svg" /></span>
+        <span class='label'>Expand</span>
+      </button>
+      <button class='link-button'>
+        <span class='icon'><img data-inline-svg class="icon-img" src="/visualizer/assets/icons/link.svg" /></span>
+        <span class='label'>Open in browser</span>
+      </button>
+      <button class='copy-button'>
+        <span class='icon'><img data-inline-svg class="icon-img" src="/visualizer/assets/icons/copy.svg" /></span>
+        <span class='label'>Copy path</span>
+      </button>
+    `
     this.d3HiddenDiv = d3.select('body').insert('div', ':first-child')
       .style('visibility', 'hidden')
       .style('position', 'absolute')
@@ -41,13 +45,15 @@ class FgTooltipContainer {
         this.onCopyPath && this.onCopyPath(this.nodeData.target)
       })
 
+    this.d3TooltipLinkBtn = this.d3TooltipHtml.select('.link-button')
+      .on('click', () => {
+        this.onOpenPath && this.onOpenPath(this.nodeData.target)
+      })
+
     this.d3TooltipZoomBtn = this.d3TooltipHtml.select('.zoom-button')
       .on('click', () => {
         this.ui.zoomNode(this.nodeData)
       })
-
-    this.copyBtnChildren = this.d3TooltipCopyBtn.selectAll('span')
-    this.zoomBtnChildren = this.d3TooltipZoomBtn.selectAll('span')
   }
 
   show ({ nodeData, rect, pointerCoords, frameIsZoomed, wrapperNode, delay = null }) {
@@ -108,6 +114,10 @@ class FgTooltipContainer {
   }
 
   updateZoomBtnLabel () {
+    const isLink = /^https?:\/\//.test(this.nodeData.target)
+    this.d3TooltipCopyBtn.classed('hidden', isLink)
+    this.d3TooltipLinkBtn.classed('hidden', !isLink)
+
     this.d3TooltipZoomBtn.select('.label').text(this.frameIsZoomed ? 'Contract' : 'Expand')
 
     this.d3TooltipZoomBtn.classed('zoom-in', !this.frameIsZoomed)

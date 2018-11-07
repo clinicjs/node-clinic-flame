@@ -109,6 +109,10 @@ chart > div {
   padding: 0;
 }
 
+.fg-tooltip-actions .label {
+  white-space: nowrap;
+}
+
 .fg-tooltip-actions button:hover {
   background-color: var(--light-glare);
 }
