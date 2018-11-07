@@ -164,20 +164,26 @@ class DataTree {
   computeGroupedSortValues () {
     this.groupedSortValues = new Map()
 
+    function getTypeKey (node) {
+      return `${node.category}:${node.typeTEMP !== undefined ? node.typeTEMP : node.type}`
+    }
+
     const walk = (node) => {
       if (!node.children) return
       const group = Object.create(null)
       node.children.forEach((child) => {
+        const type = getTypeKey(child)
         const value = this.getSortValue(child)
-        if (child.type in group) {
-          group[child.type] += value
+        if (type in group) {
+          group[type] += value
         } else {
-          group[child.type] = value
+          group[type] = value
         }
       })
 
       node.children.forEach((child) => {
-        this.groupedSortValues.set(child, group[child.type])
+        const type = getTypeKey(child)
+        this.groupedSortValues.set(child, group[type])
         walk(child)
       })
     }
