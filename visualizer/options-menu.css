@@ -178,13 +178,10 @@
   display: initial;
 }
 
-#options-menu .options :indeterminate ~ .icon-wrapper .unchecked{
+#options-menu .options :indeterminate ~ .icon-wrapper .unchecked,
+#options-menu .options :indeterminate ~ .icon-wrapper .checked{
   display: none;
 }
-
-/* #options-menu .options :indeterminate ~ .icon-wrapper svg {
-  display: nonde;
-} */
 
 #options-menu .options li[data-area="app"] {
   color: var(--area-color-app);
