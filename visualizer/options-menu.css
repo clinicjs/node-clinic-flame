@@ -106,7 +106,7 @@
   opacity: 0.3;
 }
 #options-menu .options li.disabled label {
-  pointer-events: none;
+  cursor: default;
 }
 
 #options-menu .options .copy-wrapper{
