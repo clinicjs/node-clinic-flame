@@ -18,9 +18,8 @@ function renderLabel (frameHeight, options) {
   // Don't spend any time in frames with less than one padding width between left/right padding
   if (this.labelPadding * 3 > width) return
 
-  // TODO - from d3-fg, integrate / replace this with code adapting sizes to viewport
-  const fontSize = Math.floor(12 + (frameHeight - 18) * 0.3)
-  const btmOffset = Math.floor((frameHeight - 16) / 2)
+  const fontSize = frameHeight * 0.6
+  const btmOffset = (frameHeight - fontSize) / 2
   const yBottom = y + frameHeight - btmOffset
 
   context.font = `${fontSize}px ${this.labelFont}`

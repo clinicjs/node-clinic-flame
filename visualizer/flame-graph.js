@@ -24,9 +24,13 @@ class FlameGraph extends HtmlContent {
     contentProperties = Object.assign({}, defaults, contentProperties)
     super(parentContent, contentProperties)
 
+    this.zoomFactor = contentProperties.zoomFactor
+    
     this.hoveredNodeData = null
     this.changedWidth = false
     this.isAnimating = false
+    this.baseCellHeight = 20
+    this.cellHeight = this.baseCellHeight + this.zoomFactor
 
     this.tooltip = contentProperties.customTooltip
     this.showOptimizationStatus = contentProperties.showOptimizationStatus
@@ -122,7 +126,7 @@ class FlameGraph extends HtmlContent {
       tree: dataTree.activeTree(),
       exclude: dataTree.exclude,
       element: this.d3Chart.node(),
-      cellHeight: 20,
+      cellHeight: this.cellHeight,
       collapseHiddenNodeWidths: true,
       minHeight: window.screen.availHeight,
       frameColors: {
@@ -233,7 +237,7 @@ class FlameGraph extends HtmlContent {
     })
 
     // triggering the resize after the canvas rendered to take possible scrollbars into account
-    this.resize()
+    this.resize(this.zoomFactor)
   }
 
   highlightHoveredNodeOnGraph () {
@@ -304,11 +308,13 @@ class FlameGraph extends HtmlContent {
     if (this.ui.zoomedNode) this.markNodeAsZoomed(this.ui.zoomedNode)
   }
 
-  resize () {
+  resize (zoomFactor = 0) {
     const previousWidth = this.width
+    this.zoomFactor = zoomFactor
     this.width = this.d3Chart.node().clientWidth
     if (this.width !== previousWidth) {
       this.changedWidth = true
+      this.cellHeight = this.baseCellHeight + zoomFactor
       this.draw()
     }
     this.updateMarkerBoxes()
@@ -324,9 +330,11 @@ class FlameGraph extends HtmlContent {
 
   sort () {
     const sorter = this.ui.dataTree.getFilteredStackSorter()
-    if (this.flameGraph) this.flameGraph.sort((a, b) => {
-      return sorter(a.data, b.data)
-    })
+    if (this.flameGraph) {
+      this.flameGraph.sort((a, b) => {
+        return sorter(a.data, b.data)
+      })
+    }
   }
 
   draw () {
@@ -337,6 +345,7 @@ class FlameGraph extends HtmlContent {
     if (this.changedWidth) {
       this.changedWidth = false
       this.flameGraph.width(this.width)
+      this.flameGraph.cellHeight(this.cellHeight)
     }
 
     let redrawGraph = false
