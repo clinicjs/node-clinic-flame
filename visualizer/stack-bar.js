@@ -1,4 +1,4 @@
-const d3 = require('d3')
+const d3 = require('./d3.js')
 const HtmlContent = require('./html-content.js')
 const flameGradient = require('flame-gradient')
 
