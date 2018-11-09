@@ -6,7 +6,7 @@ class SearchBox extends HtmlContent {
     super(parentContent, contentProperties)
 
     this.ui.on('clearSearch', () => {
-      this.d3Input.property('value', null)
+      this.d3Input.property('value', '')
     })
 
     this.ui.on('search', (query) => {
