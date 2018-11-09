@@ -76,7 +76,11 @@ class StackBar extends HtmlContent {
     }
 
     if (!found) {
-      isInRemaining = frames[frames.length - 1].remaining.some((smallFrame) => smallFrame.id === node.id)
+      const lastFrame = frames[frames.length - 1]
+      // This may not be an aggregate `remaining` frame if all frames fit on the stack bar,
+      // which can happen on small profiles or with aggressive filters.
+      isInRemaining = Array.isArray(lastFrame.remaining) &&
+        lastFrame.remaining.some((smallFrame) => smallFrame.id === node.id)
     }
 
     return found || isInRemaining ? `${left * totalWidth + margin}px` : '-20px'
