@@ -2,6 +2,18 @@ const HtmlContent = require('./html-content.js')
 const debounce = require('lodash.debounce')
 
 class SearchBox extends HtmlContent {
+  constructor (parentContent, contentProperties) {
+    super(parentContent, contentProperties)
+
+    this.ui.on('clearSearch', () => {
+      this.d3Input.property('value', null)
+    })
+
+    this.ui.on('search', (query) => {
+      this.d3Input.property('value', query)
+    })
+  }
+
   initializeElements () {
     super.initializeElements()
 
