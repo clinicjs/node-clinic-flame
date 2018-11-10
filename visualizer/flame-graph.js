@@ -7,8 +7,6 @@ const flameGradient = require('flame-gradient')
 const HtmlContent = require('./html-content.js')
 
 const FgTooltipContainer = require('./flame-graph-tooltip-container')
-const Message = require('./message.js')
-const copy = require('copy-to-clipboard')
 const getLabelRenderer = require('./flame-graph-label.js')
 const getFrameRenderer = require('./flame-graph-frame.js')
 
@@ -32,6 +30,7 @@ class FlameGraph extends HtmlContent {
     this.cellHeight = this.baseCellHeight + this.zoomFactor
 
     this.tooltip = contentProperties.customTooltip
+    this.tooltipHtmlContent = contentProperties.tooltipHtmlContent
     this.showOptimizationStatus = contentProperties.showOptimizationStatus
 
     this.labelFont = contentProperties.labelFont
@@ -88,16 +87,7 @@ class FlameGraph extends HtmlContent {
     if (this.tooltip) {
       this.tooltip = new FgTooltipContainer({
         tooltip: this.tooltip,
-        onCopyPath: (path) => {
-          Message.info(`
-              <span>Path copied to the clipboard!</span>
-              <pre>${path}</pre>
-            `, 4000)
-          copy(path)
-        },
-        onOpenPath: (url) => {
-          window.open(url, '_blank')
-        }
+        tooltipHtmlContent: this.tooltipHtmlContent
       })
     }
 

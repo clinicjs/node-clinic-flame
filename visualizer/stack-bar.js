@@ -9,6 +9,9 @@ class StackBar extends HtmlContent {
     this.highlightedNode = null
     this.timeoutHandler = null
 
+    this.tooltip = contentProperties.tooltip
+    this.tooltipHtmlContent = contentProperties.tooltipHtmlContent
+
     this.ui.on('highlightNode', node => {
       this.pointToNode(node || this.ui.selectedNode)
     })
@@ -152,7 +155,7 @@ class StackBar extends HtmlContent {
         const isHighlighted = data.d && self.highlightedNode && (self.highlightedNode.id === data.d.id)
         const isSelected = data.d && self.ui.selectedNode && (self.ui.selectedNode.id === data.d.id)
 
-        d3.select(this)
+        const frame = d3.select(this)
           .classed('highlighted', isHighlighted)
           .classed('selected', isSelected)
           .style('background-color', flameGradient(colorValue))
@@ -162,6 +165,26 @@ class StackBar extends HtmlContent {
             // selecting the node
             self.ui.selectNode(data.d)
           })
+
+        self.tooltip.attach({
+          msg: self.tooltipHtmlContent,
+          d3TargetElement: frame
+        })
+
+        // .on('mouseover', function () {
+        //   // nodeData, rect, pointerCoords, frameIsZoomed, wrapperNode, delay = null
+        //   self.tooltip.show({
+        //     nodeData: data.d,
+        //     rect: this.getBoundingClientRect(),
+        //     wrapperNode: self.d3StacksWrapper.node(),
+        //     pointerCoords: { x: d3.event.offsetX, y: d3.event.offsetY },
+        //     delay: 0
+
+        //     // verticalAlign: 'top',
+        //     // d3TargetElement: frame
+        //   })
+        //   // console.log(data);
+        // })
       })
 
     // moving the selector over the bar

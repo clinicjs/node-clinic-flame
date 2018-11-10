@@ -6,6 +6,8 @@ const debounce = require('lodash.debounce')
 const DataTree = require('./data-tree.js')
 const History = require('./history.js')
 
+const TooltipHtmlContent = require('./flame-graph-tooltip-content')
+
 class Ui extends events.EventEmitter {
   constructor (wrapperSelector) {
     super()
@@ -20,6 +22,8 @@ class Ui extends events.EventEmitter {
       toHide: new Set(),
       toShow: new Set()
     }
+
+    this.tooltipHtmlContent = new TooltipHtmlContent(this)
 
     this.wrapperSelector = wrapperSelector
     this.exposedCSS = null
@@ -153,7 +157,9 @@ class Ui extends events.EventEmitter {
     })
 
     this.stackBar = toolbar.addContent('StackBar', {
-      id: 'stack-bar'
+      id: 'stack-bar',
+      tooltip,
+      tooltipHtmlContent: this.tooltipHtmlContent
     })
 
     const toolbarTopPanel = toolbar.addContent(undefined, {
@@ -201,7 +207,8 @@ class Ui extends events.EventEmitter {
       id: 'flame-main',
       htmlElementType: 'section',
       customTooltip: tooltip,
-      zoomFactor: getZoomFactor()
+      zoomFactor: getZoomFactor(),
+      tooltipHtmlContent: this.tooltipHtmlContent
     })
     this.flameWrapper = flameWrapper
 
