@@ -18,7 +18,8 @@ function renderLabel (frameHeight, options) {
   // Don't spend any time in frames with less than one padding width between left/right padding
   if (this.labelPadding * 3 > width) return
 
-  const fontSize = frameHeight * 0.6
+  // keeping the same font-size used in the App (assuming the user didn't change the browser default font-size)
+  const fontSize = 10 + this.zoomFactor
   const btmOffset = (frameHeight - fontSize) / 2
   const yBottom = y + frameHeight - btmOffset
 
