@@ -20,7 +20,6 @@ class FgTooltipContent {
     }
 
     this.nodeData = null
-    this.frameIsZoomed = false
 
     this.svgPath = '/visualizer/assets/icons/'
 
@@ -50,12 +49,12 @@ class FgTooltipContent {
 
     this.d3TooltipCopyBtn = this.d3TooltipHtml.select('.copy-button')
       .on('click', () => {
-        this.onCopyPath && this.onCopyPath(this.nodeData.target)
+        this.onCopyPath(this.nodeData.target)
       })
 
     this.d3TooltipLinkBtn = this.d3TooltipHtml.select('.link-button')
       .on('click', () => {
-        this.onOpenPath && this.onOpenPath(this.nodeData.target)
+        this.onOpenPath(this.nodeData.target)
       })
 
     this.d3TooltipZoomBtn = this.d3TooltipHtml.select('.zoom-button')
@@ -64,18 +63,22 @@ class FgTooltipContent {
       })
   }
 
-  getTooltipD3 () {
-    return this.d3TooltipHtml
-  }
+  setNodeData (nodeData) {
+    this.nodeData = nodeData
+    const isLink = /^https?:\/\//.test(this.nodeData.target)
+    const frameIsZoomed = nodeData === this.ui.zoomedNode
 
-  updateZoomBtnLabel (isLink) {
     this.d3TooltipCopyBtn.classed('hidden', isLink)
     this.d3TooltipLinkBtn.classed('hidden', !isLink)
 
-    this.d3TooltipZoomBtn.select('.label').text(this.frameIsZoomed ? 'Contract' : 'Expand')
+    this.d3TooltipZoomBtn.select('.label').text(frameIsZoomed ? 'Contract' : 'Expand')
 
-    this.d3TooltipZoomBtn.classed('zoom-in', !this.frameIsZoomed)
-    this.d3TooltipZoomBtn.classed('zoom-out', this.frameIsZoomed)
+    this.d3TooltipZoomBtn.classed('zoom-in', !frameIsZoomed)
+    this.d3TooltipZoomBtn.classed('zoom-out', frameIsZoomed)
+  }
+
+  getTooltipD3 () {
+    return this.d3TooltipHtml
   }
 }
 

@@ -45,13 +45,12 @@ class FgTooltipContainer {
       // moving the tooltip html into the hidden div to get its size
       this.d3HiddenDiv.append(() => {
         const node = this.d3TooltipHtml.remove().node()
-        console.log(node)
         return node
       })
 
       this.d3TooltipCopyBtn.classed('hidden', hideCopyButton)
 
-      this.updateZoomBtnLabel()
+      this.tooltipHtmlContent.setNodeData(this.nodeData)
 
       const pointerPosition = {
         x: pointerCoords.x - rect.x,
@@ -59,7 +58,7 @@ class FgTooltipContainer {
       }
 
       this.tooltip.show({
-        msg: this.d3TooltipHtml,
+        msg: this.d3TooltipHtml.node(),
         targetRect: rect,
         offset,
         pointerCoords: pointerPosition,
@@ -78,11 +77,6 @@ class FgTooltipContainer {
         if (this.nodeData === this.ui.highlightedNode) this.ui.highlightNode(null)
       }
     }, args))
-  }
-
-  updateZoomBtnLabel () {
-    const isLink = /^https?:\/\//.test(this.nodeData.target)
-    this.tooltipContent.updateZoomBtnLabel(isLink)
   }
 }
 

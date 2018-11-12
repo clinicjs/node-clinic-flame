@@ -7,7 +7,8 @@ class StackBar extends HtmlContent {
     super(parentContent, contentProperties)
 
     this.highlightedNode = null
-    this.timeoutHandler = null
+    this.highlightedNodeTimeoutHandler = null
+    this.frameTooltipHandler = null
 
     this.tooltip = contentProperties.tooltip
     this.tooltipHtmlContent = contentProperties.tooltipHtmlContent
@@ -29,15 +30,15 @@ class StackBar extends HtmlContent {
     this.d3StacksWrapper = this.d3Element.append('div')
       .classed('stacks-wrapper', true)
       .on('mouseover', function () {
-        clearTimeout(this.timeoutHandler)
+        clearTimeout(this.highlightedNodeTimeoutHandler)
 
         if (d3.event.target === this) return
         const nodeData = getNodeDataFromEvent()
         if (nodeData) ui.highlightNode(nodeData.d)
       })
       .on('mouseout', function () {
-        clearTimeout(this.timeoutHandler)
-        this.timeoutHandler = setTimeout(() => {
+        clearTimeout(this.highlightedNodeTimeoutHandler)
+        this.highlightedNodeTimeoutHandler = setTimeout(() => {
           ui.highlightNode(null)
         }, 200)
       })
@@ -87,7 +88,7 @@ class StackBar extends HtmlContent {
 
   prepareFrames () {
     if (process.env.DEBUG_MODE) {
-      console.time('StackBar.prepareFrames')
+      // console.time('StackBar.prepareFrames')
     }
 
     const { dataTree } = this.ui
@@ -119,7 +120,7 @@ class StackBar extends HtmlContent {
       }
     }
     if (process.env.DEBUG_MODE) {
-      console.timeEnd('StackBar.prepareFrames')
+      // console.timeEnd('StackBar.prepareFrames')
     }
     return frames
   }
@@ -134,7 +135,7 @@ class StackBar extends HtmlContent {
     }
 
     if (process.env.DEBUG_MODE) {
-      console.time('StackBar.draw')
+      // console.time('StackBar.draw')
     }
 
     // const rootNode = dataTree.activeTree()
@@ -165,26 +166,22 @@ class StackBar extends HtmlContent {
             // selecting the node
             self.ui.selectNode(data.d)
           })
-
-        self.tooltip.attach({
-          msg: self.tooltipHtmlContent,
-          d3TargetElement: frame
-        })
-
-        // .on('mouseover', function () {
-        //   // nodeData, rect, pointerCoords, frameIsZoomed, wrapperNode, delay = null
-        //   self.tooltip.show({
-        //     nodeData: data.d,
-        //     rect: this.getBoundingClientRect(),
-        //     wrapperNode: self.d3StacksWrapper.node(),
-        //     pointerCoords: { x: d3.event.offsetX, y: d3.event.offsetY },
-        //     delay: 0
-
-        //     // verticalAlign: 'top',
-        //     // d3TargetElement: frame
-        //   })
-        //   // console.log(data);
-        // })
+          .on('mouseover', function (data) {
+            self.tooltipHtmlContent.setNodeData(data.d)
+            self.tooltip.show({
+              d3TargetElement: frame,
+              delay: 0,
+              msg: self.tooltipHtmlContent.getTooltipD3().node(),
+              pointerCoords: { x: d3.event.offsetX, y: d3.event.offsetY },
+              rect: this.getBoundingClientRect(),
+              wrapperNode: self.d3StacksWrapper.node()
+            })
+          })
+          .on('mouseout', function () {
+            self.tooltip.hide({ delay: 400 })
+            clearTimeout(self.highlightedNodeTimeoutHandler)
+            // self.frameTooltipHandler = setTimeout(self.tooltip)
+          })
       })
 
     // moving the selector over the bar
@@ -194,7 +191,7 @@ class StackBar extends HtmlContent {
     this.d3Pointer.classed('hidden', left === null)
 
     if (process.env.DEBUG_MODE) {
-      console.timeEnd('StackBar.draw')
+      // console.timeEnd('StackBar.draw')
     }
   }
 }
