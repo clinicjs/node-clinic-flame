@@ -13,6 +13,12 @@ class StackBar extends HtmlContent {
     this.tooltip = contentProperties.tooltip
     this.tooltipHtmlContent = contentProperties.tooltipHtmlContent
 
+    this.tooltipHtmlContent.getTooltipD3()
+      .on('mouseenter', () => {
+        clearTimeout(this.highlightedNodeTimeoutHandler)
+        this.ui.highlightNode(this.ui.selectedNode)
+      })
+
     this.ui.on('highlightNode', node => {
       this.pointToNode(node || this.ui.selectedNode)
     })
@@ -29,22 +35,39 @@ class StackBar extends HtmlContent {
 
     this.d3StacksWrapper = this.d3Element.append('div')
       .classed('stacks-wrapper', true)
-      .on('mouseover', function () {
+      .on('mousemove', () => {
         clearTimeout(this.highlightedNodeTimeoutHandler)
-
-        if (d3.event.target === this) return
-        const nodeData = getNodeDataFromEvent()
-        if (nodeData) ui.highlightNode(nodeData.d)
+        const nodeElem = this.getNodeAtX(d3.event.offsetX)
+        ui.highlightNode(nodeElem.d)
       })
-      .on('mouseout', function () {
+      .on('mouseout', () => {
         clearTimeout(this.highlightedNodeTimeoutHandler)
         this.highlightedNodeTimeoutHandler = setTimeout(() => {
           ui.highlightNode(null)
+          this.tooltip.hide(200)
         }, 200)
       })
-      .on('click', function () {
-        const nodeData = getNodeDataFromEvent()
-        if (nodeData) ui.selectNode(nodeData.d)
+      .on('click', () => {
+        const nodeElem = this.getNodeAtX(d3.event.offsetX)
+        const nodeData = nodeElem.d
+        this.ui.highlightNode(nodeData)
+        this.ui.selectNode(nodeData)
+        const wrapperRect = this.d3StacksWrapper.node().getBoundingClientRect()
+        const targetRect = {
+          x: d3.event.offsetX,
+          width: wrapperRect.width * nodeElem.width,
+          y: wrapperRect.y,
+          height: wrapperRect.height
+        }
+
+        this.tooltipHtmlContent.setNodeData(nodeData)
+        this.tooltip.show({
+          showDelay: 0,
+          msg: this.tooltipHtmlContent.getTooltipD3().node(),
+          pointerCoords: { x: d3.event.offsetX - 10, y: d3.event.offsetY },
+          targetRect,
+          wrapperNode: this.d3StacksWrapper.node()
+        })
       })
 
     this.d3Pointer = this.d3Element.append('div')
@@ -54,6 +77,16 @@ class StackBar extends HtmlContent {
   pointToNode (node) {
     this.highlightedNode = node
     this.draw()
+  }
+
+  getNodeAtX (x) {
+    let totalWidth = this.d3StacksWrapper.node().getBoundingClientRect().width
+
+    let left = 0
+    return this.frames.find(frame => {
+      left += totalWidth * frame.width + frame.margin
+      return left > x
+    })
   }
 
   getNodePosition (node) {
@@ -88,7 +121,7 @@ class StackBar extends HtmlContent {
 
   prepareFrames () {
     if (process.env.DEBUG_MODE) {
-      // console.time('StackBar.prepareFrames')
+      console.time('StackBar.prepareFrames')
     }
 
     const { dataTree } = this.ui
@@ -120,7 +153,7 @@ class StackBar extends HtmlContent {
       }
     }
     if (process.env.DEBUG_MODE) {
-      // console.timeEnd('StackBar.prepareFrames')
+      console.timeEnd('StackBar.prepareFrames')
     }
     return frames
   }
@@ -135,10 +168,8 @@ class StackBar extends HtmlContent {
     }
 
     if (process.env.DEBUG_MODE) {
-      // console.time('StackBar.draw')
+      console.time('StackBar.draw')
     }
-
-    // const rootNode = dataTree.activeTree()
     this.frames = this.prepareFrames()
 
     const update = this.d3StacksWrapper.selectAll('div')
@@ -156,32 +187,12 @@ class StackBar extends HtmlContent {
         const isHighlighted = data.d && self.highlightedNode && (self.highlightedNode.id === data.d.id)
         const isSelected = data.d && self.ui.selectedNode && (self.ui.selectedNode.id === data.d.id)
 
-        const frame = d3.select(this)
+        d3.select(this)
           .classed('highlighted', isHighlighted)
           .classed('selected', isSelected)
           .style('background-color', flameGradient(colorValue))
           .style('width', `${(width * 100).toFixed(3)}%`)
           .style('margin-right', `${margin}px`)
-          .on('click', data => {
-            // selecting the node
-            self.ui.selectNode(data.d)
-          })
-          .on('mouseover', function (data) {
-            self.tooltipHtmlContent.setNodeData(data.d)
-            self.tooltip.show({
-              d3TargetElement: frame,
-              delay: 0,
-              msg: self.tooltipHtmlContent.getTooltipD3().node(),
-              pointerCoords: { x: d3.event.offsetX, y: d3.event.offsetY },
-              rect: this.getBoundingClientRect(),
-              wrapperNode: self.d3StacksWrapper.node()
-            })
-          })
-          .on('mouseout', function () {
-            self.tooltip.hide({ delay: 400 })
-            clearTimeout(self.highlightedNodeTimeoutHandler)
-            // self.frameTooltipHandler = setTimeout(self.tooltip)
-          })
       })
 
     // moving the selector over the bar
@@ -191,15 +202,9 @@ class StackBar extends HtmlContent {
     this.d3Pointer.classed('hidden', left === null)
 
     if (process.env.DEBUG_MODE) {
-      // console.timeEnd('StackBar.draw')
+      console.timeEnd('StackBar.draw')
     }
   }
-}
-
-function getNodeDataFromEvent () {
-  const d3Hover = d3.select(d3.event.target)
-  const nodeData = d3Hover.datum()
-  return nodeData
 }
 
 module.exports = StackBar
