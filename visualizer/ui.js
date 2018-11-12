@@ -184,10 +184,24 @@ class Ui extends events.EventEmitter {
       customTooltip: tooltip
     })
 
+    const getZoomFactor = () => {
+      // getting the zoomFactor when the viewport is larger than 600px
+      // and as long as the width / height proportion equals to 16/9
+      const minWidth = 600
+
+      if (window.innerWidth > minWidth) {
+        const size = Math.min(window.innerWidth, window.innerHeight * 16 / 9)
+        return (size - minWidth) / 250
+      }
+
+      return 0
+    }
+
     const flameWrapper = this.uiContainer.addContent('FlameGraph', {
       id: 'flame-main',
       htmlElementType: 'section',
-      customTooltip: tooltip
+      customTooltip: tooltip,
+      zoomFactor: getZoomFactor()
     })
     this.flameWrapper = flameWrapper
 
@@ -223,24 +237,20 @@ class Ui extends events.EventEmitter {
       }
     }, 200)
 
-    const setFontSize = () => {
+    const setFontSize = (zoomFactor) => {
       // increasing the font-size as the screen gets wider...
-      // as long as the width / height proportion equals to 16/9
-      const minWidth = 600
-
-      if (window.innerWidth > minWidth) {
-        const size = Math.min(window.innerWidth, window.innerHeight * 16 / 9)
-        document.documentElement.style.fontSize = 0.625 + (size - minWidth) / 250 / 16 + 'em'
-      }
+      document.documentElement.style.fontSize = 0.625 + zoomFactor / 16 + 'em'
     }
 
-    setFontSize()
+    setFontSize(getZoomFactor())
+    // flameWrapper.
 
     window.addEventListener('resize', () => {
-      flameWrapper.resize()
+      const zoomFactor = getZoomFactor()
+      flameWrapper.resize(zoomFactor)
       scrollChartIntoView()
       reDrawStackBar()
-      setFontSize()
+      setFontSize(zoomFactor)
     })
 
     window.addEventListener('load', scrollChartIntoView)
