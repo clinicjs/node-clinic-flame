@@ -21,6 +21,7 @@ class Ui extends events.EventEmitter {
       toShow: new Set()
     }
     this.searchQuery = null
+    this.presentationMode = false
 
     this.wrapperSelector = wrapperSelector
     this.exposedCSS = null
@@ -41,6 +42,7 @@ class Ui extends events.EventEmitter {
       useMerged: this.dataTree.useMerged,
       showOptimizationStatus: this.dataTree.showOptimizationStatus,
       exclude: this.dataTree.exclude,
+      presentationMode: this.presentationMode,
       search: this.searchQuery
     }, opts)
   }
@@ -75,6 +77,9 @@ class Ui extends events.EventEmitter {
     if (data.search !== this.searchQuery) {
       this.search(data.search, { pushState: false })
     }
+    this.presentationMode = data.presentationMode
+
+    this.emit('presentationMode', this.presentationMode)
   }
 
   // Temporary e.g. on mouseover, erased on mouseout
@@ -146,6 +151,12 @@ class Ui extends events.EventEmitter {
         replace: prevQuery && query.startsWith(prevQuery)
       })
     }
+  }
+
+  setPresentationMode (mode) {
+    this.presentationMode = mode
+    this.pushHistory()
+    this.emit('presentationMode', mode)
   }
 
   /**
@@ -275,6 +286,12 @@ class Ui extends events.EventEmitter {
     })
 
     window.addEventListener('load', scrollChartIntoView)
+
+    this.on('presentationMode', () => {
+      const zoomFactor = getZoomFactor()
+      flameWrapper.resize(zoomFactor)
+      setFontSize(zoomFactor)
+    })
   }
 
   addSection (id, options = {}) {

@@ -3,6 +3,17 @@
 const HtmlContent = require('./html-content.js')
 const d3 = require('./d3.js')
 
+const preferences = [
+  {
+    id: 'presentation_mode',
+    title: 'Presentation mode',
+    value: false,
+    onChange: (ui, checked) => {
+      ui.setPresentationMode(checked)
+    }
+  }
+]
+
 class OptionsMenu extends HtmlContent {
   constructor (parentContent, contentProperties) {
     super(parentContent, contentProperties)
@@ -18,6 +29,15 @@ class OptionsMenu extends HtmlContent {
     })
 
     this.showMore = {}
+
+    this.ui.on('presentationMode', mode => {
+      const pref = preferences.find(pref => {
+        return pref.id === 'presentation_mode'
+      })
+      pref.value = mode === true
+      // switching the class on the html element
+      document.documentElement.classList.toggle('presentation-mode', mode)
+    })
   }
 
   initializeElements () {
@@ -60,6 +80,35 @@ class OptionsMenu extends HtmlContent {
         this.ui.setShowOptimizationStatus(checked)
       }
     })
+
+    // preferences
+    this.d3Preferences = this.d3OptionsList.append('div')
+      .classed('section preferences', true)
+    this.d3Preferences.append('h2')
+      .text('Preferences')
+
+    const prefUl = this.d3Preferences.append('ul')
+    const prefLi = prefUl.selectAll('li').data(preferences)
+    prefLi.exit().remove()
+    prefLi.enter().append('li')
+      .html(d => {
+        return (`
+          <label>
+            <input id='${d.id}' type='checkbox' "${d.value ? 'checked' : ''}" /> 
+            <span class='icon-wrapper'>
+              <img class="icon-img checked" data-inline-svg src="/visualizer/assets/icons/checkbox-checked.svg" />
+              <img class="icon-img unchecked" data-inline-svg src="/visualizer/assets/icons/checkbox-unchecked.svg" />
+            </span>
+            <span class='copy-wrapper'>${d.title}</span>
+          </label>
+        `)
+      })
+
+    prefUl.selectAll('input')
+      .on('change', () => {
+        const chkbox = d3.event.target
+        d3.select(chkbox.closest('li')).datum().onChange(this.ui, chkbox.checked)
+      })
 
     this.ui.on('setData', () => {
       this.setData()
@@ -285,6 +334,9 @@ class OptionsMenu extends HtmlContent {
     }
 
     this.applyCodeVisibilityExclusions(this.ui.dataTree.exclude)
+
+    this.d3Preferences.select('#presentation_mode')
+      .property('checked', this.ui.presentationMode)
   }
 }
 
