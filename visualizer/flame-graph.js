@@ -25,6 +25,7 @@ class FlameGraph extends HtmlContent {
     super(parentContent, contentProperties)
 
     this.zoomFactor = contentProperties.zoomFactor
+    this.zoomFactorChanged = true
 
     this.hoveredNodeData = null
     this.isAnimating = false
@@ -311,7 +312,9 @@ class FlameGraph extends HtmlContent {
   }
 
   resize (zoomFactor = 0) {
+    this.zoomFactorChanged = this.zoomFactor !== zoomFactor
     this.zoomFactor = zoomFactor
+
     this.width = this.d3Chart.node().clientWidth
     this.cellHeight = this.baseCellHeight + zoomFactor
     this.draw()
@@ -370,6 +373,11 @@ class FlameGraph extends HtmlContent {
         redrawGraph = false
       })
       isChanged = true
+    }
+
+    if (this.zoomFactorChanged) {
+      redrawGraph = true
+      this.zoomFactorChanged = false
     }
 
     if (isChanged || redrawGraph) this.updateMarkerBoxes()
