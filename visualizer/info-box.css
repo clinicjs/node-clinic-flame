@@ -59,3 +59,10 @@
 #info-box .frame-path {
   max-width: 66.67%;
 }
+
+
+
+/* presentation mode */
+.presentation-mode #info-box .frame-info {
+  background-color: var(--main-bg-color);
+}

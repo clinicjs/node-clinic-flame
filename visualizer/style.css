@@ -37,7 +37,7 @@ html {
 
   --main-bg-color: rgb(var(--main-bg-color-val));
   --main-bg-translucent: rgba(var(--main-bg-color-val), 0.94);
-  --overlay-bg-color: rgba(67, 70, 81, 0.94);
+  --overlay-bg-color: #41444f;
 
   --banner-bg-color-val: 50, 53, 61;
   --banner-bg-color: rgb(var(--banner-bg-color-val));
@@ -84,6 +84,13 @@ html.light {
   --banner-bg-color: rgba(0, 0, 0, 0.1);
   --footer-bg-color: rgba(0, 0, 0, 0.1);
   --footer-color: rgba(0, 0, 0, 0.9);
+}
+
+/* Overrides for Presentation mode */
+/* just a poc for now... */
+html.presentation-mode {
+  --banner-bg-color: #14161d;
+  --overlay-bg-color: #14161d;
 }
 
 /* Main layout */
