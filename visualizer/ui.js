@@ -79,6 +79,11 @@ class Ui extends events.EventEmitter {
     }
     this.presentationMode = data.presentationMode
 
+    if (data.search !== this.searchQuery) {
+      this.search(data.search, { pushState: false })
+    }
+    this.presentationMode = data.presentationMode
+
     this.emit('presentationMode', this.presentationMode)
   }
 
