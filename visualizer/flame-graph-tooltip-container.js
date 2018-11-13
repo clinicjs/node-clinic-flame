@@ -10,7 +10,6 @@ class FgTooltipContainer {
     this.tooltipHtmlContent = tooltipHtmlContent
 
     this.d3TooltipHtml = tooltipHtmlContent.getTooltipD3()
-    this.d3TooltipCopyBtn = this.d3TooltipHtml.select('.copy-button')
 
     this.d3HiddenDiv = d3.select('body').select('.tooltipHiddenDiv', ':first-child')
 
@@ -33,8 +32,6 @@ class FgTooltipContainer {
     this.tooltipHandler = setTimeout(() => {
       this.frameIsZoomed = frameIsZoomed
 
-      const hideCopyButton = !nodeData.target
-
       const wrapperRect = wrapperNode.getBoundingClientRect()
 
       const offset = {
@@ -47,8 +44,6 @@ class FgTooltipContainer {
         const node = this.d3TooltipHtml.remove().node()
         return node
       })
-
-      this.d3TooltipCopyBtn.classed('hidden', hideCopyButton)
 
       this.tooltipHtmlContent.setNodeData(this.nodeData)
 

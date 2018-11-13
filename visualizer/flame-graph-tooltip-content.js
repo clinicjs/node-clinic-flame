@@ -67,8 +67,9 @@ class FgTooltipContent {
     this.nodeData = nodeData
     const isLink = /^https?:\/\//.test(this.nodeData.target)
     const frameIsZoomed = nodeData === this.ui.zoomedNode
+    const hideCopyButton = !nodeData.target
 
-    this.d3TooltipCopyBtn.classed('hidden', isLink)
+    this.d3TooltipCopyBtn.classed('hidden', isLink || hideCopyButton)
     this.d3TooltipLinkBtn.classed('hidden', !isLink)
 
     this.d3TooltipZoomBtn.select('.label').text(frameIsZoomed ? 'Contract' : 'Expand')
