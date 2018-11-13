@@ -16,6 +16,9 @@ class StackBar extends HtmlContent {
     this.tooltipHtmlContent.getTooltipD3()
       .on('mouseenter', () => {
         clearTimeout(this.highlightedNodeTimeoutHandler)
+        // this.ui.highlightNode(this.ui.selectedNode)
+      })
+      .on('mouseleave', () => {
         this.ui.highlightNode(this.ui.selectedNode)
       })
 
@@ -37,13 +40,31 @@ class StackBar extends HtmlContent {
       .classed('stacks-wrapper', true)
       .on('mousemove', () => {
         clearTimeout(this.highlightedNodeTimeoutHandler)
+
         const nodeElem = this.getNodeAtX(d3.event.offsetX)
+        const nodeData = nodeElem.d
         ui.highlightNode(nodeElem.d)
+
+        const wrapperRect = this.d3StacksWrapper.node().getBoundingClientRect()
+        const targetRect = {
+          x: d3.event.offsetX - 10,
+          width: wrapperRect.width * nodeElem.width,
+          y: wrapperRect.y,
+          height: wrapperRect.height
+        }
+
+        this.tooltipHtmlContent.setNodeData(nodeData)
+        this.tooltip.show({
+          msg: this.tooltipHtmlContent.getTooltipD3().node(),
+          pointerCoords: { x: d3.event.offsetX - 10, y: d3.event.offsetY },
+          targetRect,
+          wrapperNode: this.d3StacksWrapper.node()
+        })
       })
       .on('mouseout', () => {
         clearTimeout(this.highlightedNodeTimeoutHandler)
         this.highlightedNodeTimeoutHandler = setTimeout(() => {
-          ui.highlightNode(null)
+          ui.highlightNode(this.ui.selectedNode)
           this.tooltip.hide(200)
         }, 200)
       })
@@ -52,22 +73,6 @@ class StackBar extends HtmlContent {
         const nodeData = nodeElem.d
         this.ui.highlightNode(nodeData)
         this.ui.selectNode(nodeData)
-        const wrapperRect = this.d3StacksWrapper.node().getBoundingClientRect()
-        const targetRect = {
-          x: d3.event.offsetX,
-          width: wrapperRect.width * nodeElem.width,
-          y: wrapperRect.y,
-          height: wrapperRect.height
-        }
-
-        this.tooltipHtmlContent.setNodeData(nodeData)
-        this.tooltip.show({
-          showDelay: 0,
-          msg: this.tooltipHtmlContent.getTooltipD3().node(),
-          pointerCoords: { x: d3.event.offsetX - 10, y: d3.event.offsetY },
-          targetRect,
-          wrapperNode: this.d3StacksWrapper.node()
-        })
       })
 
     this.d3Pointer = this.d3Element.append('div')
