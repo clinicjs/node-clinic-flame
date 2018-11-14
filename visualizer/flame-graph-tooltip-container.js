@@ -1,5 +1,5 @@
 'use strict'
-const d3 = require('d3')
+const d3 = require('./d3.js')
 
 class FgTooltipContainer {
   constructor ({ tooltip, showDelay = 700, hideDelay = 200, onCopyPath, onOpenPath }) {
