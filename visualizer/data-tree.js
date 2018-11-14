@@ -2,7 +2,7 @@
 
 const shared = require('../shared.js')
 const flameGradient = require('flame-gradient')
-const d3 = require('d3')
+const d3 = require('./d3.js')
 
 class DataTree {
   constructor (tree) {
