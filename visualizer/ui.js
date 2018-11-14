@@ -212,7 +212,7 @@ class Ui extends events.EventEmitter {
 
       if (window.innerWidth > minWidth) {
         const size = Math.min(window.innerWidth, window.innerHeight * 16 / 9)
-        return (size - minWidth) / 250
+        return Math.round((size - minWidth) / 250)
       }
 
       return 0
