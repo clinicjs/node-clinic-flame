@@ -85,15 +85,13 @@ class History extends EventEmitter {
     const selectedNodeId = parseInt(params.selectedNode, 10)
     const zoomedNodeId = parseInt(params.zoomedNode, 10)
     const search = params.search || null
-    const presentationMode = params.presentationMode === 'true'
     return {
       exclude,
       useMerged,
       showOptimizationStatus,
       selectedNodeId,
       zoomedNodeId,
-      search,
-      presentationMode
+      search
     }
   }
 
@@ -103,8 +101,7 @@ class History extends EventEmitter {
     showOptimizationStatus,
     selectedNodeId,
     zoomedNodeId,
-    search,
-    presentationMode
+    search
   }) {
     const params = {
       selectedNode: selectedNodeId,
@@ -122,9 +119,6 @@ class History extends EventEmitter {
     }
     if (showOptimizationStatus) {
       params.showOptimizationStatus = true
-    }
-    if (presentationMode) {
-      params.presentationMode = true
     }
 
     return qs.stringify(params)

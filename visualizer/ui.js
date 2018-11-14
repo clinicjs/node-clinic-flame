@@ -21,7 +21,7 @@ class Ui extends events.EventEmitter {
       toShow: new Set()
     }
     this.searchQuery = null
-    this.presentationMode = false
+    this.presentationMode = process.env.PRESENTATION_MODE
 
     this.wrapperSelector = wrapperSelector
     this.exposedCSS = null
@@ -42,7 +42,6 @@ class Ui extends events.EventEmitter {
       useMerged: this.dataTree.useMerged,
       showOptimizationStatus: this.dataTree.showOptimizationStatus,
       exclude: this.dataTree.exclude,
-      presentationMode: this.presentationMode,
       search: this.searchQuery
     }, opts)
   }
@@ -82,9 +81,6 @@ class Ui extends events.EventEmitter {
     if (data.search !== this.searchQuery) {
       this.search(data.search, { pushState: false })
     }
-    this.presentationMode = data.presentationMode
-
-    this.emit('presentationMode', this.presentationMode)
   }
 
   // Temporary e.g. on mouseover, erased on mouseout
@@ -145,6 +141,8 @@ class Ui extends events.EventEmitter {
 
     this.emit('search', query)
 
+    this.emit('search', query)
+
     const prevQuery = this.searchQuery
     this.searchQuery = query
 
@@ -156,6 +154,11 @@ class Ui extends events.EventEmitter {
         replace: prevQuery && query.startsWith(prevQuery)
       })
     }
+  }
+
+  setPresentationMode (mode) {
+    this.presentationMode = mode
+    this.emit('presentationMode', mode)
   }
 
   /**
@@ -223,7 +226,7 @@ class Ui extends events.EventEmitter {
       if (window.innerWidth > minWidth) {
         const size = Math.min(window.innerWidth, window.innerHeight * 16 / 9)
         const baseFactor = (size - minWidth) / 250
-        const bonus = this.presentationMode ? 1.25 : 1
+        const bonus = this.presentationMode ? 1.5 : 1
         return Math.round(baseFactor * bonus)
       }
 
@@ -292,6 +295,7 @@ class Ui extends events.EventEmitter {
       const zoomFactor = getZoomFactor()
       flameWrapper.resize(zoomFactor)
       setFontSize(zoomFactor)
+      scrollChartIntoView()
     })
   }
 
@@ -432,6 +436,8 @@ class Ui extends events.EventEmitter {
 
     this.changedExclusions.toHide.clear()
     this.changedExclusions.toShow.clear()
+
+    this.setPresentationMode(this.presentationMode)
   }
 }
 

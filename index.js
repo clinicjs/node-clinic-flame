@@ -28,11 +28,13 @@ class ClinicFlame extends events.EventEmitter {
 
     const {
       detectPort = false,
-      debug = false
+      debug = false,
+      presentationMode = false
     } = settings
 
     this.detectPort = detectPort
     this.debug = debug
+    this.presentationMode = presentationMode
   }
 
   collect (args, cb) {
@@ -124,7 +126,10 @@ class ClinicFlame extends events.EventEmitter {
     })
     b.add(scriptPath)
     b.transform('brfs')
-    b.transform(envify({ DEBUG_MODE: this.debug }))
+    b.transform(envify({
+      DEBUG_MODE: this.debug,
+      PRESENTATION_MODE: this.presentationMode
+    }))
 
     let scriptFile = b
       .bundle()
