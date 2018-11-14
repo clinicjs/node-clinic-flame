@@ -35,8 +35,6 @@ class OptionsMenu extends HtmlContent {
         return pref.id === 'presentation_mode'
       })
       pref.value = mode === true
-      // switching the class on the html element
-      document.documentElement.classList.toggle('presentation-mode', mode)
     })
   }
 
