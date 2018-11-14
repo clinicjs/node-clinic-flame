@@ -64,5 +64,5 @@
 
 /* presentation mode */
 .presentation-mode #info-box .frame-info {
-  background-color: var(--main-bg-color);
+  background-color: var(--opposite-contrast);
 }

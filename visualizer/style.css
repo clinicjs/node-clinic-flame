@@ -91,6 +91,8 @@ html.light {
 html.presentation-mode {
   --banner-bg-color: #14161d;
   --overlay-bg-color: #14161d;
+  --main-bg-color: rgb(47, 53, 66);
+  --options-menu-bg-color: #14161d;
 }
 
 /* Main layout */
