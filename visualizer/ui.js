@@ -141,8 +141,6 @@ class Ui extends events.EventEmitter {
 
     this.emit('search', query)
 
-    this.emit('search', query)
-
     const prevQuery = this.searchQuery
     this.searchQuery = query
 
