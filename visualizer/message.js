@@ -1,5 +1,5 @@
 'use strict'
-const d3 = require('d3')
+const d3 = require('./d3.js')
 
 const msgComponent = d3.select('body')
   .append('div')

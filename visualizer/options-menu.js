@@ -1,7 +1,7 @@
 'use strict'
 
 const HtmlContent = require('./html-content.js')
-const d3 = require('d3')
+const d3 = require('./d3.js')
 
 class OptionsMenu extends HtmlContent {
   constructor (parentContent, contentProperties) {
