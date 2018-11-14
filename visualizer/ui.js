@@ -76,7 +76,6 @@ class Ui extends events.EventEmitter {
     if (data.search !== this.searchQuery) {
       this.search(data.search, { pushState: false })
     }
-    this.presentationMode = data.presentationMode
 
     if (data.search !== this.searchQuery) {
       this.search(data.search, { pushState: false })
@@ -438,6 +437,7 @@ class Ui extends events.EventEmitter {
     this.changedExclusions.toHide.clear()
     this.changedExclusions.toShow.clear()
 
+    // setting Presentation Mode
     this.setPresentationMode(this.presentationMode)
   }
 }
