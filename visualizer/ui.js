@@ -158,12 +158,6 @@ class Ui extends events.EventEmitter {
     }
   }
 
-  setPresentationMode (mode) {
-    this.presentationMode = mode
-    this.pushHistory()
-    this.emit('presentationMode', mode)
-  }
-
   /**
   * Sections and content
   **/
