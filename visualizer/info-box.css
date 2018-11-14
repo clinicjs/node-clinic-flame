@@ -25,7 +25,7 @@
 }
 
 #info-box .frame-info .frame-area {
-  color: var(--primary-grey);
+  color: var(--area-color-core);
   word-break: break-word;
   text-align: right;
 }

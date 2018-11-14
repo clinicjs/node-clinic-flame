@@ -48,7 +48,6 @@ html {
 
   --options-menu-bg-color: rgba(var(--banner-bg-color-val), 0.9);
 
-  --cyan: rgb(63, 125, 198);
   --grey-blue: rgb(76, 92, 138);
   --primary-grey: rgb(121, 122, 124);
   --grey-highlight-color-val: 191, 192, 194;
@@ -57,8 +56,8 @@ html {
   --checkbox-border-color: rgba(var(--grey-highlight-color-val), 0.9);
 
   --area-color-app: var(--max-contrast);
-  --area-color-deps: var(--cyan);
-  --area-color-core: var(--primary-grey);
+  --area-color-deps: rgb(63, 125, 198);
+  --area-color-core: rgb(156, 170, 159);
 
   /* scrollbars */
   --scrollbar-primary-color-val: 145, 169, 179;
@@ -93,6 +92,9 @@ html.presentation-mode {
   --overlay-bg-color: #14161d;
   --main-bg-color: rgb(47, 53, 66);
   --options-menu-bg-color: #14161d;
+
+  --area-color-deps: rgb(94, 191, 247);  
+  --area-color-core: rgb(153, 187, 159);
 }
 
 /* Main layout */
