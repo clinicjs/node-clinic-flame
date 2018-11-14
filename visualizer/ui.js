@@ -228,7 +228,9 @@ class Ui extends events.EventEmitter {
 
       if (window.innerWidth > minWidth) {
         const size = Math.min(window.innerWidth, window.innerHeight * 16 / 9)
-        return Math.round((size - minWidth) / 250)
+        const baseFactor = (size - minWidth) / 250
+        const bonus = this.presentationMode ? 1.25 : 1
+        return Math.round(baseFactor * bonus)
       }
 
       return 0
