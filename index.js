@@ -39,7 +39,7 @@ class ClinicFlame extends events.EventEmitter {
     const argv = args.slice(1)
     const self = this
 
-    const paths = getLoggingPaths()
+    const paths = getLoggingPaths({ identifier: '{pid}' })
 
     callbackify(x({
       argv,
