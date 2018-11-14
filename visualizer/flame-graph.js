@@ -3,7 +3,6 @@
 // d3-fg is likely a temporary dep, most layout logic will move to analysis and
 // most draw / interactivity logic will be replaced here
 const d3Fg = require('d3-fg')
-const flameGradient = require('flame-gradient')
 const HtmlContent = require('./html-content.js')
 
 const FgTooltipContainer = require('./flame-graph-tooltip-container')

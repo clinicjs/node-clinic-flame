@@ -9,7 +9,6 @@ const d3 = Object.assign(
   require('d3-array')
 )
 
-
 // This property changes after importing so we fake a live binding.
 Object.defineProperty(d3, 'event', {
   get () { return selection.event }
