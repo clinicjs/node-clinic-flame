@@ -59,6 +59,14 @@ class FlameGraph extends HtmlContent {
     this.ui.on('updateExclusions', () => {
       this.sort()
     })
+
+    this.ui.on('clearSearch', () => {
+      this.flameGraph.clear(searchHighlightColor)
+    })
+
+    this.ui.on('search', (query) => {
+      this.flameGraph.search(query, searchHighlightColor)
+    })
   }
 
   initializeElements () {
@@ -316,14 +324,6 @@ class FlameGraph extends HtmlContent {
     this.cellHeight = this.baseCellHeight + zoomFactor
     this.draw()
     this.updateMarkerBoxes()
-  }
-
-  clearSearch () {
-    this.flameGraph.clear(searchHighlightColor)
-  }
-
-  search (query) {
-    this.flameGraph.search(query, searchHighlightColor)
   }
 
   sort () {
