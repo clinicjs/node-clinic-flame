@@ -22,6 +22,9 @@ function renderStackFrame (globals, locals, rect) {
   } = rect
 
   const nodeData = node.data
+  const thick = 3
+  const thin = 1
+  const lineWidth = this.ui.presentationMode ? thick : thin
 
   // Do nothing for frames excluded by zoom, unless we're still animating
   if (nodeData.value === 0 && !this.isAnimating) return
@@ -59,24 +62,32 @@ function renderStackFrame (globals, locals, rect) {
   const backgroundColor = this.ui.getFrameColor(nodeData, 'background')
   const foregroundColor = this.ui.getFrameColor(nodeData, 'foreground')
 
-  // Give rect an initial solid stroke using fill color so things behind
-  // e.g. heat bar don't show through
   context.fillStyle = backgroundColor
-  context.strokeStyle = backgroundColor
 
   context.beginPath()
-  context.rect(left, top, alignDown(width) - 1, alignDown(height))
+  context.rect(left - 0.5, top - 1.5, alignDown(width) + 0.5, height + 1)
   context.fill()
-  context.stroke()
 
   // Add a light stroke to left, bottom and right indicating code area
   context.save()
-  context.globalAlpha = 0.2
+  context.globalAlpha = this.ui.presentationMode ? 0.6 : 0.2
   context.strokeStyle = foregroundColor
+
   context.beginPath()
+  context.lineWidth = thin
   context.moveTo(left, top)
-  context.lineTo(left, bottom)
-  context.lineTo(right, bottom)
+  context.lineTo(left, bottom - lineWidth)
+  context.stroke()
+
+  context.beginPath()
+  context.lineWidth = lineWidth
+  context.moveTo(left, bottom - lineWidth)
+  context.lineTo(right, bottom - lineWidth)
+  context.stroke()
+
+  context.beginPath()
+  context.lineWidth = thin
+  context.moveTo(right, bottom - lineWidth)
   context.lineTo(right, top)
   context.stroke()
   context.restore()
