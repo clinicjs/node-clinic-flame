@@ -31,33 +31,22 @@ function renderStackFrame (globals, locals, rect) {
 
   // Align with pixel grid to avoid fuzzy 2px lines of inconsistent stroke color
   // Round everything towards being smaller so lines don't draw over each other
-  const roundedHeight = Math.floor(height) - 1
-  const roundedWidth = Math.floor(width) - 1
 
-  const top = alignUp(y)
-  const bottom = top + roundedHeight
-
-  const left = alignUp(x)
-  let right = left + roundedWidth
-  if (right <= left) right++
-
-  const alignedRect = {
-    x: left,
-    y: top,
-    width: roundedWidth,
-    height: roundedHeight
-  }
+  const left = Math.floor(x) + 1.5
+  const right = Math.ceil(left + width) - 1.5
+  const bottom = Math.floor(y + height) + 0.5
 
   // For really tiny frames, draw a 1px thick pixel-aligned 'matchstick' line
   if (width <= 1.5) {
     const backgroundColor = this.ui.getFrameColor(nodeData, 'background', false)
     const foregroundColor = this.ui.getFrameColor(nodeData, 'foreground', false)
-    renderAsLine(context, rect, backgroundColor, foregroundColor, nodeData.highlight)
+    renderAsLine(context, { x: left, y, height }, backgroundColor, foregroundColor, nodeData.highlight)
     return
   }
 
   // Don't redraw heat over previous paint on hover events, and don't draw for root node
-  if (state === STATE_IDLE && nodeData.id !== 0) renderHeatBar(context, nodeData, colorHash, alignedRect)
+  // if (state === STATE_IDLE && nodeData.id !== 0) renderHeatBar(context, nodeData, colorHash, alignedRect)
+  if (state === STATE_IDLE && nodeData.id !== 0) renderHeatBar(context, nodeData, colorHash, rect)
 
   const backgroundColor = this.ui.getFrameColor(nodeData, 'background')
   const foregroundColor = this.ui.getFrameColor(nodeData, 'foreground')
@@ -65,17 +54,17 @@ function renderStackFrame (globals, locals, rect) {
   context.fillStyle = backgroundColor
 
   context.beginPath()
-  context.rect(left - 0.5, top - 1.5, alignDown(width) + 0.5, height + 1)
+  context.rect(left, y, width, height)
   context.fill()
 
   // Add a light stroke to left, bottom and right indicating code area
   context.save()
-  context.globalAlpha = this.ui.presentationMode ? 0.6 : 0.2
+  context.globalAlpha = this.ui.presentationMode ? 0.6 : 0.4
   context.strokeStyle = foregroundColor
 
   context.beginPath()
   context.lineWidth = thin
-  context.moveTo(left, top)
+  context.moveTo(left, y)
   context.lineTo(left, bottom - lineWidth)
   context.stroke()
 
@@ -88,7 +77,7 @@ function renderStackFrame (globals, locals, rect) {
   context.beginPath()
   context.lineWidth = thin
   context.moveTo(right, bottom - lineWidth)
-  context.lineTo(right, top)
+  context.lineTo(right, y)
   context.stroke()
   context.restore()
 }
@@ -132,14 +121,6 @@ function renderAsLine (context, rect, backgroundColor, foregroundColor, isHighli
   context.lineTo(x, y + height)
   context.stroke()
   context.restore()
-}
-
-function alignUp (num) {
-  return Math.round(num + 0.5) + 0.5
-}
-
-function alignDown (num) {
-  return Math.round(num - 0.5) - 0.5
 }
 
 function getHeatHeight (height) {
