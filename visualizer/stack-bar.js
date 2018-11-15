@@ -53,6 +53,11 @@ class StackBar extends HtmlContent {
           height: wrapperRect.height
         }
 
+        if (!nodeData) {
+          this.tooltip.hide()
+          return
+        }
+
         this.tooltipHtmlContent.setNodeData(nodeData)
         this.tooltip.show({
           msg: this.tooltipHtmlContent.getTooltipD3().node(),
@@ -71,8 +76,17 @@ class StackBar extends HtmlContent {
       .on('click', () => {
         const nodeElem = this.getNodeAtX(d3.event.offsetX)
         const nodeData = nodeElem.d
-        this.ui.highlightNode(nodeData)
-        this.ui.selectNode(nodeData)
+        if (nodeData) {
+          this.ui.highlightNode(nodeData)
+          this.ui.selectNode(nodeData)
+        }
+      })
+      .on('dblclick', () => {
+        const nodeElem = this.getNodeAtX(d3.event.offsetX)
+        const nodeData = nodeElem.d
+        if (nodeData) {
+          this.ui.zoomNode(nodeData)
+        }
       })
 
     this.d3Pointer = this.d3Element.append('div')
