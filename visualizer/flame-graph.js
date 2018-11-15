@@ -232,6 +232,10 @@ class FlameGraph extends HtmlContent {
     this.resize(this.zoomFactor)
   }
 
+  getNodeRect (node) {
+    return this.flameGraph.getNodeRect(node)
+  }
+
   highlightHoveredNodeOnGraph () {
     if (this.hoveredNodeData === null) {
       this.d3Highlighter.classed('show', false)
