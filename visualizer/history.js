@@ -40,9 +40,14 @@ class History extends EventEmitter {
     }
   }
 
-  push (params) {
+  push (params, opts) {
     const hash = this.serialize(params)
-    window.history.pushState({ hash }, null, `${window.location.pathname}#${hash}`)
+    const path = `${window.location.pathname}#${hash}`
+    if (opts.replace) {
+      window.history.replaceState({ hash }, null, path)
+    } else {
+      window.history.pushState({ hash }, null, path)
+    }
   }
 
   serializeExcludes (exclude) {

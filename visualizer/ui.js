@@ -22,6 +22,7 @@ class Ui extends events.EventEmitter {
       toHide: new Set(),
       toShow: new Set()
     }
+    this.searchQuery = null
 
     this.tooltipHtmlContent = new TooltipHtmlContent(this)
 
@@ -37,14 +38,15 @@ class Ui extends events.EventEmitter {
     })
   }
 
-  pushHistory () {
+  pushHistory (opts = {}) {
     this.history.push({
       selectedNodeId: this.selectedNode && this.selectedNode.id,
       zoomedNodeId: this.zoomedNode && this.zoomedNode.id,
       useMerged: this.dataTree.useMerged,
       showOptimizationStatus: this.dataTree.showOptimizationStatus,
-      exclude: this.dataTree.exclude
-    })
+      exclude: this.dataTree.exclude,
+      search: this.searchQuery
+    }, opts)
   }
 
   updateFromHistory (data) {
@@ -73,6 +75,10 @@ class Ui extends events.EventEmitter {
 
     this.selectNode(this.dataTree.getNodeById(data.selectedNodeId), { pushState: false })
     this.zoomNode(this.dataTree.getNodeById(data.zoomedNodeId), { pushState: false })
+
+    if (data.search !== this.searchQuery) {
+      this.search(data.search, { pushState: false })
+    }
   }
 
   // Temporary e.g. on mouseover, erased on mouseout
@@ -120,19 +126,34 @@ class Ui extends events.EventEmitter {
     this.scrollSelectedFrameIntoView()
   }
 
-  clearSearch () {
-    this.flameWrapper.clearSearch()
+  clearSearch ({ pushState = true } = {}) {
+    this.searchQuery = null
+    this.emit('clearSearch')
+
+    if (pushState) {
+      this.pushHistory()
+    }
   }
 
-  search (query) {
-    if (!query) return
+  search (query, { pushState = true } = {}) {
+    if (!query) {
+      if (this.searchQuery) this.clearSearch({ pushState })
+      return
+    }
 
-    this.flameWrapper.search(query)
-    // TODO add to hash URL
-    // This may be called while the user is still typing; ideally we'd have a single history entry for a single query.
-    // A way to approach that is to keep track of the prev value, and do
-    // `query.startsWith(prevQuery)`
-    // if that matches, use replaceState() instead of pushState().
+    this.emit('search', query)
+
+    const prevQuery = this.searchQuery
+    this.searchQuery = query
+
+    if (pushState) {
+      this.pushHistory({
+        // If the new query is just the old one with more characters,
+        // the user was probably still typing. instead of pushing a new entry,
+        // potentially resulting in many entries for a single query, replace the previous entry.
+        replace: prevQuery && query.startsWith(prevQuery)
+      })
+    }
   }
 
   /**
@@ -201,7 +222,7 @@ class Ui extends events.EventEmitter {
 
       if (window.innerWidth > minWidth) {
         const size = Math.min(window.innerWidth, window.innerHeight * 16 / 9)
-        return (size - minWidth) / 250
+        return Math.round((size - minWidth) / 250)
       }
 
       return 0

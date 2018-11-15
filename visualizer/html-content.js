@@ -1,6 +1,6 @@
 'use strict'
 
-const d3 = require('d3')
+const d3 = require('./d3.js')
 
 // TODO: This could be migrated to https://github.com/nearform/node-clinic-common/ when stable
 // and shared with Bubbleprof and also, later, with Doctor
