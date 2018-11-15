@@ -48,9 +48,16 @@ class DataTree {
     return false
   }
 
-  sortFramesByHottest () {
-    // Flattened tree, sorted hottest first, excluding the 'all stacks' root node
-    this.flatByHottest = this.getFlattenedSorted(this.getStackTopSorter())
+  sortFramesByHottest (customRootNode) {
+    if (customRootNode) {
+      // Flattened tree, sorted hottest first, including the root node
+      let frames = getFlatArray(customRootNode.children)
+      this.flatByHottest = this.getFlattenedSorted(this.getStackTopSorter(), [customRootNode].concat(frames))
+    } else {
+      // Flattened tree, sorted hottest first, excluding the 'all stacks' root node
+      this.flatByHottest = this.getFlattenedSorted(this.getStackTopSorter(), this.activeNodes())
+    }
+    this.highestStackTop = this.flatByHottest[0].onStackTop.asViewed
   }
 
   activeTree () {
@@ -70,8 +77,7 @@ class DataTree {
     this.update()
   }
 
-  getFlattenedSorted (sorter) {
-    const arr = this.activeNodes()
+  getFlattenedSorted (sorter, arr) {
     const filtered = arr.filter(node => !this.exclude.has(node.type))
     return filtered.sort(sorter)
   }
