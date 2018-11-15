@@ -93,14 +93,16 @@ class StackBar extends HtmlContent {
 
     const { dataTree } = this.ui
     const rootNode = this.ui.zoomedNode || dataTree.activeTree()
+
+    // flattening the children array and sorting the frames
+    dataTree.sortFramesByHottest(this.ui.zoomedNode)
+
     const highest = dataTree.highestStackTop
     const availableWidth = this.d3Element.node().getBoundingClientRect().width
     const onePxPercent = 1 / availableWidth
 
     const frames = []
     let usedWidth = 0.0
-
-    dataTree.sortFramesByHottest(this.ui.zoomedNode)
 
     for (let i = 0; i < dataTree.flatByHottest.length; i++) {
       const d = dataTree.flatByHottest[i]
