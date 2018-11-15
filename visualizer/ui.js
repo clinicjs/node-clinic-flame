@@ -92,6 +92,8 @@ class Ui extends events.EventEmitter {
     this.selectedNode = node
     if (changed) this.emit('selectNode', node)
 
+    this.scrollSelectedFrameIntoView()
+
     this.showNodeInfo(node)
     this.highlightNode(node)
 
@@ -108,12 +110,14 @@ class Ui extends events.EventEmitter {
     // Zoom out if zooming in on already-zoomed node
     node = (!node || node === this.zoomedNode) ? null : node
     this.zoomedNode = node
+
     this.emit('zoomNode', node)
     if (node && node !== this.selectedNode) {
       this.selectNode(node, { pushState })
     } else if (pushState) {
       this.pushHistory()
     }
+    this.scrollSelectedFrameIntoView()
   }
 
   clearSearch () {
@@ -227,20 +231,30 @@ class Ui extends events.EventEmitter {
 
     let reDrawStackBar = debounce(() => this.stackBar.draw(this.highlightedNode), 200)
 
-    let scrollElement = null
-    const scrollChartIntoView = debounce(() => {
-      if (!scrollElement) {
-        scrollElement = flameWrapper.d3Element.select('.scroll-container').node()
+    let scrollContainer = null
+    this.scrollSelectedFrameIntoView = debounce(() => {
+      if (!scrollContainer) {
+        scrollContainer = flameWrapper.d3Element.select('.scroll-container').node()
       }
 
-      if (scrollElement.scrollTo) {
-        scrollElement.scrollTo({
-          top: scrollElement.scrollHeight,
+      let scrollAmount = scrollContainer.scrollHeight
+      if (this.selectedNode) {
+        const viewportHeight = scrollContainer.clientHeight
+        const rect = this.flameWrapper.getNodeRect(this.selectedNode)
+
+        scrollAmount = rect.y - viewportHeight * 0.4
+        // scrolling only if the frame is outside the viewport
+        if ((rect.y - rect.height) > scrollContainer.scrollTop && rect.y < scrollContainer.scrollTop + viewportHeight) return
+      }
+
+      if (scrollContainer.scrollTo) {
+        scrollContainer.scrollTo({
+          top: scrollAmount,
           behavior: 'smooth'
         })
       } else {
         // Fallback for MS Edge
-        scrollElement.scrollTop = scrollElement.scrollHeight
+        scrollContainer.scrollTop = scrollAmount
       }
     }, 200)
 
@@ -255,12 +269,12 @@ class Ui extends events.EventEmitter {
     window.addEventListener('resize', () => {
       const zoomFactor = getZoomFactor()
       flameWrapper.resize(zoomFactor)
-      scrollChartIntoView()
+      this.scrollSelectedFrameIntoView()
       reDrawStackBar()
       setFontSize(zoomFactor)
     })
 
-    window.addEventListener('load', scrollChartIntoView)
+    window.addEventListener('load', this.scrollSelectedFrameIntoView)
   }
 
   addSection (id, options = {}) {
