@@ -90,6 +90,8 @@ class ClinicFlame extends events.EventEmitter {
   visualize (outputDir, outputFilename, callback) {
     const paths = getLoggingPaths({ path: outputDir })
 
+    console.log('loading')
+
     callbackify(analyse(paths), (err, data) => {
       if (err) return callback(err)
       // data.merged → call tree where optimized and unoptimized versions of the same function are in a single frame
@@ -105,11 +107,13 @@ class ClinicFlame extends events.EventEmitter {
     const stylePath = path.join(__dirname, 'visualizer', 'style.css')
     const scriptPath = path.join(__dirname, 'visualizer', 'main.js')
     const logoPath = path.join(__dirname, 'visualizer/assets', 'flame-logo.svg')
+    const spinnerPath = path.join(__dirname, 'visualizer/assets/icons', 'loading-icon.svg')
     const nearFormLogoPath = path.join(__dirname, 'visualizer', 'nearform-logo.svg')
     const clinicFaviconPath = path.join(__dirname, 'visualizer', 'clinic-favicon.png.b64')
 
     // add logos
     const logoFile = fs.createReadStream(logoPath)
+    const spinnerFile = fs.createReadStream(spinnerPath)
     const nearFormLogoFile = fs.createReadStream(nearFormLogoPath)
     const clinicFaviconBase64 = fs.createReadStream(clinicFaviconPath)
 
@@ -169,7 +173,12 @@ class ClinicFlame extends events.EventEmitter {
             </div>
           </div>
 
-          <main></main>
+          <main>
+            <span id='loading-message'>
+              <span class="icon">${spinnerFile}</span>
+              Loading...
+            </span>
+          </main>
           <script>${scriptFile}</script>
         </body>
       </html>

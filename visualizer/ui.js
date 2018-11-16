@@ -155,6 +155,11 @@ class Ui extends events.EventEmitter {
   createContent () {
     this.mainElement = document.querySelector(this.wrapperSelector)
 
+    // cleaering the mainElement content (basically removing the `Loading` message)
+    while (this.mainElement.firstChild) {
+      this.mainElement.removeChild(this.mainElement.firstChild)
+    }
+
     this.uiContainer = new htmlContentTypes.HtmlContent(null, {
       element: this.mainElement,
       id: 'one-col-layout'
