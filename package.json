@@ -17,7 +17,7 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "0x": "^4.5.1",
-    "@nearform/clinic-common": "^1.0.5",
+    "@nearform/clinic-common": "^1.1.0",
     "brfs": "^2.0.1",
     "browserify": "^16.2.2",
     "browserify-inline-svg": "^1.0.2",
