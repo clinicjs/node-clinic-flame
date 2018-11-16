@@ -29,6 +29,7 @@ class FlameGraph extends HtmlContent {
     this.isAnimating = false
     this.baseCellHeight = this.ui.presentationMode ? 26 : 20
     this.cellHeight = this.baseCellHeight + this.zoomFactor
+    this.sizeChanged = false
 
     this.tooltip = contentProperties.customTooltip
     this.tooltipHtmlContent = contentProperties.tooltipHtmlContent
@@ -317,9 +318,12 @@ class FlameGraph extends HtmlContent {
     this.zoomFactorChanged = this.zoomFactor !== zoomFactor
     this.zoomFactor = zoomFactor
 
-    this.width = this.d3Chart.node().clientWidth
     this.baseCellHeight = this.ui.presentationMode ? 26 : 20
-    this.cellHeight = this.baseCellHeight + zoomFactor
+    const width = this.d3Chart.node().clientWidth
+    const cellHeight = this.baseCellHeight + zoomFactor
+    this.sizeChanged = this.width !== width || this.cellHeight !== cellHeight
+    this.width = width
+    this.cellHeight = cellHeight
     this.draw()
     this.updateMarkerBoxes()
   }
@@ -337,8 +341,11 @@ class FlameGraph extends HtmlContent {
     super.draw()
 
     const { dataTree } = this.ui
-    this.flameGraph.width(this.width)
-    this.flameGraph.cellHeight(this.cellHeight)
+    if (this.sizeChanged) {
+      this.flameGraph.width(this.width)
+      this.flameGraph.cellHeight(this.cellHeight)
+      this.sizeChanged = false
+    }
 
     let redrawGraph = false
 
