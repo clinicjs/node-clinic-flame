@@ -1,5 +1,5 @@
 'use strict'
-const d3 = require('d3')
+const d3 = require('./d3.js')
 const Message = require('./message.js')
 const copy = require('copy-to-clipboard')
 
