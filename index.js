@@ -126,7 +126,7 @@ class ClinicFlame extends events.EventEmitter {
     b.transform('brfs')
     b.transform(envify({
       DEBUG_MODE: this.debug,
-      PRESENTATION_MODE: this.presentationMode
+      PRESENTATION_MODE: process.env.PRESENTATION_MODE
     }))
 
     let scriptFile = b

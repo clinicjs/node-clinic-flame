@@ -310,7 +310,7 @@ class Ui extends events.EventEmitter {
       setFontSize(zoomFactor)
     })
 
-    window.addEventListener('load')
+    window.addEventListener('load', this.scrollSelectedFrameIntoView)
 
     this.on('presentationMode', () => {
       const zoomFactor = getZoomFactor()
