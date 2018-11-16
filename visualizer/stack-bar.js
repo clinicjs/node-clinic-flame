@@ -7,7 +7,20 @@ class StackBar extends HtmlContent {
     super(parentContent, contentProperties)
 
     this.highlightedNode = null
-    this.timeoutHandler = null
+    this.highlightedNodeTimeoutHandler = null
+    this.frameTooltipHandler = null
+
+    this.tooltip = contentProperties.tooltip
+    this.tooltipHtmlContent = contentProperties.tooltipHtmlContent
+
+    this.tooltipHtmlContent.getTooltipD3()
+      .on('mouseenter', () => {
+        clearTimeout(this.highlightedNodeTimeoutHandler)
+        // this.ui.highlightNode(this.ui.selectedNode)
+      })
+      .on('mouseleave', () => {
+        this.ui.highlightNode(this.ui.selectedNode)
+      })
 
     this.ui.on('highlightNode', node => {
       this.pointToNode(node || this.ui.selectedNode)
@@ -25,22 +38,55 @@ class StackBar extends HtmlContent {
 
     this.d3StacksWrapper = this.d3Element.append('div')
       .classed('stacks-wrapper', true)
-      .on('mouseover', function () {
-        clearTimeout(this.timeoutHandler)
+      .on('mousemove', () => {
+        clearTimeout(this.highlightedNodeTimeoutHandler)
 
-        if (d3.event.target === this) return
-        const nodeData = getNodeDataFromEvent()
-        if (nodeData) ui.highlightNode(nodeData.d)
+        const nodeElem = this.getNodeAtX(d3.event.offsetX)
+        const nodeData = nodeElem.d
+        ui.highlightNode(nodeElem.d)
+
+        const wrapperRect = this.d3StacksWrapper.node().getBoundingClientRect()
+        const targetRect = {
+          x: d3.event.offsetX - 10,
+          width: wrapperRect.width * nodeElem.width,
+          y: wrapperRect.y,
+          height: wrapperRect.height
+        }
+
+        if (!nodeData) {
+          this.tooltip.hide()
+          return
+        }
+
+        this.tooltipHtmlContent.setNodeData(nodeData)
+        this.tooltip.show({
+          msg: this.tooltipHtmlContent.getTooltipD3().node(),
+          pointerCoords: { x: d3.event.offsetX - 10, y: d3.event.offsetY },
+          targetRect,
+          wrapperNode: this.d3StacksWrapper.node()
+        })
       })
-      .on('mouseout', function () {
-        clearTimeout(this.timeoutHandler)
-        this.timeoutHandler = setTimeout(() => {
-          ui.highlightNode(null)
+      .on('mouseout', () => {
+        clearTimeout(this.highlightedNodeTimeoutHandler)
+        this.highlightedNodeTimeoutHandler = setTimeout(() => {
+          ui.highlightNode(this.ui.selectedNode)
+          this.tooltip.hide(200)
         }, 200)
       })
-      .on('click', function () {
-        const nodeData = getNodeDataFromEvent()
-        if (nodeData) ui.selectNode(nodeData.d)
+      .on('click', () => {
+        const nodeElem = this.getNodeAtX(d3.event.offsetX)
+        const nodeData = nodeElem.d
+        if (nodeData) {
+          this.ui.highlightNode(nodeData)
+          this.ui.selectNode(nodeData)
+        }
+      })
+      .on('dblclick', () => {
+        const nodeElem = this.getNodeAtX(d3.event.offsetX)
+        const nodeData = nodeElem.d
+        if (nodeData) {
+          this.ui.zoomNode(nodeData)
+        }
       })
 
     this.d3Pointer = this.d3Element.append('div')
@@ -50,6 +96,16 @@ class StackBar extends HtmlContent {
   pointToNode (node) {
     this.highlightedNode = node
     this.draw()
+  }
+
+  getNodeAtX (x) {
+    let totalWidth = this.d3StacksWrapper.node().getBoundingClientRect().width
+
+    let left = 0
+    return this.frames.find(frame => {
+      left += totalWidth * frame.width + frame.margin
+      return left > x
+    })
   }
 
   getNodePosition (node) {
@@ -133,8 +189,6 @@ class StackBar extends HtmlContent {
     if (process.env.DEBUG_MODE) {
       console.time('StackBar.draw')
     }
-
-    // const rootNode = dataTree.activeTree()
     this.frames = this.prepareFrames()
 
     const update = this.d3StacksWrapper.selectAll('div')
@@ -158,10 +212,6 @@ class StackBar extends HtmlContent {
           .style('background-color', flameGradient(colorValue))
           .style('width', `${(width * 100).toFixed(3)}%`)
           .style('margin-right', `${margin}px`)
-          .on('click', data => {
-            // selecting the node
-            self.ui.selectNode(data.d)
-          })
       })
 
     // moving the selector over the bar
@@ -174,12 +224,6 @@ class StackBar extends HtmlContent {
       console.timeEnd('StackBar.draw')
     }
   }
-}
-
-function getNodeDataFromEvent () {
-  const d3Hover = d3.select(d3.event.target)
-  const nodeData = d3Hover.datum()
-  return nodeData
 }
 
 module.exports = StackBar
