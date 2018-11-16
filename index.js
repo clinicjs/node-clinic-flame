@@ -28,18 +28,23 @@ class ClinicFlame extends events.EventEmitter {
 
     const {
       detectPort = false,
-      debug = false
+      debug = false,
+      dest = null
     } = settings
 
     this.detectPort = detectPort
     this.debug = debug
+    this.path = dest
   }
 
   collect (args, cb) {
     const argv = args.slice(1)
     const self = this
 
-    const paths = getLoggingPaths()
+    const paths = getLoggingPaths({
+      path: this.path,
+      identifier: '{pid}' // replaced with actual pid by 0x
+    })
 
     callbackify(x({
       argv,
@@ -74,7 +79,7 @@ class ClinicFlame extends events.EventEmitter {
         })
       }
 
-      const paths = getLoggingPaths({ identifier: pid })
+      const paths = getLoggingPaths({ path: self.path, identifier: pid })
       fs.writeFile(paths['/systeminfo'], JSON.stringify(systemInfo(paths['/0x-data/']), null, 2), next)
       fs.writeFile(paths['/inlinedfunctions'], JSON.stringify(inlinedFunctions(paths['/0x-data/'])), next)
 
