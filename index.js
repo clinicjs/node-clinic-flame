@@ -90,8 +90,6 @@ class ClinicFlame extends events.EventEmitter {
   visualize (outputDir, outputFilename, callback) {
     const paths = getLoggingPaths({ path: outputDir })
 
-    console.log('loading')
-
     callbackify(analyse(paths), (err, data) => {
       if (err) return callback(err)
       // data.merged → call tree where optimized and unoptimized versions of the same function are in a single frame
