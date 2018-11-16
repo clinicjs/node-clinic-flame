@@ -28,13 +28,11 @@ class ClinicFlame extends events.EventEmitter {
 
     const {
       detectPort = false,
-      debug = false,
-      presentationMode = false
+      debug = false
     } = settings
 
     this.detectPort = detectPort
     this.debug = debug
-    this.presentationMode = presentationMode
   }
 
   collect (args, cb) {

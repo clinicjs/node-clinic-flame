@@ -21,7 +21,7 @@ class Ui extends events.EventEmitter {
       toShow: new Set()
     }
     this.searchQuery = null
-    this.presentationMode = process.env.PRESENTATION_MODE
+    this.presentationMode = process.env.PRESENTATION_MODE === 'true'
 
     this.wrapperSelector = wrapperSelector
     this.exposedCSS = null
