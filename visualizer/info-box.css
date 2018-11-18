@@ -1,5 +1,5 @@
 #info-box .frame-info {
-  background-color: var(--banner-bg-color);
+  background-color: var(--opposite-translucent);
   color: var(--grey-highlight);
   display: flex;
   font-size: var(--normal-text-size);

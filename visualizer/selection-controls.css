@@ -1,18 +1,16 @@
 #selection-controls {
   display: flex;
-  padding: 6px;
-  background-color: var(--banner-bg-color);
 }
 
 #selection-controls .hotness-selector:disabled {
   color: var(--primary-grey);
   cursor: auto;
-  opacity: 0.5;
+  background: var(--opposite-translucent);
 }
 
 #selection-controls .hotness-selector {
   padding: 4px 8px;
-  margin: 0px 2px;
+  margin-right: 4px;
   background-color: var(--opposite-contrast);
   color: var(--max-contrast);
   border: none;
@@ -60,13 +58,13 @@
 @media screen and (min-width: 530px) {
   .visible-from-bp-1 {
     display: initial;
-  } 
+  }
 }
 
 @media screen and (min-width: 680px) {
   .visible-from-bp-2 {
     display: initial;
-  } 
+  }
 }
 
 /* presentation mode */

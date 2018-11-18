@@ -33,11 +33,11 @@ html {
   --main-bg-color-val: 27, 30, 39;
   --max-contrast: rgb(255, 255, 255);
   --opposite-contrast: rgb(0, 0, 0);
-  --light-glare: rgba(255, 255, 255, 0.1);
+  --opposite-translucent: rgba(0, 0, 0, 0.5);
+  --light-glare: rgba(255, 255, 255, 0.3);
 
   --main-bg-color: rgb(var(--main-bg-color-val));
   --main-bg-translucent: rgba(var(--main-bg-color-val), 0.94);
-  --overlay-bg-color: #41444f;
 
   --banner-bg-color-val: 50, 53, 61;
   --banner-bg-color: rgb(var(--banner-bg-color-val));
@@ -88,8 +88,7 @@ html.light {
 /* Overrides for Presentation mode */
 /* just a poc for now... */
 html.presentation-mode {
-  --banner-bg-color: #14161d;
-  --overlay-bg-color: #14161d;
+  --banner-bg-color: rgb(20, 22, 29);
   --main-bg-color: rgb(47, 53, 66);
   --options-menu-bg-color: #14161d;
 
@@ -204,7 +203,6 @@ html * {
   flex-shrink: 1;
   overflow: auto;
   position: relative;
-  border-top: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .scroll-container::-webkit-scrollbar {
