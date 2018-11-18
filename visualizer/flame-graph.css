@@ -16,6 +16,9 @@ chart {
 chart > div {
   height: 100%;
 }
+#flame-main .flamegraph-outer {
+  border-top: 1px solid var(--light-glare);
+}
 
 /* node-highlighter */
 .node-highlighter {
@@ -45,10 +48,10 @@ chart > div {
 
 .node-highlighter .down-arrow {
   border-color: transparent;
-  border-top-color: var(--overlay-bg-color);
+  border-top-color: var(--banner-bg-color);
   border-style: solid;
   border-width: 10px;
-  filter: drop-shadow(0px 1px 0px rgba(255, 255, 255, 0.5));
+  filter: drop-shadow(0px 1px 0px var(--light-glare));
   margin:0 0 -8px;
   flex-shrink: 0;
 }
@@ -93,7 +96,7 @@ chart > div {
 
 .fg-tooltip-actions button {
   align-items: center;
-  background-color: transparent;
+  background-color: var(--opposite-translucent);
   border-radius: 0;
   border: none;
   color: inherit;
