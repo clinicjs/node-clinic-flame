@@ -88,10 +88,10 @@ chart > div {
 
 .fg-tooltip-actions {
   display: flex;
-  background-color: rgba(0, 0, 0, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  background-color: var(--opposite-translucent);
+  border: 1px solid var(--primary-grey);
   color: white;
-  font-size: var(--normal-text-size);;
+  font-size: var(--normal-text-size);
 }
 
 .fg-tooltip-actions button {
@@ -106,9 +106,8 @@ chart > div {
   font-size: inherit;
   justify-content: center;
   line-height: 1.2em;
-  margin: 2px;
+  padding: 2px;
   outline: none;
-  padding: 0;
 }
 
 .fg-tooltip-actions .label {
@@ -116,7 +115,8 @@ chart > div {
 }
 
 .fg-tooltip-actions button:hover {
-  background-color: var(--light-glare);
+  background-color: var(--opposite-contrast);
+  outline: 1px solid var(--max-contrast);
 }
 
 .fg-tooltip-actions .zoom-button svg {
