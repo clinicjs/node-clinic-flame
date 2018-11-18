@@ -93,8 +93,8 @@ html.presentation-mode {
   --main-bg-color: rgb(47, 53, 66);
   --options-menu-bg-color: #14161d;
 
-  --area-color-deps: rgb(94, 191, 247);  
-  --area-color-core: rgb(153, 187, 159);
+  --area-color-deps: rgb(145, 210, 255);
+  --area-color-core: rgb(160, 155, 215);
 }
 
 /* Main layout */
