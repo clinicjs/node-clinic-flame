@@ -88,9 +88,8 @@ html.light {
 /* Overrides for Presentation mode */
 /* just a poc for now... */
 html.presentation-mode {
-  --banner-bg-color: rgb(20, 22, 29);
-  --main-bg-color: rgb(47, 53, 66);
-  --options-menu-bg-color: #14161d;
+  --banner-bg-color: rgb(120, 122, 128);
+  --main-bg-color: rgb(76, 78, 84);
 
   --area-color-deps: rgb(145, 210, 255);
   --area-color-core: rgb(160, 155, 215);
