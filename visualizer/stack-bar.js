@@ -1,6 +1,5 @@
 const d3 = require('./d3.js')
 const HtmlContent = require('./html-content.js')
-const flameGradient = require('flame-gradient')
 
 class StackBar extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
@@ -145,7 +144,6 @@ class StackBar extends HtmlContent {
 
     const { dataTree } = this.ui
     const rootNode = dataTree.activeTree()
-    const highest = dataTree.highestStackTop
     const availableWidth = this.d3Element.node().getBoundingClientRect().width
     const onePxPercent = 1 / availableWidth
 
@@ -155,19 +153,17 @@ class StackBar extends HtmlContent {
     for (let i = 0; i < dataTree.flatByHottest.length; i++) {
       const d = dataTree.flatByHottest[i]
       const stackTop = d.onStackTop.asViewed
-      const highestFraction = stackTop / highest
       const totalFraction = Math.max(onePxPercent, stackTop / rootNode.value)
 
       const width = totalFraction
       const margin = totalFraction > 0.02 ? 2 : 1
 
-      frames.push({ d, width, margin, colorValue: highestFraction })
+      frames.push({ d, width, margin })
 
       usedWidth += width + (margin / availableWidth)
       if (usedWidth >= 0.98) {
         const remaining = dataTree.flatByHottest.slice(i + 1)
-        const remainingFraction = remaining[0].onStackTop.asViewed / highest
-        frames.push({ remaining, width: 1 - usedWidth, margin: 0, colorValue: remainingFraction })
+        frames.push({ remaining, width: 1 - usedWidth, margin: 0 })
         break
       }
     }
@@ -201,7 +197,7 @@ class StackBar extends HtmlContent {
       .classed('stack-frame', true)
       .merge(update)
       .each(function (data) {
-        const { width, margin, colorValue } = data
+        const { width, margin } = data
 
         const isHighlighted = data.d && self.highlightedNode && (self.highlightedNode.id === data.d.id)
         const isSelected = data.d && self.ui.selectedNode && (self.ui.selectedNode.id === data.d.id)
@@ -209,7 +205,7 @@ class StackBar extends HtmlContent {
         d3.select(this)
           .classed('highlighted', isHighlighted)
           .classed('selected', isSelected)
-          .style('background-color', flameGradient(colorValue))
+          .style('background-color', self.ui.dataTree.getHeatColor(data.d))
           .style('width', `${(width * 100).toFixed(3)}%`)
           .style('margin-right', `${margin}px`)
       })
