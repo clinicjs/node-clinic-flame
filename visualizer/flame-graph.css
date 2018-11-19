@@ -83,20 +83,20 @@ chart > div {
   position: absolute;
   pointer-events: none;
   border-top: 3px solid var(--main-bg-color);
-  background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0));
+  background: linear-gradient(to bottom, rgba(var(--opposite-color-val), 0.8), rgba(var(--opposite-color-val), 0));
 }
 
 .fg-tooltip-actions {
   display: flex;
-  background-color: var(--opposite-translucent);
+  background-color: rgba(var(--opposite-color-val), 0.8);
   border: 1px solid var(--primary-grey);
   color: white;
   font-size: var(--normal-text-size);
 }
 
 .fg-tooltip-actions button {
+  background-color: transparent;
   align-items: center;
-  background-color: var(--opposite-translucent);
   border-radius: 0;
   border: none;
   color: inherit;

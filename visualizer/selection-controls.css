@@ -5,7 +5,7 @@
 #selection-controls .hotness-selector:disabled {
   color: var(--primary-grey);
   cursor: auto;
-  background: var(--opposite-translucent);
+  background: rgba(var(--opposite-color-val), 0.5);
 }
 
 #selection-controls .hotness-selector {

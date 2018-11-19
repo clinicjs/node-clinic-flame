@@ -1,5 +1,5 @@
 #info-box .frame-info {
-  background-color: var(--opposite-translucent);
+  background-color: rgba(var(--opposite-color-val), 0.5);
   color: var(--grey-highlight);
   display: flex;
   font-size: var(--normal-text-size);
