@@ -99,7 +99,6 @@
 #options-menu .options label {
   position: absolute;
   width: 100%;
-  opacity: 0.8;
   display: flex;
   align-items: flex-start;
   cursor: pointer;
