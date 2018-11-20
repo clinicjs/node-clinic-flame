@@ -321,12 +321,12 @@ class Ui extends events.EventEmitter {
       'deps': singular ? 'Dependency' : 'Dependencies',
       'all-core': 'Core',
 
-      'core': 'Node JS',
-      'native': 'V8 native',
-      'v8': 'V8 runtime',
-      'cpp': 'V8 C++',
-      'regexp': 'RegExp',
-      'init': 'Init'
+      'all-core:core': 'Node JS',
+      'all-core:native': 'V8 native',
+      'all-core:v8': 'V8 runtime',
+      'all-core:cpp': 'V8 C++',
+      'all-core:regexp': 'RegExp',
+      'all-core:init': 'Init'
     }
     return keysToLabels[key] || key
   }

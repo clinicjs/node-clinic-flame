@@ -126,6 +126,9 @@ class FlameGraph extends HtmlContent {
     this.flameGraph = d3Fg({
       tree: dataTree.activeTree(),
       exclude: dataTree.exclude,
+      isNodeExcluded: node => {
+        return this.ui.dataTree.isNodeExcluded(node.data)
+      },
       element: this.d3Chart.node(),
       cellHeight: this.cellHeight,
       collapseHiddenNodeWidths: true,

@@ -84,15 +84,13 @@ class FrameNode {
 
     const {
       category,
-      type,
-      typeTEMP // Temporary until d3-fg custom property filter complete
+      type
     } = this.getCoreType(name, systemInfo) ||
       this.getDepType(name, systemInfo) ||
       this.getAppType(name, systemInfo)
 
     this.category = category // Top level filters: 'app' or 'deps' or 'all-core'
     this.type = type // Second-level filters; core are static, app and deps depend on app
-    this.typeTEMP = typeTEMP // Temporary access to dependency name or app directory
 
     if (type === 'regexp') {
       this.formatRegExpName()
@@ -159,8 +157,7 @@ class FrameNode {
     const match = name.match(depDirRegex)
     return match ? {
       // TODO: use this type after adding custom d3-fg filter on properties including category
-      typeTEMP: match[1],
-      type: 'deps', // Temporary until d3-fg custom property filter complete
+      type: match[1], // Temporary until d3-fg custom property filter complete
       category: 'deps'
     } : null
   }
@@ -171,9 +168,9 @@ class FrameNode {
     const parentDir = platformPath.join(systemInfo.mainDirectory, `..${systemInfo.pathSeparator}`)
 
     return {
-      // TODO: use this type after adding custom d3-fg filter on properties including category
-      typeTEMP: platformPath.relative(parentDir, platformPath.dirname(this.fileName)),
-      type: 'app', // Temporary until d3-fg custom property filter complete
+      // TODO: profile some large applications with a lot of app code, see if there's a useful heuristic to split
+      // out types, e.g. folders containing more than n files or look for common patterns like `lib`
+      type: 'app',
       category: 'app'
     }
   }
@@ -236,7 +233,6 @@ class FrameNode {
       target: this.target || '',
 
       type: this.type,
-      typeTEMP: this.typeTEMP, // Temporary until d3-fg custom property filter complete
       category: this.category,
 
       isOptimised: this.isOptimised,

@@ -18,21 +18,23 @@ function setStackTop (node, exclude = this.exclude) {
 }
 
 function isNodeExcluded (node, exclude = this.exclude) {
-  if (node.isInit && exclude.has('init')) return true
-  if (node.isInlinable && exclude.has('inlinable')) return true
+  if (node.isInit && exclude.has('is:init')) return true
+  if (node.isInlinable && exclude.has('is:inlinable')) return true
 
   if (exclude.has(node.category)) return true
-  if (exclude.has(node.type)) return true
+
+  // Namespace types by category in case someone installs a dependency named 'cpp' etc
+  if (exclude.has(`${node.category}:${node.type}`)) return true
 
   return false
 }
 
 const defaultExclude = new Set([
-  'v8',
-  'cpp',
-  'init',
-  'native',
-  'regexp'
+  'all-core:v8',
+  'all-core:cpp',
+  'all-core:init',
+  'all-core:native',
+  'all-core:regexp'
 ])
 
 module.exports = {

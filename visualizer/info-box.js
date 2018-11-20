@@ -41,8 +41,7 @@ class InfoBox extends HtmlContent {
     this.pathText = node.fileName
     this.rankNumber = this.ui.dataTree.getSortPosition(node)
 
-    // 'typeTEMP' key is temporary until d3-fg custom filter is complete
-    const typeLabel = this.ui.getLabelFromKey(node.typeTEMP || node.type, true)
+    const typeLabel = this.ui.getLabelFromKey(node.type, true)
     const categoryLabel = this.ui.getLabelFromKey(node.category, true)
     this.areaText = `In ${categoryLabel} (${typeLabel})`
 
