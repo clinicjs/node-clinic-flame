@@ -14,13 +14,39 @@ const preferences = [
   }
 ]
 
+function getCodeAreaDescription (area) {
+  const { id } = area
+
+  if (id === 'all-core') {
+    return 'The Node.js framework and its dependencies'
+  }
+  if (id === 'core') {
+    return `JS functions in core Node.js APIs. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#core">More info</a>`
+  }
+  if (id === 'native') {
+    return `JS compiled into V8, such as prototype methods and eval. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#native">More info</a>`
+  }
+  if (id === 'v8' || id === 'all-v8') {
+    return `Operations in V8's implementation of JS. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#v8">More info</a>`
+  }
+  if (id === 'cpp') {
+    return `Native C++ operations called by V8, including shared libraries. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#cpp">More info</a>`
+  }
+  if (id === 'regexp') {
+    return `The RegExp notation is shown as the function name. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#rx">More info</a>`
+  }
+  if (id === 'init') {
+    return `Any of the above that are repeated frequently during initialization. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#init">More info</a>`
+  }
+}
+
 class OptionsMenu extends HtmlContent {
   constructor (parentContent, contentProperties) {
     super(parentContent, contentProperties)
 
-    this.setCodeAreas({
-      appName: 'app'
-    })
+    this.setCodeAreas([
+      { id: 'app' }
+    ])
 
     this.addCollapseControl(true, {
       classNames: 'options-menu-toggle',
@@ -153,15 +179,15 @@ class OptionsMenu extends HtmlContent {
     const { ui } = this
     const self = this
 
-    // Create the top-level filter options, like "app" / "deps" / "node.js"
+    // Create the top-level filter options, like "app" / "deps" / "core"
     const d3RootItems = this.d3VisibilityOptions.select('ul')
       .selectAll('li').data(this.codeAreas)
-      .classed('childrenVisibilityToggle', d => d.childrenVisibilityToggle === true)
     d3RootItems.exit().remove()
 
     const d3NewRootItems = d3RootItems.enter().append('li')
       .call(createOptionElement)
     d3NewRootItems.merge(d3RootItems)
+      .classed('childrenVisibilityToggle', d => d.childrenVisibilityToggle === true)
       .call(renderOptionElement)
 
     // Create or update the required number of sub-<ul>s: 1 if there are any children;
@@ -205,7 +231,6 @@ class OptionsMenu extends HtmlContent {
       const wrapper = li.append('div')
         .classed('overflow-wrapper', true)
       const label = wrapper.append('label')
-        .attr('title', d => d.title)
       label.append('input')
         .attr('type', 'checkbox')
         .on('change', onchange)
@@ -216,13 +241,17 @@ class OptionsMenu extends HtmlContent {
           <img class="icon-img unchecked" data-inline-svg src="/visualizer/assets/icons/checkbox-unchecked.svg" />
           <img class="icon-img indetermined" data-inline-svg src="/visualizer/assets/icons/checkbox-indetermined.svg" />
         `)
+
       const copyWrapper = label.append('span')
         .classed('copy-wrapper', true)
       copyWrapper.append('span')
         .classed('name', true)
       copyWrapper.append('description')
         .classed('description', true)
-        .html(d => d.description ? ` - ${d.description}` : '')
+        .html((d) => {
+          const description = getCodeAreaDescription(d)
+          return description ? ` - ${description}` : ''
+        })
     }
 
     // Update an existing filter option element,
@@ -256,7 +285,7 @@ class OptionsMenu extends HtmlContent {
 
   setData () {
     const {
-      appName = 'app',
+      codeAreas,
       useMerged,
       showOptimizationStatus
     } = this.ui.dataTree
@@ -264,27 +293,11 @@ class OptionsMenu extends HtmlContent {
     this.d3MergeCheckbox.property('checked', useMerged)
     this.d3OptCheckbox.property('checked', showOptimizationStatus)
 
-    this.setCodeAreas({ appName })
+    this.setCodeAreas(codeAreas)
   }
 
-  setCodeAreas ({ appName }) {
-    this.codeAreas = [
-      { id: 'app', title: appName },
-      { id: 'deps', title: 'dependencies' },
-      { id: 'all-core',
-        title: 'core',
-        description: 'The Node.js framework and its dependencies',
-        childrenVisibilityToggle: true,
-        children: [
-          { id: 'core', visible: true, description: `JS functions in core Node.js APIs. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#core">More info</a>` },
-          { id: 'native', visible: true, description: `JS compiled into V8, such as prototype methods and eval. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#native">More info</a>` },
-          { id: 'v8', description: `Operations in V8's implementation of JS. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#v8">More info</a>` },
-          { id: 'cpp', description: `Native C++ operations called by V8, including shared libraries. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#cpp">More info</a>` },
-          { id: 'regexp', description: `The RegExp notation is shown as the function name. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#rx">More info</a>` },
-          { id: 'init', description: `Any of the above that are repeated frequently during initialization. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#init">More info</a>` }
-        ] }
-    ]
-
+  setCodeAreas (codeAreas) {
+    this.codeAreas = codeAreas
     this.codeAreasChanged = true
   }
 
@@ -299,7 +312,7 @@ class OptionsMenu extends HtmlContent {
       })
       .property('indeterminate', (area) => {
         const { children } = area
-        if (!children) {
+        if (!Array.isArray(children) || children.length === 0) {
           return false
         }
 

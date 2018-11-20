@@ -360,6 +360,7 @@ class Ui extends events.EventEmitter {
       'all-core': 'Core',
 
       'core': 'Node JS',
+      'all-v8': 'V8',
       'native': 'V8 native',
       'v8': 'V8 runtime',
       'cpp': 'V8 C++',
