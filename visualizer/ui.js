@@ -326,7 +326,9 @@ class Ui extends events.EventEmitter {
       'all-core:v8': 'V8 runtime',
       'all-core:cpp': 'V8 C++',
       'all-core:regexp': 'RegExp',
-      'all-core:init': 'Init'
+
+      'is:inlinable': 'Inlinable',
+      'is:init': 'Init'
     }
     return keysToLabels[key] || key
   }

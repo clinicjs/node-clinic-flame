@@ -115,10 +115,7 @@ class FrameNode {
   getCoreType (name, systemInfo) {
     let type
 
-    // TODO: Delete 'init' condition here when adding custom d3-fg filter on properties
-    if (/\[INIT]$/.test(name)) {
-      type = 'init'
-    } else if (!/\.m?js/.test(name)) {
+    if (!/\.m?js/.test(name)) {
       if (/\[CODE:RegExp]$/.test(name)) {
         type = 'regexp'
       } else if (/\[CODE:.*?]$/.test(name) || /v8::internal::.*\[CPP]$/.test(name)) {

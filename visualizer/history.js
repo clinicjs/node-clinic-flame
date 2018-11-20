@@ -27,12 +27,12 @@ class History extends EventEmitter {
       'app',
       'deps',
       'core',
-      'native',
-      'cpp',
-      'v8',
-      'regexp',
-      'init',
-      'inlinable'
+      'all-core:native',
+      'all-core:cpp',
+      'all-core:v8',
+      'all-core:regexp',
+      'is:init',
+      'is:inlinable'
     ]
 
     if (window.location.hash) {

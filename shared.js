@@ -32,9 +32,9 @@ function isNodeExcluded (node, exclude = this.exclude) {
 const defaultExclude = new Set([
   'all-core:v8',
   'all-core:cpp',
-  'all-core:init',
   'all-core:native',
-  'all-core:regexp'
+  'all-core:regexp',
+  'is:init'
 ])
 
 module.exports = {
