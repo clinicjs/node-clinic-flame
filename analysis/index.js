@@ -23,9 +23,52 @@ async function analyse (paths) {
   const appName = platformPath.basename(systemInfo.mainDirectory)
   const pathSeparator = systemInfo.pathSeparator
 
+  const appCodeAreas = new Set()
+  const depCodeAreas = new Set()
+
+  const steps = [
+    (tree) => labelNodes(tree),
+    (tree) => tree.walk((node) => {
+      node.categorise(systemInfo, appName)
+      node.format(systemInfo)
+
+      if (node.type === 'deps') {
+        depCodeAreas.add(`deps:${node.typeTEMP}`)
+      }
+    }),
+    (tree) => setStackTop(tree, defaultExclude)
+  ]
+
+  const trees = ticksToTree(ticks, { inlined })
+  const merged = new FrameNode(trees.merged)
+  const unmerged = new FrameNode(trees.unmerged)
+  steps.forEach((step) => {
+    step(merged)
+    step(unmerged)
+  })
+
+  // Turn a Set of code area names into a sorted list of code area objects.
+  // This sorts by name right now, just to have a consistent output,
+  // but could use eg. the heat of the area in the future.
+  function toCodeAreaChildren (set) {
+    return Array.from(set, (id) => {
+      return { id }
+    }).sort(sorter)
+
+    function sorter (a, b) {
+      return a.id.localeCompare(b.id)
+    }
+  }
+
   const codeAreas = [
-    { id: 'app' },
-    { id: 'deps' },
+    { id: 'app',
+      children: toCodeAreaChildren(appCodeAreas),
+      // Only show the "show more" button if there's many code areas
+      // at 2 or less the button will take at least as much space as the area labels anyway
+      childrenVisibilityToggle: appCodeAreas.size > 2 },
+    { id: 'deps',
+      children: toCodeAreaChildren(depCodeAreas),
+      childrenVisibilityToggle: depCodeAreas.size > 2 },
     { id: 'core' },
     { id: 'all-v8',
       children: [
@@ -44,23 +87,6 @@ async function analyse (paths) {
         childArea.excludeKey = `${area.id}:${childArea.id}`
       })
     }
-  })
-
-  const steps = [
-    (tree) => labelNodes(tree),
-    (tree) => tree.walk((node) => {
-      node.categorise(systemInfo, appName)
-      node.format(systemInfo)
-    }),
-    (tree) => setStackTop(tree, defaultExclude)
-  ]
-
-  const trees = ticksToTree(ticks, { inlined })
-  const merged = new FrameNode(trees.merged)
-  const unmerged = new FrameNode(trees.unmerged)
-  steps.forEach((step) => {
-    step(merged)
-    step(unmerged)
   })
 
   return {
