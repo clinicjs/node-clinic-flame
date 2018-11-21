@@ -78,7 +78,9 @@ class OptionsMenu extends HtmlContent {
   addFgOptionCheckbox ({ id, name, description, onChange }) {
     const li = this.d3FgOptions.select('ul').append('li')
       .attr('id', id)
-    const label = li.append('label')
+    const wrapper = li.append('div')
+      .classed('overflow-wrapper', true)
+    const label = wrapper.append('label')
     const d3Checkbox = label.append('input')
       .attr('type', 'checkbox')
       .on('click', () => {
@@ -89,9 +91,9 @@ class OptionsMenu extends HtmlContent {
     label.append('span')
       .classed('icon-wrapper', true)
       .html(`
-      <img class="icon-img checked" data-inline-svg src="/visualizer/assets/icons/checkbox-checked.svg" />
-      <img class="icon-img unchecked" data-inline-svg src="/visualizer/assets/icons/checkbox-unchecked.svg" />
-      <img class="icon-img indetermined" data-inline-svg src="/visualizer/assets/icons/checkbox-indetermined.svg" />
+        <img class="icon-img checked" data-inline-svg src="/visualizer/assets/icons/checkbox-checked.svg" />
+        <img class="icon-img unchecked" data-inline-svg src="/visualizer/assets/icons/checkbox-unchecked.svg" />
+        <img class="icon-img indetermined" data-inline-svg src="/visualizer/assets/icons/checkbox-indetermined.svg" />
       `)
 
     const copyWrapper = label.append('span')
@@ -159,7 +161,9 @@ class OptionsMenu extends HtmlContent {
     // for use with a d3.enter() selection.
     function createOptionElement (li) {
       li.classed('visible', d => d.visible === true)
-      const label = li.append('label')
+      const wrapper = li.append('div')
+        .classed('overflow-wrapper', true)
+      const label = wrapper.append('label')
         .attr('title', d => d.title)
       label.append('input')
         .attr('type', 'checkbox')
@@ -231,12 +235,12 @@ class OptionsMenu extends HtmlContent {
         description: 'The Node.js framework and its dependencies',
         childrenVisibilityToggle: true,
         children: [
-          { id: 'core', visible: true, description: `JS functions in core Node.js APIs. <a target="_blank" class="more-info href="https://clinicjs.org/flame/walkthrough/controls/#core">More info</a>` },
-          { id: 'native', visible: true, description: `JS compiled into V8, such as prototype methods and eval. <a target="_blank" class="more-info href="https://clinicjs.org/flame/walkthrough/controls/#native">More info</a>` },
-          { id: 'v8', description: `Operations in V8's implementation of JS. <a target="_blank" class="more-info href="https://clinicjs.org/flame/walkthrough/controls/#v8">More info</a>` },
-          { id: 'cpp', description: `Native C++ operations called by V8, including shared libraries. <a target="_blank" class="more-info href="https://clinicjs.org/flame/walkthrough/controls/#cpp">More info</a>` },
-          { id: 'regexp', description: `The RegExp notation is shown as the function name. <a target="_blank" class="more-info href="https://clinicjs.org/flame/walkthrough/controls/#rx">More info</a>` },
-          { id: 'init', description: `Any of the above that are repeated frequently during initialization. <a target="_blank" class="more-info href="https://clinicjs.org/flame/walkthrough/controls/#init">More info</a>` }
+          { id: 'core', visible: true, description: `JS functions in core Node.js APIs. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#core">More info</a>` },
+          { id: 'native', visible: true, description: `JS compiled into V8, such as prototype methods and eval. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#native">More info</a>` },
+          { id: 'v8', description: `Operations in V8's implementation of JS. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#v8">More info</a>` },
+          { id: 'cpp', description: `Native C++ operations called by V8, including shared libraries. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#cpp">More info</a>` },
+          { id: 'regexp', description: `The RegExp notation is shown as the function name. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#rx">More info</a>` },
+          { id: 'init', description: `Any of the above that are repeated frequently during initialization. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#init">More info</a>` }
         ] }
     ]
 

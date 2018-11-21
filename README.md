@@ -37,6 +37,10 @@ const flame = new ClinicFlame()
 
 * settings [`<Object>`][]
   * detectPort [`<boolean>`][] **Default**: false
+  * debug [`<boolean>`][] If set to true, the generated html will not be minified.
+    **Default**: false
+  * dest [`<String>`][] The folder where the collected data is stored.
+    **Default**: '.'
 
 #### `flame.collect(args, callback)`
 
@@ -75,3 +79,4 @@ possible error.
 [clinic-url]: https://github.com/nearform/node-clinic
 [`<Object>`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
 [`<boolean>`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type
+[`<String>`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String

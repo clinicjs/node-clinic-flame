@@ -9,6 +9,7 @@
   height: 6px;
   transition: transform 0.3s cubic-bezier(0.42, 0, 0.46, 1.79);
   transform-origin: 50%;
+  pointer-events: none;
 }
 
 #stack-bar .stack-frame.highlighted{

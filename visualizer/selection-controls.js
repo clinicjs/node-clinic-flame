@@ -22,6 +22,10 @@ class SelectionControls extends HtmlContent {
       this.update()
     })
 
+    this.ui.on('setData', () => {
+      this.countFrames()
+    })
+
     this.ui.on('selectNode', node => {
       if (!node) return
       this.selectedNode = node
