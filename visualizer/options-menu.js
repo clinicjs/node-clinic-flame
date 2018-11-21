@@ -3,6 +3,17 @@
 const HtmlContent = require('./html-content.js')
 const d3 = require('./d3.js')
 
+const preferences = [
+  {
+    id: 'presentation_mode',
+    title: 'Presentation mode',
+    value: false,
+    onChange: (ui, checked) => {
+      ui.setPresentationMode(checked)
+    }
+  }
+]
+
 class OptionsMenu extends HtmlContent {
   constructor (parentContent, contentProperties) {
     super(parentContent, contentProperties)
@@ -18,6 +29,13 @@ class OptionsMenu extends HtmlContent {
     })
 
     this.showMore = {}
+
+    this.ui.on('presentationMode', mode => {
+      const pref = preferences.find(pref => {
+        return pref.id === 'presentation_mode'
+      })
+      pref.value = mode === true
+    })
   }
 
   initializeElements () {
@@ -61,6 +79,26 @@ class OptionsMenu extends HtmlContent {
       }
     })
 
+    // preferences
+    this.d3Preferences = this.d3OptionsList.append('div')
+      .classed('section preferences', true)
+    this.d3Preferences.append('h2')
+      .text('Preferences')
+
+    const prefUl = this.d3Preferences.append('ul')
+    const prefLi = prefUl.selectAll('li').data(preferences)
+    prefLi.exit().remove()
+    prefLi.enter().append('li').call((li) => {
+      const datum = li.datum()
+      this.addFgOptionCheckbox({
+        id: datum.id,
+        name: datum.title,
+        onChange: (checked) => {
+          datum.onChange(this.ui, checked)
+        }
+      }, prefUl)
+    })
+
     this.ui.on('setData', () => {
       this.setData()
     })
@@ -75,8 +113,9 @@ class OptionsMenu extends HtmlContent {
     true) // using useCapture here so that we can handle the event before `.showMore` button updates its content
   }
 
-  addFgOptionCheckbox ({ id, name, description, onChange }) {
-    const li = this.d3FgOptions.select('ul').append('li')
+  addFgOptionCheckbox ({ id, name, description, onChange }, parentNode) {
+    parentNode = parentNode || this.d3FgOptions.select('ul')
+    const li = parentNode.append('li')
       .attr('id', id)
     const wrapper = li.append('div')
       .classed('overflow-wrapper', true)
@@ -101,9 +140,11 @@ class OptionsMenu extends HtmlContent {
     copyWrapper.append('span')
       .classed('name', true)
       .text(name)
-    copyWrapper.append('span')
-      .classed('description', true)
-      .html(` - ${description}`)
+    if (description) {
+      copyWrapper.append('span')
+        .classed('description', true)
+        .html(` - ${description}`)
+    }
 
     return d3Checkbox
   }
@@ -289,6 +330,9 @@ class OptionsMenu extends HtmlContent {
     }
 
     this.applyCodeVisibilityExclusions(this.ui.dataTree.exclude)
+
+    this.d3Preferences.select('#presentation_mode')
+      .property('checked', this.ui.presentationMode)
   }
 }
 

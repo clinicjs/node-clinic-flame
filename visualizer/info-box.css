@@ -25,7 +25,7 @@
 }
 
 #info-box .frame-info .frame-area {
-  color: var(--primary-grey);
+  color: var(--area-color-core);
   word-break: break-word;
   text-align: right;
 }
@@ -58,4 +58,11 @@
 
 #info-box .frame-path {
   max-width: 66.67%;
+}
+
+
+
+/* presentation mode */
+.presentation-mode #info-box .frame-info {
+  background-color: var(--opposite-contrast);
 }

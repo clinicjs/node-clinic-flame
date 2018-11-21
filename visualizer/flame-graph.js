@@ -26,7 +26,7 @@ class FlameGraph extends HtmlContent {
 
     this.hoveredNodeData = null
     this.isAnimating = false
-    this.baseCellHeight = 20
+    this.baseCellHeight = this.ui.presentationMode ? 26 : 20
     this.cellHeight = this.baseCellHeight + this.zoomFactor
     this.sizeChanged = false
 
@@ -325,6 +325,7 @@ class FlameGraph extends HtmlContent {
     this.zoomFactorChanged = this.zoomFactor !== zoomFactor
     this.zoomFactor = zoomFactor
 
+    this.baseCellHeight = this.ui.presentationMode ? 26 : 20
     const width = this.d3Chart.node().clientWidth
     const cellHeight = this.baseCellHeight + zoomFactor
     this.sizeChanged = this.width !== width || this.cellHeight !== cellHeight

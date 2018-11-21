@@ -23,6 +23,7 @@ class Ui extends events.EventEmitter {
       toShow: new Set()
     }
     this.searchQuery = null
+    this.presentationMode = process.env.PRESENTATION_MODE === 'true'
 
     this.tooltipHtmlContent = new TooltipHtmlContent(this)
 
@@ -59,36 +60,38 @@ class Ui extends events.EventEmitter {
       zoomedNodeId
     } = data
 
-    this.setUseMergedTree(useMerged, { pushState: false, selectedNodeId, cb: () => {
-      this.dataTree.showOptimizationStatus = showOptimizationStatus
+    this.setUseMergedTree(useMerged, { pushState: false,
+      selectedNodeId,
+      cb: () => {
+        this.dataTree.showOptimizationStatus = showOptimizationStatus
 
-      let anyChanges = false
+        let anyChanges = false
 
-      // Diff exclusion setting so FlameGraph can update.
-      exclude.forEach((name) => {
-        if (this.dataTree.exclude.has(name)) return
-        this.changedExclusions.toHide.add(name)
-        anyChanges = true
-      })
-      this.dataTree.exclude.forEach((name) => {
-        if (exclude.has(name)) return
-        this.changedExclusions.toShow.add(name)
-        anyChanges = true
-      })
-      this.dataTree.exclude = exclude
+        // Diff exclusion setting so FlameGraph can update.
+        exclude.forEach((name) => {
+          if (this.dataTree.exclude.has(name)) return
+          this.changedExclusions.toHide.add(name)
+          anyChanges = true
+        })
+        this.dataTree.exclude.forEach((name) => {
+          if (exclude.has(name)) return
+          this.changedExclusions.toShow.add(name)
+          anyChanges = true
+        })
+        this.dataTree.exclude = exclude
 
-      if (anyChanges) this.updateExclusions({ pushState: false, selectedNodeId, zoomedNodeId })
+        if (anyChanges) this.updateExclusions({ pushState: false, selectedNodeId, zoomedNodeId })
 
-      // Redraw before zooming to make sure these nodes are visible in the flame graph.
-      this.draw()
+        // Redraw before zooming to make sure these nodes are visible in the flame graph.
+        this.draw()
 
-      this.zoomNode(this.dataTree.getNodeById(zoomedNodeId), { pushState: false })
-      this.selectNode(this.dataTree.getNodeById(selectedNodeId), { pushState: false })
+        this.zoomNode(this.dataTree.getNodeById(zoomedNodeId), { pushState: false })
+        this.selectNode(this.dataTree.getNodeById(selectedNodeId), { pushState: false })
 
-      if (search !== this.searchQuery) {
-        this.search(search, { pushState: false })
-      }
-    }})
+        if (search !== this.searchQuery) {
+          this.search(search, { pushState: false })
+        }
+      } })
   }
 
   // Temporary e.g. on mouseover, erased on mouseout
@@ -174,6 +177,14 @@ class Ui extends events.EventEmitter {
     }
   }
 
+  setPresentationMode (mode) {
+    this.presentationMode = mode
+    // switching the class on the html element
+    document.documentElement.classList.toggle('presentation-mode', mode)
+    this.setExposedCSS()
+    this.emit('presentationMode', mode)
+  }
+
   /**
   * Sections and content
   **/
@@ -240,7 +251,9 @@ class Ui extends events.EventEmitter {
 
       if (window.innerWidth > minWidth) {
         const size = Math.min(window.innerWidth, window.innerHeight * 16 / 9)
-        return Math.round((size - minWidth) / 250)
+        const baseFactor = (size - minWidth) / 250
+        const bonus = this.presentationMode ? 1.5 : 1
+        return Math.round(baseFactor * bonus)
       }
 
       return 0
@@ -314,6 +327,13 @@ class Ui extends events.EventEmitter {
     })
 
     window.addEventListener('load', this.scrollSelectedFrameIntoView)
+
+    this.on('presentationMode', () => {
+      const zoomFactor = getZoomFactor()
+      flameWrapper.resize(zoomFactor)
+      setFontSize(zoomFactor)
+      this.scrollSelectedFrameIntoView()
+    })
   }
 
   addSection (id, options = {}) {
@@ -408,7 +428,7 @@ class Ui extends events.EventEmitter {
       if (pushState) this.pushHistory()
 
       if (cb) cb()
-    }})
+    } })
   }
 
   setShowOptimizationStatus (showOptimizationStatus) {
@@ -472,6 +492,9 @@ class Ui extends events.EventEmitter {
 
     this.changedExclusions.toHide.clear()
     this.changedExclusions.toShow.clear()
+
+    // setting Presentation Mode
+    this.setPresentationMode(this.presentationMode)
   }
 }
 
