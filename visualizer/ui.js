@@ -103,7 +103,7 @@ class Ui extends events.EventEmitter {
 
   // Persistent e.g. on click, then falls back to this after mouseout
   selectNode (node = null, { pushState = true } = {}) {
-    if ((node && node.id === 0) || !node) return
+    if (!node || node.id === 0) return
     const changed = node !== this.selectedNode
     this.selectedNode = node
     if (changed) this.emit('selectNode', node)
