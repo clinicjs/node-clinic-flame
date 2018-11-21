@@ -1,12 +1,11 @@
 #options-menu .options {
   right: 0;
-  padding: 8px 0;
   width: 100%;
   font-size: var(--small-text-size);
   position: absolute;
   z-index: 1;
-  background-color: var(--options-menu-bg-color);
-  margin-top: 6px;
+  background-color: var(--opposite-translucent);
+  margin-top: 8px;
 }
 
 #options-menu .options .children-toggle-btn{
@@ -34,9 +33,9 @@
 
 #options-menu .options .section {
   border: none;
-  padding: 0;
-  margin: 0 0 10px 0;
+  padding: 8px 0 0 0;
   position: relative; /* forces this to show on _top_ of the .options element, else it's not clickable */
+  background-color: var(--opposite-translucent);
 }
 
 #options-menu .options .section:last-child {
@@ -93,13 +92,9 @@
 
 #options-menu .options label:hover {
   white-space: normal;
-  /* background of options area mixed with:
-   *   rgba(255, 255, 255, 0.06)
-   * included as a constant value so this colour
-   * obscures the lower items that it overflows on hover. */
-  background-color: rgb(66, 69, 81);
   height: auto;
   z-index: 3;
+  background: var(--opposite-contrast);
 }
 
 #options-menu .options label {
