@@ -58,13 +58,23 @@ class OptionsMenu extends HtmlContent {
     this.d3FgOptions = this.d3OptionsList.append('div')
       .classed('section', true)
     this.d3FgOptions.append('h2')
-      .text('Merging and highlighting')
+      .text('Advanced')
     this.d3FgOptions.append('ul')
+
+    this.d3InitCheckbox = this.addFgOptionCheckbox({
+      id: 'option-init',
+      name: 'Init',
+      description: 'Show initialization operations hidden by default, like module loading',
+      onChange: (checked) => {
+        ui.setCodeAreaVisibility('init', checked)
+        ui.draw()
+      }
+    })
 
     this.d3MergeCheckbox = this.addFgOptionCheckbox({
       id: 'option-usemergedtree',
       name: 'Merge',
-      description: 'joins optimized and unoptimized versions of frames',
+      description: 'Join optimized and unoptimized versions of frames',
       onChange: (checked) => {
         this.ui.setUseMergedTree(checked)
       }
@@ -73,7 +83,7 @@ class OptionsMenu extends HtmlContent {
     this.d3OptCheckbox = this.addFgOptionCheckbox({
       id: 'option-showoptimizationstatus',
       name: 'Show optimization status',
-      description: 'highlight frames that are optimized functions',
+      description: 'Highlight frames that are optimized functions',
       onChange: (checked) => {
         this.ui.setShowOptimizationStatus(checked)
       }
@@ -113,21 +123,21 @@ class OptionsMenu extends HtmlContent {
     true) // using useCapture here so that we can handle the event before `.showMore` button updates its content
   }
 
-  addFgOptionCheckbox ({ id, name, description, onChange }, parentNode) {
-    parentNode = parentNode || this.d3FgOptions.select('ul')
-    const li = parentNode.append('li')
+  addFgOptionCheckbox ({ id, name, description, onChange }, d3ParentNode) {
+    d3ParentNode = d3ParentNode || this.d3FgOptions.select('ul')
+    const d3Li = d3ParentNode.append('li')
       .attr('id', id)
-    const wrapper = li.append('div')
+    const d3Wrapper = d3Li.append('div')
       .classed('overflow-wrapper', true)
-    const label = wrapper.append('label')
-    const d3Checkbox = label.append('input')
+    const d3Label = d3Wrapper.append('label')
+    const d3Checkbox = d3Label.append('input')
       .attr('type', 'checkbox')
       .on('click', () => {
         const { checked } = d3.event.target
         onChange(checked)
       })
 
-    label.append('span')
+    d3Label.append('span')
       .classed('icon-wrapper', true)
       .html(`
         <img class="icon-img checked" data-inline-svg src="/visualizer/assets/icons/checkbox-checked.svg" />
@@ -135,13 +145,13 @@ class OptionsMenu extends HtmlContent {
         <img class="icon-img indetermined" data-inline-svg src="/visualizer/assets/icons/checkbox-indetermined.svg" />
       `)
 
-    const copyWrapper = label.append('span')
+    const d3CopyWrapper = d3Label.append('span')
       .classed('copy-wrapper', true)
-    copyWrapper.append('span')
+    d3CopyWrapper.append('span')
       .classed('name', true)
       .text(name)
     if (description) {
-      copyWrapper.append('span')
+      d3CopyWrapper.append('span')
         .classed('description', true)
         .html(` - ${description}`)
     }
@@ -299,15 +309,14 @@ class OptionsMenu extends HtmlContent {
     super.draw()
 
     // Update option checkbox values.
-    const { useMerged, showOptimizationStatus, appName } = this.ui.dataTree
-    this.d3FgOptions.select('#option-usemergedtree')
-      .select('input')
-      .property('checked', useMerged)
-    this.d3FgOptions.select('#option-showoptimizationstatus')
-      .classed('disabled', useMerged)
-      .select('input')
+    const { useMerged, showOptimizationStatus, exclude, appName } = this.ui.dataTree
+    this.d3MergeCheckbox.property('checked', useMerged)
+    this.d3OptCheckbox
       .attr('disabled', useMerged ? 'disabled' : null)
       .property('checked', showOptimizationStatus)
+      .select(function () { return this.closest('li') })
+      .classed('disabled', useMerged)
+    this.d3InitCheckbox.property('checked', !exclude.has('init'))
 
     // Updating the app name
     this.d3VisibilityOptions.select('.name')
