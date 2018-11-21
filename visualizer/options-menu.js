@@ -66,8 +66,8 @@ class OptionsMenu extends HtmlContent {
       name: 'Init',
       description: 'Show initialization operations hidden by default, like module loading',
       onChange: (checked) => {
-        ui.setCodeAreaVisibility('init', checked)
-        ui.draw()
+        this.ui.setCodeAreaVisibility('init', checked)
+        this.ui.draw()
       }
     })
 
