@@ -37,12 +37,16 @@ class FlameGraph extends HtmlContent {
     this.labelFont = contentProperties.labelFont
     this.labelPadding = contentProperties.labelPadding
 
+    this.onNextAnimationEnd = null
+
     this.ui.on('setData', () => {
       this.initializeFromData()
     })
 
-    this.ui.on('zoomNode', node => {
+    this.ui.on('zoomNode', (node, cb) => {
       if (this.flameGraph) {
+        if (cb) this.onNextAnimationEnd = cb
+
         this.isAnimating = true
         this.zoomedNodeData = node
 
@@ -53,6 +57,8 @@ class FlameGraph extends HtmlContent {
         this.markNodeAsSelected(null)
         this.markNodeAsZoomed(null)
         this.flameGraph.zoom(node || this.ui.dataTree.activeTree())
+      } else {
+        if (cb) cb()
       }
     })
 
@@ -231,6 +237,11 @@ class FlameGraph extends HtmlContent {
       } else {
         this.hoveredNodeData = this.ui.highlightedNode || this.ui.selectedNode
         this.highlightHoveredNodeOnGraph()
+      }
+
+      if (this.onNextAnimationEnd) {
+        this.onNextAnimationEnd()
+        this.onNextAnimationEnd = null
       }
     })
 
