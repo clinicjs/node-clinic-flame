@@ -376,11 +376,13 @@ class Ui extends events.EventEmitter {
       return
     }
 
+    // Current selected and zoomed nodes will be in wrong tree, therefore may cause errors during draw.
+    // ui.selectNode() will be called properly in this.selectHottestNode() or based on selectedNodeId.
+    this.selectedNode = null
+    this.zoomNode(null)
+
     this.dataTree.setActiveTree(useMerged)
 
-    // Current ui.selectedNode will be in wrong tree, therefore may cause errors during draw.
-    // Just erase instead of using ui.selectNode() - that will be called in this.selectHottestNode()
-    this.selectedNode = null
     this.draw()
     if (!selectedNodeId) this.selectHottestNode()
 
