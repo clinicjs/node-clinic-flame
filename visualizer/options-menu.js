@@ -91,14 +91,16 @@ class OptionsMenu extends HtmlContent {
     prefLi.enter().append('li')
       .html(d => {
         return (`
-          <label>
-            <input id='${d.id}' type='checkbox' "${d.value ? 'checked' : ''}" /> 
-            <span class='icon-wrapper'>
-              <img class="icon-img checked" data-inline-svg src="/visualizer/assets/icons/checkbox-checked.svg" />
-              <img class="icon-img unchecked" data-inline-svg src="/visualizer/assets/icons/checkbox-unchecked.svg" />
-            </span>
-            <span class='copy-wrapper'>${d.title}</span>
-          </label>
+          <div class='overflow-wrapper'>
+            <label>
+              <input id='${d.id}' type='checkbox' "${d.value ? 'checked' : ''}" /> 
+              <span class='icon-wrapper'>
+                <img class="icon-img checked" data-inline-svg src="/visualizer/assets/icons/checkbox-checked.svg" />
+                <img class="icon-img unchecked" data-inline-svg src="/visualizer/assets/icons/checkbox-unchecked.svg" />
+              </span>
+              <span class='copy-wrapper'>${d.title}</span>
+            </label>
+          </div>
         `)
       })
 
