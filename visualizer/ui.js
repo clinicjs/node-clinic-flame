@@ -50,35 +50,44 @@ class Ui extends events.EventEmitter {
   }
 
   updateFromHistory (data) {
-    this.setUseMergedTree(data.useMerged, { pushState: false })
+    const {
+      exclude,
+      useMerged,
+      search,
+      selectedNodeId,
+      showOptimizationStatus,
+      zoomedNodeId
+    } = data
 
-    this.dataTree.showOptimizationStatus = data.showOptimizationStatus
+    this.setUseMergedTree(useMerged, { pushState: false, selectedNodeId })
+
+    this.dataTree.showOptimizationStatus = showOptimizationStatus
 
     let anyChanges = false
 
     // Diff exclusion setting so FlameGraph can update.
-    data.exclude.forEach((name) => {
+    exclude.forEach((name) => {
       if (this.dataTree.exclude.has(name)) return
       this.changedExclusions.toHide.add(name)
       anyChanges = true
     })
     this.dataTree.exclude.forEach((name) => {
-      if (data.exclude.has(name)) return
+      if (exclude.has(name)) return
       this.changedExclusions.toShow.add(name)
       anyChanges = true
     })
-    this.dataTree.exclude = data.exclude
+    this.dataTree.exclude = exclude
 
-    if (anyChanges) this.updateExclusions({ pushState: false })
+    if (anyChanges) this.updateExclusions({ pushState: false, selectedNodeId })
 
     // Redraw before zooming to make sure these nodes are visible in the flame graph.
     this.draw()
 
-    this.selectNode(this.dataTree.getNodeById(data.selectedNodeId), { pushState: false })
-    this.zoomNode(this.dataTree.getNodeById(data.zoomedNodeId), { pushState: false })
+    this.selectNode(this.dataTree.getNodeById(selectedNodeId), { pushState: false })
+    this.zoomNode(this.dataTree.getNodeById(zoomedNodeId), { pushState: false })
 
-    if (data.search !== this.searchQuery) {
-      this.search(data.search, { pushState: false })
+    if (search !== this.searchQuery) {
+      this.search(search, { pushState: false })
     }
   }
 
@@ -349,10 +358,10 @@ class Ui extends events.EventEmitter {
     return isChanged
   }
 
-  updateExclusions ({ initial, pushState = true } = {}) {
+  updateExclusions ({ initial, pushState = true, selectedNodeId } = {}) {
     this.dataTree.update(initial)
 
-    if (this.selectedNode && this.dataTree.exclude.has(this.selectedNode.type)) {
+    if (!selectedNodeId && this.selectedNode && this.dataTree.exclude.has(this.selectedNode.type)) {
       this.selectHottestNode()
     }
 
@@ -362,7 +371,7 @@ class Ui extends events.EventEmitter {
     }
   }
 
-  setUseMergedTree (useMerged, { pushState = true } = {}) {
+  setUseMergedTree (useMerged, { pushState = true, selectedNodeId } = {}) {
     if (this.dataTree.useMerged === useMerged) {
       return
     }
@@ -373,7 +382,7 @@ class Ui extends events.EventEmitter {
     // Just erase instead of using ui.selectNode() - that will be called in this.selectHottestNode()
     this.selectedNode = null
     this.draw()
-    this.selectHottestNode()
+    if (!selectedNodeId) this.selectHottestNode()
 
     if (pushState) this.pushHistory()
   }
