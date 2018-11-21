@@ -27,6 +27,8 @@ async function analyse (paths) {
     { id: 'app' },
     { id: 'deps' },
     { id: 'core' },
+    // This is a "virtual" code area, it overlaps with other areas.
+    { id: 'init' },
     { id: 'all-v8',
       children: [
         { id: 'v8' },

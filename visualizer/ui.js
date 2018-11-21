@@ -378,7 +378,7 @@ class Ui extends events.EventEmitter {
       'native': `JS compiled into V8, such as prototype methods and eval. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#native">More info</a>`,
       'cpp': `Native C++ operations called by V8, including shared libraries. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#cpp">More info</a>`,
       'regexp': `The RegExp notation is shown as the function name. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#rx">More info</a>`,
-      'init': `Any of the above that are repeated frequently during initialization. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#init">More info</a>`,
+      'init': `Module loading and other operations during initialization. Frames in this category also belong to other categories. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#init">More info</a>`,
     }
 
     return keysToDescriptions[key] || null
