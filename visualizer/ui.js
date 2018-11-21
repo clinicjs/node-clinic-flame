@@ -77,7 +77,7 @@ class Ui extends events.EventEmitter {
       })
       this.dataTree.exclude = exclude
 
-      if (anyChanges) this.updateExclusions({ pushState: false, selectedNodeId })
+      if (anyChanges) this.updateExclusions({ pushState: false, selectedNodeId, zoomedNodeId })
 
       // Redraw before zooming to make sure these nodes are visible in the flame graph.
       this.draw()
@@ -124,6 +124,11 @@ class Ui extends events.EventEmitter {
     if (!node && !this.zoomedNode) {
       if (cb) cb()
       return
+    }
+
+    // Don't allow zooming on an excluded node
+    if (node && this.dataTree.exclude.has(node.type)) {
+      this.zoomNode(null, { pushState, cb })
     }
 
     // Zoom out if zooming in on already-zoomed node
@@ -361,16 +366,25 @@ class Ui extends events.EventEmitter {
     return isChanged
   }
 
-  updateExclusions ({ initial, pushState = true, selectedNodeId } = {}) {
+  updateExclusions ({ initial, pushState = true, selectedNodeId, zoomedNodeId } = {}) {
     this.dataTree.update(initial)
 
     if (!selectedNodeId && this.selectedNode && this.dataTree.exclude.has(this.selectedNode.type)) {
       this.selectHottestNode()
     }
 
-    if (!initial) this.emit('updateExclusions')
-    if (pushState) {
-      this.pushHistory()
+    const cb = () => {
+      if (!initial) this.emit('updateExclusions')
+      if (pushState) {
+        this.pushHistory()
+      }
+    }
+
+    // Zoom out before updating exclusions if the user excludes the node they're zoomed in on
+    if (!zoomedNodeId && this.zoomedNode && this.dataTree.exclude.has(this.zoomedNode.type)) {
+      this.zoomNode(null, { cb })
+    } else {
+      cb()
     }
   }
 
