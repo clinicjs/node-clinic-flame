@@ -186,6 +186,8 @@ class DataTree {
         this.groupedSortValues.set(child, group[type])
         walk(child)
       })
+
+      node.childGroups = group
     }
 
     walk(this.activeTree())
