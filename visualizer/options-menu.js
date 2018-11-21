@@ -14,32 +14,6 @@ const preferences = [
   }
 ]
 
-function getCodeAreaDescription (area) {
-  const { id } = area
-
-  if (id === 'all-core') {
-    return 'The Node.js framework and its dependencies'
-  }
-  if (id === 'core') {
-    return `JS functions in core Node.js APIs. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#core">More info</a>`
-  }
-  if (id === 'native') {
-    return `JS compiled into V8, such as prototype methods and eval. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#native">More info</a>`
-  }
-  if (id === 'v8' || id === 'all-v8') {
-    return `Operations in V8's implementation of JS. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#v8">More info</a>`
-  }
-  if (id === 'cpp') {
-    return `Native C++ operations called by V8, including shared libraries. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#cpp">More info</a>`
-  }
-  if (id === 'regexp') {
-    return `The RegExp notation is shown as the function name. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#rx">More info</a>`
-  }
-  if (id === 'init') {
-    return `Any of the above that are repeated frequently during initialization. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#init">More info</a>`
-  }
-}
-
 class OptionsMenu extends HtmlContent {
   constructor (parentContent, contentProperties) {
     super(parentContent, contentProperties)
@@ -249,7 +223,7 @@ class OptionsMenu extends HtmlContent {
       copyWrapper.append('description')
         .classed('description', true)
         .html((d) => {
-          const description = getCodeAreaDescription(d)
+          const description = ui.getDescriptionFromKey(d.id)
           return description ? ` - ${description}` : ''
         })
     }

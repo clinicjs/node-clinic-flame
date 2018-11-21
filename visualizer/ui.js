@@ -370,6 +370,20 @@ class Ui extends events.EventEmitter {
     return keysToLabels[key] || key
   }
 
+  getDescriptionFromKey (key) {
+    const keysToDescriptions = {
+      'core': `JS functions in core Node.js APIs. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#core">More info</a>`,
+      'all-v8': 'The V8 engine JavaScript implementation',
+      'v8': `Operations in V8's implementation of JS. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#v8">More info</a>`,
+      'native': `JS compiled into V8, such as prototype methods and eval. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#native">More info</a>`,
+      'cpp': `Native C++ operations called by V8, including shared libraries. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#cpp">More info</a>`,
+      'regexp': `The RegExp notation is shown as the function name. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#rx">More info</a>`,
+      'init': `Any of the above that are repeated frequently during initialization. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#init">More info</a>`,
+    }
+
+    return keysToDescriptions[key] || null
+  }
+
   setCodeAreaVisibility (name, visible, manyTimes) {
     // Apply a single possible change to dataTree.exclude, updating what's necessary
     let isChanged = false
