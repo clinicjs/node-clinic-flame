@@ -1,6 +1,8 @@
 'use strict'
 
 const shared = require('../shared.js')
+const flameGradient = require('flame-gradient')
+const d3 = require('./d3.js')
 
 class DataTree {
   constructor (tree) {
@@ -20,7 +22,10 @@ class DataTree {
 
     // Set and updated in .update()
     this.flatByHottest = null
-    this.highestStackTop = null
+    this.mean = 0
+    this.highestStackTop = 0
+    this.maxRootAboveMean = 0
+    this.maxRootBelowMean = 0
 
     this.setStackTop = shared.setStackTop.bind(this)
     this.isNodeExcluded = shared.isNodeExcluded.bind(this)
@@ -29,7 +34,9 @@ class DataTree {
   update (initial) {
     if (!initial) this.setStackTop(this.activeTree())
     this.sortFramesByHottest()
-    this.updateHighestStackTop()
+    this.mean = d3.mean(this.flatByHottest, node => node.onStackTop.asViewed)
+    this.highestStackTop = this.flatByHottest[0].onStackTop.asViewed
+    this.calculateRoots()
   }
 
   show (name) {
@@ -51,6 +58,30 @@ class DataTree {
   sortFramesByHottest () {
     // Flattened tree, sorted hottest first, excluding the 'all stacks' root node
     this.flatByHottest = this.getFlattenedSorted(this.getStackTopSorter())
+  }
+
+  calculateRoots (arr = this.flatByHottest) {
+    // Used to give a reasonable flame gradient range above and below the mean value
+    let maxRootAboveMean = 0
+    let maxRootBelowMean = 0
+
+    const count = arr.length
+    for (let i = 0; i < count; i++) {
+      const node = this.flatByHottest[i]
+
+      if (node.onStackTop.asViewed > this.mean) {
+        node.onStackTop.rootFromMean = Math.sqrt(node.onStackTop.asViewed - this.mean)
+        if (node.onStackTop.rootFromMean > maxRootAboveMean) maxRootAboveMean = node.onStackTop.rootFromMean
+      } else if (node.onStackTop.asViewed < this.mean) {
+        node.onStackTop.rootFromMean = Math.sqrt(this.mean - node.onStackTop.asViewed)
+        if (node.onStackTop.rootFromMean > maxRootBelowMean) maxRootBelowMean = node.onStackTop.rootFromMean
+      } else { // Exactly equals mean
+        node.onStackTop.rootFromMean = 0
+      }
+    }
+
+    this.maxRootAboveMean = maxRootAboveMean
+    this.maxRootBelowMean = maxRootBelowMean
   }
 
   activeTree () {
@@ -76,8 +107,18 @@ class DataTree {
     return filtered.sort(sorter)
   }
 
-  updateHighestStackTop () {
-    this.highestStackTop = this.flatByHottest[0].onStackTop.asViewed
+  getHeatColor (node, arr = this.flatByHottest) {
+    if (!node) return flameGradient(0)
+
+    const pivotPoint = this.mean / (this.mean + this.maxRootAboveMean + this.maxRootBelowMean)
+
+    if (node.onStackTop.rootFromMean === 0 || node.onStackTop.asViewed === this.mean) return flameGradient(pivotPoint)
+
+    if (node.onStackTop.asViewed > this.mean) {
+      return flameGradient(pivotPoint + (node.onStackTop.rootFromMean / this.maxRootAboveMean) * (0.95 - pivotPoint))
+    } else {
+      return flameGradient(pivotPoint - (node.onStackTop.rootFromMean / this.maxRootBelowMean) * pivotPoint)
+    }
   }
 
   getFrameByRank (rank, arr = this.flatByHottest) {

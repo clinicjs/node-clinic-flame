@@ -28,8 +28,8 @@ test('Collect - logging path - path', function (t) {
   t.end()
 })
 
-test('Collect - logging path - defaults to 0x path templates', function (t) {
-  const paths = getLoggingPaths()
+test('Collect - logging path - supports 0x path templates', function (t) {
+  const paths = getLoggingPaths({ identifier: '{pid}' })
   t.strictDeepEqual(paths, {
     '/': path.normalize('{pid}.clinic-flame'),
     '/systeminfo': path.normalize('{pid}.clinic-flame/{pid}.clinic-flame-systeminfo'),

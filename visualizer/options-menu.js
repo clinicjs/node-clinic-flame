@@ -125,7 +125,9 @@ class OptionsMenu extends HtmlContent {
   addFgOptionCheckbox ({ id, name, description, onChange }) {
     const li = this.d3FgOptions.select('ul').append('li')
       .attr('id', id)
-    const label = li.append('label')
+    const wrapper = li.append('div')
+      .classed('overflow-wrapper', true)
+    const label = wrapper.append('label')
     const d3Checkbox = label.append('input')
       .attr('type', 'checkbox')
       .on('click', () => {
@@ -136,9 +138,9 @@ class OptionsMenu extends HtmlContent {
     label.append('span')
       .classed('icon-wrapper', true)
       .html(`
-      <img class="icon-img checked" data-inline-svg src="/visualizer/assets/icons/checkbox-checked.svg" />
-      <img class="icon-img unchecked" data-inline-svg src="/visualizer/assets/icons/checkbox-unchecked.svg" />
-      <img class="icon-img indetermined" data-inline-svg src="/visualizer/assets/icons/checkbox-indetermined.svg" />
+        <img class="icon-img checked" data-inline-svg src="/visualizer/assets/icons/checkbox-checked.svg" />
+        <img class="icon-img unchecked" data-inline-svg src="/visualizer/assets/icons/checkbox-unchecked.svg" />
+        <img class="icon-img indetermined" data-inline-svg src="/visualizer/assets/icons/checkbox-indetermined.svg" />
       `)
 
     const copyWrapper = label.append('span')
@@ -206,7 +208,9 @@ class OptionsMenu extends HtmlContent {
     // for use with a d3.enter() selection.
     function createOptionElement (li) {
       li.classed('visible', d => d.visible === true)
-      const label = li.append('label')
+      const wrapper = li.append('div')
+        .classed('overflow-wrapper', true)
+      const label = wrapper.append('label')
         .attr('title', d => d.title)
       label.append('input')
         .attr('type', 'checkbox')
