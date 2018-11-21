@@ -50,7 +50,8 @@ class Ui extends events.EventEmitter {
   }
 
   updateFromHistory (data) {
-    this.dataTree.useMerged = data.useMerged
+    this.setUseMergedTree(data.useMerged, { pushState: false })
+
     this.dataTree.showOptimizationStatus = data.showOptimizationStatus
 
     let anyChanges = false
@@ -361,17 +362,20 @@ class Ui extends events.EventEmitter {
     }
   }
 
-  setUseMergedTree (useMerged) {
+  setUseMergedTree (useMerged, { pushState = true } = {}) {
     if (this.dataTree.useMerged === useMerged) {
       return
     }
 
     this.dataTree.setActiveTree(useMerged)
 
+    // Current ui.selectedNode will be in wrong tree, therefore may cause errors during draw.
+    // Just erase instead of using ui.selectNode() - that will be called in this.selectHottestNode()
+    this.selectedNode = null
     this.draw()
     this.selectHottestNode()
 
-    this.pushHistory()
+    if (pushState) this.pushHistory()
   }
 
   setShowOptimizationStatus (showOptimizationStatus) {
