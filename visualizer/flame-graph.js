@@ -357,28 +357,28 @@ class FlameGraph extends HtmlContent {
     const { toHide, toShow } = this.ui.changedExclusions
     let isChanged = false
 
+    if (this.zoomFactorChanged) {
+      redrawGraph = true
+      this.zoomFactorChanged = false
+    }
+
+    // Must re-render tree before applying exclusions, else error if tree and exclusions change at same time
+    if (redrawGraph) this.flameGraph.renderTree(this.renderedTree)
+
     if (toHide.size > 0) {
       toHide.forEach((name) => {
         this.flameGraph.typeHide(name)
-        redrawGraph = false
       })
       isChanged = true
     }
     if (toShow.size > 0) {
       toShow.forEach((name) => {
         this.flameGraph.typeShow(name)
-        redrawGraph = false
       })
       isChanged = true
     }
 
-    if (this.zoomFactorChanged) {
-      redrawGraph = true
-      this.zoomFactorChanged = false
-    }
-
     if (isChanged || redrawGraph) this.updateMarkerBoxes()
-    if (redrawGraph) this.flameGraph.renderTree(this.renderedTree)
   }
 }
 
