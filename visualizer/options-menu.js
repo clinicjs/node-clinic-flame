@@ -88,27 +88,16 @@ class OptionsMenu extends HtmlContent {
     const prefUl = this.d3Preferences.append('ul')
     const prefLi = prefUl.selectAll('li').data(preferences)
     prefLi.exit().remove()
-    prefLi.enter().append('li')
-      .html(d => {
-        return (`
-          <div class='overflow-wrapper'>
-            <label>
-              <input id='${d.id}' type='checkbox' "${d.value ? 'checked' : ''}" /> 
-              <span class='icon-wrapper'>
-                <img class="icon-img checked" data-inline-svg src="/visualizer/assets/icons/checkbox-checked.svg" />
-                <img class="icon-img unchecked" data-inline-svg src="/visualizer/assets/icons/checkbox-unchecked.svg" />
-              </span>
-              <span class='copy-wrapper'>${d.title}</span>
-            </label>
-          </div>
-        `)
-      })
-
-    prefUl.selectAll('input')
-      .on('change', () => {
-        const chkbox = d3.event.target
-        d3.select(chkbox.closest('li')).datum().onChange(this.ui, chkbox.checked)
-      })
+    prefLi.enter().append('li').call((li) => {
+      const datum = li.datum()
+      this.addFgOptionCheckbox({
+        id: datum.id,
+        name: datum.title,
+        onChange: (checked) => {
+          datum.onChange(this.ui, checked)
+        }
+      }, prefUl)
+    })
 
     this.ui.on('setData', () => {
       this.setData()
@@ -124,8 +113,9 @@ class OptionsMenu extends HtmlContent {
     true) // using useCapture here so that we can handle the event before `.showMore` button updates its content
   }
 
-  addFgOptionCheckbox ({ id, name, description, onChange }) {
-    const li = this.d3FgOptions.select('ul').append('li')
+  addFgOptionCheckbox ({ id, name, description, onChange }, parentNode) {
+    parentNode = parentNode || this.d3FgOptions.select('ul')
+    const li = parentNode.append('li')
       .attr('id', id)
     const wrapper = li.append('div')
       .classed('overflow-wrapper', true)
@@ -150,9 +140,11 @@ class OptionsMenu extends HtmlContent {
     copyWrapper.append('span')
       .classed('name', true)
       .text(name)
-    copyWrapper.append('span')
-      .classed('description', true)
-      .html(` - ${description}`)
+    if (description) {
+      copyWrapper.append('span')
+        .classed('description', true)
+        .html(` - ${description}`)
+    }
 
     return d3Checkbox
   }
