@@ -82,8 +82,8 @@ class Ui extends events.EventEmitter {
       // Redraw before zooming to make sure these nodes are visible in the flame graph.
       this.draw()
 
-      this.selectNode(this.dataTree.getNodeById(selectedNodeId), { pushState: false })
       this.zoomNode(this.dataTree.getNodeById(zoomedNodeId), { pushState: false })
+      this.selectNode(this.dataTree.getNodeById(selectedNodeId), { pushState: false })
 
       if (search !== this.searchQuery) {
         this.search(search, { pushState: false })
