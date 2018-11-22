@@ -41,9 +41,9 @@ class InfoBox extends HtmlContent {
     this.pathText = node.fileName
     this.rankNumber = this.ui.dataTree.getSortPosition(node)
 
-    const typeLabel = this.ui.getLabelFromKey(node.type, true)
+    const typeLabel = node.category === 'core' ? '' : ` (${this.ui.getLabelFromKey(node.type, true)})`
     const categoryLabel = this.ui.getLabelFromKey(node.category, true)
-    this.areaText = `In ${categoryLabel} (${typeLabel})`
+    this.areaText = `In ${categoryLabel}${typeLabel}`
 
     if (node.isInit) this.areaText += '. In initialization process'
     if (node.isInlinable) this.areaText += '. Inlinable'
