@@ -30,6 +30,8 @@ class Key extends HtmlContent {
     this.ui.on('setData', () => {
       this.setData()
     })
+
+    this.ui.on('presentationMode', () => { this.draw() })
   }
 
   setData () {

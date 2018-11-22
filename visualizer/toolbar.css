@@ -1,5 +1,5 @@
 #toolbar {
-  background-color: var(--overlay-bg-color);
+  background-color: var(--banner-bg-color);
   z-index: 5;
   position: relative;
 }
@@ -21,10 +21,8 @@
 }
 
 #toolbar-side-panel {
-  padding: 6px;
   flex-grow: 0;
   display: flex;
-  background-color: var(--banner-bg-color);
   position: relative;
   min-width: 25em;
 }
@@ -45,11 +43,17 @@
   }
   #toolbar-top-panel {
     justify-content: space-between;
-  } 
+  }
 }
 
 @media screen and (min-width: 720px) {
   #info-box .frame-info {
     font-size: var(--small-text-size);
   }
+}
+
+/* presentation mode */
+.presentation-mode #toolbar-side-panel {
+  background-color: transparent;
+  padding: 0px;
 }
