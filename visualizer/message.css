@@ -7,20 +7,21 @@
 }
 
 #message-component .message-text {
-  background-color: rgb(61, 165, 108);
+  background-color: rgb(5, 97, 47);
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
   color: '#fff';
-  padding: 2px 5px;
+  padding: 5px;
   border-radius: 3px;
   margin: 1px 0px;
   font-size: var(--small-text-size);
   text-align: center;
-  color: rgba(0, 0, 0, 0.6);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 #message-component pre {
-  color: #000000;
+  color: rgba(255, 255, 255, 0.9);
   font-style: italic;
-  margin: 1em;
+  margin: 1em 1em 0.5em;
   word-break: break-word;
   white-space: normal
 }

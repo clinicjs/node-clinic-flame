@@ -23,6 +23,7 @@ class Ui extends events.EventEmitter {
       toShow: new Set()
     }
     this.searchQuery = null
+    this.presentationMode = process.env.PRESENTATION_MODE === 'true'
 
     this.tooltipHtmlContent = new TooltipHtmlContent(this)
 
@@ -50,35 +51,47 @@ class Ui extends events.EventEmitter {
   }
 
   updateFromHistory (data) {
-    this.dataTree.useMerged = data.useMerged
-    this.dataTree.showOptimizationStatus = data.showOptimizationStatus
+    const {
+      exclude,
+      useMerged,
+      search,
+      selectedNodeId,
+      showOptimizationStatus,
+      zoomedNodeId
+    } = data
 
-    let anyChanges = false
+    this.setUseMergedTree(useMerged, { pushState: false,
+      selectedNodeId,
+      cb: () => {
+        this.dataTree.showOptimizationStatus = showOptimizationStatus
 
-    // Diff exclusion setting so FlameGraph can update.
-    data.exclude.forEach((name) => {
-      if (this.dataTree.exclude.has(name)) return
-      this.changedExclusions.toHide.add(name)
-      anyChanges = true
-    })
-    this.dataTree.exclude.forEach((name) => {
-      if (data.exclude.has(name)) return
-      this.changedExclusions.toShow.add(name)
-      anyChanges = true
-    })
-    this.dataTree.exclude = data.exclude
+        let anyChanges = false
 
-    if (anyChanges) this.updateExclusions({ pushState: false })
+        // Diff exclusion setting so FlameGraph can update.
+        exclude.forEach((name) => {
+          if (this.dataTree.exclude.has(name)) return
+          this.changedExclusions.toHide.add(name)
+          anyChanges = true
+        })
+        this.dataTree.exclude.forEach((name) => {
+          if (exclude.has(name)) return
+          this.changedExclusions.toShow.add(name)
+          anyChanges = true
+        })
+        this.dataTree.exclude = exclude
 
-    // Redraw before zooming to make sure these nodes are visible in the flame graph.
-    this.draw()
+        if (anyChanges) this.updateExclusions({ pushState: false, selectedNodeId, zoomedNodeId })
 
-    this.selectNode(this.dataTree.getNodeById(data.selectedNodeId), { pushState: false })
-    this.zoomNode(this.dataTree.getNodeById(data.zoomedNodeId), { pushState: false })
+        // Redraw before zooming to make sure these nodes are visible in the flame graph.
+        this.draw()
 
-    if (data.search !== this.searchQuery) {
-      this.search(data.search, { pushState: false })
-    }
+        this.zoomNode(this.dataTree.getNodeById(zoomedNodeId), { pushState: false })
+        this.selectNode(this.dataTree.getNodeById(selectedNodeId), { pushState: false })
+
+        if (search !== this.searchQuery) {
+          this.search(search, { pushState: false })
+        }
+      } })
   }
 
   // Temporary e.g. on mouseover, erased on mouseout
@@ -93,7 +106,7 @@ class Ui extends events.EventEmitter {
 
   // Persistent e.g. on click, then falls back to this after mouseout
   selectNode (node = null, { pushState = true } = {}) {
-    if (node && node.id === 0) return
+    if (!node || node.id === 0) return
     const changed = node !== this.selectedNode
     this.selectedNode = node
     if (changed) this.emit('selectNode', node)
@@ -110,14 +123,22 @@ class Ui extends events.EventEmitter {
     this.selectNode(this.dataTree.getFrameByRank(0), opts)
   }
 
-  zoomNode (node = null, { pushState = true } = {}) {
-    if (!node && !this.zoomedNode) return
+  zoomNode (node = null, { pushState = true, cb } = {}) {
+    if (!node && !this.zoomedNode) {
+      if (cb) cb()
+      return
+    }
+
+    // Don't allow zooming on an excluded node
+    if (node && this.dataTree.exclude.has(node.type)) {
+      this.zoomNode(null, { pushState, cb })
+    }
 
     // Zoom out if zooming in on already-zoomed node
     node = (!node || node === this.zoomedNode) ? null : node
     this.zoomedNode = node
 
-    this.emit('zoomNode', node)
+    this.emit('zoomNode', node, cb)
     if (node && node !== this.selectedNode) {
       this.selectNode(node, { pushState })
     } else if (pushState) {
@@ -154,6 +175,14 @@ class Ui extends events.EventEmitter {
         replace: prevQuery && query.startsWith(prevQuery)
       })
     }
+  }
+
+  setPresentationMode (mode) {
+    this.presentationMode = mode
+    // switching the class on the html element
+    document.documentElement.classList.toggle('presentation-mode', mode)
+    this.setExposedCSS()
+    this.emit('presentationMode', mode)
   }
 
   /**
@@ -222,7 +251,9 @@ class Ui extends events.EventEmitter {
 
       if (window.innerWidth > minWidth) {
         const size = Math.min(window.innerWidth, window.innerHeight * 16 / 9)
-        return Math.round((size - minWidth) / 250)
+        const baseFactor = (size - minWidth) / 250
+        const bonus = this.presentationMode ? 1.5 : 1
+        return Math.round(baseFactor * bonus)
       }
 
       return 0
@@ -296,6 +327,13 @@ class Ui extends events.EventEmitter {
     })
 
     window.addEventListener('load', this.scrollSelectedFrameIntoView)
+
+    this.on('presentationMode', () => {
+      const zoomFactor = getZoomFactor()
+      flameWrapper.resize(zoomFactor)
+      setFontSize(zoomFactor)
+      this.scrollSelectedFrameIntoView()
+    })
   }
 
   addSection (id, options = {}) {
@@ -348,30 +386,49 @@ class Ui extends events.EventEmitter {
     return isChanged
   }
 
-  updateExclusions ({ initial, pushState = true } = {}) {
+  updateExclusions ({ initial, pushState = true, selectedNodeId, zoomedNodeId } = {}) {
     this.dataTree.update(initial)
 
-    if (this.selectedNode && this.dataTree.exclude.has(this.selectedNode.type)) {
+    if (!selectedNodeId && this.selectedNode && this.dataTree.exclude.has(this.selectedNode.type)) {
       this.selectHottestNode()
     }
 
-    if (!initial) this.emit('updateExclusions')
-    if (pushState) {
-      this.pushHistory()
+    const cb = () => {
+      if (!initial) this.emit('updateExclusions')
+      if (pushState) {
+        this.pushHistory()
+      }
+    }
+
+    // Zoom out before updating exclusions if the user excludes the node they're zoomed in on
+    if (!zoomedNodeId && this.zoomedNode && this.dataTree.exclude.has(this.zoomedNode.type)) {
+      this.zoomNode(null, { cb })
+    } else {
+      cb()
     }
   }
 
-  setUseMergedTree (useMerged) {
+  setUseMergedTree (useMerged, { pushState = true, selectedNodeId, cb } = {}) {
     if (this.dataTree.useMerged === useMerged) {
+      if (cb) cb()
       return
     }
 
-    this.dataTree.setActiveTree(useMerged)
+    // Current selected and zoomed nodes will be in wrong tree, therefore may cause errors during draw.
+    // ui.selectNode() will be called properly in this.selectHottestNode() or based on selectedNodeId.
+    this.selectedNode = null
 
-    this.draw()
-    this.selectHottestNode()
+    this.zoomNode(null, { cb: () => {
+      // Complete update after any zoom animation is complete
+      this.dataTree.setActiveTree(useMerged)
 
-    this.pushHistory()
+      this.draw()
+      if (!selectedNodeId) this.selectHottestNode()
+
+      if (pushState) this.pushHistory()
+
+      if (cb) cb()
+    } })
   }
 
   setShowOptimizationStatus (showOptimizationStatus) {
@@ -435,6 +492,9 @@ class Ui extends events.EventEmitter {
 
     this.changedExclusions.toHide.clear()
     this.changedExclusions.toShow.clear()
+
+    // setting Presentation Mode
+    this.setPresentationMode(this.presentationMode)
   }
 }
 

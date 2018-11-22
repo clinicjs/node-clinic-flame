@@ -1,5 +1,5 @@
 #info-box .frame-info {
-  background-color: var(--banner-bg-color);
+  background-color: rgba(var(--opposite-color-val), 0.5);
   color: var(--grey-highlight);
   display: flex;
   font-size: var(--normal-text-size);
@@ -25,7 +25,7 @@
 }
 
 #info-box .frame-info .frame-area {
-  color: var(--primary-grey);
+  color: var(--area-color-core);
   word-break: break-word;
   text-align: right;
 }
@@ -58,4 +58,11 @@
 
 #info-box .frame-path {
   max-width: 66.67%;
+}
+
+
+
+/* presentation mode */
+.presentation-mode #info-box .frame-info {
+  background-color: var(--opposite-contrast);
 }

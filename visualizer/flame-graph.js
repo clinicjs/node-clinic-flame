@@ -26,7 +26,7 @@ class FlameGraph extends HtmlContent {
 
     this.hoveredNodeData = null
     this.isAnimating = false
-    this.baseCellHeight = 20
+    this.baseCellHeight = this.ui.presentationMode ? 26 : 20
     this.cellHeight = this.baseCellHeight + this.zoomFactor
     this.sizeChanged = false
 
@@ -37,12 +37,16 @@ class FlameGraph extends HtmlContent {
     this.labelFont = contentProperties.labelFont
     this.labelPadding = contentProperties.labelPadding
 
+    this.onNextAnimationEnd = null
+
     this.ui.on('setData', () => {
       this.initializeFromData()
     })
 
-    this.ui.on('zoomNode', node => {
+    this.ui.on('zoomNode', (node, cb) => {
       if (this.flameGraph) {
+        if (cb) this.onNextAnimationEnd = cb
+
         this.isAnimating = true
         this.zoomedNodeData = node
 
@@ -53,6 +57,8 @@ class FlameGraph extends HtmlContent {
         this.markNodeAsSelected(null)
         this.markNodeAsZoomed(null)
         this.flameGraph.zoom(node || this.ui.dataTree.activeTree())
+      } else {
+        if (cb) cb()
       }
     })
 
@@ -232,6 +238,11 @@ class FlameGraph extends HtmlContent {
         this.hoveredNodeData = this.ui.highlightedNode || this.ui.selectedNode
         this.highlightHoveredNodeOnGraph()
       }
+
+      if (this.onNextAnimationEnd) {
+        this.onNextAnimationEnd()
+        this.onNextAnimationEnd = null
+      }
     })
 
     // triggering the resize after the canvas rendered to take possible scrollbars into account
@@ -314,6 +325,7 @@ class FlameGraph extends HtmlContent {
     this.zoomFactorChanged = this.zoomFactor !== zoomFactor
     this.zoomFactor = zoomFactor
 
+    this.baseCellHeight = this.ui.presentationMode ? 26 : 20
     const width = this.d3Chart.node().clientWidth
     const cellHeight = this.baseCellHeight + zoomFactor
     this.sizeChanged = this.width !== width || this.cellHeight !== cellHeight
@@ -357,28 +369,28 @@ class FlameGraph extends HtmlContent {
     const { toHide, toShow } = this.ui.changedExclusions
     let isChanged = false
 
+    if (this.zoomFactorChanged) {
+      redrawGraph = true
+      this.zoomFactorChanged = false
+    }
+
+    // Must re-render tree before applying exclusions, else error if tree and exclusions change at same time
+    if (redrawGraph) this.flameGraph.renderTree(this.renderedTree)
+
     if (toHide.size > 0) {
       toHide.forEach((name) => {
         this.flameGraph.typeHide(name)
-        redrawGraph = false
       })
       isChanged = true
     }
     if (toShow.size > 0) {
       toShow.forEach((name) => {
         this.flameGraph.typeShow(name)
-        redrawGraph = false
       })
       isChanged = true
     }
 
-    if (this.zoomFactorChanged) {
-      redrawGraph = true
-      this.zoomFactorChanged = false
-    }
-
     if (isChanged || redrawGraph) this.updateMarkerBoxes()
-    if (redrawGraph) this.flameGraph.renderTree(this.renderedTree)
   }
 }
 

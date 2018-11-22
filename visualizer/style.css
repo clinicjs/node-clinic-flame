@@ -32,12 +32,12 @@ html {
 
   --main-bg-color-val: 27, 30, 39;
   --max-contrast: rgb(255, 255, 255);
-  --opposite-contrast: rgb(0, 0, 0);
-  --light-glare: rgba(255, 255, 255, 0.1);
+  --opposite-contrast: rgb(var(--opposite-color-val));
+  --opposite-color-val: 0, 0, 0;
+  --light-glare: rgba(255, 255, 255, 0.3);
 
   --main-bg-color: rgb(var(--main-bg-color-val));
   --main-bg-translucent: rgba(var(--main-bg-color-val), 0.94);
-  --overlay-bg-color: rgba(67, 70, 81, 0.94);
 
   --banner-bg-color-val: 50, 53, 61;
   --banner-bg-color: rgb(var(--banner-bg-color-val));
@@ -48,7 +48,6 @@ html {
 
   --options-menu-bg-color: rgba(var(--banner-bg-color-val), 0.9);
 
-  --cyan: rgb(63, 125, 198);
   --grey-blue: rgb(76, 92, 138);
   --primary-grey: rgb(121, 122, 124);
   --grey-highlight-color-val: 191, 192, 194;
@@ -57,8 +56,8 @@ html {
   --checkbox-border-color: rgba(var(--grey-highlight-color-val), 0.9);
 
   --area-color-app: var(--max-contrast);
-  --area-color-deps: var(--cyan);
-  --area-color-core: var(--primary-grey);
+  --area-color-deps: rgb(63, 125, 198);
+  --area-color-core: rgb(156, 170, 159);
 
   /* scrollbars */
   --scrollbar-primary-color-val: 145, 169, 179;
@@ -84,6 +83,17 @@ html.light {
   --banner-bg-color: rgba(0, 0, 0, 0.1);
   --footer-bg-color: rgba(0, 0, 0, 0.1);
   --footer-color: rgba(0, 0, 0, 0.9);
+}
+
+/* Overrides for Presentation mode */
+/* just a poc for now... */
+html.presentation-mode {
+  --banner-bg-color: rgb(120, 122, 128);
+  --main-bg-color: rgb(76, 78, 84);
+  --grey-highlight: rgb(255, 255, 255);
+
+  --area-color-deps: rgb(145, 210, 255);
+  --area-color-core: rgb(160, 155, 215);
 }
 
 /* Main layout */
@@ -193,7 +203,6 @@ html * {
   flex-shrink: 1;
   overflow: auto;
   position: relative;
-  border-top: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .scroll-container::-webkit-scrollbar {
