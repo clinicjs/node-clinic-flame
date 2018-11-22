@@ -15,10 +15,15 @@ class SelectionControls extends HtmlContent {
     // Show content for highlightedNode, or selectedNode when nothing is highlighted
     // so content falls back to most recent selection on frame mouseout etc
     this.ui.on('updateExclusions', () => {
+      this.update()
+    })
+
+    this.ui.on('zoomNode', () => {
+      this.update()
+    })
+
+    this.ui.on('setData', () => {
       this.countFrames()
-      const node = this.ui.highlightedNode || this.ui.selectedNode
-      this.rankNumber = this.ui.dataTree.getSortPosition(node)
-      this.draw()
     })
 
     this.ui.on('selectNode', node => {
@@ -33,6 +38,13 @@ class SelectionControls extends HtmlContent {
       this.rankNumber = this.ui.dataTree.getSortPosition(node || this.selectedNode)
       this.draw()
     })
+  }
+
+  update () {
+    this.countFrames()
+    const node = this.ui.highlightedNode || this.ui.selectedNode
+    this.rankNumber = this.ui.dataTree.getSortPosition(node)
+    this.draw()
   }
 
   draw () {

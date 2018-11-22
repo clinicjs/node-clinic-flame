@@ -2,58 +2,22 @@
 const d3 = require('./d3.js')
 
 class FgTooltipContainer {
-  constructor ({ tooltip, showDelay = 700, hideDelay = 200, onCopyPath, onOpenPath }) {
+  constructor ({ tooltip, tooltipHtmlContent, showDelay = 700, hideDelay = 200 }) {
     this.tooltip = tooltip
     this.ui = tooltip.ui
 
     this.tooltipHandler = null
+    this.tooltipHtmlContent = tooltipHtmlContent
+
+    this.d3TooltipHtml = tooltipHtmlContent.getTooltipD3()
+
+    this.d3HiddenDiv = d3.select('body').select('.tooltipHiddenDiv', ':first-child')
 
     this.showDelay = showDelay
     this.hideDelay = hideDelay
-    this.onCopyPath = onCopyPath
-    this.onOpenPath = onOpenPath
 
     this.nodeData = null
     this.frameIsZoomed = false
-
-    this.svgPath = '/visualizer/assets/icons/'
-
-    const html = `
-      <button class='zoom-button'>
-        <span class='icon'><img data-inline-svg class="icon-img zoom-in" src="/visualizer/assets/icons/zoom-in.svg" /><img data-inline-svg class="icon-img zoom-out" src="/visualizer/assets/icons/zoom-out.svg" /></span>
-        <span class='label'>Expand</span>
-      </button>
-      <button class='link-button'>
-        <span class='icon'><img data-inline-svg class="icon-img" src="/visualizer/assets/icons/link.svg" /></span>
-        <span class='label'>Open in browser</span>
-      </button>
-      <button class='copy-button'>
-        <span class='icon'><img data-inline-svg class="icon-img" src="/visualizer/assets/icons/copy.svg" /></span>
-        <span class='label'>Copy path</span>
-      </button>
-    `
-    this.d3HiddenDiv = d3.select('body').insert('div', ':first-child')
-      .style('visibility', 'hidden')
-      .style('position', 'absolute')
-
-    this.d3TooltipHtml = this.d3HiddenDiv.append('div')
-      .classed('fg-tooltip-actions', true)
-      .html(html)
-
-    this.d3TooltipCopyBtn = this.d3TooltipHtml.select('.copy-button')
-      .on('click', () => {
-        this.onCopyPath && this.onCopyPath(this.nodeData.target)
-      })
-
-    this.d3TooltipLinkBtn = this.d3TooltipHtml.select('.link-button')
-      .on('click', () => {
-        this.onOpenPath && this.onOpenPath(this.nodeData.target)
-      })
-
-    this.d3TooltipZoomBtn = this.d3TooltipHtml.select('.zoom-button')
-      .on('click', () => {
-        this.ui.zoomNode(this.nodeData)
-      })
   }
 
   show ({ nodeData, rect, pointerCoords, frameIsZoomed, wrapperNode, delay = null }) {
@@ -68,8 +32,6 @@ class FgTooltipContainer {
     this.tooltipHandler = setTimeout(() => {
       this.frameIsZoomed = frameIsZoomed
 
-      const hideCopyButton = !nodeData.target
-
       const wrapperRect = wrapperNode.getBoundingClientRect()
 
       const offset = {
@@ -79,12 +41,11 @@ class FgTooltipContainer {
 
       // moving the tooltip html into the hidden div to get its size
       this.d3HiddenDiv.append(() => {
-        return this.d3TooltipHtml.remove().node()
+        const node = this.d3TooltipHtml.remove().node()
+        return node
       })
 
-      this.d3TooltipCopyBtn.classed('hidden', hideCopyButton)
-
-      this.updateZoomBtnLabel()
+      this.tooltipHtmlContent.setNodeData(this.nodeData)
 
       const pointerPosition = {
         x: pointerCoords.x - rect.x,
@@ -111,17 +72,6 @@ class FgTooltipContainer {
         if (this.nodeData === this.ui.highlightedNode) this.ui.highlightNode(null)
       }
     }, args))
-  }
-
-  updateZoomBtnLabel () {
-    const isLink = /^https?:\/\//.test(this.nodeData.target)
-    this.d3TooltipCopyBtn.classed('hidden', isLink)
-    this.d3TooltipLinkBtn.classed('hidden', !isLink)
-
-    this.d3TooltipZoomBtn.select('.label').text(this.frameIsZoomed ? 'Contract' : 'Expand')
-
-    this.d3TooltipZoomBtn.classed('zoom-in', !this.frameIsZoomed)
-    this.d3TooltipZoomBtn.classed('zoom-out', this.frameIsZoomed)
   }
 }
 

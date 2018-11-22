@@ -22,71 +22,73 @@ function renderStackFrame (globals, locals, rect) {
   } = rect
 
   const nodeData = node.data
+  const thick = 3
+  const thin = 1
+  const lineWidth = this.ui.presentationMode ? thick : thin
+  const heatHeight = Math.ceil(rect.height / (this.ui.presentationMode ? 2.5 : 3))
 
   // Do nothing for frames excluded by zoom, unless we're still animating
   if (nodeData.value === 0 && !this.isAnimating) return
 
   // Align with pixel grid to avoid fuzzy 2px lines of inconsistent stroke color
   // Round everything towards being smaller so lines don't draw over each other
-  const roundedHeight = Math.floor(height) - 1
-  const roundedWidth = Math.floor(width) - 1
 
-  const top = alignUp(y)
-  const bottom = top + roundedHeight
-
-  const left = alignUp(x)
-  let right = left + roundedWidth
-  if (right <= left) right++
-
-  const alignedRect = {
-    x: left,
-    y: top,
-    width: roundedWidth,
-    height: roundedHeight
-  }
+  const left = Math.floor(x) + 1.5
+  const right = Math.ceil(left + width) - 1.5
+  const bottom = Math.floor(y + height) + 0.5
 
   // For really tiny frames, draw a 1px thick pixel-aligned 'matchstick' line
   if (width <= 1.5) {
     const backgroundColor = this.ui.getFrameColor(nodeData, 'background', false)
     const foregroundColor = this.ui.getFrameColor(nodeData, 'foreground', false)
-    renderAsLine(context, rect, backgroundColor, foregroundColor, nodeData.highlight)
+    renderAsLine(context, { x: left, y, height }, backgroundColor, foregroundColor, nodeData.highlight, heatHeight)
     return
   }
 
   // Don't redraw heat over previous paint on hover events, and don't draw for root node
-  if (state === STATE_IDLE && nodeData.id !== 0) renderHeatBar(context, nodeData, colorHash, alignedRect)
+  // if (state === STATE_IDLE && nodeData.id !== 0) renderHeatBar(context, nodeData, colorHash, alignedRect)
+  if (state === STATE_IDLE && nodeData.id !== 0) {
+    renderHeatBar(context, nodeData, colorHash, rect, heatHeight)
+  }
 
   const backgroundColor = this.ui.getFrameColor(nodeData, 'background')
   const foregroundColor = this.ui.getFrameColor(nodeData, 'foreground')
 
-  // Give rect an initial solid stroke using fill color so things behind
-  // e.g. heat bar don't show through
   context.fillStyle = backgroundColor
-  context.strokeStyle = backgroundColor
 
   context.beginPath()
-  context.rect(left, top, alignDown(width) - 1, alignDown(height))
+  context.rect(left, y, width, height)
   context.fill()
-  context.stroke()
 
   // Add a light stroke to left, bottom and right indicating code area
   context.save()
-  context.globalAlpha = 0.2
+  context.globalAlpha = this.ui.presentationMode ? 0.6 : 0.4
   context.strokeStyle = foregroundColor
+
   context.beginPath()
-  context.moveTo(left, top)
-  context.lineTo(left, bottom)
-  context.lineTo(right, bottom)
-  context.lineTo(right, top)
+  context.lineWidth = thin
+  context.moveTo(left, y)
+  context.lineTo(left, bottom - lineWidth)
+  context.stroke()
+
+  context.beginPath()
+  context.lineWidth = lineWidth
+  context.moveTo(left, bottom - lineWidth)
+  context.lineTo(right, bottom - lineWidth)
+  context.stroke()
+
+  context.beginPath()
+  context.lineWidth = thin
+  context.moveTo(right, bottom - lineWidth)
+  context.lineTo(right, y)
   context.stroke()
   context.restore()
 }
 
-function renderHeatBar (context, nodeData, colorHash, rect) {
+function renderHeatBar (context, nodeData, colorHash, rect, heatHeight) {
   // Extracted from d3-fg so we can pixel-align it to match the rest
   const heatColor = colorHash(nodeData)
   const heatStrokeColor = colorHash(nodeData, 1.1)
-  const heatHeight = getHeatHeight(rect.height)
 
   context.fillStyle = heatColor
   context.strokeStyle = heatStrokeColor
@@ -96,7 +98,7 @@ function renderHeatBar (context, nodeData, colorHash, rect) {
   context.stroke()
 }
 
-function renderAsLine (context, rect, backgroundColor, foregroundColor, isHighlighted) {
+function renderAsLine (context, rect, backgroundColor, foregroundColor, isHighlighted, heatHeight) {
   const {
     x,
     y,
@@ -106,7 +108,7 @@ function renderAsLine (context, rect, backgroundColor, foregroundColor, isHighli
   // Black solid background line, including black heat area
   context.strokeStyle = backgroundColor
   context.beginPath()
-  context.moveTo(x, y - getHeatHeight(height))
+  context.moveTo(x, y - heatHeight)
   context.lineTo(x, y + height)
   context.stroke()
 
@@ -121,18 +123,6 @@ function renderAsLine (context, rect, backgroundColor, foregroundColor, isHighli
   context.lineTo(x, y + height)
   context.stroke()
   context.restore()
-}
-
-function alignUp (num) {
-  return Math.round(num + 0.5) + 0.5
-}
-
-function alignDown (num) {
-  return Math.round(num - 0.5) - 0.5
-}
-
-function getHeatHeight (height) {
-  return Math.ceil(height / 3)
 }
 
 module.exports = getFrameRenderer

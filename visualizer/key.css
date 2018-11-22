@@ -33,7 +33,7 @@
 
 #key-panel .key-title {
   flex-grow: 1;
-  color: var(--primary-grey);
+  color: var(--grey-highlight);
 }
 
 #key-panel .key-title em {

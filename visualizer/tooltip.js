@@ -44,74 +44,21 @@ class Tooltip extends HtmlContent {
       .on('click.tooltip', () => this.hide(options))
   }
 
-  show ({ msg, d3TargetElement, targetRect, outerRect = document.body.getBoundingClientRect(), offset, pointerCoords, showDelay = this.showDelay, verticalAlign = 'bottom' }) {
+  show (props) {
+    const baseDelay = props.showDelay === undefined ? this.showDelay : props.showDelay
     // adding the delay if no tooltip is already displayed, or a shorter delay
     // if the tooltip is already there
-    const delay = this.nodeData === null ? showDelay : showDelay / 2
-    let msgHtmlNode = msg
-
-    this.d3TooltipInner.classed('top bottom', false)
-    this.d3TooltipInner.classed(verticalAlign, true)
-
-    let innerRect = targetRect || d3TargetElement.node().getBoundingClientRect()
-
-    if (offset) {
-      innerRect.x += offset.x || 0
-      innerRect.y += offset.y || 0
-      innerRect.width += offset.width || 0
-      innerRect.height += offset.height || 0
-    }
-
-    if (typeof (msg) === 'string') {
-      var node = document.createElement('DIV')
-      node.className = 'tooltip-default-message'
-      node.textContent = msg
-      msgHtmlNode = node
-    }
-
+    const delay = this.nodeData === null ? baseDelay : baseDelay / 2
     clearTimeout(this.tooltipHandler)
 
-    this.tooltipHandler = setTimeout(
-      () => {
-        let ttLeft = innerRect.x + innerRect.width / 2
-        let ttTop = innerRect.y + (verticalAlign === 'bottom' ? innerRect.height : 0)
+    this.updateTooltip(props)
 
-        if (pointerCoords) {
-          // centering on the mouse pointer horizontally
-          ttLeft = innerRect.x + pointerCoords.x
-        }
+    this.tooltipHandler = setTimeout(() => {
+      this.isHidden = false
+      this.draw()
 
-        this.d3Tooltip
-          .style('left', `${ttLeft}px`)
-          .style('top', `${ttTop}px`)
-
-        this.d3TooltipInner.selectAll(function () { return this.childNodes })
-          .remove()
-        this.d3TooltipInner.append(() => msgHtmlNode)
-
-        this.isHidden = false
-        this.draw()
-
-        // calculating the actual tooltip width
-        const ttWidth = this.d3TooltipInner.node().getBoundingClientRect().width
-
-        // positioning the tooltip content
-        // making sure that it doesn't go over the frame right edge
-        const alignRight = ttLeft + ttWidth - (innerRect.x + innerRect.width)
-        let deltaX = Math.max(alignRight, ttWidth / 2)
-
-        // then checking it doesn't overflow the frame left edge
-        deltaX = (ttLeft - deltaX < innerRect.x) ? ttLeft - innerRect.x : deltaX
-
-        // then checking the outer element right edge
-        if (outerRect) {
-          deltaX = (ttLeft - deltaX + ttWidth > outerRect.right) ? alignRight : deltaX
-        }
-
-        this.d3TooltipInner
-          .style('left', `-${deltaX}px`)
-          .style('max-width', outerRect ? `${outerRect.width}px` : 'auto')
-      }, delay)
+      this.updateTooltip(props)
+    }, delay)
   }
 
   // If nothing is passed in, or { delay } === undefined, use default delay
@@ -129,6 +76,70 @@ class Tooltip extends HtmlContent {
         this.onHideCallback = null
       }
     }, delay)
+  }
+
+  updateTooltip ({ msg, d3TargetElement, targetRect, outerRect = document.body.getBoundingClientRect(), offset, pointerCoords, verticalAlign = 'bottom' }) {
+    // returns if the tooltip is hidden
+    if (this.isHidden) return
+
+    let msgHtmlNode = msg
+
+    this.d3TooltipInner.classed('top bottom', false)
+    this.d3TooltipInner.classed(verticalAlign, true)
+
+    let innerRect = Object.assign({ }, targetRect || d3TargetElement.node().getBoundingClientRect())
+
+    if (offset) {
+      innerRect.x += offset.x || 0
+      innerRect.y += offset.y || 0
+      innerRect.width += offset.width || 0
+      innerRect.height += offset.height || 0
+    }
+
+    if (typeof (msg) === 'string') {
+      var node = document.createElement('DIV')
+      node.className = 'tooltip-default-message'
+      node.textContent = msg
+      msgHtmlNode = node
+    }
+
+    clearTimeout(this.tooltipHandler)
+
+    let ttLeft = innerRect.x + innerRect.width / 2
+    let ttTop = innerRect.y + (verticalAlign === 'bottom' ? innerRect.height : 0)
+
+    if (pointerCoords) {
+      // centering on the mouse pointer horizontally
+      ttLeft = innerRect.x + pointerCoords.x
+    }
+
+    this.d3Tooltip
+      .style('left', `${ttLeft}px`)
+      .style('top', `${ttTop}px`)
+
+    this.d3TooltipInner.selectAll(function () { return this.childNodes })
+      .remove()
+    this.d3TooltipInner.append(() => msgHtmlNode)
+
+    // calculating the actual tooltip width
+    const ttWidth = this.d3TooltipInner.node().getBoundingClientRect().width
+
+    // positioning the tooltip content
+    // making sure that it doesn't go over the frame right edge
+    const alignRight = ttLeft + ttWidth - (innerRect.x + innerRect.width)
+    let deltaX = Math.max(alignRight, ttWidth / 2)
+
+    // then checking it doesn't overflow the frame left edge
+    deltaX = (ttLeft - deltaX < innerRect.x) ? ttLeft - innerRect.x : deltaX
+
+    // then checking the outer element right edge
+    if (outerRect) {
+      deltaX = (ttLeft - deltaX + ttWidth > outerRect.right) ? alignRight : deltaX
+    }
+
+    this.d3TooltipInner
+      .style('left', `-${deltaX}px`)
+      .style('max-width', outerRect ? `${outerRect.width}px` : 'auto')
   }
 
   draw () {
