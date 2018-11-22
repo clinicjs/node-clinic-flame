@@ -4,7 +4,7 @@
   font-size: var(--small-text-size);
   position: absolute;
   z-index: 1;
-  background-color: rgba(var(--opposite-color-val), 0.85);
+  background-color: var(--options-menu-bg-color);
   margin-top: 8px;
 }
 
@@ -93,7 +93,9 @@
   white-space: normal;
   height: auto;
   z-index: 3;
-  background: var(--opposite-contrast);
+  background: var(--options-menu-bg-hover);
+  opacity: 1;
+  outline: 1px dotted var(--light-glare);  
 }
 
 #options-menu .options label {
