@@ -56,8 +56,8 @@ async function analyse (paths) {
   ]
 
   const trees = ticksToTree(ticks, { inlined })
-  const merged = new FrameNode(trees.merged)
-  const unmerged = new FrameNode(trees.unmerged)
+  const merged = new FrameNode(trees.merged, appName)
+  const unmerged = new FrameNode(trees.unmerged, appName)
   steps.forEach((step) => {
     step(merged)
     step(unmerged)

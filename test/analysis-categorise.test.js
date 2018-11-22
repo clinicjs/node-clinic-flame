@@ -17,15 +17,15 @@ const windows = {
   nodeVersions: { node: '8.13.0' }
 }
 
-function byProps (properties, sysinfo) {
-  const node = new FrameNode(properties)
+function byProps (properties, sysinfo, appName = 'some-app') {
+  const node = new FrameNode(properties, appName)
   node.categorise(sysinfo)
   return node
 }
 
 test('analysis - categorise node names', (t) => {
-  function byName (name, sysinfo) {
-    const { type } = byProps({ name }, sysinfo)
+  function byName (name, sysinfo, appName) {
+    const { type } = byProps({ name }, sysinfo, appName)
     return type
   }
 
@@ -47,6 +47,12 @@ test('analysis - categorise node names', (t) => {
     isInit: false,
     isInlinable: true
   })
+  t.match(byProps({ name: '~walk /home/username/dash-ast/index.js:26:15 [INLINABLE]' }, linux, 'dash-ast'), {
+    category: 'app',
+    type: 'dash-ast',
+    isInit: false,
+    isInlinable: true
+  })
 
   t.equal(byName('/usr/bin/node [SHARED_LIB]', linux), 'cpp')
   t.equal(byName('C:\\Program Files\\nodejs\\node.exe [SHARED_LIB]', windows), 'cpp')
@@ -54,8 +60,8 @@ test('analysis - categorise node names', (t) => {
   t.equal(byName('Call_ReceiverIsNotNullOrUndefined [CODE:Builtin]', linux), 'v8')
   t.equal(byName('NativeModule.require internal/bootstrap/loaders.js:140:34', linux), 'core')
   t.equal(byName('_run /root/0x/examples/rest-api/node_modules/restify/lib/server.js:807:38', linux), 'restify')
-  t.equal(byName('(anonymous) /root/0x/examples/rest-api/etag.js:1:11', linux), 'app')
-  t.equal(byName('(anonymous) C:\\Documents\\Contains spaces\\0x\\examples\\rest-api\\etag.js:1:11', windows), 'app')
+  t.equal(byName('(anonymous) /root/0x/examples/rest-api/etag.js:1:11', linux, 'rest-api'), 'rest-api')
+  t.equal(byName('(anonymous) C:\\Documents\\Contains spaces\\0x\\examples\\rest-api\\etag.js:1:11', windows), 'some-app')
   t.equal(byName('InnerArraySort native array.js:486:24', linux), 'native')
   t.equal(byName('[\u0000zA-Z\u0000#$%&\'*+.|~]+$ [CODE:RegExp]', linux), 'regexp')
 
@@ -74,12 +80,12 @@ test('analysis - categorise node properties', (t) => {
   // Handle multiple unexpected custom flags
   const customNode = byProps({
     name: '~Unexpected multiple customFlags C:\\Documents\\Contains spaces\\sub_dir\\index.js:1:1'
-  }, windows)
+  }, windows, 'Contains spaces')
 
   customNode.format(windows)
 
   t.equal(customNode.category, 'app')
-  t.equal(customNode.type, 'app')
+  t.equal(customNode.type, 'Contains spaces')
   t.equal(customNode.functionName, 'Unexpected multiple customFlags')
   t.equal(customNode.fileName, '.\\sub_dir\\index.js')
   t.ok(customNode.isOptimised)

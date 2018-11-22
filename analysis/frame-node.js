@@ -5,8 +5,9 @@ const jsFrameRx = /^([~*])?((?:\S+?\(anonymous function\)|\S+)?(?: [a-zA-Z]+)*) 
 const cppFrameRx = /^(.*) (\[CPP]|\[SHARED_LIB]|\[CODE:\w+])( \[INIT])?$/m
 
 class FrameNode {
-  constructor (data) {
+  constructor (data, appName) {
     this.id = null
+    this.appName = appName
 
     /* istanbul ignore next: must be a string; can be null but can't replicate in tests */
     this.name = data.name || ''
@@ -14,7 +15,7 @@ class FrameNode {
     this.onStack = data.value
     this.onStackTop = { base: data.top }
     this.children = data.children
-      ? data.children.map((frame) => new FrameNode(frame))
+      ? data.children.map((frame) => new FrameNode(frame, appName))
       : []
 
     this.functionName = null
@@ -166,7 +167,7 @@ class FrameNode {
     return {
       // TODO: profile some large applications with a lot of app code, see if there's a useful heuristic to split
       // out types, e.g. folders containing more than n files or look for common patterns like `lib`
-      type: 'app',
+      type: this.appName,
       category: 'app'
     }
   }
