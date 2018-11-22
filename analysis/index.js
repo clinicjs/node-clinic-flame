@@ -39,9 +39,11 @@ async function analyse (paths) {
 
   codeAreas.forEach(area => {
     area.excludeKey = area.id
-    if (area.children) area.children.forEach(childArea => {
-      childArea.excludeKey = `${area.id}:${childArea.id}`
-    })
+    if (area.children) {
+      area.children.forEach(childArea => {
+        childArea.excludeKey = `${area.id}:${childArea.id}`
+      })
+    }
   })
 
   const steps = [

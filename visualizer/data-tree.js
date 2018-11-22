@@ -145,8 +145,6 @@ class DataTree {
   }
 
   getFilteredStackSorter () {
-    const exclude = this.exclude
-
     return (nodeA, nodeB) => {
       const valueA = this.getNodeValue(nodeA)
       const valueB = this.getNodeValue(nodeB)

@@ -163,10 +163,6 @@ class FrameNode {
   }
 
   getAppType (name, systemInfo) {
-    const platformPath = getPlatformPath(systemInfo)
-
-    const parentDir = platformPath.join(systemInfo.mainDirectory, `..${systemInfo.pathSeparator}`)
-
     return {
       // TODO: profile some large applications with a lot of app code, see if there's a useful heuristic to split
       // out types, e.g. folders containing more than n files or look for common patterns like `lib`
