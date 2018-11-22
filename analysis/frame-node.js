@@ -172,7 +172,7 @@ class FrameNode {
   }
 
   anonymise (systemInfo) {
-    if (!this.fileName || this.isNodeCore(systemInfo)) {
+    if (!this.fileName || this.isNodeCore(systemInfo) || this.category === 'all-v8') {
       return
     }
 
