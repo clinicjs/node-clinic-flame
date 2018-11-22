@@ -29,15 +29,31 @@ test('analysis - categorise node names', (t) => {
     return type
   }
 
-  t.equal(byName('NativeModule.compile internal/bootstrap/loaders.js:236:44 [INIT]', linux), 'init')
-  t.equal(byName('~getMediaTypePriority /root/0x/examples/rest-api/node_modules/negotiator/lib/mediaType.js:99:30 [INLINABLE]', linux), 'deps')
+  t.match(byProps({ name: 'NativeModule.compile internal/bootstrap/loaders.js:236:44 [INIT]' }, linux), {
+    category: 'core',
+    type: 'core',
+    isInit: true,
+    isInlinable: false
+  })
+  t.match(byProps({ name: '~(anonymous) /home/username/.npm/prefix/lib/node_modules/clinic/node_modules/0x/lib/preload/no-cluster.js:1:11 [INIT]' }, linux), {
+    category: 'deps',
+    type: 'clinic',
+    isInit: true,
+    isInlinable: false
+  })
+  t.match(byProps({ name: '~getMediaTypePriority /root/0x/examples/rest-api/node_modules/negotiator/lib/mediaType.js:99:30 [INLINABLE]' }, linux), {
+    category: 'deps',
+    type: 'negotiator',
+    isInit: false,
+    isInlinable: true
+  })
+
   t.equal(byName('/usr/bin/node [SHARED_LIB]', linux), 'cpp')
   t.equal(byName('C:\\Program Files\\nodejs\\node.exe [SHARED_LIB]', windows), 'cpp')
   t.equal(byName('v8::internal::Runtime_CompileLazy(int, v8::internal::Object**, v8::internal::Isolate*) [CPP]', linux), 'v8')
   t.equal(byName('Call_ReceiverIsNotNullOrUndefined [CODE:Builtin]', linux), 'v8')
-  t.equal(byName('ArrayFilter [CODE:Builtin] [INIT]'), 'init')
   t.equal(byName('NativeModule.require internal/bootstrap/loaders.js:140:34', linux), 'core')
-  t.equal(byName('_run /root/0x/examples/rest-api/node_modules/restify/lib/server.js:807:38', linux), 'deps')
+  t.equal(byName('_run /root/0x/examples/rest-api/node_modules/restify/lib/server.js:807:38', linux), 'restify')
   t.equal(byName('(anonymous) /root/0x/examples/rest-api/etag.js:1:11', linux), 'app')
   t.equal(byName('(anonymous) C:\\Documents\\Contains spaces\\0x\\examples\\rest-api\\etag.js:1:11', windows), 'app')
   t.equal(byName('InnerArraySort native array.js:486:24', linux), 'native')
@@ -63,7 +79,7 @@ test('analysis - categorise node properties', (t) => {
   customNode.format(windows)
 
   t.equal(customNode.category, 'app')
-  t.equal(customNode.typeTEMP, 'Contains spaces\\sub_dir')
+  t.equal(customNode.type, 'app')
   t.equal(customNode.functionName, 'Unexpected multiple customFlags')
   t.equal(customNode.fileName, '.\\sub_dir\\index.js')
   t.ok(customNode.isOptimised)
@@ -77,7 +93,7 @@ test('analysis - categorise node properties', (t) => {
   depNode.format(windows)
 
   t.equal(depNode.category, 'deps')
-  t.equal(depNode.typeTEMP, 'some-module')
+  t.equal(depNode.type, 'some-module')
   t.equal(depNode.functionName, 'Funcname')
   t.equal(depNode.fileName, '.\\node_modules\\some-module\\index.js')
   t.equal(depNode.lineNumber, 1)
@@ -118,7 +134,7 @@ test('analysis - categorise node properties', (t) => {
   t.notOk(inlinableNode.isOptimised)
   t.notOk(inlinableNode.isOptimisable)
   t.notOk(dataTree.isNodeExcluded(inlinableNode))
-  dataTree.exclude.add('inlinable')
+  dataTree.exclude.add('is:inlinable')
   t.ok(dataTree.isNodeExcluded(inlinableNode))
 
   const initNode = byProps({
