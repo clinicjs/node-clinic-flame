@@ -87,7 +87,13 @@ class Tooltip extends HtmlContent {
     this.d3TooltipInner.classed('top bottom', false)
     this.d3TooltipInner.classed(verticalAlign, true)
 
-    let innerRect = Object.assign({ }, targetRect || d3TargetElement.node().getBoundingClientRect())
+    const obj = targetRect || d3TargetElement.node().getBoundingClientRect()
+    let innerRect = {
+      x: obj.x,
+      y: obj.y,
+      width: obj.width,
+      height: obj.height
+    }
 
     if (offset) {
       innerRect.x += offset.x || 0
