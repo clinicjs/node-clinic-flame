@@ -46,8 +46,10 @@ html {
   --footer-bg-color: rgb(15, 18, 26);
   --footer-color: rgba(255, 255, 255, 0.9);
 
-  --options-menu-bg-color: rgb(0, 0, 0);
-  --options-menu-bg-hover: rgb(10, 10, 10);
+  --clickable-bg-hover : rgb(15, 15, 15);
+
+  --options-menu-bg-color: rgba(0, 0, 0, 0.85);
+  --options-menu-bg-hover: var(--clickable-bg-hover);
 
   --grey-blue: rgb(76, 92, 138);
   --primary-grey: rgb(121, 122, 124);

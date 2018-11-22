@@ -19,6 +19,9 @@
   align-items: center;
   line-height: 1;
 }
+#selection-controls .hotness-selector:hover {
+  background-color: var(--clickable-bg-hover);
+}
 
 #selection-controls .rank-wrapper {
   margin: 0px 8px;

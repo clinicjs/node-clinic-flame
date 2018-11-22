@@ -220,6 +220,9 @@
   outline: none;
   position: relative;
 }
+#options-menu .options-menu-toggle:hover {
+  background-color: var(--clickable-bg-hover);
+}
 
 #options-menu .options-menu-toggle .chevron {
   position: absolute;
