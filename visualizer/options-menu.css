@@ -193,7 +193,8 @@
   color: var(--area-color-app);
 }
 
-#options-menu .options li[data-area="all-core"] {
+#options-menu .options li[data-area="core"],
+#options-menu .options li[data-area="v8"] {
   color: var(--area-color-core);
 }
 

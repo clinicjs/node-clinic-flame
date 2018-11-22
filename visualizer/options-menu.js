@@ -66,7 +66,7 @@ class OptionsMenu extends HtmlContent {
       name: 'Init',
       description: 'Show initialization operations hidden by default, like module loading',
       onChange: (checked) => {
-        this.ui.setCodeAreaVisibility('init', checked)
+        this.ui.setCodeAreaVisibility('is:init', checked)
         this.ui.draw()
       }
     })
@@ -316,7 +316,7 @@ class OptionsMenu extends HtmlContent {
       .property('checked', showOptimizationStatus)
       .select(function () { return this.closest('li') })
       .classed('disabled', useMerged)
-    this.d3InitCheckbox.property('checked', !exclude.has('init'))
+    this.d3InitCheckbox.property('checked', !exclude.has('is:init'))
 
     // Updating the app name
     this.d3VisibilityOptions.select('.name')

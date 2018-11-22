@@ -27,10 +27,10 @@ class History extends EventEmitter {
       'app',
       'deps',
       'core',
-      'all-core:native',
-      'all-core:cpp',
-      'all-core:v8',
-      'all-core:regexp',
+      'all-v8:native',
+      'all-v8:cpp',
+      'all-v8:v8',
+      'all-v8:regexp',
       'is:init',
       'is:inlinable'
     ]

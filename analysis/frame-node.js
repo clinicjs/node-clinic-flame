@@ -85,11 +85,11 @@ class FrameNode {
     const {
       category,
       type
-    } = this.getCoreType(name, systemInfo) ||
+    } = this.getCoreOrV8Type(name, systemInfo) ||
       this.getDepType(name, systemInfo) ||
       this.getAppType(name, systemInfo)
 
-    this.category = category // Top level filters: 'app' or 'deps' or 'all-core'
+    this.category = category // Top level filters: 'app', 'deps', 'core' or 'all-v8'
     this.type = type // Second-level filters; core are static, app and deps depend on app
 
     if (type === 'regexp') {
@@ -112,7 +112,10 @@ class FrameNode {
     // TODO: add more cases like this
   }
 
-  getCoreType (name, systemInfo) {
+  getCoreOrV8Type (name, systemInfo) {
+    // TODO: see if any subdivisions of core are useful
+    const core = { type: 'core', category: 'core' }
+
     let type
 
     if (!/\.m?js/.test(name)) {
@@ -121,7 +124,7 @@ class FrameNode {
       } else if (/\[CODE:.*?]$/.test(name) || /v8::internal::.*\[CPP]$/.test(name)) {
         type = 'v8'
       } else /* istanbul ignore next */ if (/\.$/.test(name)) {
-        type = 'core'
+        return core
       } else if (/\[CPP]$/.test(name) || /\[SHARED_LIB]$/.test(name)) {
         type = 'cpp'
       } else if (/\[eval]/.test(name)) {
@@ -136,12 +139,12 @@ class FrameNode {
     } else if (/ native /.test(name)) {
       type = 'native'
     } else if (this.isNodeCore(systemInfo)) {
-      type = 'core'
+      return core
     }
 
     return type ? {
       type,
-      category: 'all-core'
+      category: 'all-v8'
     } : null
   }
 
@@ -173,10 +176,7 @@ class FrameNode {
   }
 
   anonymise (systemInfo) {
-    if (!this.fileName || this.isNodeCore(systemInfo) ||
-        // Init frames are in the all-core category but may be part of the app.
-        // TODO Remove the `init` after adding custom d3-fg filter on properties like `isInit`
-        (this.category === 'all-core' && this.type !== 'init')) {
+    if (!this.fileName || this.isNodeCore(systemInfo)) {
       return
     }
 

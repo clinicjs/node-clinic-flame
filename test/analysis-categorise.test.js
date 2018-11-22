@@ -95,7 +95,7 @@ test('analysis - categorise node properties', (t) => {
 
   regexpNode.format(windows)
 
-  t.equal(regexpNode.category, 'all-core')
+  t.equal(regexpNode.category, 'all-v8')
   t.equal(regexpNode.type, 'regexp')
   t.equal(regexpNode.functionName, '/[\u0000zA-Z\u0000#$%&\'*+.|~]+$/')
   t.equal(regexpNode.fileName, '[CODE:RegExp]')
