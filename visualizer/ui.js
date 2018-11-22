@@ -368,7 +368,8 @@ class Ui extends events.EventEmitter {
       'all-v8:cpp': 'V8 C++',
       'all-v8:regexp': 'RegExp'
     }
-    return keysToLabels[key] || key
+    const splitKey = key.split(':')
+    return keysToLabels[key] || (splitKey.length ? splitKey[1] : key)
   }
 
   getDescriptionFromKey (key) {

@@ -41,7 +41,7 @@ class InfoBox extends HtmlContent {
     this.pathText = node.fileName
     this.rankNumber = this.ui.dataTree.getSortPosition(node)
 
-    const typeLabel = node.category === 'core' ? '' : ` (${this.ui.getLabelFromKey(node.type, true)})`
+    const typeLabel = node.category === 'core' ? '' : ` (${this.ui.getLabelFromKey(`${node.category}:${node.type}`, true)})`
     const categoryLabel = this.ui.getLabelFromKey(node.category, true)
     this.areaText = `In ${categoryLabel}${typeLabel}`
 
