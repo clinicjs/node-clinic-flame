@@ -23,6 +23,20 @@ async function analyse (paths) {
   const appName = platformPath.basename(systemInfo.mainDirectory)
   const pathSeparator = systemInfo.pathSeparator
 
+  const codeAreas = [
+    { id: 'app' },
+    { id: 'deps' },
+    { id: 'core' },
+    { id: 'all-v8',
+      children: [
+        { id: 'v8' },
+        { id: 'native' },
+        { id: 'cpp' },
+        { id: 'regexp' }
+      ],
+      childrenVisibilityToggle: true }
+  ]
+
   const steps = [
     (tree) => labelNodes(tree),
     (tree) => tree.walk((node) => {
@@ -43,6 +57,7 @@ async function analyse (paths) {
   return {
     appName,
     pathSeparator,
+    codeAreas,
     merged,
     unmerged
   }

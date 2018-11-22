@@ -18,9 +18,9 @@ class OptionsMenu extends HtmlContent {
   constructor (parentContent, contentProperties) {
     super(parentContent, contentProperties)
 
-    this.setCodeAreas({
-      appName: 'app'
-    })
+    this.setCodeAreas([
+      { id: 'app' }
+    ])
 
     this.addCollapseControl(true, {
       classNames: 'options-menu-toggle',
@@ -58,13 +58,23 @@ class OptionsMenu extends HtmlContent {
     this.d3FgOptions = this.d3OptionsList.append('div')
       .classed('section', true)
     this.d3FgOptions.append('h2')
-      .text('Merging and highlighting')
+      .text('Advanced')
     this.d3FgOptions.append('ul')
+
+    this.d3InitCheckbox = this.addFgOptionCheckbox({
+      id: 'option-init',
+      name: 'Init',
+      description: 'Show initialization operations hidden by default, like module loading',
+      onChange: (checked) => {
+        this.ui.setCodeAreaVisibility('init', checked)
+        this.ui.draw()
+      }
+    })
 
     this.d3MergeCheckbox = this.addFgOptionCheckbox({
       id: 'option-usemergedtree',
       name: 'Merge',
-      description: 'joins optimized and unoptimized versions of frames',
+      description: 'Join optimized and unoptimized versions of frames',
       onChange: (checked) => {
         this.ui.setUseMergedTree(checked)
       }
@@ -73,7 +83,7 @@ class OptionsMenu extends HtmlContent {
     this.d3OptCheckbox = this.addFgOptionCheckbox({
       id: 'option-showoptimizationstatus',
       name: 'Show optimization status',
-      description: 'highlight frames that are optimized functions',
+      description: 'Highlight frames that are optimized functions',
       onChange: (checked) => {
         this.ui.setShowOptimizationStatus(checked)
       }
@@ -113,21 +123,21 @@ class OptionsMenu extends HtmlContent {
     true) // using useCapture here so that we can handle the event before `.showMore` button updates its content
   }
 
-  addFgOptionCheckbox ({ id, name, description, onChange }, parentNode) {
-    parentNode = parentNode || this.d3FgOptions.select('ul')
-    const li = parentNode.append('li')
+  addFgOptionCheckbox ({ id, name, description, onChange }, d3ParentNode) {
+    d3ParentNode = d3ParentNode || this.d3FgOptions.select('ul')
+    const d3Li = d3ParentNode.append('li')
       .attr('id', id)
-    const wrapper = li.append('div')
+    const d3Wrapper = d3Li.append('div')
       .classed('overflow-wrapper', true)
-    const label = wrapper.append('label')
-    const d3Checkbox = label.append('input')
+    const d3Label = d3Wrapper.append('label')
+    const d3Checkbox = d3Label.append('input')
       .attr('type', 'checkbox')
       .on('click', () => {
         const { checked } = d3.event.target
         onChange(checked)
       })
 
-    label.append('span')
+    d3Label.append('span')
       .classed('icon-wrapper', true)
       .html(`
         <img class="icon-img checked" data-inline-svg src="/visualizer/assets/icons/checkbox-checked.svg" />
@@ -135,13 +145,13 @@ class OptionsMenu extends HtmlContent {
         <img class="icon-img indetermined" data-inline-svg src="/visualizer/assets/icons/checkbox-indetermined.svg" />
       `)
 
-    const copyWrapper = label.append('span')
+    const d3CopyWrapper = d3Label.append('span')
       .classed('copy-wrapper', true)
-    copyWrapper.append('span')
+    d3CopyWrapper.append('span')
       .classed('name', true)
       .text(name)
     if (description) {
-      copyWrapper.append('span')
+      d3CopyWrapper.append('span')
         .classed('description', true)
         .html(` - ${description}`)
     }
@@ -153,15 +163,15 @@ class OptionsMenu extends HtmlContent {
     const { ui } = this
     const self = this
 
-    // Create the top-level filter options, like "app" / "deps" / "node.js"
+    // Create the top-level filter options, like "app" / "deps" / "core"
     const d3RootItems = this.d3VisibilityOptions.select('ul')
       .selectAll('li').data(this.codeAreas)
-      .classed('childrenVisibilityToggle', d => d.childrenVisibilityToggle === true)
     d3RootItems.exit().remove()
 
     const d3NewRootItems = d3RootItems.enter().append('li')
       .call(createOptionElement)
     d3NewRootItems.merge(d3RootItems)
+      .classed('childrenVisibilityToggle', d => d.childrenVisibilityToggle === true)
       .call(renderOptionElement)
 
     // Create or update the required number of sub-<ul>s: 1 if there are any children;
@@ -205,7 +215,6 @@ class OptionsMenu extends HtmlContent {
       const wrapper = li.append('div')
         .classed('overflow-wrapper', true)
       const label = wrapper.append('label')
-        .attr('title', d => d.title)
       label.append('input')
         .attr('type', 'checkbox')
         .on('change', onchange)
@@ -216,13 +225,17 @@ class OptionsMenu extends HtmlContent {
           <img class="icon-img unchecked" data-inline-svg src="/visualizer/assets/icons/checkbox-unchecked.svg" />
           <img class="icon-img indetermined" data-inline-svg src="/visualizer/assets/icons/checkbox-indetermined.svg" />
         `)
+
       const copyWrapper = label.append('span')
         .classed('copy-wrapper', true)
       copyWrapper.append('span')
         .classed('name', true)
       copyWrapper.append('description')
         .classed('description', true)
-        .html(d => d.description ? ` - ${d.description}` : '')
+        .html((d) => {
+          const description = ui.getDescriptionFromKey(d.id)
+          return description ? ` - ${description}` : ''
+        })
     }
 
     // Update an existing filter option element,
@@ -256,7 +269,7 @@ class OptionsMenu extends HtmlContent {
 
   setData () {
     const {
-      appName = 'app',
+      codeAreas,
       useMerged,
       showOptimizationStatus
     } = this.ui.dataTree
@@ -264,27 +277,11 @@ class OptionsMenu extends HtmlContent {
     this.d3MergeCheckbox.property('checked', useMerged)
     this.d3OptCheckbox.property('checked', showOptimizationStatus)
 
-    this.setCodeAreas({ appName })
+    this.setCodeAreas(codeAreas)
   }
 
-  setCodeAreas ({ appName }) {
-    this.codeAreas = [
-      { id: 'app', title: appName },
-      { id: 'deps', title: 'dependencies' },
-      { id: 'all-core',
-        title: 'core',
-        description: 'The Node.js framework and its dependencies',
-        childrenVisibilityToggle: true,
-        children: [
-          { id: 'core', visible: true, description: `JS functions in core Node.js APIs. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#core">More info</a>` },
-          { id: 'native', visible: true, description: `JS compiled into V8, such as prototype methods and eval. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#native">More info</a>` },
-          { id: 'v8', description: `Operations in V8's implementation of JS. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#v8">More info</a>` },
-          { id: 'cpp', description: `Native C++ operations called by V8, including shared libraries. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#cpp">More info</a>` },
-          { id: 'regexp', description: `The RegExp notation is shown as the function name. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#rx">More info</a>` },
-          { id: 'init', description: `Any of the above that are repeated frequently during initialization. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#init">More info</a>` }
-        ] }
-    ]
-
+  setCodeAreas (codeAreas) {
+    this.codeAreas = codeAreas
     this.codeAreasChanged = true
   }
 
@@ -299,7 +296,7 @@ class OptionsMenu extends HtmlContent {
       })
       .property('indeterminate', (area) => {
         const { children } = area
-        if (!children) {
+        if (!Array.isArray(children) || children.length === 0) {
           return false
         }
 
@@ -312,15 +309,14 @@ class OptionsMenu extends HtmlContent {
     super.draw()
 
     // Update option checkbox values.
-    const { useMerged, showOptimizationStatus, appName } = this.ui.dataTree
-    this.d3FgOptions.select('#option-usemergedtree')
-      .select('input')
-      .property('checked', useMerged)
-    this.d3FgOptions.select('#option-showoptimizationstatus')
-      .classed('disabled', useMerged)
-      .select('input')
+    const { useMerged, showOptimizationStatus, exclude, appName } = this.ui.dataTree
+    this.d3MergeCheckbox.property('checked', useMerged)
+    this.d3OptCheckbox
       .attr('disabled', useMerged ? 'disabled' : null)
       .property('checked', showOptimizationStatus)
+      .select(function () { return this.closest('li') })
+      .classed('disabled', useMerged)
+    this.d3InitCheckbox.property('checked', !exclude.has('init'))
 
     // Updating the app name
     this.d3VisibilityOptions.select('.name')
