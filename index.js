@@ -179,8 +179,7 @@ class ClinicFlame extends events.EventEmitter {
             </div>
           </div>
 
-          <main>
-          </main>
+          <main></main>
           <script>${scriptFile}</script>
         </body>
       </html>
