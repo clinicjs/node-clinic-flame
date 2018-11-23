@@ -365,13 +365,26 @@ class Ui extends events.EventEmitter {
       'all-core': 'Core',
 
       'core': 'Node JS',
+      'all-v8': 'V8',
       'native': 'V8 native',
       'v8': 'V8 runtime',
       'cpp': 'V8 C++',
-      'regexp': 'RegExp',
-      'init': 'Init'
+      'regexp': 'RegExp'
     }
     return keysToLabels[key] || key
+  }
+
+  getDescriptionFromKey (key) {
+    const keysToDescriptions = {
+      'core': `JS functions in core Node.js APIs. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#core">More info</a>`,
+      'all-v8': 'The JavaScript engine used by default in Node.js',
+      'v8': `Operations in V8's implementation of JS. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#v8">More info</a>`,
+      'native': `JS compiled into V8, such as prototype methods and eval. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#native">More info</a>`,
+      'cpp': `Native C++ operations called by V8, including shared libraries. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#cpp">More info</a>`,
+      'regexp': `The RegExp notation is shown as the function name. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#rx">More info</a>`
+    }
+
+    return keysToDescriptions[key] || null
   }
 
   setCodeAreaVisibility (name, visible, manyTimes) {

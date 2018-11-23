@@ -49,12 +49,6 @@ class StackBar extends HtmlContent {
         ui.highlightNode(nodeElem.d)
 
         const wrapperRect = this.d3StacksWrapper.node().getBoundingClientRect()
-        const targetRect = {
-          x: d3.event.offsetX - 10,
-          width: wrapperRect.width * nodeElem.width,
-          y: wrapperRect.y,
-          height: wrapperRect.height
-        }
 
         if (!nodeData) {
           this.tooltip.hide()
@@ -64,8 +58,8 @@ class StackBar extends HtmlContent {
         this.tooltipHtmlContent.setNodeData(nodeData)
         this.tooltip.show({
           msg: this.tooltipHtmlContent.getTooltipD3().node(),
-          pointerCoords: { x: d3.event.offsetX - 10, y: d3.event.offsetY },
-          targetRect,
+          pointerCoords: { x: d3.event.offsetX, y: d3.event.offsetY },
+          targetRect: wrapperRect,
           wrapperNode: this.d3StacksWrapper.node()
         })
       })

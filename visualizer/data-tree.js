@@ -9,6 +9,8 @@ class DataTree {
     this.merged = tree.merged
     this.unmerged = tree.unmerged
 
+    this.codeAreas = tree.codeAreas
+
     // Set a reasonable upper limit to displayed name; exact name matching is done in analysis
     this.appName = tree.appName.length > 30 ? tree.appName.slice(0, 30) + '…' : tree.appName
     this.pathSeparator = tree.pathSeparator
