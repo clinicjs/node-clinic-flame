@@ -169,11 +169,10 @@ class FrameNode {
     const platformPath = getPlatformPath(systemInfo)
 
     const parentDir = platformPath.join(systemInfo.mainDirectory, `..${systemInfo.pathSeparator}`)
-    const typeTEMP = platformPath.relative(parentDir, platformPath.dirname(this.fileName))
 
     return {
       // TODO: use this type after adding custom d3-fg filter on properties including category
-      typeTEMP,
+      typeTEMP: platformPath.relative(parentDir, platformPath.dirname(this.fileName)),
       type: 'app', // Temporary until d3-fg custom property filter complete
       category: 'app'
     }
