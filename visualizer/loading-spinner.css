@@ -31,11 +31,15 @@ body:not(.initialized):after{
   align-items: center;
   color: var(--flame-orange);
   display: flex;
-  font-size: 14pt;
   font-variant: all-small-caps;
   font-weight: bold;
   justify-content: center;
   position: absolute;
+  text-align: center;
+  color: white;
+  font-size: 14px;
+  height: auto;
+  margin-top: -0.2em;
 }
 
 body:not(.initialized):after {
