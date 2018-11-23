@@ -175,3 +175,12 @@ test('analysis - categorise node properties', (t) => {
 
   t.end()
 })
+
+test('do not crash on RegExp nodes', (t) => {
+  const regexpNode = new FrameNode({
+    name: '\\.js(\\?[^.]+)?$ [CODE:RegExp]'
+  })
+  regexpNode.categorise(windows)
+  t.equal(regexpNode.type, 'regexp')
+  t.end()
+})

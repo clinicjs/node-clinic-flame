@@ -120,10 +120,10 @@ class FrameNode {
     // TODO: Delete 'init' condition here when adding custom d3-fg filter on properties
     if (/\[INIT]$/.test(name)) {
       type = 'init'
+    } else if (/\[CODE:RegExp]$/.test(name)) {
+      type = 'regexp'
     } else if (!/\.m?js/.test(name)) {
-      if (/\[CODE:RegExp]$/.test(name)) {
-        type = 'regexp'
-      } else if (/\[CODE:.*?]$/.test(name) || /v8::internal::.*\[CPP]$/.test(name)) {
+      if (/\[CODE:.*?]$/.test(name) || /v8::internal::.*\[CPP]$/.test(name)) {
         type = 'v8'
       } else /* istanbul ignore next */ if (/\.$/.test(name)) {
         type = 'core'
