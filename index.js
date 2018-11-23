@@ -180,10 +180,6 @@ class ClinicFlame extends events.EventEmitter {
           </div>
 
           <main>
-            <span id='loading-message'>
-              <span class="icon">${spinnerFile}</span>
-              Loading...
-            </span>
           </main>
           <script>${scriptFile}</script>
         </body>

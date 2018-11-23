@@ -8,6 +8,7 @@
 @import "./options-menu.css";
 @import "./selection-controls.css";
 @import "./info-box.css";
+@import "./loading-spinner.css";
 
 html {
   font-family: sans-serif;
@@ -52,6 +53,7 @@ html {
   --primary-grey: rgb(121, 122, 124);
   --grey-highlight-color-val: 191, 192, 194;
   --grey-highlight: rgb(var(--grey-highlight-color-val));
+  --flame-orange: rgb(255, 170, 43);
 
   --checkbox-border-color: rgba(var(--grey-highlight-color-val), 0.9);
 
@@ -122,37 +124,6 @@ main {
 html * {
   box-sizing: border-box;
 }
-
-#loading-message {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 20px 40px;
-  border-radius: 5px;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
-  font-size: 20px;
-  display: flex;
-  flex-wrap: nowrap;
-}
-
-#loading-message .icon{
-  margin-right: 0.5em;
-
-  -webkit-animation: spinningAnimation 3s infinite linear;
-  -moz-animation: spinningAnimation 3s infinite linear;
-  -ms-animation: spinningAnimation 3s infinite linear;
-  -o-animation: spinningAnimation 3s infinite linear;
-  animation: spinningAnimation 3s infinite linear;
-}
-
-#loading-message .icon svg{
-  width: 1.2em;
-  height: 1.2em;
-  display: block;
-}
-
 
 .hidden {
   /* Hides elements even if display is defined for structural reasons */
@@ -268,15 +239,4 @@ svg.icon-img {
   width: 1em;
   height: 1em;
   display: block;
-}
-
-@keyframes spinningAnimation {
-  100% {
-    -webkit-transform: rotate(359deg);
-    -moz-transform: rotate(359deg);
-    -ms-transform: rotate(359deg);
-    -o-transform: rotate(359deg);
-    transform: rotate(359deg);
-  }
-
 }
