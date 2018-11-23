@@ -8,6 +8,7 @@
 @import "./options-menu.css";
 @import "./selection-controls.css";
 @import "./info-box.css";
+@import "./loading-spinner.css";
 
 html {
   font-family: sans-serif;
@@ -52,6 +53,7 @@ html {
   --primary-grey: rgb(121, 122, 124);
   --grey-highlight-color-val: 191, 192, 194;
   --grey-highlight: rgb(var(--grey-highlight-color-val));
+  --flame-orange: rgb(255, 170, 43);
 
   --checkbox-border-color: rgba(var(--grey-highlight-color-val), 0.9);
 

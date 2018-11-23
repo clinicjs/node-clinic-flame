@@ -1,0 +1,54 @@
+body:not(.initialized):before,
+body:not(.initialized):after {
+  width: 124px;
+  height: 120px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-top: -60px;
+  margin-left: -60px;
+  z-index: 9;
+}
+
+body:not(.initialized) {
+  position: relative;
+  z-index: 3;
+}
+
+body:not(.initialized):before{
+  animation: loading 1.6s infinite linear;
+  border-bottom: 4px solid var(--flame-orange);
+  border-left: 1px solid var(--primary-grey);
+  border-radius: 50%;
+  border-right: 1px solid var(--primary-grey);
+  border-top: 4px solid var(--flame-orange);
+  content: "";
+  display: block;
+  transform: rotate(0deg);
+}
+
+body:not(.initialized):after{
+  align-items: center;
+  color: var(--flame-orange);
+  display: flex;
+  font-size: 14pt;
+  font-variant: all-small-caps;
+  font-weight: bold;
+  justify-content: center;
+  position: absolute;
+}
+
+body:not(.initialized):after {
+  content: "Preparing file";
+}
+
+@keyframes loading {
+  100% {
+    -webkit-transform: rotate(359deg);
+    -moz-transform: rotate(359deg);
+    -ms-transform: rotate(359deg);
+    -o-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+  
+}
