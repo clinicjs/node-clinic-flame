@@ -495,6 +495,9 @@ class Ui extends events.EventEmitter {
   }
 
   initializeElements () {
+    // switching the loading spinner off
+    document.body.classList.add('initialized')
+
     // Cascades down tree in addContent() append/prepend order
     this.uiContainer.initializeElements()
   }
