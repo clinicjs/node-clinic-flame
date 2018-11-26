@@ -115,7 +115,7 @@ chart > div {
 }
 
 .fg-tooltip-actions button:hover {
-  background-color: var(--opposite-contrast);
+  background-color: var(--clickable-bg-hover);
   outline: 1px solid var(--max-contrast);
 }
 
