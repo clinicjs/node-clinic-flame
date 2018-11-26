@@ -19,8 +19,9 @@
   align-items: center;
   line-height: 1;
 }
-#selection-controls .hotness-selector:hover {
+#selection-controls button.hotness-selector:hover:not(:disabled) {
   background-color: var(--clickable-bg-hover);
+  outline: 1px dotted var(--light-glare);  
 }
 
 #selection-controls .rank-wrapper {
