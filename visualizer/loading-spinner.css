@@ -29,21 +29,18 @@ body:not(.initialized):before{
 
 body:not(.initialized):after{
   align-items: center;
-  color: var(--flame-orange);
+  color: var(--max-contrast);
+  content: "Loading file";
   display: flex;
-  font-variant: all-small-caps;
+  font-size: 12px;
   font-weight: bold;
+  height: auto;
   justify-content: center;
+  line-height: 1;
+  margin-top: 0;
   position: absolute;
   text-align: center;
-  color: white;
-  font-size: 14px;
-  height: auto;
-  margin-top: -0.2em;
-}
-
-body:not(.initialized):after {
-  content: "Preparing file";
+  text-transform: uppercase;
 }
 
 @keyframes loading {
