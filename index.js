@@ -49,7 +49,13 @@ class ClinicFlame extends events.EventEmitter {
     callbackify(x({
       argv,
       onPort: this.detectPort ? onPort : undefined,
-      onProcessExit: () => this.emit('analysing'),
+      onProcessExit: (code) => {
+        if (code !== 0) {
+          // 0x already logs this.
+          // this.emit('warning', 'Process exited with non-zero exit code, the analysis may produce unexpected results!')
+        }
+        this.emit('analysing')
+      },
       status: (message) => this.emit('status', message.replace(/\n$/, '')),
       pathToNodeBinary: args[0],
       collectOnly: true,
