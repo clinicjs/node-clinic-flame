@@ -56,7 +56,6 @@ class ClinicFlame extends events.EventEmitter {
         }
         this.emit('analysing')
       },
-      status: (message) => this.emit('status', message.replace(/\n$/, '')),
       pathToNodeBinary: args[0],
       collectOnly: true,
       writeTicks: true,
