@@ -156,8 +156,7 @@ class FrameNode {
 
     const match = name.match(depDirRegex)
     return match ? {
-      // TODO: use this type after adding custom d3-fg filter on properties including category
-      type: match[1], // Temporary until d3-fg custom property filter complete
+      type: match[1],
       category: 'deps'
     } : null
   }
