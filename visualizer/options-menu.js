@@ -241,7 +241,7 @@ class OptionsMenu extends HtmlContent {
     // Update an existing filter option element,
     // for use with a d3.enter() + update selection.
     function renderOptionElement (li) {
-      li.attr('data-area', data => data.id)
+      li.attr('data-category', data => data.excludeKey.split(':')[0])
       li.select('.name')
         .text(data => ui.getLabelFromKey(data.excludeKey))
     }
