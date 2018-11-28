@@ -18,8 +18,8 @@ const windows = {
 }
 
 function byProps (properties, sysinfo, appName = 'some-app') {
-  const node = new FrameNode(properties, appName)
-  node.categorise(sysinfo)
+  const node = new FrameNode(properties)
+  node.categorise(sysinfo, appName)
   return node
 }
 
