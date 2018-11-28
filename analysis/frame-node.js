@@ -118,10 +118,10 @@ class FrameNode {
 
     let type
 
-    if (!/\.m?js/.test(name)) {
-      if (/\[CODE:RegExp]$/.test(name)) {
-        type = 'regexp'
-      } else if (/\[CODE:.*?]$/.test(name) || /v8::internal::.*\[CPP]$/.test(name)) {
+    if (/\[CODE:RegExp]$/.test(name)) {
+      type = 'regexp'
+    } else if (!/\.m?js/.test(name)) {
+      if (/\[CODE:.*?]$/.test(name) || /v8::internal::.*\[CPP]$/.test(name)) {
         type = 'v8'
       } else /* istanbul ignore next */ if (/\.$/.test(name)) {
         return core

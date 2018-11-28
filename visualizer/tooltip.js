@@ -87,13 +87,18 @@ class Tooltip extends HtmlContent {
     this.d3TooltipInner.classed('top bottom', false)
     this.d3TooltipInner.classed(verticalAlign, true)
 
-    let innerRect = Object.assign({ }, targetRect || d3TargetElement.node().getBoundingClientRect())
+    let {
+      x,
+      y,
+      width,
+      height
+    } = targetRect || d3TargetElement.node().getBoundingClientRect()
 
     if (offset) {
-      innerRect.x += offset.x || 0
-      innerRect.y += offset.y || 0
-      innerRect.width += offset.width || 0
-      innerRect.height += offset.height || 0
+      x += offset.x || 0
+      y += offset.y || 0
+      width += offset.width || 0
+      height += offset.height || 0
     }
 
     if (typeof (msg) === 'string') {
@@ -105,12 +110,12 @@ class Tooltip extends HtmlContent {
 
     clearTimeout(this.tooltipHandler)
 
-    let ttLeft = innerRect.x + innerRect.width / 2
-    let ttTop = innerRect.y + (verticalAlign === 'bottom' ? innerRect.height : 0)
+    let ttLeft = x + width / 2
+    let ttTop = y + (verticalAlign === 'bottom' ? height : 0)
 
     if (pointerCoords) {
       // centering on the mouse pointer horizontally
-      ttLeft = innerRect.x + pointerCoords.x
+      ttLeft = x + pointerCoords.x
     }
 
     this.d3Tooltip
@@ -126,11 +131,11 @@ class Tooltip extends HtmlContent {
 
     // positioning the tooltip content
     // making sure that it doesn't go over the frame right edge
-    const alignRight = ttLeft + ttWidth - (innerRect.x + innerRect.width)
+    const alignRight = ttLeft + ttWidth - (x + width)
     let deltaX = Math.max(alignRight, ttWidth / 2)
 
     // then checking it doesn't overflow the frame left edge
-    deltaX = (ttLeft - deltaX < innerRect.x) ? ttLeft - innerRect.x : deltaX
+    deltaX = (ttLeft - deltaX < x) ? ttLeft - x : deltaX
 
     // then checking the outer element right edge
     if (outerRect) {
