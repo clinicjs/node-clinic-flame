@@ -5,9 +5,8 @@ const jsFrameRx = /^([~*])?((?:\S+?\(anonymous function\)|\S+)?(?: [a-zA-Z]+)*) 
 const cppFrameRx = /^(.*) (\[CPP]|\[SHARED_LIB]|\[CODE:\w+])( \[INIT])?$/m
 
 class FrameNode {
-  constructor (data, appName) {
+  constructor (data) {
     this.id = null
-    this.appName = appName
 
     /* istanbul ignore next: must be a string; can be null but can't replicate in tests */
     this.name = data.name || ''
@@ -15,7 +14,7 @@ class FrameNode {
     this.onStack = data.value
     this.onStackTop = { base: data.top }
     this.children = data.children
-      ? data.children.map((frame) => new FrameNode(frame, appName))
+      ? data.children.map((frame) => new FrameNode(frame))
       : []
 
     this.functionName = null
@@ -80,7 +79,7 @@ class FrameNode {
     return !getPlatformPath(systemInfo).isAbsolute(fullFileName)
   }
 
-  categorise (systemInfo) {
+  categorise (systemInfo, appName) {
     const { name } = this // this.name remains unmutated: the initial name returned by 0x
 
     const {
@@ -88,7 +87,7 @@ class FrameNode {
       type
     } = this.getCoreOrV8Type(name, systemInfo) ||
       this.getDepType(name, systemInfo) ||
-      this.getAppType(name, systemInfo)
+      this.getAppType(name, appName)
 
     this.category = category // Top level filters: 'app', 'deps', 'core' or 'all-v8'
     this.type = type // Second-level filters; core are static, app and deps depend on app
@@ -163,11 +162,11 @@ class FrameNode {
     } : null
   }
 
-  getAppType (name, systemInfo) {
+  getAppType (name, appName) {
     return {
       // TODO: profile some large applications with a lot of app code, see if there's a useful heuristic to split
       // out types, e.g. folders containing more than n files or look for common patterns like `lib`
-      type: this.appName,
+      type: appName,
       category: 'app'
     }
   }

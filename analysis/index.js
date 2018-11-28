@@ -49,15 +49,15 @@ async function analyse (paths) {
   const steps = [
     (tree) => labelNodes(tree),
     (tree) => tree.walk((node) => {
-      node.categorise(systemInfo)
+      node.categorise(systemInfo, appName)
       node.format(systemInfo)
     }),
     (tree) => setStackTop(tree, defaultExclude)
   ]
 
   const trees = ticksToTree(ticks, { inlined })
-  const merged = new FrameNode(trees.merged, appName)
-  const unmerged = new FrameNode(trees.unmerged, appName)
+  const merged = new FrameNode(trees.merged)
+  const unmerged = new FrameNode(trees.unmerged)
   steps.forEach((step) => {
     step(merged)
     step(unmerged)
