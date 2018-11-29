@@ -1,13 +1,19 @@
 'use strict'
 const HtmlContent = require('./html-content.js')
+const getNoDataNode = require('./no-data-node.js')
 
 class InfoBox extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
     super(parentContent, contentProperties)
 
-    this.functionText = 'Loading…'
-    this.pathText = '[file location]'
-    this.areaText = '[node.js module]'
+    const {
+      functionName,
+      fileName
+    } = getNoDataNode()
+
+    this.functionText = functionName
+    this.pathText = fileName
+    this.areaText = 'Processing data...'
   }
 
   initializeElements () {
@@ -43,7 +49,9 @@ class InfoBox extends HtmlContent {
 
     const typeLabel = node.category === 'core' ? '' : ` (${this.ui.getLabelFromKey(`${node.category}:${node.type}`, true)})`
     const categoryLabel = this.ui.getLabelFromKey(node.category, true)
-    this.areaText = `In ${categoryLabel}${typeLabel}`
+
+    // e.g. The no-data-node has an .areaText containing a custom message
+    this.areaText = node.areaText || `In ${categoryLabel}${typeLabel}`
 
     if (node.isInit) this.areaText += '. In initialization process'
     if (node.isInlinable) this.areaText += '. Inlinable'
