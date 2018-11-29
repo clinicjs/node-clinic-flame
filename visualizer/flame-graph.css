@@ -123,11 +123,11 @@ chart > div {
   display: none;
 }
 
-.fg-tooltip-actions .zoom-button.zoom-in .zoom-in {
+.fg-tooltip-actions .zoom-button.zoom-in .zoom-in-svg {
   display: initial;
 }
 
-.fg-tooltip-actions .zoom-button.zoom-out .zoom-out {
+.fg-tooltip-actions .zoom-button.zoom-out .zoom-out-svg {
   display: initial;
 }
 
