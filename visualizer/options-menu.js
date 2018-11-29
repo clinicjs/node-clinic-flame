@@ -2,6 +2,14 @@
 
 const HtmlContent = require('./html-content.js')
 const d3 = require('./d3.js')
+const caretUpIcon = require('@nearform/clinic-common/icons/caret-up')
+const checkboxCheckedIcon = require('@nearform/clinic-common/icons/checkbox-checked')
+const checkboxUncheckedIcon = require('@nearform/clinic-common/icons/checkbox-unchecked')
+const checkboxIndeterminedIcon = require('@nearform/clinic-common/icons/checkbox-indetermined')
+
+// const caretUpIcon = require('@nearform/clinic-common/icons')
+// const caretUpIcon = require('@nearform/clinic-common/icons')
+// const caretUpIcon = require('@nearform/clinic-common/icons')
 
 const preferences = [
   {
@@ -25,7 +33,7 @@ class OptionsMenu extends HtmlContent {
     this.addCollapseControl(true, {
       classNames: 'options-menu-toggle',
       htmlElementType: 'button',
-      htmlContent: `<span class="label">Options</span> <img class="icon-img chevron" data-inline-svg src="/visualizer/assets/icons/caret-up.svg" />`
+      htmlContent: `<span class="label">Options</span> ${caretUpIcon}`
     })
 
     this.showMore = {}
@@ -140,9 +148,9 @@ class OptionsMenu extends HtmlContent {
     d3Label.append('span')
       .classed('icon-wrapper', true)
       .html(`
-        <img class="icon-img checked" data-inline-svg src="/visualizer/assets/icons/checkbox-checked.svg" />
-        <img class="icon-img unchecked" data-inline-svg src="/visualizer/assets/icons/checkbox-unchecked.svg" />
-        <img class="icon-img indetermined" data-inline-svg src="/visualizer/assets/icons/checkbox-indetermined.svg" />
+        ${checkboxCheckedIcon}
+        ${checkboxUncheckedIcon}
+        ${checkboxIndeterminedIcon}        
       `)
 
     const d3CopyWrapper = d3Label.append('span')
@@ -192,10 +200,9 @@ class OptionsMenu extends HtmlContent {
       .call(renderOptionElement)
 
     // I am sure there's a better way to do this...
-    const caretIcon = `<img class="icon-img" data-inline-svg src="/visualizer/assets/icons/caret-down.svg" />`
     this.d3VisibilityOptions.selectAll('.childrenVisibilityToggle')
       .append('button')
-      .html(`<span>show more</span> ${caretIcon}`)
+      .html(`<span>show more</span> ${caretUpIcon}`)
       .classed('children-toggle-btn', true)
       .on('click', function (d) {
         const showMore = !(self.showMore[d.id] === true)
@@ -205,7 +212,7 @@ class OptionsMenu extends HtmlContent {
         const parent = d3.select(this.closest('.childrenVisibilityToggle'))
         parent.classed('show-more', showMore)
 
-        d3.select(this).html(`<span>show ${showMore ? 'less' : 'more'}</span> ${caretIcon}`)
+        d3.select(this).html(`<span>show ${showMore ? 'less' : 'more'}</span> ${caretUpIcon}`)
       })
 
     // Insert a new filter option element,
@@ -221,9 +228,9 @@ class OptionsMenu extends HtmlContent {
       label.append('span')
         .classed('icon-wrapper', true)
         .html(`
-          <img class="icon-img checked" data-inline-svg src="/visualizer/assets/icons/checkbox-checked.svg" />
-          <img class="icon-img unchecked" data-inline-svg src="/visualizer/assets/icons/checkbox-unchecked.svg" />
-          <img class="icon-img indetermined" data-inline-svg src="/visualizer/assets/icons/checkbox-indetermined.svg" />
+          ${checkboxCheckedIcon}
+          ${checkboxUncheckedIcon}
+          ${checkboxIndeterminedIcon}   
         `)
 
       const copyWrapper = label.append('span')
