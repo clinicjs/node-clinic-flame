@@ -130,7 +130,7 @@ class Ui extends events.EventEmitter {
     }
 
     // Don't allow zooming on an excluded node
-    if (node && this.dataTree.exclude.has(node.type)) {
+    if (node && this.dataTree.isNodeExcluded(node)) {
       this.zoomNode(null, { pushState, cb })
     }
 
@@ -405,7 +405,7 @@ class Ui extends events.EventEmitter {
   updateExclusions ({ initial, pushState = true, selectedNodeId, zoomedNodeId } = {}) {
     this.dataTree.update(initial)
 
-    if (!selectedNodeId && this.selectedNode && this.dataTree.exclude.has(this.selectedNode.type)) {
+    if (!selectedNodeId && this.selectedNode && this.dataTree.isNodeExcluded(this.selectedNode)) {
       this.selectHottestNode()
     }
 
@@ -417,7 +417,7 @@ class Ui extends events.EventEmitter {
     }
 
     // Zoom out before updating exclusions if the user excludes the node they're zoomed in on
-    if (!zoomedNodeId && this.zoomedNode && this.dataTree.exclude.has(this.zoomedNode.type)) {
+    if (!zoomedNodeId && this.zoomedNode && this.dataTree.isNodeExcluded(this.zoomedNode)) {
       this.zoomNode(null, { cb })
     } else {
       cb()
