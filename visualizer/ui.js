@@ -128,9 +128,9 @@ class Ui extends events.EventEmitter {
     const nodeInvalidMessage = ' node selected in selectHottestNode'
 
     // Prevent infinite loop if some future bug allows an invalid node to be returned here
-    if (!node) throw new Error ('No' + nodeInvalidMessage)
-    if (node.id === 0) throw new Error ('Root' + nodeInvalidMessage)
-    if (this.dataTree.isNodeExcluded(node)) throw new Error ('Excluded' + nodeInvalidMessage)
+    if (!node) throw new Error('No' + nodeInvalidMessage)
+    if (node.id === 0) throw new Error('Root' + nodeInvalidMessage)
+    if (this.dataTree.isNodeExcluded(node)) throw new Error('Excluded' + nodeInvalidMessage)
 
     this.selectNode(node, opts)
   }
