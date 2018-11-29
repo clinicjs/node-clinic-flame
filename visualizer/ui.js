@@ -129,13 +129,8 @@ class Ui extends events.EventEmitter {
       return
     }
 
-    // Don't allow zooming on an excluded node
-    if (node && this.dataTree.isNodeExcluded(node)) {
-      this.zoomNode(null, { pushState, cb })
-    }
-
-    // Zoom out if zooming in on already-zoomed node
-    node = (!node || node === this.zoomedNode) ? null : node
+    // Zoom out if zooming in on already-zoomed node, or zoom target is excluded
+    if (!node || node === this.zoomedNode || this.dataTree.isNodeExcluded(node)) node = null
     this.zoomedNode = node
 
     this.emit('zoomNode', node, cb)
