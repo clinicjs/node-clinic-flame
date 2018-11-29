@@ -106,6 +106,10 @@ class Ui extends events.EventEmitter {
 
   // Persistent e.g. on click, then falls back to this after mouseout
   selectNode (node = null, { pushState = true } = {}) {
+    if (!node || node.id === 0 || this.dataTree.isNodeExcluded(node)) {
+      if (!this.selectedNode) this.selectHottestNode({ pushState })
+      return
+    }
     if (!node || node.id === 0) return
     const changed = node !== this.selectedNode
     this.selectedNode = node
@@ -120,7 +124,15 @@ class Ui extends events.EventEmitter {
   }
 
   selectHottestNode (opts) {
-    this.selectNode(this.dataTree.getFrameByRank(0), opts)
+    const node = this.dataTree.getFrameByRank(0)
+    const nodeInvalidMessage = ' node selected in selectHottestNode'
+
+    // Prevent infinite loop if some future bug allows an invalid node to be returned here
+    if (!node) throw new Error ('No' + nodeInvalidMessage)
+    if (node.id === 0) throw new Error ('Root' + nodeInvalidMessage)
+    if (this.dataTree.isNodeExcluded(node)) throw new Error ('Excluded' + nodeInvalidMessage)
+
+    this.selectNode(node, opts)
   }
 
   zoomNode (node = null, { pushState = true, cb } = {}) {
