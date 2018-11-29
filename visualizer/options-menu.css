@@ -191,15 +191,16 @@
   display: none;
 }
 
-#options-menu .options li[data-area="app"] {
+#options-menu .options li[data-category="app"] {
   color: var(--area-color-app);
 }
 
-#options-menu .options li[data-area="all-core"] {
+#options-menu .options li[data-category="core"],
+#options-menu .options li[data-category="all-v8"] {
   color: var(--area-color-core);
 }
 
-#options-menu .options li[data-area="deps"] {
+#options-menu .options li[data-category="deps"] {
   color: var(--area-color-deps);
 }
 

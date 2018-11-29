@@ -106,6 +106,10 @@ class Ui extends events.EventEmitter {
 
   // Persistent e.g. on click, then falls back to this after mouseout
   selectNode (node = null, { pushState = true } = {}) {
+    if (!node || node.id === 0 || this.dataTree.isNodeExcluded(node)) {
+      if (!this.selectedNode) this.selectHottestNode({ pushState })
+      return
+    }
     if (!node || node.id === 0) return
     const changed = node !== this.selectedNode
     this.selectedNode = node
@@ -120,7 +124,15 @@ class Ui extends events.EventEmitter {
   }
 
   selectHottestNode (opts) {
-    this.selectNode(this.dataTree.getFrameByRank(0), opts)
+    const node = this.dataTree.getFrameByRank(0)
+    const nodeInvalidMessage = ' node selected in selectHottestNode'
+
+    // Prevent infinite loop if some future bug allows an invalid node to be returned here
+    if (!node) throw new Error('No' + nodeInvalidMessage)
+    if (node.id === 0) throw new Error('Root' + nodeInvalidMessage)
+    if (this.dataTree.isNodeExcluded(node)) throw new Error('Excluded' + nodeInvalidMessage)
+
+    this.selectNode(node, opts)
   }
 
   zoomNode (node = null, { pushState = true, cb } = {}) {
@@ -129,13 +141,8 @@ class Ui extends events.EventEmitter {
       return
     }
 
-    // Don't allow zooming on an excluded node
-    if (node && this.dataTree.exclude.has(node.type)) {
-      this.zoomNode(null, { pushState, cb })
-    }
-
-    // Zoom out if zooming in on already-zoomed node
-    node = (!node || node === this.zoomedNode) ? null : node
+    // Zoom out if zooming in on already-zoomed node, or zoom target is excluded
+    if (!node || node === this.zoomedNode || this.dataTree.isNodeExcluded(node)) node = null
     this.zoomedNode = node
 
     this.emit('zoomNode', node, cb)
@@ -357,26 +364,29 @@ class Ui extends events.EventEmitter {
     const keysToLabels = {
       'app': 'profiled application',
       'deps': singular ? 'Dependency' : 'Dependencies',
-      'all-core': 'Core',
-
       'core': 'Node JS',
+
+      'is:inlinable': 'Inlinable',
+      'is:init': 'Init',
+
       'all-v8': 'V8',
-      'native': 'V8 native',
-      'v8': 'V8 runtime',
-      'cpp': 'V8 C++',
-      'regexp': 'RegExp'
+      'all-v8:native': 'V8 native',
+      'all-v8:v8': 'V8 runtime',
+      'all-v8:cpp': 'V8 C++',
+      'all-v8:regexp': 'RegExp'
     }
-    return keysToLabels[key] || key
+    const splitKey = key.split(':')
+    return keysToLabels[key] || (splitKey.length ? splitKey[1] : key)
   }
 
   getDescriptionFromKey (key) {
     const keysToDescriptions = {
       'core': `JS functions in core Node.js APIs. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#core">More info</a>`,
       'all-v8': 'The JavaScript engine used by default in Node.js',
-      'v8': `Operations in V8's implementation of JS. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#v8">More info</a>`,
-      'native': `JS compiled into V8, such as prototype methods and eval. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#native">More info</a>`,
-      'cpp': `Native C++ operations called by V8, including shared libraries. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#cpp">More info</a>`,
-      'regexp': `The RegExp notation is shown as the function name. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#rx">More info</a>`
+      'all-v8:v8': `Operations in V8's implementation of JS. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#v8">More info</a>`,
+      'all-v8:native': `JS compiled into V8, such as prototype methods and eval. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#native">More info</a>`,
+      'all-v8:cpp': `Native C++ operations called by V8, including shared libraries. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#cpp">More info</a>`,
+      'all-v8:regexp': `The RegExp notation is shown as the function name. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#rx">More info</a>`
     }
 
     return keysToDescriptions[key] || null
@@ -402,7 +412,7 @@ class Ui extends events.EventEmitter {
   updateExclusions ({ initial, pushState = true, selectedNodeId, zoomedNodeId } = {}) {
     this.dataTree.update(initial)
 
-    if (!selectedNodeId && this.selectedNode && this.dataTree.exclude.has(this.selectedNode.type)) {
+    if (!selectedNodeId && this.selectedNode && this.dataTree.isNodeExcluded(this.selectedNode)) {
       this.selectHottestNode()
     }
 
@@ -414,7 +424,7 @@ class Ui extends events.EventEmitter {
     }
 
     // Zoom out before updating exclusions if the user excludes the node they're zoomed in on
-    if (!zoomedNodeId && this.zoomedNode && this.dataTree.exclude.has(this.zoomedNode.type)) {
+    if (!zoomedNodeId && this.zoomedNode && this.dataTree.isNodeExcluded(this.zoomedNode)) {
       this.zoomNode(null, { cb })
     } else {
       cb()
@@ -471,7 +481,8 @@ class Ui extends events.EventEmitter {
     this.exposedCSS = {
       app: computedStyle.getPropertyValue('--area-color-app').trim(),
       deps: computedStyle.getPropertyValue('--area-color-deps').trim(),
-      'all-core': computedStyle.getPropertyValue('--area-color-core').trim(),
+      'core': computedStyle.getPropertyValue('--area-color-core').trim(),
+      'all-v8': computedStyle.getPropertyValue('--area-color-core').trim(),
 
       'opposite-contrast': computedStyle.getPropertyValue('--opposite-contrast').trim(),
       'max-contrast': computedStyle.getPropertyValue('--max-contrast').trim(),
