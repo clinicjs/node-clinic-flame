@@ -15,7 +15,7 @@ function getNoDataNode () {
       base: 0,
       rootFromMean: 0
     },
-    type: 'none',
+    type: 'no-data', // Used for this node specifically, indicating no visible data
 
     areaText: 'No frames are visible', // Trailing '.' is added in info-box.js
     getNodeRect: function () {
