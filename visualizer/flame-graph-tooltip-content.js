@@ -25,8 +25,6 @@ class FgTooltipContent {
 
     this.nodeData = null
 
-    this.svgPath = '/visualizer/assets/icons/'
-
     const html = `
       <button class='zoom-button'>
         <span class='icon'>${zoomInIcon}${zoomOutIcon}</span>
