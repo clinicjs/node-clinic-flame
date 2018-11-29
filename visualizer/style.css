@@ -32,6 +32,8 @@ tt {
 html {
   /* Define colors */
 
+  --spinner-border-color: var(--flame-orange);
+
   --main-bg-color-val: 27, 30, 39;
   --max-contrast: rgb(255, 255, 255);
   --opposite-contrast: rgb(var(--opposite-color-val));
