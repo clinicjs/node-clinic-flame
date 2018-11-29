@@ -50,7 +50,7 @@ class SelectionControls extends HtmlContent {
   draw () {
     super.draw()
 
-    const noNodes = this.ui.selectedNode.type === 'no-data'
+    const noNodes = this.ui.selectedNode && this.ui.selectedNode.type === 'no-data'
 
     this.d3FramesCount.html(`<span class="visible-from-bp-1">of ${noNodes ? 0 : this.framesCount}</span>`)
     this.d3SelectNumber.property('value', noNodes ? 0 : this.rankNumber + 1)

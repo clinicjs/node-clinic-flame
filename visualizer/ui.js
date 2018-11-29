@@ -415,9 +415,9 @@ class Ui extends events.EventEmitter {
   updateExclusions ({ initial, pushState = true, selectedNodeId, zoomedNodeId } = {}) {
     this.dataTree.update(initial)
 
-    const noVisibleSelectedNode = this.dataTree.isNodeExcluded(this.selectedNode) || this.selectedNode.category === 'none'
+    const selectedNodeNotShown = this.selectedNode && (this.dataTree.isNodeExcluded(this.selectedNode) || this.selectedNode.category === 'none')
 
-    if (!initial && !selectedNodeId && this.selectedNode && noVisibleSelectedNode) {
+    if (!initial && !selectedNodeId && selectedNodeNotShown) {
       this.selectHottestNode()
     }
 
