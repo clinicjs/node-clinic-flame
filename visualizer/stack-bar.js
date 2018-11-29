@@ -45,6 +45,8 @@ class StackBar extends HtmlContent {
         clearTimeout(this.highlightedNodeTimeoutHandler)
 
         const nodeElem = this.getNodeAtX(d3.event.offsetX)
+        if (!nodeElem) return
+
         const nodeData = nodeElem.d
         ui.highlightNode(nodeElem.d)
 
@@ -72,6 +74,8 @@ class StackBar extends HtmlContent {
       })
       .on('click', () => {
         const nodeElem = this.getNodeAtX(d3.event.offsetX)
+        if (!nodeElem) return
+
         const nodeData = nodeElem.d
         if (nodeData) {
           this.ui.highlightNode(nodeData)
@@ -80,6 +84,8 @@ class StackBar extends HtmlContent {
       })
       .on('dblclick', () => {
         const nodeElem = this.getNodeAtX(d3.event.offsetX)
+        if (!nodeElem) return
+
         const nodeData = nodeElem.d
         if (nodeData) {
           this.ui.zoomNode(nodeData)
