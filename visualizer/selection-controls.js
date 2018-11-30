@@ -1,6 +1,10 @@
 'use strict'
 
 const HtmlContent = require('./html-content.js')
+const chevronLeftFirst = require('@nearform/clinic-common/icons/chevron-left-first')
+const chevronLeft = require('@nearform/clinic-common/icons/chevron-left')
+const chevronRight = require('@nearform/clinic-common/icons/chevron-right')
+const chevronRightLast = require('@nearform/clinic-common/icons/chevron-right-last')
 
 class SelectionControls extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
@@ -68,7 +72,7 @@ class SelectionControls extends HtmlContent {
     // Initialize controls
     this.d3SelectHottest = this.d3Element.append('button')
       .classed('hotness-selector', true)
-      .html(`<img class="icon-img" data-inline-svg src="/visualizer/assets/icons/chevron-left-first.svg" />`)
+      .html(`${chevronLeftFirst}`)
       .on('click', () => {
         this.selectByRank(0)
       })
@@ -83,7 +87,7 @@ class SelectionControls extends HtmlContent {
 
     this.d3SelectHotter = this.d3Element.append('button')
       .classed('hotness-selector', true)
-      .html(`<img class="icon-img" data-inline-svg src="/visualizer/assets/icons/chevron-left.svg" />`)
+      .html(`${chevronLeft}`)
       .on('click', () => {
         this.selectByRank(this.rankNumber - 1)
       })
@@ -108,7 +112,7 @@ class SelectionControls extends HtmlContent {
 
     this.d3SelectCooler = this.d3Element.append('button')
       .classed('hotness-selector next-btn', true)
-      .html(`<span class="visible-from-bp-2">Next hottest</span><img class="icon-img" data-inline-svg src="/visualizer/assets/icons/chevron-right.svg" />`)
+      .html(`<span class="visible-from-bp-2">Next hottest</span>${chevronRight}`)
       .on('click', () => {
         this.selectByRank(this.rankNumber + 1)
       })
@@ -123,7 +127,7 @@ class SelectionControls extends HtmlContent {
 
     this.d3SelectColdest = this.d3Element.append('button')
       .classed('hotness-selector', true)
-      .html(`<img class="icon-img" data-inline-svg src="/visualizer/assets/icons/chevron-right-last.svg" />`)
+      .html(`${chevronRightLast}`)
       .on('click', () => {
         this.selectByRank('last')
       })
