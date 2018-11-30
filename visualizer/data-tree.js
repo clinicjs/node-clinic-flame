@@ -20,7 +20,7 @@ class DataTree {
 
     this.useMerged = true
     this.showOptimizationStatus = false
-    this.exclude = new Set(['cpp', 'regexp', 'v8', 'native', 'init'])
+    this.exclude = shared.defaultExclude
 
     // Set and updated in .update()
     this.flatByHottest = null
@@ -111,12 +111,12 @@ class DataTree {
   }
 
   getFlattenedSorted (sorter, arr) {
-    const filtered = arr.filter(node => !this.exclude.has(node.type))
+    const filtered = arr.filter(node => !this.isNodeExcluded(node))
     return filtered.sort(sorter)
   }
 
   getHeatColor (node, arr = this.flatByHottest) {
-    if (!node) return flameGradient(0)
+    if (!node || this.isNodeExcluded(node)) return flameGradient(0)
 
     const pivotPoint = this.mean / (this.mean + this.maxRootAboveMean + this.maxRootBelowMean)
 
@@ -145,30 +145,28 @@ class DataTree {
   }
 
   getFilteredStackSorter () {
-    const exclude = this.exclude
-
-    function getValue (node) {
-      if (exclude.has(node.type)) {
-        // Value of hidden frames is the sum of their visible children
-        return node.children ? node.children.reduce((acc, child) => {
-          return acc + getValue(child)
-        }, 0) : 0
-      }
-
-      // d3-fg sets `value` to 0 to hide off-screen nodes.
-      // there's no other property to indicate this but the original value is stored on `.original`.
-      if (node.value === 0 && typeof node.original === 'number') {
-        return node.original
-      }
-      return node.value
-    }
-
     return (nodeA, nodeB) => {
-      const valueA = getValue(nodeA)
-      const valueB = getValue(nodeB)
+      const valueA = this.getNodeValue(nodeA)
+      const valueB = this.getNodeValue(nodeB)
 
       return valueA === valueB ? 0 : valueA > valueB ? -1 : 1
     }
+  }
+
+  getNodeValue (node) {
+    if (this.isNodeExcluded(node)) {
+      // Value of hidden frames is the sum of their visible children
+      return node.children ? node.children.reduce((acc, child) => {
+        return acc + this.getNodeValue(child)
+      }, 0) : 0
+    }
+
+    // d3-fg sets `value` to 0 to hide off-screen nodes.
+    // there's no other property to indicate this but the original value is stored on `.original`.
+    if (node.value === 0 && typeof node.original === 'number') {
+      return node.original
+    }
+    return node.value
   }
 
   getSortPosition (node, arr = this.flatByHottest) {

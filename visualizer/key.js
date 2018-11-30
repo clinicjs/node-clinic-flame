@@ -65,7 +65,7 @@ class Key extends HtmlContent {
     this.d3Key3
       .text(showOpt ? 'Not JavaScript' : this.core)
       .style('color', this.ui.getFrameColor({
-        category: 'all-core'
+        category: 'core'
       }, 'foreground', false))
 
     const titleHTML = `Call stacks in <em>${this.appName}</em>, grouped, by time spent on stack`

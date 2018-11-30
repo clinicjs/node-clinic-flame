@@ -41,11 +41,11 @@ class InfoBox extends HtmlContent {
     this.pathText = node.fileName
     this.rankNumber = this.ui.dataTree.getSortPosition(node)
 
-    // 'typeTEMP' key is temporary until d3-fg custom filter is complete
-    const typeLabel = this.ui.getLabelFromKey(node.typeTEMP || node.type, true)
+    const typeLabel = node.category === 'core' ? '' : ` (${this.ui.getLabelFromKey(`${node.category}:${node.type}`, true)})`
     const categoryLabel = this.ui.getLabelFromKey(node.category, true)
-    this.areaText = `In ${categoryLabel} (${typeLabel})`
+    this.areaText = `In ${categoryLabel}${typeLabel}`
 
+    if (node.isInit) this.areaText += '. In initialization process'
     if (node.isInlinable) this.areaText += '. Inlinable'
     if (node.isOptimisable) this.areaText += '. Optimizable'
     if (node.isOptimised) this.areaText += '. Is optimized'

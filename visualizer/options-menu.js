@@ -27,7 +27,7 @@ class OptionsMenu extends HtmlContent {
     super(parentContent, contentProperties)
 
     this.setCodeAreas([
-      { id: 'app' }
+      { id: 'app', excludeKey: 'app' }
     ])
 
     this.addCollapseControl(true, {
@@ -74,7 +74,7 @@ class OptionsMenu extends HtmlContent {
       name: 'Init',
       description: 'Show initialization operations hidden by default, like module loading',
       onChange: (checked) => {
-        this.ui.setCodeAreaVisibility('init', checked)
+        this.ui.setCodeAreaVisibility('is:init', checked)
         this.ui.draw()
       }
     })
@@ -240,7 +240,7 @@ class OptionsMenu extends HtmlContent {
       copyWrapper.append('description')
         .classed('description', true)
         .html((d) => {
-          const description = ui.getDescriptionFromKey(d.id)
+          const description = ui.getDescriptionFromKey(d.excludeKey)
           return description ? ` - ${description}` : ''
         })
     }
@@ -248,9 +248,9 @@ class OptionsMenu extends HtmlContent {
     // Update an existing filter option element,
     // for use with a d3.enter() + update selection.
     function renderOptionElement (li) {
-      li.attr('data-area', data => data.id)
+      li.attr('data-category', data => data.excludeKey.split(':')[0])
       li.select('.name')
-        .text(data => ui.getLabelFromKey(data.id))
+        .text(data => ui.getLabelFromKey(data.excludeKey))
     }
 
     // Toggle a code area visibility setting.
@@ -261,12 +261,12 @@ class OptionsMenu extends HtmlContent {
         let anyChanges = false
         data.children.forEach((child) => {
           // Pass flag to only call ui.updateExclusions() when all changes are made
-          const isChanged = ui.setCodeAreaVisibility(child.id, checked, true)
+          const isChanged = ui.setCodeAreaVisibility(child.excludeKey, checked, true)
           if (isChanged) anyChanges = true
         })
         if (anyChanges) ui.updateExclusions()
       } else {
-        ui.setCodeAreaVisibility(data.id, checked)
+        ui.setCodeAreaVisibility(data.excludeKey, checked)
       }
       ui.draw()
     }
@@ -297,9 +297,9 @@ class OptionsMenu extends HtmlContent {
       .selectAll('li input')
       .property('checked', (area) => {
         if (area.children) {
-          return area.children.some((child) => !excludes.has(child.id))
+          return area.children.some((child) => !excludes.has(child.excludeKey))
         }
-        return !excludes.has(area.id)
+        return !excludes.has(area.excludeKey)
       })
       .property('indeterminate', (area) => {
         const { children } = area
@@ -307,8 +307,8 @@ class OptionsMenu extends HtmlContent {
           return false
         }
 
-        const first = excludes.has(children[0].id)
-        return children.some((child) => excludes.has(child.id) !== first)
+        const first = excludes.has(children[0].excludeKey)
+        return children.some((child) => excludes.has(child.excludeKey) !== first)
       })
   }
 
@@ -323,7 +323,7 @@ class OptionsMenu extends HtmlContent {
       .property('checked', showOptimizationStatus)
       .select(function () { return this.closest('li') })
       .classed('disabled', useMerged)
-    this.d3InitCheckbox.property('checked', !exclude.has('init'))
+    this.d3InitCheckbox.property('checked', !exclude.has('is:init'))
 
     // Updating the app name
     this.d3VisibilityOptions.select('.name')

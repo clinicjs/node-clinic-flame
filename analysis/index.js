@@ -37,10 +37,19 @@ async function analyse (paths) {
       childrenVisibilityToggle: true }
   ]
 
+  codeAreas.forEach(area => {
+    area.excludeKey = area.id
+    if (area.children) {
+      area.children.forEach(childArea => {
+        childArea.excludeKey = `${area.id}:${childArea.id}`
+      })
+    }
+  })
+
   const steps = [
     (tree) => labelNodes(tree),
     (tree) => tree.walk((node) => {
-      node.categorise(systemInfo)
+      node.categorise(systemInfo, appName)
       node.format(systemInfo)
     }),
     (tree) => setStackTop(tree, defaultExclude)

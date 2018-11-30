@@ -79,20 +79,18 @@ class FrameNode {
     return !getPlatformPath(systemInfo).isAbsolute(fullFileName)
   }
 
-  categorise (systemInfo) {
+  categorise (systemInfo, appName) {
     const { name } = this // this.name remains unmutated: the initial name returned by 0x
 
     const {
       category,
-      type,
-      typeTEMP // Temporary until d3-fg custom property filter complete
-    } = this.getCoreType(name, systemInfo) ||
+      type
+    } = this.getCoreOrV8Type(name, systemInfo) ||
       this.getDepType(name, systemInfo) ||
-      this.getAppType(name, systemInfo)
+      this.getAppType(name, appName)
 
-    this.category = category // Top level filters: 'app' or 'deps' or 'all-core'
+    this.category = category // Top level filters: 'app', 'deps', 'core' or 'all-v8'
     this.type = type // Second-level filters; core are static, app and deps depend on app
-    this.typeTEMP = typeTEMP // Temporary access to dependency name or app directory
 
     if (type === 'regexp') {
       this.formatRegExpName()
@@ -114,19 +112,19 @@ class FrameNode {
     // TODO: add more cases like this
   }
 
-  getCoreType (name, systemInfo) {
+  getCoreOrV8Type (name, systemInfo) {
+    // TODO: see if any subdivisions of core are useful
+    const core = { type: 'core', category: 'core' }
+
     let type
 
-    // TODO: Delete 'init' condition here when adding custom d3-fg filter on properties
-    if (/\[INIT]$/.test(name)) {
-      type = 'init'
-    } else if (/\[CODE:RegExp]$/.test(name)) {
+    if (/\[CODE:RegExp]$/.test(name)) {
       type = 'regexp'
     } else if (!/\.m?js/.test(name)) {
       if (/\[CODE:.*?]$/.test(name) || /v8::internal::.*\[CPP]$/.test(name)) {
         type = 'v8'
       } else /* istanbul ignore next */ if (/\.$/.test(name)) {
-        type = 'core'
+        return core
       } else if (/\[CPP]$/.test(name) || /\[SHARED_LIB]$/.test(name)) {
         type = 'cpp'
       } else if (/\[eval]/.test(name)) {
@@ -141,12 +139,12 @@ class FrameNode {
     } else if (/ native /.test(name)) {
       type = 'native'
     } else if (this.isNodeCore(systemInfo)) {
-      type = 'core'
+      return core
     }
 
     return type ? {
       type,
-      category: 'all-core'
+      category: 'all-v8'
     } : null
   }
 
@@ -158,31 +156,22 @@ class FrameNode {
 
     const match = name.match(depDirRegex)
     return match ? {
-      // TODO: use this type after adding custom d3-fg filter on properties including category
-      typeTEMP: match[1],
-      type: 'deps', // Temporary until d3-fg custom property filter complete
+      type: match[1],
       category: 'deps'
     } : null
   }
 
-  getAppType (name, systemInfo) {
-    const platformPath = getPlatformPath(systemInfo)
-
-    const parentDir = platformPath.join(systemInfo.mainDirectory, `..${systemInfo.pathSeparator}`)
-
+  getAppType (name, appName) {
     return {
-      // TODO: use this type after adding custom d3-fg filter on properties including category
-      typeTEMP: platformPath.relative(parentDir, platformPath.dirname(this.fileName)),
-      type: 'app', // Temporary until d3-fg custom property filter complete
+      // TODO: profile some large applications with a lot of app code, see if there's a useful heuristic to split
+      // out types, e.g. folders containing more than n files or look for common patterns like `lib`
+      type: appName,
       category: 'app'
     }
   }
 
   anonymise (systemInfo) {
-    if (!this.fileName || this.isNodeCore(systemInfo) ||
-        // Init frames are in the all-core category but may be part of the app.
-        // TODO Remove the `init` after adding custom d3-fg filter on properties like `isInit`
-        (this.category === 'all-core' && this.type !== 'init')) {
+    if (!this.fileName || this.isNodeCore(systemInfo) || this.category === 'all-v8') {
       return
     }
 
@@ -236,7 +225,6 @@ class FrameNode {
       target: this.target || '',
 
       type: this.type,
-      typeTEMP: this.typeTEMP, // Temporary until d3-fg custom property filter complete
       category: this.category,
 
       isOptimised: this.isOptimised,
