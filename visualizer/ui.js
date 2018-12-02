@@ -7,6 +7,7 @@ const DataTree = require('./data-tree.js')
 const History = require('./history.js')
 
 const TooltipHtmlContent = require('./flame-graph-tooltip-content')
+const getNoDataNode = require('./no-data-node.js')
 
 class Ui extends events.EventEmitter {
   constructor (wrapperSelector) {
@@ -16,7 +17,9 @@ class Ui extends events.EventEmitter {
 
     this.dataTree = null
     this.highlightedNode = null
-    this.selectedNode = null
+
+    this.selectedNode = getNoDataNode()
+
     this.zoomedNode = null
     this.changedExclusions = {
       toHide: new Set(),
@@ -125,10 +128,10 @@ class Ui extends events.EventEmitter {
 
   selectHottestNode (opts) {
     const node = this.dataTree.getFrameByRank(0)
-    const nodeInvalidMessage = ' node selected in selectHottestNode'
+    if (!node) return getNoDataNode()
 
     // Prevent infinite loop if some future bug allows an invalid node to be returned here
-    if (!node) throw new Error('No' + nodeInvalidMessage)
+    const nodeInvalidMessage = ' node selected in selectHottestNode'
     if (node.id === 0) throw new Error('Root' + nodeInvalidMessage)
     if (this.dataTree.isNodeExcluded(node)) throw new Error('Excluded' + nodeInvalidMessage)
 
@@ -297,7 +300,7 @@ class Ui extends events.EventEmitter {
       }
 
       let scrollAmount = scrollContainer.scrollHeight
-      if (this.selectedNode) {
+      if (this.selectedNode && this.selectedNode.category !== 'none') {
         const viewportHeight = scrollContainer.clientHeight
         const rect = this.flameWrapper.getNodeRect(this.selectedNode)
 
@@ -412,7 +415,9 @@ class Ui extends events.EventEmitter {
   updateExclusions ({ initial, pushState = true, selectedNodeId, zoomedNodeId } = {}) {
     this.dataTree.update(initial)
 
-    if (!selectedNodeId && this.selectedNode && this.dataTree.isNodeExcluded(this.selectedNode)) {
+    const selectedNodeNotShown = this.selectedNode && (this.dataTree.isNodeExcluded(this.selectedNode) || this.selectedNode.category === 'none')
+
+    if (!initial && !selectedNodeId && selectedNodeNotShown) {
       this.selectHottestNode()
     }
 
