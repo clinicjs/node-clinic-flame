@@ -7,10 +7,10 @@
   "scripts": {
     "visualize-watch": "node debug/visualize-watch.js",
     "visualize-all": "node debug/visualize-all.js",
-    "test": "npm run lint && tap --100 test/*.test.js",
+    "test": "npm run lint && tap --timeout=50 --100 test/*.test.js",
     "ci-lint": "npm run lint",
-    "ci-test-cov": "tap --100 test/*.test.js",
-    "ci-test-no-cov": "tap test/*.test.js",
+    "ci-test-cov": "tap --100 --timeout=50 test/*.test.js",
+    "ci-test-no-cov": "tap --timeout=40 test/*.test.js",
     "lint": "standard --fix | snazzy"
   },
   "author": "",
