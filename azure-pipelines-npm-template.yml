@@ -21,4 +21,8 @@ jobs:
   - bash: npm run ci-lint
     displayName: Check linting
   - bash: npm run ci-test-cov
-    displayName: Run tests
+    displayName: Run tests with code coverage
+    condition: ne(variables['node_versions'], '8.x')
+  - bash: npm run ci-test-no-cov
+    displayName: Run tests without code coverage
+    condition: eq(variables['node_versions'], '8.x')
