@@ -33,7 +33,7 @@ async function analyse (paths) {
       node.format(systemInfo)
 
       if (node.category === 'deps') {
-        depCodeAreas.add(`deps:${node.type}`)
+        depCodeAreas.add(node.type)
       }
     }),
     (tree) => setStackTop(tree, defaultExclude)
