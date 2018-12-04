@@ -32,8 +32,8 @@ async function analyse (paths) {
       node.categorise(systemInfo, appName)
       node.format(systemInfo)
 
-      if (node.type === 'deps') {
-        depCodeAreas.add(`deps:${node.typeTEMP}`)
+      if (node.category === 'deps') {
+        depCodeAreas.add(`deps:${node.type}`)
       }
     }),
     (tree) => setStackTop(tree, defaultExclude)
