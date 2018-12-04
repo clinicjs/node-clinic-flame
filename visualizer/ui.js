@@ -409,10 +409,10 @@ class Ui extends events.EventEmitter {
       return keysToDescriptions[key]
     }
 
-    if (id.startsWith('deps:')) {
+    if (key.startsWith('deps:')) {
       // TODO use actual path, this is incorrect for
       // nested dependencies
-      return `./node_modules/${id.slice(5)}`
+      return `./node_modules/${key.slice(5)}`
     }
 
     return null
