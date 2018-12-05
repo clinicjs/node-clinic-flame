@@ -49,6 +49,9 @@ class ClinicFlame extends events.EventEmitter {
     callbackify(x({
       argv,
       onPort: this.detectPort ? onPort : undefined,
+      onProcessExit: () => {
+        this.emit('analysing')
+      },
       pathToNodeBinary: args[0],
       collectOnly: true,
       writeTicks: true,
