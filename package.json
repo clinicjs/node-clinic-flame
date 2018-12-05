@@ -16,7 +16,7 @@
   "author": "",
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "0x": "^4.6.0",
+    "0x": "^4.7.2",
     "@nearform/clinic-common": "^1.1.0",
     "brfs": "^2.0.1",
     "browserify": "^16.2.2",
