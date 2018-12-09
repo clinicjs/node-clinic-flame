@@ -49,17 +49,17 @@ class Key extends HtmlContent {
     const showOpt = this.ui.dataTree.showOptimizationStatus
 
     this.d3Key1
-      .text(showOpt ? 'Optimizable' : this.appName)
+      .text(showOpt ? 'Unoptimized' : this.appName)
       .style('color', this.ui.getFrameColor({
         category: 'app',
-        isOptimisable: true
+        isUnoptimized: true
       }, 'foreground', false))
 
     this.d3Key2
-      .text(showOpt ? 'Is optimized' : this.deps)
+      .text(showOpt ? 'Optimized' : this.deps)
       .style('color', this.ui.getFrameColor({
         category: 'deps',
-        isOptimised: true
+        isOptimized: true
       }, 'foreground', false))
 
     this.d3Key3
