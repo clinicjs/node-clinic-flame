@@ -60,6 +60,10 @@
   max-width: 66.67%;
 }
 
+#info-box .frame-line-col {
+  color: var(--primary-grey);
+  white-space: nowrap;
+}
 
 
 /* presentation mode */
