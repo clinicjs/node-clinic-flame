@@ -12,7 +12,7 @@ class InfoBox extends HtmlContent {
     } = getNoDataNode()
 
     this.functionText = functionName
-    this.pathText = fileName
+    this.pathHtml = fileName
     this.areaText = 'Processing data...'
   }
 
@@ -45,10 +45,10 @@ class InfoBox extends HtmlContent {
 
     this.functionText = node.functionName
 
-    this.pathText = node.fileName
+    this.pathHtml = node.fileName
     if (node.lineNumber && node.columnNumber) {
       // Two spaces (in <pre> tag) so this is visually linked to but distinct from main path, including when wrapped
-      this.pathText += `  <span class="frame-line-col">line:${node.lineNumber} column:${node.columnNumber}</span>`
+      this.pathHtml += `  <span class="frame-line-col">line:${node.lineNumber} column:${node.columnNumber}</span>`
     }
 
     this.rankNumber = this.ui.dataTree.getSortPosition(node)
@@ -76,7 +76,7 @@ class InfoBox extends HtmlContent {
     super.draw()
 
     this.d3FrameFunction.text(this.functionText)
-    this.d3FramePath.html(this.pathText)
+    this.d3FramePath.html(this.pathHtml)
     this.d3FrameArea.text(this.areaText)
   }
 }
