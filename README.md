@@ -1,6 +1,6 @@
 # node-clinic-flame
 
-[![npm version][npm-version]][npm-url] [![Stability Stable][stability-stable]][stability-docs] [![CircleCI build status][circleci-status]][circleci-url] [![Appveyor build status][appveyor-status]][appveyor-url]
+[![npm version][npm-version]][npm-url] [![Stability Stable][stability-stable]][stability-docs] [![Azure Pipelines build status][azure-status]][azure-url]
 [![Downloads][npm-downloads]][npm-url] [![Code style][lint-standard]][lint-standard-url]
 
 Programmable interface to [clinic][clinic-url] flame. Learn more about clinic: https://clinicjs.org/
@@ -65,10 +65,6 @@ possible error.
 ## License
 [GPL 3.0](LICENSE)
 
-[appveyor-status]: https://ci.appveyor.com/api/projects/status/3twvae268fobe442?svg=true
-[appveyor-url]: https://ci.appveyor.com/project/nearForm/node-clinic-flame
-[circleci-status]: https://circleci.com/gh/nearform/node-clinic-flame/tree/master.svg?style=shield
-[circleci-url]: https://circleci.com/gh/nearform/node-clinic-flame
 [stability-stable]: https://img.shields.io/badge/stability-stable-green.svg?style=flat-square
 [stability-docs]: https://nodejs.org/api/documentation.html#documentation_stability_index
 [npm-version]: https://img.shields.io/npm/v/@nearform/flame.svg?style=flat-square
@@ -80,3 +76,5 @@ possible error.
 [`<Object>`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
 [`<boolean>`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type
 [`<String>`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
+[azure-status]: https://dev.azure.com/node-clinic/node-clinic/_apis/build/status/nearform.node-clinic-doctor
+[azure-url]: https://dev.azure.com/node-clinic/node-clinic/_apis/build/status/nearform.node-clinic-doctor?branchName=master
