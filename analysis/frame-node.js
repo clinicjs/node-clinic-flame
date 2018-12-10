@@ -48,8 +48,8 @@ class FrameNode {
       this.columnNumber = parseInt(columnNumber, 10)
       this.isInit = isInit != null
       this.isInlinable = isInlinable != null
-      this.isOptimised = optimizationFlag === '~'
-      this.isOptimisable = optimizationFlag === '*'
+      this.isOptimized = optimizationFlag === '~'
+      this.isUnoptimized = optimizationFlag === '*'
     } else {
       const m = this.name.match(cppFrameRx)
       /* istanbul ignore else: Only triggers if there's a bug */
@@ -227,8 +227,8 @@ class FrameNode {
       type: this.type,
       category: this.category,
 
-      isOptimised: this.isOptimised,
-      isOptimisable: this.isOptimisable,
+      isOptimized: this.isOptimized,
+      isUnoptimized: this.isUnoptimized,
       isInlinable: this.isInlinable,
       isInit: this.isInit,
 

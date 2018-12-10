@@ -44,7 +44,13 @@ class InfoBox extends HtmlContent {
     }
 
     this.functionText = node.functionName
+
     this.pathText = node.fileName
+    if (node.lineNumber && node.columnNumber) {
+      // Two spaces (in <pre> tag) so this is visually linked to but distinct from main path, including when wrapped
+      this.pathText += `  <span class="frame-line-col">line:${node.lineNumber} column:${node.columnNumber}</span>`
+    }
+
     this.rankNumber = this.ui.dataTree.getSortPosition(node)
 
     const typeLabel = node.category === 'core' ? '' : ` (${this.ui.getLabelFromKey(`${node.category}:${node.type}`, true)})`
@@ -55,8 +61,8 @@ class InfoBox extends HtmlContent {
 
     if (node.isInit) this.areaText += '. In initialization process'
     if (node.isInlinable) this.areaText += '. Inlinable'
-    if (node.isOptimisable) this.areaText += '. Optimizable'
-    if (node.isOptimised) this.areaText += '. Is optimized'
+    if (node.isUnoptimized) this.areaText += '. Unoptimized'
+    if (node.isOptimized) this.areaText += '. Optimized'
     this.areaText += '.'
 
     this.draw()
@@ -70,7 +76,7 @@ class InfoBox extends HtmlContent {
     super.draw()
 
     this.d3FrameFunction.text(this.functionText)
-    this.d3FramePath.text(this.pathText)
+    this.d3FramePath.html(this.pathText)
     this.d3FrameArea.text(this.areaText)
   }
 }
