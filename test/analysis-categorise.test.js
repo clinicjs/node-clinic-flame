@@ -88,8 +88,8 @@ test('analysis - categorise node properties', (t) => {
   t.equal(customNode.type, 'Contains spaces')
   t.equal(customNode.functionName, 'Unexpected multiple customFlags')
   t.equal(customNode.fileName, '.\\sub_dir\\index.js')
-  t.ok(customNode.isOptimised)
-  t.notOk(customNode.isOptimisable)
+  t.ok(customNode.isOptimized)
+  t.notOk(customNode.isUnoptimized)
   t.notOk(dataTree.isNodeExcluded(customNode))
 
   const depNode = byProps({
@@ -104,8 +104,8 @@ test('analysis - categorise node properties', (t) => {
   t.equal(depNode.fileName, '.\\node_modules\\some-module\\index.js')
   t.equal(depNode.lineNumber, 1)
   t.equal(depNode.columnNumber, 2)
-  t.notOk(depNode.isOptimised)
-  t.ok(depNode.isOptimisable)
+  t.notOk(depNode.isOptimized)
+  t.ok(depNode.isUnoptimized)
   t.notOk(dataTree.isNodeExcluded(depNode))
   dataTree.exclude.add('deps')
   t.ok(dataTree.isNodeExcluded(depNode))
@@ -121,8 +121,8 @@ test('analysis - categorise node properties', (t) => {
   t.equal(regexpNode.type, 'regexp')
   t.equal(regexpNode.functionName, '/[\u0000zA-Z\u0000#$%&\'*+.|~]+$/')
   t.equal(regexpNode.fileName, '[CODE:RegExp]')
-  t.notOk(regexpNode.isOptimised)
-  t.notOk(regexpNode.isOptimisable)
+  t.notOk(regexpNode.isOptimized)
+  t.notOk(regexpNode.isUnoptimized)
   t.ok(dataTree.isNodeExcluded(regexpNode))
 
   // Handle INIT and INLINABLE frames
@@ -137,8 +137,8 @@ test('analysis - categorise node properties', (t) => {
   t.equal(inlinableNode.fileName, './0x/examples/dummy.js')
   t.ok(inlinableNode.isInlinable)
   t.notOk(inlinableNode.isInit)
-  t.notOk(inlinableNode.isOptimised)
-  t.notOk(inlinableNode.isOptimisable)
+  t.notOk(inlinableNode.isOptimized)
+  t.notOk(inlinableNode.isUnoptimized)
   t.notOk(dataTree.isNodeExcluded(inlinableNode))
   dataTree.exclude.add('is:inlinable')
   t.ok(dataTree.isNodeExcluded(inlinableNode))
@@ -153,8 +153,8 @@ test('analysis - categorise node properties', (t) => {
   t.equal(initNode.fileName, './0x/examples/dummy.js')
   t.ok(initNode.isInit)
   t.notOk(initNode.isInlinable)
-  t.notOk(initNode.isOptimised)
-  t.ok(initNode.isOptimisable)
+  t.notOk(initNode.isOptimized)
+  t.ok(initNode.isUnoptimized)
 
   t.ok(dataTree.isNodeExcluded(initNode))
 

@@ -61,8 +61,8 @@ class InfoBox extends HtmlContent {
 
     if (node.isInit) this.areaText += '. In initialization process'
     if (node.isInlinable) this.areaText += '. Inlinable'
-    if (node.isOptimisable) this.areaText += '. Optimizable'
-    if (node.isOptimised) this.areaText += '. Is optimized'
+    if (node.isUnoptimized) this.areaText += '. Unoptimized'
+    if (node.isOptimized) this.areaText += '. Optimized'
     this.areaText += '.'
 
     this.draw()

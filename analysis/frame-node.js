@@ -9,7 +9,8 @@ class FrameNode {
     this.id = null
 
     /* istanbul ignore next: must be a string; can be null but can't replicate in tests */
-    this.name = data.name || ''
+    // If backslashes have been hard-escaped as their unicode escape char, swap them back in
+    this.name = data.name.replace(/\\u005c/g, '\\') || ''
 
     this.onStack = data.value
     this.onStackTop = { base: data.top }
@@ -48,8 +49,8 @@ class FrameNode {
       this.columnNumber = parseInt(columnNumber, 10)
       this.isInit = isInit != null
       this.isInlinable = isInlinable != null
-      this.isOptimised = optimizationFlag === '~'
-      this.isOptimisable = optimizationFlag === '*'
+      this.isOptimized = optimizationFlag === '~'
+      this.isUnoptimized = optimizationFlag === '*'
     } else {
       const m = this.name.match(cppFrameRx)
       /* istanbul ignore else: Only triggers if there's a bug */
@@ -227,8 +228,8 @@ class FrameNode {
       type: this.type,
       category: this.category,
 
-      isOptimised: this.isOptimised,
-      isOptimisable: this.isOptimisable,
+      isOptimized: this.isOptimized,
+      isUnoptimized: this.isUnoptimized,
       isInlinable: this.isInlinable,
       isInit: this.isInit,
 

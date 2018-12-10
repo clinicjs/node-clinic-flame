@@ -45,8 +45,8 @@ function renderLabel (frameHeight, options) {
 
   if (nodeData.isInlinable) functionName += ' (inlinable)'
 
-  if (this.ui.dataTree.showOptimizationStatus && (nodeData.isOptimised || nodeData.isOptimisable)) {
-    functionName += ` (${nodeData.isOptimised ? 'is optimized' : 'optimizable'})`
+  if (this.ui.dataTree.showOptimizationStatus && (nodeData.isOptimized || nodeData.isUnoptimized)) {
+    functionName += ` (${nodeData.isOptimized ? 'opt.' : 'unopt.'})`
   }
 
   if (fileName === null) {

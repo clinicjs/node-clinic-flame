@@ -502,8 +502,8 @@ class Ui extends events.EventEmitter {
     }
 
     if (this.dataTree.showOptimizationStatus) {
-      if (nodeData.isOptimisable) return this.exposedCSS['max-contrast']
-      if (nodeData.isOptimised) return this.exposedCSS['primary-grey']
+      if (nodeData.isUnoptimized) return this.exposedCSS['max-contrast']
+      if (nodeData.isOptimized) return this.exposedCSS['primary-grey']
       return this.exposedCSS['grey-blue']
     } else {
       return this.exposedCSS[nodeData.category]
