@@ -9,7 +9,8 @@ class FrameNode {
     this.id = null
 
     /* istanbul ignore next: must be a string; can be null but can't replicate in tests */
-    this.name = data.name || ''
+    // If backslashes have been hard-escaped as their unicode escape char, swap them back in
+    this.name = data.name.replace(/\\u005c/g, '\\') || ''
 
     this.onStack = data.value
     this.onStackTop = { base: data.top }
