@@ -383,13 +383,10 @@ class Ui extends events.EventEmitter {
       return keysToLabels[key]
     }
 
-    if (key.startsWith('deps:')) {
-      return key.slice(5)
-    }
-
     const splitKey = key.split(':')
-    if (splitKey.length > 0 && keysToLabels[splitKey[1]]) {
-      return keysToLabels[splitKey[1]]
+    if (splitKey.length > 1) {
+      const type = splitKey[1]
+      return keysToLabels[type] || type
     }
 
     return key
