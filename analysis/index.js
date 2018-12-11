@@ -12,6 +12,14 @@ const {
 
 const readFile = promisify(fs.readFile)
 
+// TODO Remove this function when the UI side of dependency code areas
+// is implemented.
+function removeDependencyAreasFromCodeAreas (codeAreas) {
+  const depArea = codeAreas.find((area) => area.id === 'deps')
+  delete depArea.children
+  delete depArea.childrenVisibilityToggle
+}
+
 async function analyse (paths) {
   const [ systemInfo, ticks, inlined ] = await Promise.all([
     readFile(paths['/systeminfo'], 'utf8').then(JSON.parse),
@@ -41,20 +49,11 @@ async function analyse (paths) {
     step(unmerged)
   })
 
-  // Turn a Set of code area names into a sorted list of code area objects.
-  // This sorts by name right now, just to have a consistent output,
-  // but could use eg. the heat of the area in the future.
-  function toCodeAreaChildren (set) {
-    return Array.from(set, (id) => {
-      return { id }
-    }).sort(sorter)
-
-    function sorter (a, b) {
-      return a.id.localeCompare(b.id)
-    }
-  }
-
   const codeAreas = collectCodeAreas({ merged, unmerged })
+
+  // TODO Remove this TEMPORARY call when UI side of code area collection
+  // is implemented
+  removeDependencyAreasFromCodeAreas(codeAreas)
 
   return {
     appName,
