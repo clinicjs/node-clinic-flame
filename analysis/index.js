@@ -4,12 +4,21 @@ const { promisify } = require('util')
 const ticksToTree = require('0x/lib/ticks-to-tree')
 const FrameNode = require('./frame-node.js')
 const labelNodes = require('./label-nodes.js')
+const collectCodeAreas = require('./code-areas.js')
 const {
   setStackTop,
   defaultExclude
 } = require('../shared.js')
 
 const readFile = promisify(fs.readFile)
+
+// TODO Remove this function when the UI side of dependency code areas
+// is implemented.
+function removeDependencyAreasFromCodeAreas (codeAreas) {
+  const depArea = codeAreas.find((area) => area.id === 'deps')
+  delete depArea.children
+  delete depArea.childrenVisibilityToggle
+}
 
 async function analyse (paths) {
   const [ systemInfo, ticks, inlined ] = await Promise.all([
@@ -22,29 +31,6 @@ async function analyse (paths) {
   const platformPath = systemInfo.pathSeparator === '\\' ? path.win32 : path.posix
   const appName = platformPath.basename(systemInfo.mainDirectory)
   const pathSeparator = systemInfo.pathSeparator
-
-  const codeAreas = [
-    { id: 'app' },
-    { id: 'deps' },
-    { id: 'core' },
-    { id: 'all-v8',
-      children: [
-        { id: 'v8' },
-        { id: 'native' },
-        { id: 'cpp' },
-        { id: 'regexp' }
-      ],
-      childrenVisibilityToggle: true }
-  ]
-
-  codeAreas.forEach(area => {
-    area.excludeKey = area.id
-    if (area.children) {
-      area.children.forEach(childArea => {
-        childArea.excludeKey = `${area.id}:${childArea.id}`
-      })
-    }
-  })
 
   const steps = [
     (tree) => labelNodes(tree),
@@ -62,6 +48,12 @@ async function analyse (paths) {
     step(merged)
     step(unmerged)
   })
+
+  const codeAreas = collectCodeAreas({ merged, unmerged })
+
+  // TODO Remove this TEMPORARY call when UI side of code area collection
+  // is implemented
+  removeDependencyAreasFromCodeAreas(codeAreas)
 
   return {
     appName,

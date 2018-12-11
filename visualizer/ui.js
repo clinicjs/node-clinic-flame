@@ -378,8 +378,18 @@ class Ui extends events.EventEmitter {
       'all-v8:cpp': 'V8 C++',
       'all-v8:regexp': 'RegExp'
     }
+
+    if (keysToLabels[key]) {
+      return keysToLabels[key]
+    }
+
     const splitKey = key.split(':')
-    return keysToLabels[key] || (splitKey.length ? splitKey[1] : key)
+    if (splitKey.length > 1) {
+      const type = splitKey[1]
+      return keysToLabels[type] || type
+    }
+
+    return key
   }
 
   getDescriptionFromKey (key) {
@@ -392,7 +402,17 @@ class Ui extends events.EventEmitter {
       'all-v8:regexp': `The RegExp notation is shown as the function name. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#rx">More info</a>`
     }
 
-    return keysToDescriptions[key] || null
+    if (keysToDescriptions[key]) {
+      return keysToDescriptions[key]
+    }
+
+    if (key.startsWith('deps:')) {
+      // TODO use actual path, this is incorrect for
+      // nested dependencies
+      return `./node_modules/${key.slice(5)}`
+    }
+
+    return null
   }
 
   setCodeAreaVisibility (name, visible, manyTimes) {

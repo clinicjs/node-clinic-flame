@@ -21,19 +21,21 @@ class History extends EventEmitter {
   }
 
   setData (dataTree) {
-    // TODO take this information from dataTree
-    // once analysis supports it.
+    const { codeAreas } = dataTree
+    // Manually populate special quasi-categories
     this.availableExclusions = [
-      'app',
-      'deps',
-      'core',
-      'all-v8:native',
-      'all-v8:cpp',
-      'all-v8:v8',
-      'all-v8:regexp',
       'is:init',
       'is:inlinable'
     ]
+
+    codeAreas.forEach((group) => {
+      this.availableExclusions.push(group.excludeKey)
+      if (Array.isArray(group.children)) {
+        group.children.forEach((area) => {
+          this.availableExclusions.push(area.excludeKey)
+        })
+      }
+    })
 
     if (window.location.hash) {
       this.emit('change', this.deserialize(window.location.hash.replace(/^#/, '')))
@@ -57,15 +59,33 @@ class History extends EventEmitter {
       .map((name) => exclude.has(name) ? '1' : '0')
       .join('')
 
-    return parseInt(bits, 2).toString(16)
+    // serialize in groups of 16 bits (4 hex characters)
+    // this way we can have more groups than there are (reliable) bits in a JS number.
+    const groups = []
+    const groupSize = Math.pow(2, 4)
+    for (let i = 0; i < bits.length; i += groupSize) {
+      // If there are less than 16 bits left, we add some dummy 0s at the end which
+      // are ignored by deserializeExcludes().
+      const word = bits.slice(i, i + groupSize)
+        .padEnd(groupSize, '0')
+      groups.push(parseInt(word, 2).toString(16))
+    }
+    return groups.join('-')
   }
 
   deserializeExcludes (string) {
-    const bits = parseInt(string, 16).toString(2)
-      // The leading 0s were dropped in the parseInt(2).toString(16) serialization dance, add them back.
-      .padStart(this.availableExclusions.length, '0')
-      .split('')
-      .map((n) => n === '1')
+    const bits = []
+    const groupSize = Math.pow(2, 4)
+    const groups = string.split('-')
+    groups.forEach((group, i) => {
+      const groupBits = parseInt(group, 16).toString(2)
+        // The leading 0s were dropped in the parseInt(2).toString(16) serialization dance
+        // in serializeExcludes(), add them back.
+        .padStart(groupSize, '0')
+        .split('')
+        .map((n) => n === '1')
+      bits.push(...groupBits)
+    })
 
     const exclude = new Set()
     this.availableExclusions.forEach((name, i) => {
@@ -73,7 +93,6 @@ class History extends EventEmitter {
         exclude.add(name)
       }
     })
-
     return exclude
   }
 
