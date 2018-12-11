@@ -60,9 +60,12 @@ class History extends EventEmitter {
       .join('')
 
     // serialize in groups of 16 bits (4 hex characters)
+    // this way we can have more groups than there are (reliable) bits in a JS number.
     const groups = []
     const groupSize = Math.pow(2, 4)
     for (let i = 0; i < bits.length; i += groupSize) {
+      // If there are less than 16 bits left, we add some dummy 0s at the end which
+      // are ignored by deserializeExcludes().
       const word = bits.slice(i, i + groupSize)
         .padEnd(groupSize, '0')
       groups.push(parseInt(word, 2).toString(16))
@@ -75,10 +78,11 @@ class History extends EventEmitter {
     const groupSize = Math.pow(2, 4)
     const groups = string.split('-')
     groups.forEach((group, i) => {
-      let bitString = parseInt(group, 16).toString(2)
-        // The leading 0s were dropped in the parseInt(2).toString(16) serialization dance, add them back.
+      const groupBits = parseInt(group, 16).toString(2)
+        // The leading 0s were dropped in the parseInt(2).toString(16) serialization dance
+        // in serializeExcludes(), add them back.
         .padStart(groupSize, '0')
-      const groupBits = bitString.split('')
+        .split('')
         .map((n) => n === '1')
       bits.push(...groupBits)
     })
