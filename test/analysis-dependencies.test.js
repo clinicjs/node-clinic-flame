@@ -1,3 +1,5 @@
+'use strict'
+
 const { test } = require('tap')
 const FrameNode = require('../analysis/frame-node.js')
 const collectCodeAreas = require('../analysis/code-areas.js')

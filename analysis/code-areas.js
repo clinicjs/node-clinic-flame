@@ -1,3 +1,5 @@
+'use strict'
+
 // Turn a Set of code area names into a sorted list of code area objects.
 // This sorts by name right now, just to have a consistent output,
 // but could use eg. the heat of the area in the future.
