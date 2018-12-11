@@ -4,6 +4,7 @@ const { promisify } = require('util')
 const ticksToTree = require('0x/lib/ticks-to-tree')
 const FrameNode = require('./frame-node.js')
 const labelNodes = require('./label-nodes.js')
+const collectCodeAreas = require('./code-areas.js')
 const {
   setStackTop,
   defaultExclude
@@ -23,18 +24,11 @@ async function analyse (paths) {
   const appName = platformPath.basename(systemInfo.mainDirectory)
   const pathSeparator = systemInfo.pathSeparator
 
-  const appCodeAreas = new Set()
-  const depCodeAreas = new Set()
-
   const steps = [
     (tree) => labelNodes(tree),
     (tree) => tree.walk((node) => {
       node.categorise(systemInfo, appName)
       node.format(systemInfo)
-
-      if (node.category === 'deps') {
-        depCodeAreas.add(node.type)
-      }
     }),
     (tree) => setStackTop(tree, defaultExclude)
   ]
@@ -60,34 +54,7 @@ async function analyse (paths) {
     }
   }
 
-  const codeAreas = [
-    { id: 'app',
-      children: toCodeAreaChildren(appCodeAreas),
-      // Only show the "show more" button if there's many code areas
-      // at 2 or less the button will take at least as much space as the area labels anyway
-      childrenVisibilityToggle: appCodeAreas.size > 2 },
-    { id: 'deps',
-      children: toCodeAreaChildren(depCodeAreas),
-      childrenVisibilityToggle: depCodeAreas.size > 2 },
-    { id: 'core' },
-    { id: 'all-v8',
-      children: [
-        { id: 'v8' },
-        { id: 'native' },
-        { id: 'cpp' },
-        { id: 'regexp' }
-      ],
-      childrenVisibilityToggle: true }
-  ]
-
-  codeAreas.forEach(area => {
-    area.excludeKey = area.id
-    if (area.children) {
-      area.children.forEach(childArea => {
-        childArea.excludeKey = `${area.id}:${childArea.id}`
-      })
-    }
-  })
+  const codeAreas = collectCodeAreas({ merged, unmerged })
 
   return {
     appName,
