@@ -18,6 +18,7 @@
   },
   "nyc": {
     "exclude": [
+      "test/*.js",
       "shared.js",
       "visualizer/d3.js",
       "visualizer/data-tree.js",
