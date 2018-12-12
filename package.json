@@ -9,9 +9,17 @@
     "visualize-all": "node debug/visualize-all.js",
     "test": "npm run lint && tap --timeout=50 --100 test/*.test.js",
     "ci-lint": "npm run lint",
-    "ci-test-cov": "tap --100 --timeout=50 test/*.test.js",
+    "ci-test-cov": "tap --timeout=50 --100 test/*.test.js",
     "ci-test-no-cov": "tap --timeout=40 test/*.test.js",
     "lint": "standard --fix | snazzy"
+  },
+  "nyc": {
+    "exclude": [
+      "shared.js",
+      "visualizer/d3.js",
+      "visualizer/data-tree.js",
+      "visualizer/no-data-node.js"
+    ]
   },
   "author": "",
   "license": "GPL-3.0-or-later",
