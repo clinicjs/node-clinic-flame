@@ -20,6 +20,7 @@ class History extends EventEmitter {
     }
   }
 
+  /* istanbul ignore next: no test for this yet */
   setData (dataTree) {
     const { codeAreas } = dataTree
     // Manually populate special quasi-categories
@@ -37,11 +38,13 @@ class History extends EventEmitter {
       }
     })
 
+    /* istanbul ignore next: browser only */
     if (window.location.hash) {
       this.emit('change', this.deserialize(window.location.hash.replace(/^#/, '')))
     }
   }
 
+  /* istanbul ignore next: browser only */
   push (params, opts) {
     const hash = this.serialize(params)
     const path = `${window.location.pathname}#${hash}`
@@ -96,6 +99,7 @@ class History extends EventEmitter {
     return exclude
   }
 
+  /* istanbul ignore next: no test for this yet */
   deserialize (query) {
     const params = qs.parse(query)
     const exclude = this.deserializeExcludes(params.exclude)
@@ -114,6 +118,7 @@ class History extends EventEmitter {
     }
   }
 
+  /* istanbul ignore next: no test for this yet */
   serialize ({
     exclude,
     useMerged,
