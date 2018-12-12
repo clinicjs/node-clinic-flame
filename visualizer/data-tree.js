@@ -173,7 +173,7 @@ class DataTree {
       const group = Object.create(null)
       node.children.forEach((child) => {
         const type = getTypeKey(child)
-        const value = this.getSortValue(child)
+        const value = this.getNodeValue(child)
         if (type in group) {
           group[type] += value
         } else {
