@@ -149,10 +149,12 @@ class DataTree {
 
   getFilteredStackSorter () {
     return (nodeA, nodeB) => {
+      /** TODO enable grouped sorting when UI is ready
       const groupA = this.groupedSortValues.get(nodeA)
       const groupB = this.groupedSortValues.get(nodeB)
       if (groupA > groupB) return -1
       if (groupA < groupB) return 1
+      */
 
       const valueA = this.getNodeValue(nodeA)
       const valueB = this.getNodeValue(nodeB)

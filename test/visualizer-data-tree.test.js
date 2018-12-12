@@ -1,7 +1,9 @@
 const test = require('tap').test
 const DataTree = require('../visualizer/data-tree.js')
 
-test('visualizer - data tree - sort frames by code area and stack top value', (t) => {
+test('visualizer - data tree - sort frames by code area and stack top value', {
+  skip: 'currently disabled by the comment in data-tree.js'
+}, (t) => {
   const rootNode = {
     name: 'all stacks',
     value: 2,
