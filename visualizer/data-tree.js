@@ -2,6 +2,7 @@
 
 const shared = require('../shared.js')
 const flameGradient = require('flame-gradient')
+const getNoDataNode = require('./no-data-node.js')
 const d3 = require('./d3.js')
 
 class DataTree {
@@ -112,11 +113,12 @@ class DataTree {
 
   getFlattenedSorted (sorter, arr) {
     const filtered = arr.filter(node => !this.isNodeExcluded(node))
-    return filtered.sort(sorter)
+    if (filtered.length) return filtered.sort(sorter)
+    return [ getNoDataNode() ]
   }
 
   getHeatColor (node, arr = this.flatByHottest) {
-    if (!node || this.isNodeExcluded(node)) return flameGradient(0)
+    if (!node || this.isNodeExcluded(node) || this.mean === 0) return flameGradient(0)
 
     const pivotPoint = this.mean / (this.mean + this.maxRootAboveMean + this.maxRootBelowMean)
 

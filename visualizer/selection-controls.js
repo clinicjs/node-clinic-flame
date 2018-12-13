@@ -54,16 +54,18 @@ class SelectionControls extends HtmlContent {
   draw () {
     super.draw()
 
-    this.d3FramesCount.html(`<span class="visible-from-bp-1">of ${this.framesCount}</span>`)
-    this.d3SelectNumber.property('value', this.rankNumber + 1)
+    const noNodes = this.ui.selectedNode && this.ui.selectedNode.type === 'no-data'
+
+    this.d3FramesCount.html(`<span class="visible-from-bp-1">of ${noNodes ? 0 : this.framesCount}</span>`)
+    this.d3SelectNumber.property('value', noNodes ? 0 : this.rankNumber + 1)
 
     const isHottest = this.rankNumber === 0
-    this.d3SelectHotter.attr('disabled', isHottest || null)
-    this.d3SelectHottest.attr('disabled', isHottest || null)
+    this.d3SelectHotter.attr('disabled', noNodes || isHottest || null)
+    this.d3SelectHottest.attr('disabled', noNodes || isHottest || null)
 
     const isColdest = this.rankNumber === this.framesCount - 1
-    this.d3SelectCooler.attr('disabled', isColdest || null)
-    this.d3SelectColdest.attr('disabled', isColdest || null)
+    this.d3SelectCooler.attr('disabled', noNodes || isColdest || null)
+    this.d3SelectColdest.attr('disabled', noNodes || isColdest || null)
   }
 
   initializeElements () {

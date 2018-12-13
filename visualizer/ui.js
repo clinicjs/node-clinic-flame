@@ -7,6 +7,7 @@ const DataTree = require('./data-tree.js')
 const History = require('./history.js')
 
 const TooltipHtmlContent = require('./flame-graph-tooltip-content')
+const getNoDataNode = require('./no-data-node.js')
 
 class Ui extends events.EventEmitter {
   constructor (wrapperSelector) {
@@ -16,7 +17,9 @@ class Ui extends events.EventEmitter {
 
     this.dataTree = null
     this.highlightedNode = null
-    this.selectedNode = null
+
+    this.selectedNode = getNoDataNode()
+
     this.zoomedNode = null
     this.changedExclusions = {
       toHide: new Set(),
@@ -125,10 +128,10 @@ class Ui extends events.EventEmitter {
 
   selectHottestNode (opts) {
     const node = this.dataTree.getFrameByRank(0)
-    const nodeInvalidMessage = ' node selected in selectHottestNode'
+    if (!node) return getNoDataNode()
 
     // Prevent infinite loop if some future bug allows an invalid node to be returned here
-    if (!node) throw new Error('No' + nodeInvalidMessage)
+    const nodeInvalidMessage = ' node selected in selectHottestNode'
     if (node.id === 0) throw new Error('Root' + nodeInvalidMessage)
     if (this.dataTree.isNodeExcluded(node)) throw new Error('Excluded' + nodeInvalidMessage)
 
@@ -297,7 +300,7 @@ class Ui extends events.EventEmitter {
       }
 
       let scrollAmount = scrollContainer.scrollHeight
-      if (this.selectedNode) {
+      if (this.selectedNode && this.selectedNode.category !== 'none') {
         const viewportHeight = scrollContainer.clientHeight
         const rect = this.flameWrapper.getNodeRect(this.selectedNode)
 
@@ -375,8 +378,18 @@ class Ui extends events.EventEmitter {
       'all-v8:cpp': 'V8 C++',
       'all-v8:regexp': 'RegExp'
     }
+
+    if (keysToLabels[key]) {
+      return keysToLabels[key]
+    }
+
     const splitKey = key.split(':')
-    return keysToLabels[key] || (splitKey.length ? splitKey[1] : key)
+    if (splitKey.length > 1) {
+      const type = splitKey[1]
+      return keysToLabels[type] || type
+    }
+
+    return key
   }
 
   getDescriptionFromKey (key) {
@@ -389,7 +402,17 @@ class Ui extends events.EventEmitter {
       'all-v8:regexp': `The RegExp notation is shown as the function name. <a target="_blank" class="more-info" href="https://clinicjs.org/flame/walkthrough/controls/#rx">More info</a>`
     }
 
-    return keysToDescriptions[key] || null
+    if (keysToDescriptions[key]) {
+      return keysToDescriptions[key]
+    }
+
+    if (key.startsWith('deps:')) {
+      // TODO use actual path, this is incorrect for
+      // nested dependencies
+      return `./node_modules/${key.slice(5)}`
+    }
+
+    return null
   }
 
   setCodeAreaVisibility (name, visible, manyTimes) {
@@ -412,7 +435,9 @@ class Ui extends events.EventEmitter {
   updateExclusions ({ initial, pushState = true, selectedNodeId, zoomedNodeId } = {}) {
     this.dataTree.update(initial)
 
-    if (!selectedNodeId && this.selectedNode && this.dataTree.isNodeExcluded(this.selectedNode)) {
+    const selectedNodeNotShown = this.selectedNode && (this.dataTree.isNodeExcluded(this.selectedNode) || this.selectedNode.category === 'none')
+
+    if (!initial && !selectedNodeId && selectedNodeNotShown) {
       this.selectHottestNode()
     }
 
@@ -497,8 +522,8 @@ class Ui extends events.EventEmitter {
     }
 
     if (this.dataTree.showOptimizationStatus) {
-      if (nodeData.isOptimisable) return this.exposedCSS['max-contrast']
-      if (nodeData.isOptimised) return this.exposedCSS['primary-grey']
+      if (nodeData.isUnoptimized) return this.exposedCSS['max-contrast']
+      if (nodeData.isOptimized) return this.exposedCSS['primary-grey']
       return this.exposedCSS['grey-blue']
     } else {
       return this.exposedCSS[nodeData.category]

@@ -1,13 +1,19 @@
 'use strict'
 const HtmlContent = require('./html-content.js')
+const getNoDataNode = require('./no-data-node.js')
 
 class InfoBox extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
     super(parentContent, contentProperties)
 
-    this.functionText = 'Loading…'
-    this.pathText = '[file location]'
-    this.areaText = '[node.js module]'
+    const {
+      functionName,
+      fileName
+    } = getNoDataNode()
+
+    this.functionText = functionName
+    this.pathHtml = fileName
+    this.areaText = 'Processing data...'
   }
 
   initializeElements () {
@@ -38,17 +44,25 @@ class InfoBox extends HtmlContent {
     }
 
     this.functionText = node.functionName
-    this.pathText = node.fileName
+
+    this.pathHtml = node.fileName
+    if (node.lineNumber && node.columnNumber) {
+      // Two spaces (in <pre> tag) so this is visually linked to but distinct from main path, including when wrapped
+      this.pathHtml += `  <span class="frame-line-col">line:${node.lineNumber} column:${node.columnNumber}</span>`
+    }
+
     this.rankNumber = this.ui.dataTree.getSortPosition(node)
 
     const typeLabel = node.category === 'core' ? '' : ` (${this.ui.getLabelFromKey(`${node.category}:${node.type}`, true)})`
     const categoryLabel = this.ui.getLabelFromKey(node.category, true)
-    this.areaText = `In ${categoryLabel}${typeLabel}`
+
+    // e.g. The no-data-node has an .areaText containing a custom message
+    this.areaText = node.areaText || `In ${categoryLabel}${typeLabel}`
 
     if (node.isInit) this.areaText += '. In initialization process'
     if (node.isInlinable) this.areaText += '. Inlinable'
-    if (node.isOptimisable) this.areaText += '. Optimizable'
-    if (node.isOptimised) this.areaText += '. Is optimized'
+    if (node.isUnoptimized) this.areaText += '. Unoptimized'
+    if (node.isOptimized) this.areaText += '. Optimized'
     this.areaText += '.'
 
     this.draw()
@@ -62,7 +76,7 @@ class InfoBox extends HtmlContent {
     super.draw()
 
     this.d3FrameFunction.text(this.functionText)
-    this.d3FramePath.text(this.pathText)
+    this.d3FramePath.html(this.pathHtml)
     this.d3FrameArea.text(this.areaText)
   }
 }

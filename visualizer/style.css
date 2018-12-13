@@ -98,7 +98,9 @@ html.light {
 html.presentation-mode {
   --banner-bg-color: rgb(120, 122, 128);
   --main-bg-color: rgb(76, 78, 84);
+
   --grey-highlight: rgb(255, 255, 255);
+  --primary-grey: rgb(var(--grey-highlight-color-val));
 
   --area-color-deps: rgb(145, 210, 255);
   --area-color-core: rgb(160, 155, 215);

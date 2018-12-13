@@ -222,7 +222,7 @@ class FlameGraph extends HtmlContent {
       // Show tooltip and highlight box for zoomed node after zoom completes
       if (this.ui.zoomedNode && this.ui.zoomedNode.id !== 0) {
         if (this.tooltip) {
-          const rect = this.flameGraph.getNodeRect(this.ui.zoomedNode)
+          const rect = this.getNodeRect(this.ui.zoomedNode)
           this.tooltip.show({
             nodeData: this.ui.zoomedNode,
             rect,
@@ -253,6 +253,10 @@ class FlameGraph extends HtmlContent {
   }
 
   getNodeRect (node) {
+    // Get an override for non-standard nodes e.g. from no-data-node.js
+    if (node.getNodeRect) return node.getNodeRect()
+
+    // Get a { x, y, width, height } object from d3-fg for regular nodes
     return this.flameGraph.getNodeRect(node)
   }
 
@@ -263,7 +267,7 @@ class FlameGraph extends HtmlContent {
       return
     }
 
-    const rect = this.flameGraph.getNodeRect(this.hoveredNodeData)
+    const rect = this.getNodeRect(this.hoveredNodeData)
     if (rect) {
       this.d3Highlighter.classed('show', true)
       this.applyRectToDiv(this.d3Highlighter, rect, true)
@@ -283,7 +287,8 @@ class FlameGraph extends HtmlContent {
     this.d3SelectionMarker.classed('hidden', !node)
 
     if (node) {
-      const rect = this.flameGraph.getNodeRect(node)
+      const rect = this.getNodeRect(node)
+
       this.applyRectToDiv(this.d3SelectionMarker, Object.assign({}, {
         // Ensure marker is visible on tiny frames
         width: rect.width < 2 ? 2 : rect.width
@@ -295,7 +300,7 @@ class FlameGraph extends HtmlContent {
     this.d3ZoomMarker.classed('hidden', !node)
 
     if (node) {
-      const rect = this.flameGraph.getNodeRect(node)
+      const rect = this.getNodeRect(node)
       this.applyRectToDiv(this.d3ZoomMarker, {
         x: rect.x,
         y: rect.y + rect.height * 4,

@@ -13,7 +13,7 @@ ui.setData(dataTree)
 // And only if no node was selected during initialization by some other means
 // (eg from parsing the history hash).
 ui.draw()
-if (ui.selectedNode === null) {
+if (!ui.selectedNode || ui.selectedNode.category === 'none') {
   ui.selectHottestNode()
 }
 
