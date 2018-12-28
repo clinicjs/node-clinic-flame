@@ -126,7 +126,7 @@ class FlameGraph extends HtmlContent {
   }
 
   initializeFromData () {
-    const { dataTree } = this.ui
+    const { dataTree, flameWrapper } = this.ui
 
     this.renderedTree = dataTree.activeTree()
     this.flameGraph = d3Fg({
@@ -138,7 +138,7 @@ class FlameGraph extends HtmlContent {
       element: this.d3Chart.node(),
       cellHeight: this.cellHeight,
       collapseHiddenNodeWidths: true,
-      minHeight: window.screen.availHeight,
+      minHeight: flameWrapper.d3Element.node().clientHeight,
       frameColors: {
         fill: '#000',
         stroke: '#363b4c'
