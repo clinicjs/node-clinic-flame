@@ -395,11 +395,11 @@ class Ui extends events.EventEmitter {
   getDescriptionFromKey (key) {
     const keysToDescriptions = {
       'core': `JS functions in core Node.js APIs.`,
-      'all-v8': 'The JavaScript engine used by default in Node.js',
+      'all-v8': `The JavaScript engine used by default in Node.js. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8')}`,
       'all-v8:v8': `Operations in V8's implementation of JS. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-runtime')}`,
       'all-v8:native': `JS compiled into V8, such as prototype methods and eval. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-native')}`,
-      'all-v8:cpp': `Native C++ operations called by V8, including shared libraries. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-c')}`,
-      'all-v8:regexp': `The RegExp notation is shown as the function name. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-rx')}`
+      'all-v8:cpp': `Native C++ operations called by V8, including shared libraries. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-cpp')}`,
+      'all-v8:regexp': `The RegExp notation is shown as the function name. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-regexp')}`
     }
 
     if (keysToDescriptions[key]) {
