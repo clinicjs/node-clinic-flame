@@ -1,5 +1,5 @@
 'use strict'
-
+require('@nearform/clinic-common/spinner')
 const Ui = require('./ui.js')
 
 const ui = new Ui('main')
