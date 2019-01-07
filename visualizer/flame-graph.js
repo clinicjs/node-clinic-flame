@@ -138,7 +138,7 @@ class FlameGraph extends HtmlContent {
       element: this.d3Chart.node(),
       cellHeight: this.cellHeight,
       collapseHiddenNodeWidths: true,
-      minHeight: window.screen.availHeight,
+      minHeight: this.d3Element.node().clientHeight,
       frameColors: {
         fill: '#000',
         stroke: '#363b4c'
@@ -336,9 +336,11 @@ class FlameGraph extends HtmlContent {
     this.baseCellHeight = this.ui.presentationMode ? 26 : 20
     const width = this.d3Chart.node().clientWidth
     const cellHeight = this.baseCellHeight + zoomFactor
-    this.sizeChanged = this.width !== width || this.cellHeight !== cellHeight
+    const minHeight = this.d3Element.node().clientHeight
+    this.sizeChanged = this.width !== width || this.cellHeight !== cellHeight || this.minHeight !== minHeight
     this.width = width
     this.cellHeight = cellHeight
+    this.minHeight = minHeight
     this.draw()
     this.updateMarkerBoxes()
   }
@@ -359,6 +361,7 @@ class FlameGraph extends HtmlContent {
     if (this.sizeChanged) {
       this.flameGraph.width(this.width)
       this.flameGraph.cellHeight(this.cellHeight)
+      this.flameGraph.minHeight(this.minHeight)
       this.sizeChanged = false
     }
 
