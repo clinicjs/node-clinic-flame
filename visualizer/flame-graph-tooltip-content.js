@@ -2,6 +2,10 @@
 const d3 = require('./d3.js')
 const Message = require('./message.js')
 const copy = require('copy-to-clipboard')
+const zoomInIcon = require('@nearform/clinic-common/icons/zoom-in')
+const zoomOutIcon = require('@nearform/clinic-common/icons/zoom-out')
+const linkIcon = require('@nearform/clinic-common/icons/link')
+const copyIcon = require('@nearform/clinic-common/icons/copy')
 
 class FgTooltipContent {
   constructor (ui) {
@@ -21,19 +25,17 @@ class FgTooltipContent {
 
     this.nodeData = null
 
-    this.svgPath = '/visualizer/assets/icons/'
-
     const html = `
       <button class='zoom-button'>
-        <span class='icon'><img data-inline-svg class="icon-img zoom-in" src="/visualizer/assets/icons/zoom-in.svg" /><img data-inline-svg class="icon-img zoom-out" src="/visualizer/assets/icons/zoom-out.svg" /></span>
+        <span class='icon'>${zoomInIcon}${zoomOutIcon}</span>
         <span class='label'>Expand</span>
       </button>
       <button class='link-button'>
-        <span class='icon'><img data-inline-svg class="icon-img" src="/visualizer/assets/icons/link.svg" /></span>
+        <span class='icon'>${linkIcon}</span>
         <span class='label'>Open in browser</span>
       </button>
       <button class='copy-button'>
-        <span class='icon'><img data-inline-svg class="icon-img" src="/visualizer/assets/icons/copy.svg" /></span>
+        <span class='icon'>${copyIcon}</span>
         <span class='label'>Copy path</span>
       </button>
     `

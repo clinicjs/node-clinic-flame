@@ -162,11 +162,11 @@
 #options-menu .options .icon-wrapper svg{
   display: none;
 }
-#options-menu .options .icon-wrapper .unchecked{
+#options-menu .options .icon-wrapper .checkbox-unchecked-svg{
   display: initial;
 }
 
-#options-menu .options :checked ~ .icon-wrapper .unchecked{
+#options-menu .options :checked ~ .icon-wrapper .checkbox-unchecked-svg{
   display: none;
 }
 
@@ -174,7 +174,7 @@
   color: var(--max-contrast);
 }
 
-#options-menu .options :checked ~ .icon-wrapper .checked{
+#options-menu .options :checked ~ .icon-wrapper .checkbox-checked-svg{
   display: initial;
 }
 
@@ -182,12 +182,12 @@
   color: var(--grey-highlight);
 }
 
-#options-menu .options :indeterminate ~ .icon-wrapper .indetermined {
+#options-menu .options :indeterminate ~ .icon-wrapper .checkbox-indetermined-svg {
   display: initial;
 }
 
-#options-menu .options :indeterminate ~ .icon-wrapper .unchecked,
-#options-menu .options :indeterminate ~ .icon-wrapper .checked{
+#options-menu .options :indeterminate ~ .icon-wrapper .checkbox-unchecked-svg,
+#options-menu .options :indeterminate ~ .icon-wrapper .checkbox-checked-svg{
   display: none;
 }
 
@@ -224,7 +224,7 @@
   background-color: var(--clickable-bg-hover);
 }
 
-#options-menu .options-menu-toggle .chevron {
+#options-menu .options-menu-toggle .caret-up-svg {
   position: absolute;
   right: 5px;
   font-size: 2em;
@@ -234,6 +234,6 @@
   transform: rotateZ(0deg)
 }
 
-#options-menu.collapsed .options-menu-toggle .chevron {
+#options-menu.collapsed .options-menu-toggle .caret-up-svg {
   transform: rotateZ(180deg)
 }
