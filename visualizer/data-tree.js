@@ -164,15 +164,19 @@ class DataTree {
   computeGroupedSortValues () {
     this.groupedSortValues = new Map()
 
-    function getTypeKey (node) {
-      return `${node.category}:${node.type}`
-    }
+    const completeNodesArray = [ this.activeTree() ].concat(this.activeNodes())
 
-    const walk = (node) => {
-      if (!node.children) return
+    completeNodesArray.forEach(node => {
       const group = Object.create(null)
-      node.children.forEach((child) => {
-        const type = getTypeKey(child)
+      node.childGroups = group
+
+      if (!node.children || this.isNodeExcluded(node)) return
+
+      const nextVisibleDescendents = this.getNextVisible(node)
+
+      nextVisibleDescendents.forEach((child) => {
+        if (!this.isNodeExcluded(child)) console.log(child, node)
+        const type = this.getTypeKey(child)
         const value = this.getNodeValue(child)
         if (type in group) {
           group[type] += value
@@ -181,16 +185,13 @@ class DataTree {
         }
       })
 
-      node.children.forEach((child) => {
-        const type = getTypeKey(child)
+      nextVisibleDescendents.forEach((child) => {
+        const type = this.getTypeKey(child)
         this.groupedSortValues.set(child, group[type])
-        walk(child)
       })
 
       node.childGroups = group
-    }
-
-    walk(this.activeTree())
+    })
   }
 
   isOffScreen (node) {
@@ -209,6 +210,12 @@ class DataTree {
     return this.isOffScreen(node) ? node.original : node.value
   }
 
+  getTypeKey (node) {
+    if (this.isNodeExcluded(node)) {
+    }
+    return `${node.category}:${node.type}`
+  }
+
   getSortPosition (node, arr = this.flatByHottest) {
     return arr.indexOf(node)
   }
@@ -220,6 +227,20 @@ class DataTree {
   getNodeById (id) {
     const arr = this.activeNodes()
     return arr.find((node) => node.id === id)
+  }
+
+  getNextVisible (node = this.activeTree()) {
+    let nextVisibleDescendents = []
+    const childCount = node.children.length
+    for (let i = 0; i < childCount; i++) {
+      const child = node.children[i]
+      if (this.isNodeExcluded(child)) {
+        nextVisibleDescendents = nextVisibleDescendents.concat(this.getNextVisible(child))
+      } else {
+        nextVisibleDescendents.push(child)
+      }
+    }
+    return nextVisibleDescendents
   }
 }
 
