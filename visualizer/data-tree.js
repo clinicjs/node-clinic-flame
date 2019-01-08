@@ -167,7 +167,7 @@ class DataTree {
     this.groupedSortValues = new Map()
 
     function getTypeKey (node) {
-      return `${node.category}:${node.typeTEMP !== undefined ? node.typeTEMP : node.type}`
+      return `${node.category}:${node.type}`
     }
 
     const walk = (node) => {
