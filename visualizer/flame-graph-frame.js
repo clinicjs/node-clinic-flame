@@ -5,6 +5,8 @@ function getFrameRenderer (bindTo) {
 }
 
 function renderStackFrame (globals, locals, rect) {
+  if (!this.flameGraph) return
+
   const {
     colorHash,
     STATE_IDLE
@@ -83,6 +85,18 @@ function renderStackFrame (globals, locals, rect) {
   context.lineTo(right, y)
   context.stroke()
   context.restore()
+
+  const childGroups = Object.entries(nodeData.childGroups).sort((a, b) => b[1] - a[1])
+  const childGroupLength = childGroups.length
+  let amountDrawn = 0
+
+  // TODO: refactor a better way of applying context that isn't done each iteration
+  const outline = renderAreaOutline.bind(this)
+
+  for (let i = 0; i < childGroupLength; i++) {
+    outline(childGroups[i][0], childGroups[i][1], node, amountDrawn, context)
+    amountDrawn += childGroups[i][1]
+  }
 }
 
 function renderHeatBar (context, nodeData, colorHash, rect, heatHeight) {
@@ -123,6 +137,52 @@ function renderAsLine (context, rect, backgroundColor, foregroundColor, isHighli
   context.lineTo(x, y + height)
   context.stroke()
   context.restore()
+}
+
+function renderAreaOutline (key, value, parentNode, amountDrawn, context) {
+  if (!value) return
+
+  const widestNodeValue = this.ui.zoomedNode ? this.ui.zoomedNode.value
+    // Use sum of next visible descendents as all stacks value, else includes excluded
+    : this.ui.dataTree.getNextVisible().reduce((acc, node) => acc + node.value, 0)
+
+  const decimalValue = value / widestNodeValue
+  const decimalDrawn = amountDrawn / widestNodeValue
+
+  const [category, type] = key.split(':')
+  const areaChange = parentNode.data.category !== category || parentNode.data.type !== type
+  console.log(areaChange, 'this:', category, type, 'parent:', parentNode.data.category, parentNode.data.type)
+
+  const areaNode = {
+    x0: parentNode.x0 + decimalDrawn,
+    x1: parentNode.x0 + decimalDrawn + decimalValue,
+    depth: parentNode.depth + 2,
+    parent: parentNode
+  }
+
+  const rect = this.getNodeRect(areaNode)
+
+  if (!rect) return
+
+  const {
+    x,
+    y,
+    width,
+    height
+  } = rect
+
+  // Temporary styling for testing purposes
+  // TODO: find a better way to stop these getting drawn over
+  setTimeout(() => {
+    context.globalAlpha = 0.3
+    context.strokeStyle = areaChange ? 'rgb(255, 0, 255)' : 'rgb(0, 255, 0)'
+    context.fillStyle = areaChange ? 'rgba(255, 0, 255, 0.1)' : 'rgba(0, 255, 0, 0.1)'
+    context.beginPath()
+    context.rect(x, y, width, height)
+    context.stroke()
+    context.fill()
+    context.globalAlpha = 1
+  })
 }
 
 module.exports = getFrameRenderer
