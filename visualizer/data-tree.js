@@ -148,14 +148,26 @@ class DataTree {
   }
 
   getFilteredStackSorter () {
+    console.log('SORTING...')
+    return (nodeA, nodeB) => {
+      // treeSortPosition is set for visible nodes only
+      if ('treeSortPosition' in nodeA && 'treeSortPosition' in nodeB) {
+        return nodeA.treeSortPosition - nodeB.treeSortPosition
+      }
+      // Push hidden nodes to the end, no change (return 0) if both are hidden
+      return Number('treeSortPosition' in nodeA) - Number('treeSortPosition' in nodeB)
+    }
+  }
+
+  getSortPositionSetter () {
     return (nodeA, nodeB) => {
       const groupA = this.groupedSortValues.get(nodeA)
       const groupB = this.groupedSortValues.get(nodeB)
       if (groupA > groupB) return -1
       if (groupA < groupB) return 1
 
-      const valueA = this.getNodeValue(nodeA)
-      const valueB = this.getNodeValue(nodeB)
+      const valueA = nodeA.value // this.getNodeValue(nodeA)
+      const valueB = nodeB.value // this.getNodeValue(nodeB)
 
       return valueA === valueB ? 0 : valueA > valueB ? -1 : 1
     }
@@ -172,16 +184,15 @@ class DataTree {
 
       if (!node.children || this.isNodeExcluded(node)) return
 
-      const nextVisibleDescendents = this.getNextVisible(node)
+      const nextVisibleDescendents = this.getVisibleChildren(node)
 
       nextVisibleDescendents.forEach((child) => {
-        if (!this.isNodeExcluded(child)) console.log(child, node)
         const type = this.getTypeKey(child)
-        const value = this.getNodeValue(child)
+        // const value = this.getNodeValue(child)
         if (type in group) {
-          group[type] += value
+          group[type] += child.value
         } else {
-          group[type] = value
+          group[type] = child.value
         }
       })
 
@@ -189,6 +200,25 @@ class DataTree {
         const type = this.getTypeKey(child)
         this.groupedSortValues.set(child, group[type])
       })
+
+      nextVisibleDescendents.sort(this.getSortPositionSetter().bind(this))
+
+      node.c = nextVisibleDescendents.length ? nextVisibleDescendents : null
+
+      /** Make scenarios like this:
+       * [1---------][2--]
+       * [hidden---------][3------][2-----][1-]
+       *
+       * ...show like this:
+       * [1---------][1-][2-----][2--][3------]
+       **/
+
+
+// TODO - values from hidden nodes are being calculated differently
+// between regular bars and code areas? Code areas don't include
+// hidden children?
+
+// Also, compare with this PR and without for regressions
 
       node.childGroups = group
     })
@@ -199,8 +229,13 @@ class DataTree {
     return node.value === 0 && typeof node.original === 'number'
   }
 
+  setRootNodeValue () {
+    this.rootNodeValue = this.getNextVisible().reduce((acc, node) => acc + node.value, 0)
+  }
+
   getNodeValue (node) {
     if (this.isNodeExcluded(node)) {
+      console.log('>>>>>>>>>>>>> GETTING VALUE OF HIDDEN NODE')
       // Value of hidden frames is the sum of their visible children
       return node.children ? node.children.reduce((acc, child) => {
         return acc + this.getNodeValue(child)
@@ -229,13 +264,15 @@ class DataTree {
     return arr.find((node) => node.id === id)
   }
 
-  getNextVisible (node = this.activeTree()) {
+  getVisibleChildren (node = this.activeTree()) {
+    // Can pass in data nodes or D3 partition nodes; gets closest visible descendents of same type
+
     let nextVisibleDescendents = []
-    const childCount = node.children.length
+    const childCount = node.children ? node.children.length : 0
     for (let i = 0; i < childCount; i++) {
       const child = node.children[i]
-      if (this.isNodeExcluded(child)) {
-        nextVisibleDescendents = nextVisibleDescendents.concat(this.getNextVisible(child))
+      if (this.isNodeExcluded(child.data || child)) {
+        nextVisibleDescendents = nextVisibleDescendents.concat(this.getVisibleChildren(child))
       } else {
         nextVisibleDescendents.push(child)
       }

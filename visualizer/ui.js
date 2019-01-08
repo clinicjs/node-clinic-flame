@@ -415,6 +415,10 @@ class Ui extends events.EventEmitter {
     return null
   }
 
+  getWidestNodeValue () {
+    return this.zoomedNode ? this.zoomedNode.value : this.dataTree.getNextVisible().reduce((acc, node) => acc + node.value, 0)
+  }
+
   setCodeAreaVisibility (name, visible, manyTimes) {
     // Apply a single possible change to dataTree.exclude, updating what's necessary
     let isChanged = false
@@ -531,7 +535,6 @@ class Ui extends events.EventEmitter {
   }
 
   initializeElements () {
-
     // Cascades down tree in addContent() append/prepend order
     this.uiContainer.initializeElements()
   }
