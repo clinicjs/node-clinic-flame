@@ -9,16 +9,10 @@ const getLoggingPaths = require('./collect/get-logging-paths.js')
 const systemInfo = require('./collect/system-info.js')
 const inlinedFunctions = require('./collect/inlined-functions.js')
 const analyse = require('./analysis/index.js')
-var inlineSvg = require('browserify-inline-svg')
-
-// TODO: These will likely be moved to a generic Clinic tool visualizer
-const { promisify } = require('util')
-const readFile = promisify(require('fs').readFile)
-const postcss = require('postcss')
-const postcssImport = require('postcss-import')
+const inlineSvg = require('browserify-inline-svg')
 const pump = require('pump')
-const browserify = require('browserify')
-const envify = require('loose-envify/custom')
+const buildJs = require('@nearform/clinic-common/scripts/build-js')
+const buildCss = require('@nearform/clinic-common/scripts/build-css')
 const mainTemplate = require('@nearform/clinic-common/templates/main')
 
 class ClinicFlame extends events.EventEmitter {
@@ -121,40 +115,28 @@ class ClinicFlame extends events.EventEmitter {
     const nearFormLogoFile = fs.createReadStream(nearFormLogoPath)
     const clinicFaviconBase64 = fs.createReadStream(clinicFaviconPath)
 
-    const b = browserify({
-      'basedir': __dirname,
-      'debug': this.debug,
-      'noParse': [fakeDataPath]
-    })
-    b.require({
-      'source': JSON.stringify(data),
-      'file': fakeDataPath
-    })
-    b.add(scriptPath)
-    b.transform('brfs')
-    b.transform(envify({
-      DEBUG_MODE: this.debug,
-      PRESENTATION_MODE: process.env.PRESENTATION_MODE
+    // build JS
+    const scriptFile = buildJs({
+      basedir: __dirname,
+      debug: this.debug,
+      fakeDataPath,
+      scriptPath,
+      beforeBundle: b => b.require({
+        source: JSON.stringify(data),
+        file: fakeDataPath
+      }),
+      env: {
+        PRESENTATION_MODE: process.env.PRESENTATION_MODE
+      }
+    }).pipe(inlineSvg({
+      basePath: __dirname
     }))
 
-    let scriptFile = b
-      .bundle()
-      .pipe(inlineSvg({
-        basePath: __dirname
-      }))
-
-    // create style-file stream
-    const processor = postcss([
-      postcssImport()
-    ])
-    const styleFile = readFile(stylePath, 'utf8')
-      .then((css) => processor.process(css, {
-        from: stylePath,
-        map: this.debug ? { inline: true } : false
-      }))
-      .then((result) => {
-        return result.css
-      })
+    // build CSS
+    const styleFile = buildCss({
+      stylePath,
+      debug: this.debug
+    })
 
     // This basic HTML template will be migrated to node-clinic-common and shared between tools,
     // piping in tool name, logo etc. Customise tool-specific html in node-clinic-toolname/visualizer
