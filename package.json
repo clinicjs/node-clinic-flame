@@ -31,6 +31,7 @@
     "0x": "^4.7.2",
     "@nearform/clinic-common": "^1.5.0",
     "browserify-inline-svg": "^1.0.2",
+    "brfs": "^2.0.1",
     "copy-to-clipboard": "^3.0.8",
     "d3-array": "^2.0.2",
     "d3-fg": "^6.13.1",
