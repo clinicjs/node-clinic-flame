@@ -16,11 +16,10 @@ const { promisify } = require('util')
 const readFile = promisify(require('fs').readFile)
 const postcss = require('postcss')
 const postcssImport = require('postcss-import')
-// const minifyStream = require('minify-stream')
-const streamTemplate = require('stream-template')
 const pump = require('pump')
 const browserify = require('browserify')
 const envify = require('loose-envify/custom')
+const mainTemplate = require('@nearform/clinic-common/templates/main')
 
 class ClinicFlame extends events.EventEmitter {
   constructor (settings = {}) {
@@ -159,33 +158,19 @@ class ClinicFlame extends events.EventEmitter {
 
     // This basic HTML template will be migrated to node-clinic-common and shared between tools,
     // piping in tool name, logo etc. Customise tool-specific html in node-clinic-toolname/visualizer
-    const outputFile = streamTemplate`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="utf8">
-          <style>${styleFile}</style>
-          <meta name="viewport" content="width=device-width">
-          <title>Clinic Flame</title>
-          <link rel="shortcut icon" type="image/png" href="${clinicFaviconBase64}">
-        </head>
-        <body>
-          <div id="header">
-            <div id="banner">
-              <a id="main-logo" href="https://github.com/nearform/node-clinic-flame" title="Clinic Flame on GitHub" target="_blank">
-                ${logoFile}<span>Flame</span>
-              </a>
-              <a id="company-logo" href="https://nearform.com" title="nearForm" target="_blank">
-                ${nearFormLogoFile}
-              </a>
-            </div>
-          </div>
-
-          <main></main>
-          <script>${scriptFile}</script>
-        </body>
-      </html>
-    `
+    const outputFile = mainTemplate({
+      favicon: clinicFaviconBase64,
+      title: 'Clinic Flame',
+      styles: styleFile,
+      script: scriptFile,
+      headerLogoUrl: 'https://github.com/nearform/node-clinic-flame',
+      headerLogoTitle: 'Clinic Flame on GitHub',
+      headerLogo: logoFile,
+      headerText: 'Flame',
+      nearFormLogo: nearFormLogoFile,
+      uploadId: outputFilename.split('/').pop().split('.html').shift(),
+      body: `<main></main>`
+    })
 
     pump(
       outputFile,

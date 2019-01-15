@@ -1,6 +1,9 @@
 'use strict'
 require('@nearform/clinic-common/spinner')
 const Ui = require('./ui.js')
+const askBehaviours = require('@nearform/clinic-common/behaviours/ask')
+
+askBehaviours()
 
 const ui = new Ui('main')
 ui.initializeElements()
