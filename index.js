@@ -132,14 +132,13 @@ class ClinicFlame extends events.EventEmitter {
       basePath: __dirname
     }))
 
-    // build CSS
+    // uild CSS
     const styleFile = buildCss({
       stylePath,
       debug: this.debug
     })
 
-    // This basic HTML template will be migrated to node-clinic-common and shared between tools,
-    // piping in tool name, logo etc. Customise tool-specific html in node-clinic-toolname/visualizer
+    // generate HTML
     const outputFile = mainTemplate({
       favicon: clinicFaviconBase64,
       title: 'Clinic Flame',
