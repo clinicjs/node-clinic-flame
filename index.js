@@ -132,7 +132,7 @@ class ClinicFlame extends events.EventEmitter {
       basePath: __dirname
     }))
 
-    // build CSS
+    // uild CSS
     const styleFile = buildCss({
       stylePath,
       debug: this.debug
