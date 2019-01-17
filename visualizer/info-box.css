@@ -1,18 +1,84 @@
+#info-box {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: stretch;
+  position: relative;
+}
+
 #info-box .frame-info {
   background-color: rgba(var(--opposite-color-val), 0.5);
   color: var(--grey-highlight);
   display: flex;
+  flex-grow: 1;
   font-size: var(--normal-text-size);
   height: 2.9em;
   margin: 0;
   overflow: hidden;
-  padding: 2px 8px;
+  padding: 2px 4px;
   white-space: pre-wrap;
 }
 
 #info-box .frame-info:hover {
   height: auto;
   min-height: 2.9em;
+}
+
+#info-box .frame-dropdown {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 70px;
+  padding: 2px 8px;
+  font-weight: bold;
+  background-color: black;
+  color: white;
+  border: 0;
+  cursor: pointer;
+}
+
+#info-box .frame-dropdown:focus {
+  outline: 0;
+}
+
+#info-box .frame-dropdown span {
+  min-width: 36px;
+  text-align: left;
+}
+
+#info-box .frame-dropdown svg {
+  margin-right: -8px;
+  font-size: 2em;
+  transition: transform 0.6s cubic-bezier(0.42, 0, 0.23, 1.65);
+}
+
+#info-box.collapsed .frame-dropdown svg {
+  transform: rotate(180deg);
+}
+
+#info-box .collapsible-content-wrapper {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  min-width: 320px;
+  padding: 8px;
+  font-size: var(--small-text-size);
+  color: white;
+  background-color: var(--options-menu-bg-color);
+}
+
+#info-box .collapsible-content-wrapper h2 {
+  padding: 0 8px 6px 8px;
+  margin: 0 -8px;
+  font-size: var(--small-text-size);
+  border-bottom: 3px solid var(--main-bg-color);
+}
+
+#info-box .collapsible-content-wrapper > :first-child {
+  margin-top: 0;
+}
+
+#info-box .collapsible-content-wrapper > :last-child {
+  margin-bottom: 0;
 }
 
 #info-box .frame-info strong {
@@ -31,7 +97,7 @@
 }
 
 #info-box .frame-info-item {
-  padding: 0 8px;
+  padding: 0 4px;
 }
 
 #info-box .frame-info .frame-path {
@@ -62,9 +128,21 @@
 
 #info-box .frame-line-col {
   color: var(--primary-grey);
-  white-space: nowrap;
 }
 
+#info-box .frame-line-col span {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  #info-box .frame-info {
+    align-items: center;
+  }
+
+  #info-box .frame-line-col span {
+    display: inline-block;
+  }
+}
 
 /* presentation mode */
 .presentation-mode #info-box .frame-info {
