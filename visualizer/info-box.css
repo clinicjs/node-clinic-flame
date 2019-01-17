@@ -10,6 +10,7 @@
   color: var(--grey-highlight);
   display: flex;
   flex-grow: 1;
+  align-items: center;
   font-size: var(--normal-text-size);
   height: 2.9em;
   margin: 0;
