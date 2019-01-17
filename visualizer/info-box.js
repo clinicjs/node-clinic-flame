@@ -14,6 +14,10 @@ class InfoBox extends HtmlContent {
     this.functionText = functionName
     this.pathHtml = fileName
     this.areaText = 'Processing data...'
+    this.stackPercentages = {
+      top: 0,
+      overall: 0
+    }
   }
 
   initializeElements () {
@@ -35,12 +39,19 @@ class InfoBox extends HtmlContent {
     this.d3FrameArea = this.d3FrameInfo.append('span')
       .classed('frame-info-item', true)
       .classed('frame-area', true)
+
+    this.d3FramePercentages = this.d3FrameInfo.append('span')
   }
 
   contentFromNode (node) {
     if (!node) {
       console.error('`node` argument cannot be undefined/null')
       return
+    }
+
+    this.stackPercentages = {
+      top: Math.round(100 * (node.onStackTop.asViewed / this.ui.dataTree.countTotalFrames()) * 10) / 10,
+      overall: Math.round(100 * (node.value / this.ui.dataTree.countTotalFrames()) * 10) / 10
     }
 
     this.functionText = node.functionName
@@ -78,6 +89,7 @@ class InfoBox extends HtmlContent {
     this.d3FrameFunction.text(this.functionText)
     this.d3FramePath.html(this.pathHtml)
     this.d3FrameArea.text(this.areaText)
+    this.d3FramePercentages.text(`${this.stackPercentages.top}% on stack top`)
   }
 }
 

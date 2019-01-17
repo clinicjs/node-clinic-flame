@@ -2,6 +2,7 @@
   background-color: rgba(var(--opposite-color-val), 0.5);
   color: var(--grey-highlight);
   display: flex;
+  align-items: center;
   font-size: var(--normal-text-size);
   height: 2.9em;
   margin: 0;
