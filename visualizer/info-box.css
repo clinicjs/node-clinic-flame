@@ -17,7 +17,7 @@
   font-family: monospace, monospace;
   font-size: var(--normal-text-size);
   white-space: nowrap;
-  overflow: auto;
+  overflow: hidden;
   background-color: rgba(var(--opposite-color-val), 0.5);
   color: var(--grey-highlight);
 }
@@ -96,6 +96,11 @@
   margin-bottom: 0;
 }
 
+#info-box .frame-info-item {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 #info-box .frame-info strong {
   color: var(--max-contrast);
   word-break: break-word;
@@ -115,7 +120,6 @@
 #info-box.collapsed .frame-dropdown svg {
   transform: rotate(180deg);
 }
-
 
 #info-box .collapsible-content-wrapper {
   position: absolute;
@@ -155,7 +159,7 @@
   color: var(--primary-grey);
 }
 
-#info-box .frame-line-col span {
+.visible-md {
   display: none;
 }
 
@@ -188,8 +192,13 @@
 }
 
 @media (min-width: 992px) {
-  #info-box .frame-line-col span {
-    display: inline-block;
+  .visible-md {
+    display: initial;
+  }
+
+  #info-box .frame-info-item {
+    overflow: initial;
+    text-overflow: initial;
   }
 }
 
