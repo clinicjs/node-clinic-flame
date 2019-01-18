@@ -47,7 +47,6 @@ class InfoBox extends HtmlContent {
       .classed('frame-info-item', true)
       .classed('frame-area', true)
 
-<<<<<<< HEAD
     this.d3StackInfoTitle = this.d3ContentWrapper
       .append('h2')
       .text('Stack info')
@@ -76,9 +75,6 @@ class InfoBox extends HtmlContent {
       }
     },
     true)
-=======
-    this.d3FramePercentages = this.d3FrameInfo.append('span')
->>>>>>> [621] - Create method in DataTree to count total frames from source data and use show percentage on stack top each frame is in the UI
   }
 
   contentFromNode (node) {
@@ -87,18 +83,12 @@ class InfoBox extends HtmlContent {
       return
     }
 
-<<<<<<< HEAD
     // Todo: Use visibleRootValue when ready
     const totalValue = this.ui.dataTree.activeTree().value
 
     this.stackPercentages = {
       top: Math.round(100 * (node.onStackTop.asViewed / totalValue) * 10) / 10,
       overall: Math.round(100 * (node.value / totalValue) * 10) / 10
-=======
-    this.stackPercentages = {
-      top: Math.round(100 * (node.onStackTop.asViewed / this.ui.dataTree.countTotalFrames()) * 10) / 10,
-      overall: Math.round(100 * (node.value / this.ui.dataTree.countTotalFrames()) * 10) / 10
->>>>>>> [621] - Create method in DataTree to count total frames from source data and use show percentage on stack top each frame is in the UI
     }
 
     this.functionText = node.functionName
@@ -133,19 +123,12 @@ class InfoBox extends HtmlContent {
   draw () {
     super.draw()
 
-<<<<<<< HEAD
     this.d3FrameFunction.text(this.functionText).attr('title', this.functionText)
     this.d3FramePath.html(this.pathHtml).attr('title', this.pathHtml.replace(/(<([^>]+)>)/ig, ''))
     this.d3FrameArea.text(this.areaText).attr('title', this.areaText)
     this.d3CollapseButton.select('span').text(`${this.stackPercentages.top}%`)
     this.d3StackPercentageTop.text(`Top of stack: ${this.stackPercentages.top}%`)
     this.d3StackPercentageOverall.text(`On stack: ${this.stackPercentages.overall}%`)
-=======
-    this.d3FrameFunction.text(this.functionText)
-    this.d3FramePath.html(this.pathHtml)
-    this.d3FrameArea.text(this.areaText)
-    this.d3FramePercentages.text(`${this.stackPercentages.top}% on stack top`)
->>>>>>> [621] - Create method in DataTree to count total frames from source data and use show percentage on stack top each frame is in the UI
   }
 }
 
