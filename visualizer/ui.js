@@ -531,6 +531,7 @@ class Ui extends events.EventEmitter {
   }
 
   initializeElements () {
+
     // Cascades down tree in addContent() append/prepend order
     this.uiContainer.initializeElements()
   }

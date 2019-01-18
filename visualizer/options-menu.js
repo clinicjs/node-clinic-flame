@@ -146,7 +146,7 @@ class OptionsMenu extends HtmlContent {
       .html(`
         ${checkboxCheckedIcon}
         ${checkboxUncheckedIcon}
-        ${checkboxIndeterminedIcon}
+        ${checkboxIndeterminedIcon}        
       `)
 
     const d3CopyWrapper = d3Label.append('span')
@@ -238,7 +238,7 @@ class OptionsMenu extends HtmlContent {
         .html(`
           ${checkboxCheckedIcon}
           ${checkboxUncheckedIcon}
-          ${checkboxIndeterminedIcon}
+          ${checkboxIndeterminedIcon}   
         `)
 
       const copyWrapper = label.append('span')

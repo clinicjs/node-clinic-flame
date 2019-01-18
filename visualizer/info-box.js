@@ -73,6 +73,7 @@ class InfoBox extends HtmlContent {
       return
     }
 
+    // Todo: Use visibleRootValue when ready
     const totalValue = this.ui.dataTree.activeTree().value
 
     this.stackPercentages = {
@@ -85,7 +86,7 @@ class InfoBox extends HtmlContent {
     this.pathHtml = node.fileName
     if (node.lineNumber && node.columnNumber) {
       // Two spaces (in <pre> tag) so this is visually linked to but distinct from main path, including when wrapped
-      this.pathHtml += `<span class="frame-line-col"><span>line</span>:${node.lineNumber}<span>col</span>:${node.columnNumber}</span>`
+      this.pathHtml += `<span class="frame-line-col"><span> line</span>:${node.lineNumber}<span> col</span>:${node.columnNumber}</span>`
     }
 
     this.rankNumber = this.ui.dataTree.getSortPosition(node)
@@ -113,7 +114,7 @@ class InfoBox extends HtmlContent {
     super.draw()
 
     this.d3FrameFunction.text(this.functionText).attr('title', this.functionText)
-    this.d3FramePath.html(this.pathHtml)
+    this.d3FramePath.html(this.pathHtml).attr('title', this.pathHtml.replace(/(<([^>]+)>)/ig, ''))
     this.d3FrameArea.text(this.areaText).attr('title', this.areaText)
     this.d3CollapseButton.select('span').text(`${this.stackPercentages.top}%`)
     this.d3StackPercentageTop.text(`Top of stack: ${this.stackPercentages.top}%`)

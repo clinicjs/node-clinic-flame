@@ -21,7 +21,7 @@
 }
 #selection-controls button.hotness-selector:hover:not(:disabled) {
   background-color: var(--clickable-bg-hover);
-  outline: 1px dotted var(--light-glare);
+  outline: 1px dotted var(--light-glare);  
 }
 
 #selection-controls .rank-wrapper {
