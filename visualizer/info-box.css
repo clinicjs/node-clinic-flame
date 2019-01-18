@@ -6,22 +6,36 @@
 }
 
 #info-box .frame-info {
-  background-color: rgba(var(--opposite-color-val), 0.5);
-  color: var(--grey-highlight);
   display: flex;
+  flex-direction: column;
   flex-grow: 1;
   align-items: center;
   font-size: var(--normal-text-size);
   height: 2.9em;
   margin: 0;
-  overflow: hidden;
-  padding: 2px 4px;
-  white-space: pre-wrap;
+  padding: 4px 8px;
+  font-family: monospace, monospace;
+  font-size: var(--normal-text-size);
+  white-space: nowrap;
+  overflow: auto;
+  background-color: rgba(var(--opposite-color-val), 0.5);
+  color: var(--grey-highlight);
 }
 
-#info-box .frame-info:hover {
-  height: auto;
-  min-height: 2.9em;
+#info-box .frame-dropdown {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 70px;
+  padding: 2px 8px;
+  font-weight: bold;
+  background-color: black;
+  color: white;
+  border: 0;
+}
+
+#info-box .frame-dropdown:focus {
+  outline: 0;
 }
 
 #info-box .frame-dropdown {
@@ -87,44 +101,54 @@
   word-break: break-word;
 }
 
-#info-box span.frame-info-item {
-  flex-grow: 1;
+#info-box .frame-dropdown span {
+  min-width: 36px;
+  text-align: left;
+}
+
+#info-box .frame-dropdown svg {
+  margin-right: -8px;
+  font-size: 2em;
+  transition: transform 0.6s cubic-bezier(0.42, 0, 0.23, 1.65);
+}
+
+#info-box.collapsed .frame-dropdown svg {
+  transform: rotate(180deg);
+}
+
+
+#info-box .collapsible-content-wrapper {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  min-width: 320px;
+  padding: 8px;
+  font-size: var(--small-text-size);
+  color: white;
+  background-color: var(--options-menu-bg-color);
+}
+
+#info-box .collapsible-content-wrapper h2 {
+  padding: 0 8px 6px 8px;
+  margin: 0 -8px;
+  font-size: var(--small-text-size);
+  border-bottom: 3px solid var(--main-bg-color);
+}
+
+#info-box .collapsible-content-wrapper > :first-child {
+  margin-top: 0;
+}
+
+#info-box .collapsible-content-wrapper > :last-child {
+  margin-bottom: 0;
+}
+
+#info-box .frame-info strong {
+  color: var(--max-contrast);
 }
 
 #info-box .frame-info .frame-area {
   color: var(--area-color-core);
-  word-break: break-word;
-  text-align: right;
-}
-
-#info-box .frame-info-item {
-  padding: 0 4px;
-}
-
-#info-box .frame-info .frame-path {
-  overflow: hidden;
-  word-break: break-word;
-  flex-shrink: 0;
-}
-
-/* Share space, with the file path always starting in a consistent position, */
-/* unless function name is unusually long, in which case it shrinks to fit */
-#info-box .frame-function {
-  flex-grow: 0;
-}
-
-#info-box .frame-path,
-#info-box .frame-area {
-  flex-grow: 1;
-}
-
-#info-box .frame-function,
-#info-box .frame-area {
-  min-width: 16.67%;
-}
-
-#info-box .frame-path {
-  max-width: 66.67%;
 }
 
 #info-box .frame-line-col {
@@ -135,11 +159,35 @@
   display: none;
 }
 
-@media (min-width: 992px) {
+@media (min-width: 680px) {
   #info-box .frame-info {
+    flex-direction: row;
     align-items: center;
+    justify-content: space-between;
+    height: 3.4em;
   }
 
+  #info-box .frame-info-item {
+    white-space: pre-wrap;
+  }
+
+  #info-box .frame-function {
+    min-width: 20%;
+  }
+
+  #info-box .frame-path {
+    flex-grow: 1;
+    max-width: 55%;
+  }
+
+  #info-box .frame-area {
+    min-width: 25%;
+    max-width: 25%;
+    text-align: right;
+  }
+}
+
+@media (min-width: 992px) {
   #info-box .frame-line-col span {
     display: inline-block;
   }

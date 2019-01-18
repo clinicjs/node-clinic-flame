@@ -31,7 +31,7 @@ class InfoBox extends HtmlContent {
     super.initializeElements()
 
     // Initialize frame info
-    this.d3FrameInfo = this.d3Element.append('pre')
+    this.d3FrameInfo = this.d3Element.append('div')
       .classed('frame-info', true)
       .classed('panel', true)
 
