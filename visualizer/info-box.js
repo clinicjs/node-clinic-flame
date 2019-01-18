@@ -73,9 +73,11 @@ class InfoBox extends HtmlContent {
       return
     }
 
+    const totalValue = this.ui.dataTree.activeTree().value
+
     this.stackPercentages = {
-      top: Math.round(100 * (node.onStackTop.asViewed / this.ui.dataTree.countTotalFrames()) * 10) / 10,
-      overall: Math.round(100 * (node.value / this.ui.dataTree.countTotalFrames()) * 10) / 10
+      top: Math.round(100 * (node.onStackTop.asViewed / totalValue) * 10) / 10,
+      overall: Math.round(100 * (node.value / totalValue) * 10) / 10
     }
 
     this.functionText = node.functionName
