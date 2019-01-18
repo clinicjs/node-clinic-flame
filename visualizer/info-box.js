@@ -83,7 +83,7 @@ class InfoBox extends HtmlContent {
 
     this.functionText = node.functionName
 
-    this.pathHtml = node.fileName
+    this.pathHtml = node.fileName || ''
     if (node.lineNumber && node.columnNumber) {
       // Two spaces (in <pre> tag) so this is visually linked to but distinct from main path, including when wrapped
       this.pathHtml += `<span class="frame-line-col"><span> line</span>:${node.lineNumber}<span> col</span>:${node.columnNumber}</span>`
