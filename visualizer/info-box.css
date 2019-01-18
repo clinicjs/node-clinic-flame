@@ -127,7 +127,6 @@
 
 #info-box .frame-line-col {
   color: var(--primary-grey);
-  white-space: nowrap;
 }
 
 #info-box .frame-line-col span {

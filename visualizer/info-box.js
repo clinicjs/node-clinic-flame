@@ -31,7 +31,7 @@ class InfoBox extends HtmlContent {
     super.initializeElements()
 
     // Initialize frame info
-    this.d3FrameInfo = this.d3Element.append('div')
+    this.d3FrameInfo = this.d3Element.append('pre')
       .classed('frame-info', true)
       .classed('panel', true)
 
@@ -86,7 +86,7 @@ class InfoBox extends HtmlContent {
     this.pathHtml = node.fileName || ''
     if (node.lineNumber && node.columnNumber) {
       // Two spaces (in <pre> tag) so this is visually linked to but distinct from main path, including when wrapped
-      this.pathHtml += `<span class="frame-line-col"><span> line</span>:${node.lineNumber}<span> col</span>:${node.columnNumber}</span>`
+      this.pathHtml += `<span class="frame-line-col"><span>  line</span>:${node.lineNumber}<span> column</span>:${node.columnNumber}</span>`
     }
 
     this.rankNumber = this.ui.dataTree.getSortPosition(node)
