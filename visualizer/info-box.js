@@ -115,7 +115,7 @@ class InfoBox extends HtmlContent {
     this.d3FrameArea.text(this.areaText).attr('title', this.areaText)
     this.d3CollapseButton.select('span').text(`${this.stackPercentages.top}%`)
     this.d3StackPercentageTop.text(`Top of stack: ${this.stackPercentages.top}%`)
-    this.d3StackPercentageOverall.text(`On stack top: ${this.stackPercentages.overall}%`)
+    this.d3StackPercentageOverall.text(`On stack: ${this.stackPercentages.overall}%`)
   }
 }
 

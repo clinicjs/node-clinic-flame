@@ -10,7 +10,7 @@
   flex-direction: column;
   flex-grow: 1;
   margin: 0;
-  padding: 2px 8px;
+  padding: 4px 8px;
   font-family: monospace, monospace;
   font-size: var(--normal-text-size);
   white-space: nowrap;
@@ -23,7 +23,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 68px;
+  min-width: 70px;
   padding: 2px 8px;
   font-weight: bold;
   background-color: black;
@@ -33,6 +33,11 @@
 
 #info-box .frame-dropdown:focus {
   outline: 0;
+}
+
+#info-box .frame-dropdown span {
+  min-width: 36px;
+  text-align: left;
 }
 
 #info-box .frame-dropdown svg {
@@ -92,12 +97,7 @@
   display: none;
 }
 
-/* presentation mode */
-.presentation-mode #info-box .frame-info {
-  background-color: var(--opposite-contrast);
-}
-
-@media (min-width: 640px) {
+@media (min-width: 680px) {
   #info-box .frame-info {
     flex-direction: row;
     align-items: center;
@@ -118,9 +118,16 @@
     min-width: 55%;
     max-width: 55%;
   }
+}
 
+@media (min-width: 992px) {
   #info-box .frame-line-col span {
     display: inline-block;
     padding-left: 8px;
   }
+}
+
+/* presentation mode */
+.presentation-mode #info-box .frame-info {
+  background-color: var(--opposite-contrast);
 }
