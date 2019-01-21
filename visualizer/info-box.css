@@ -32,22 +32,6 @@
   background-color: black;
   color: white;
   border: 0;
-}
-
-#info-box .frame-dropdown:focus {
-  outline: 0;
-}
-
-#info-box .frame-dropdown {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 70px;
-  padding: 2px 8px;
-  font-weight: bold;
-  background-color: black;
-  color: white;
-  border: 0;
   cursor: pointer;
 }
 
@@ -97,61 +81,17 @@
 }
 
 #info-box .frame-info-item {
+  max-height: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-#info-box .frame-info strong {
+#info-box .frame-function {
   color: var(--max-contrast);
   word-break: break-word;
 }
 
-#info-box .frame-dropdown span {
-  min-width: 36px;
-  text-align: left;
-}
-
-#info-box .frame-dropdown svg {
-  margin-right: -8px;
-  font-size: 2em;
-  transition: transform 0.6s cubic-bezier(0.42, 0, 0.23, 1.65);
-}
-
-#info-box.collapsed .frame-dropdown svg {
-  transform: rotate(180deg);
-}
-
-#info-box .collapsible-content-wrapper {
-  position: absolute;
-  right: 0;
-  top: 100%;
-  min-width: 320px;
-  padding: 8px;
-  font-size: var(--small-text-size);
-  color: white;
-  background-color: var(--options-menu-bg-color);
-}
-
-#info-box .collapsible-content-wrapper h2 {
-  padding: 0 8px 6px 8px;
-  margin: 0 -8px;
-  font-size: var(--small-text-size);
-  border-bottom: 3px solid var(--main-bg-color);
-}
-
-#info-box .collapsible-content-wrapper > :first-child {
-  margin-top: 0;
-}
-
-#info-box .collapsible-content-wrapper > :last-child {
-  margin-bottom: 0;
-}
-
-#info-box .frame-info strong {
-  color: var(--max-contrast);
-}
-
-#info-box .frame-info .frame-area {
+#info-box .frame-area {
   color: var(--area-color-core);
 }
 
@@ -168,10 +108,11 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    height: 3.4em;
+    height: 4em;
   }
 
   #info-box .frame-info-item {
+    line-height: 1;
     white-space: pre-wrap;
   }
 
@@ -181,12 +122,12 @@
 
   #info-box .frame-path {
     flex-grow: 1;
-    max-width: 55%;
+    max-width: 60%;
   }
 
   #info-box .frame-area {
-    min-width: 25%;
-    max-width: 25%;
+    flex-grow: 1;
+    min-width: 20%;
     text-align: right;
   }
 }
@@ -205,4 +146,8 @@
 /* presentation mode */
 .presentation-mode #info-box .frame-info {
   background-color: var(--opposite-contrast);
+}
+
+.presentation-mode #info-box .frame-dropdown {
+  border-left: solid var(--banner-bg-color) 1px;
 }
