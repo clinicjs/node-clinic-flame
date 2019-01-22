@@ -18,7 +18,7 @@ class FlameGraph extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
     const defaults = {
       showOptimizationStatus: false,
-      labelFont: 'Verdana, sans-serif',
+      labelFont: 'Archia, sans-serif',
       labelPadding: 3
     }
     contentProperties = Object.assign({}, defaults, contentProperties)

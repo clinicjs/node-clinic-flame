@@ -13,7 +13,6 @@
 
 
 html {
-  font-family: sans-serif;
   font-size: 62.5%;
 }
 
@@ -26,7 +25,7 @@ code,
 kbd,
 samp,
 tt {
-  font-family:monospace,monospace;
+  font-family: var(--nc-font-family-monospace);
   font-size:1em;
 }
 

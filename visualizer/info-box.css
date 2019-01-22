@@ -3,6 +3,7 @@
   color: var(--grey-highlight);
   display: flex;
   font-size: var(--normal-text-size);
+  line-height: 1.1;
   height: 2.9em;
   margin: 0;
   overflow: hidden;
