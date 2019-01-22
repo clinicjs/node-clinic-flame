@@ -19,6 +19,7 @@ class Ui extends events.EventEmitter {
     this.highlightedNode = null
 
     this.selectedNode = getNoDataNode()
+    this.selectedNodeOtherOccurences = []
 
     this.zoomedNode = null
     this.changedExclusions = {
@@ -116,6 +117,8 @@ class Ui extends events.EventEmitter {
     if (!node || node.id === 0) return
     const changed = node !== this.selectedNode
     this.selectedNode = node
+    this.selectedNodeOtherOccurences = this.selectOtherOccurences(node)
+
     if (changed) this.emit('selectNode', node)
 
     this.scrollSelectedFrameIntoView()
@@ -124,6 +127,10 @@ class Ui extends events.EventEmitter {
     this.highlightNode(node)
 
     if (pushState) this.pushHistory()
+  }
+
+  selectOtherOccurences (node) {
+    return this.dataTree.activeNodes().filter(n => (n.name === node.name && n.id !== node.id))
   }
 
   selectHottestNode (opts) {
@@ -531,7 +538,6 @@ class Ui extends events.EventEmitter {
   }
 
   initializeElements () {
-
     // Cascades down tree in addContent() append/prepend order
     this.uiContainer.initializeElements()
   }
