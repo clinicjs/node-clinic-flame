@@ -43,8 +43,8 @@ class FlameGraph extends HtmlContent {
       this.initializeFromData()
     })
 
-    this.ui.on('showOccurrences', (isVisible) => {
-      this.highlightOtherOccurrences(isVisible)
+    this.ui.on('showOccurrences', () => {
+      this.highlightOtherOccurrences()
     })
 
     this.ui.on('zoomNode', (node, cb) => {
@@ -117,6 +117,7 @@ class FlameGraph extends HtmlContent {
     this.ui.on('highlightNode', node => {
       this.hoveredNodeData = node || this.ui.selectedNode
       this.highlightHoveredNodeOnGraph()
+      this.highlightOtherOccurrences()
     })
 
     this.ui.on('selectNode', node => {
@@ -296,7 +297,8 @@ class FlameGraph extends HtmlContent {
   }
 
   highlightOtherOccurrences (show = this.ui.showOccurrences) {
-    const nodes = show ? this.ui.selectedNodeOtherOccurrences : []
+    const node = this.ui.highlightedNode || this.ui.selectedNode
+    const nodes = show ? this.ui.selectOtherOccurrences(node) : []
     const divs = this.d3OccurrencesHighLighter.selectAll('div')
 
     const scrollTop = this.d3Chart.node().scrollTop

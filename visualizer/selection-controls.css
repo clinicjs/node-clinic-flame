@@ -59,6 +59,38 @@
   display: none;
 }
 
+#selection-controls .occurrences-count{
+  display: flex;
+  align-items: center;
+  color: var(--max-contrast);
+  font-size: var(--small-text-size);
+  background-color: var(--opposite-contrast);
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+#selection-controls .occurrences-count .count{
+  display: inline-block;
+  margin-right: 0.3em;
+}
+
+#selection-controls .occurrences-count svg{
+  opacity: 0.6;
+  font-size: 1em;
+  margin-right: 0.3em;
+}
+
+#selection-controls .occurrences-count.on svg{
+  color: var(--occurrences-main);
+  opacity: 0.8;
+}
+#selection-controls .occurrences-count .perc{
+  font-size: calc(var(--small-text-size) * 0.8);
+  opacity: 0.6;
+  align-self: flex-start;
+}
+
 @media screen and (min-width: 530px) {
   .visible-from-bp-1 {
     display: initial;

@@ -137,7 +137,7 @@ class Ui extends events.EventEmitter {
   }
 
   selectOtherOccurrences (node) {
-    return this.dataTree.activeNodes().filter(n => (n.name === node.name && n.id !== node.id))
+    return node ? this.dataTree.activeNodes().filter(n => (n.name === node.name && n.id !== node.id)) : []
   }
 
   selectHottestNode (opts) {

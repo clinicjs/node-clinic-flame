@@ -5,6 +5,8 @@ const chevronLeftFirst = require('@nearform/clinic-common/icons/chevron-left-fir
 const chevronLeft = require('@nearform/clinic-common/icons/chevron-left')
 const chevronRight = require('@nearform/clinic-common/icons/chevron-right')
 const chevronRightLast = require('@nearform/clinic-common/icons/chevron-right-last')
+const show = require('@nearform/clinic-common/icons/grid-view')
+const hide = require('@nearform/clinic-common/icons/grid-view')
 
 class SelectionControls extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
@@ -42,6 +44,8 @@ class SelectionControls extends HtmlContent {
       this.rankNumber = this.ui.dataTree.getSortPosition(node || this.selectedNode)
       this.draw()
     })
+
+    this.ui.on('showOccurrences', () => this.draw())
   }
 
   update () {
@@ -66,6 +70,28 @@ class SelectionControls extends HtmlContent {
     const isColdest = this.rankNumber === this.framesCount - 1
     this.d3SelectCooler.attr('disabled', noNodes || isColdest || null)
     this.d3SelectColdest.attr('disabled', noNodes || isColdest || null)
+
+    const node = this.ui.highlightedNode || this.ui.selectedNode
+
+    if (node) {
+      const occurrences = [node, ...this.ui.selectOtherOccurrences(node)]
+      const totalValue = this.ui.dataTree.activeTree().value
+
+      // this.stackPercentages = {
+      //   top: Math.round(100 * (node.onStackTop.asViewed / totalValue) * 10) / 10,
+      //   overall: Math.round(100 * (node.value / totalValue) * 10) / 10
+      // }
+
+      const perc = occurrences.reduce((acc, curr) => acc + curr.onStackTop.asViewed, 0)
+
+      this.d3OccurrencesCount
+        .classed('on', this.ui.showOccurrences)
+        .html(`
+        ${this.ui.showOccurrences ? show : hide}
+        <span class='count'>${occurrences.length}</span>
+        <span class='perc'>${Math.round(100 * (perc / totalValue) * 10) / 10}%</span>
+      `)
+    }
   }
 
   initializeElements () {
@@ -137,6 +163,22 @@ class SelectionControls extends HtmlContent {
     this.tooltip.attach({
       msg: 'Select the coldest frame (meaning, least time at the top of the stack)',
       d3TargetElement: this.d3SelectColdest,
+      offset: {
+        y: 2
+      }
+    })
+
+    // occurrences count
+    this.d3OccurrencesCount = this.d3Element.append('button')
+      .classed('occurrences-count', true)
+      .html(`...`)
+      .on('click', () => {
+        this.ui.setOccurrencesVisibility(!this.ui.showOccurrences)
+      })
+
+    this.tooltip.attach({
+      msg: 'Show/Hide all the occurrences for the highlighted frame',
+      d3TargetElement: this.d3OccurrencesCount,
       offset: {
         y: 2
       }
