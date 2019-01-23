@@ -127,6 +127,7 @@ body {
 
 /* MS Edge doesn't like background colors on body elements when devtools open */
 main {
+  flex-grow: 1;
   background: var(--main-bg-color);
 }
 
@@ -146,9 +147,12 @@ html * {
 }
 
 /* Header */
-
 .nc-header {
   flex-shrink: 0;
+}
+
+.is-loading-font .nc-header {
+  opacity: 0;
 }
 
 /* Footer */
