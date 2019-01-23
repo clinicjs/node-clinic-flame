@@ -7,13 +7,16 @@ const loadFonts = require('@nearform/clinic-common/behaviours/font-loader')
 
 const fontSpinner = spinner.attachTo()
 const ui = new Ui('main')
+let uiFontLoaded
 
 fontSpinner.show()
 
 askBehaviours()
 
 loadFonts({
-  onLoad: () => {
+  onLoad: err => {
+    uiFontLoaded = !err
+
     fontSpinner.hide()
     ui.initializeElements()
 
@@ -27,6 +30,12 @@ loadFonts({
     ui.draw()
     if (!ui.selectedNode || ui.selectedNode.category === 'none') {
       ui.selectHottestNode()
+    }
+  },
+  fontactive: (font, variant) => {
+    // If all fonts failed to load or took too long, emit uiFontLoaded event
+    if (font === 'Archia' && variant === 'n4' && uiFontLoaded === false) {
+      ui.emit('uiFontLoaded')
     }
   }
 })

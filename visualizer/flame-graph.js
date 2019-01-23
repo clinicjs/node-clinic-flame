@@ -42,6 +42,10 @@ class FlameGraph extends HtmlContent {
 
     this.onNextAnimationEnd = null
 
+    this.ui.on('uiFontLoaded', () => {
+      this.draw(true)
+    })
+
     this.ui.on('setData', () => {
       this.initializeFromData()
     })
@@ -402,7 +406,7 @@ class FlameGraph extends HtmlContent {
     }
   }
 
-  draw () {
+  draw (forceRedraw = false) {
     super.draw()
 
     const { dataTree } = this.ui
@@ -417,7 +421,7 @@ class FlameGraph extends HtmlContent {
       this.sizeChanged = false
     }
 
-    let redrawGraph = false
+    let redrawGraph = forceRedraw
 
     if (this.renderedTree !== dataTree.activeTree()) {
       this.renderedTree = dataTree.activeTree()
