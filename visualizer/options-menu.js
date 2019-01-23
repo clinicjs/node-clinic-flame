@@ -96,6 +96,16 @@ class OptionsMenu extends HtmlContent {
         this.ui.setShowOptimizationStatus(checked)
       }
     })
+    this.ui.on('showOccurrences', () => this.draw)
+
+    this.d3OccurrencesCheckbox = this.addFgOptionCheckbox({
+      id: 'option-showalloccurrences',
+      name: 'Show all the occurrences',
+      description: 'Highlight all the occurrences of the selected frame',
+      onChange: (checked) => {
+        this.ui.setOccurrencesVisibility(checked)
+      }
+    })
 
     // preferences
     this.d3Preferences = this.d3OptionsList.append('div')
@@ -316,7 +326,10 @@ class OptionsMenu extends HtmlContent {
     super.draw()
 
     // Update option checkbox values.
-    const { useMerged, showOptimizationStatus, exclude, appName } = this.ui.dataTree
+    const { useMerged, showOptimizationStatus, exclude, appName, showOccurrences } = this.ui.dataTree
+
+    this.d3OccurrencesCheckbox.property('checked', showOccurrences)
+
     this.d3MergeCheckbox.property('checked', useMerged)
     this.d3OptCheckbox
       .attr('disabled', useMerged ? 'disabled' : null)

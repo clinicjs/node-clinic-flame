@@ -43,8 +43,12 @@ class FlameGraph extends HtmlContent {
       this.initializeFromData()
     })
 
+    this.ui.on('showOccurrences', (isVisible) => {
+      this.highlightOtherOccurrences(isVisible)
+    })
+
     this.ui.on('zoomNode', (node, cb) => {
-      this.highlightOtherOccurences(false)
+      this.highlightOtherOccurrences(false)
       if (this.flameGraph) {
         if (cb) this.onNextAnimationEnd = cb
 
@@ -100,7 +104,7 @@ class FlameGraph extends HtmlContent {
       .classed('zoom-underline', true)
       .classed('hidden', true)
 
-    this.d3OccurencesHighLighter = this.d3Element.append('div')
+    this.d3OccurrencesHighLighter = this.d3Element.append('div')
       .classed('occurencies-wrapper', true)
 
     if (this.tooltip) {
@@ -120,14 +124,14 @@ class FlameGraph extends HtmlContent {
       this.highlightHoveredNodeOnGraph()
 
       this.markNodeAsSelected(node)
-      this.highlightOtherOccurences()
+      this.highlightOtherOccurrences()
     })
 
     // hiding the tooltip on scroll and moving the box
     this.d3Chart.node().addEventListener('scroll', () => {
       this.tooltip.hide({ delay: 0 })
       this.updateMarkerBoxes()
-      this.highlightOtherOccurences()
+      this.highlightOtherOccurrences()
     })
   }
 
@@ -223,7 +227,7 @@ class FlameGraph extends HtmlContent {
     this.flameGraph.on('animationEnd', () => {
       // Update selection marker with new node position and size
       this.markNodeAsSelected(this.ui.selectedNode)
-      this.highlightOtherOccurences(true)
+      this.highlightOtherOccurrences()
 
       this.isAnimating = false
 
@@ -291,9 +295,9 @@ class FlameGraph extends HtmlContent {
     }
   }
 
-  highlightOtherOccurences (show = true) {
-    const nodes = show ? this.ui.selectedNodeOtherOccurences : []
-    const divs = this.d3OccurencesHighLighter.selectAll('div')
+  highlightOtherOccurrences (show = this.ui.showOccurrences) {
+    const nodes = show ? this.ui.selectedNodeOtherOccurrences : []
+    const divs = this.d3OccurrencesHighLighter.selectAll('div')
 
     const scrollTop = this.d3Chart.node().scrollTop
     const d = divs.data(nodes, d => d.id)
@@ -382,7 +386,7 @@ class FlameGraph extends HtmlContent {
     this.minHeight = minHeight
     this.draw()
     this.updateMarkerBoxes()
-    this.highlightOtherOccurences()
+    this.highlightOtherOccurrences()
   }
 
   sort () {

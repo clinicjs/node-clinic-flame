@@ -7,6 +7,7 @@ ui.initializeElements()
 
 // TODO: see if there's a way to load this asyncronously (in case of huge data) that works with puppeteer
 const dataTree = require('./data.json')
+
 ui.setData(dataTree)
 
 // Select hottest frame, after frame visibility has been set in d3-fg

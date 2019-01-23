@@ -18,8 +18,10 @@ class Ui extends events.EventEmitter {
     this.dataTree = null
     this.highlightedNode = null
 
+    this.showOccurrences = false
+
     this.selectedNode = getNoDataNode()
-    this.selectedNodeOtherOccurences = []
+    this.selectedNodeOtherOccurrences = []
 
     this.zoomedNode = null
     this.changedExclusions = {
@@ -50,7 +52,8 @@ class Ui extends events.EventEmitter {
       useMerged: this.dataTree.useMerged,
       showOptimizationStatus: this.dataTree.showOptimizationStatus,
       exclude: this.dataTree.exclude,
-      search: this.searchQuery
+      search: this.searchQuery,
+      showOccurrences: this.showOccurrences
     }, opts)
   }
 
@@ -61,8 +64,12 @@ class Ui extends events.EventEmitter {
       search,
       selectedNodeId,
       showOptimizationStatus,
-      zoomedNodeId
+      zoomedNodeId,
+      showOccurrences
     } = data
+
+    this.dataTree.showOccurrences = showOccurrences
+    this.setOccurrencesVisibility(showOccurrences, { pushState: false })
 
     this.setUseMergedTree(useMerged, { pushState: false,
       selectedNodeId,
@@ -117,7 +124,7 @@ class Ui extends events.EventEmitter {
     if (!node || node.id === 0) return
     const changed = node !== this.selectedNode
     this.selectedNode = node
-    this.selectedNodeOtherOccurences = this.selectOtherOccurences(node)
+    this.selectedNodeOtherOccurrences = this.selectOtherOccurrences(node)
 
     if (changed) this.emit('selectNode', node)
 
@@ -129,7 +136,7 @@ class Ui extends events.EventEmitter {
     if (pushState) this.pushHistory()
   }
 
-  selectOtherOccurences (node) {
+  selectOtherOccurrences (node) {
     return this.dataTree.activeNodes().filter(n => (n.name === node.name && n.id !== node.id))
   }
 
@@ -200,6 +207,15 @@ class Ui extends events.EventEmitter {
     document.documentElement.classList.toggle('presentation-mode', mode)
     this.setExposedCSS()
     this.emit('presentationMode', mode)
+  }
+
+  setOccurrencesVisibility (isVisible, { pushState = true } = {}) {
+    this.dataTree.showOccurrences = isVisible
+    this.showOccurrences = isVisible
+    if (pushState) {
+      this.pushHistory()
+    }
+    this.emit('showOccurrences', isVisible)
   }
 
   /**
