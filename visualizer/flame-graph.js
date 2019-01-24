@@ -44,11 +44,10 @@ class FlameGraph extends HtmlContent {
     })
 
     this.ui.on('showOccurrences', () => {
-      this.highlightOtherOccurrences()
+      this.flameGraph.update()
     })
 
     this.ui.on('zoomNode', (node, cb) => {
-      this.highlightOtherOccurrences(false)
       if (this.flameGraph) {
         if (cb) this.onNextAnimationEnd = cb
 
@@ -104,9 +103,6 @@ class FlameGraph extends HtmlContent {
       .classed('zoom-underline', true)
       .classed('hidden', true)
 
-    this.d3OccurrencesHighLighter = this.d3Element.append('div')
-      .classed('occurencies-wrapper', true)
-
     if (this.tooltip) {
       this.tooltip = new FgTooltipContainer({
         tooltip: this.tooltip,
@@ -117,7 +113,9 @@ class FlameGraph extends HtmlContent {
     this.ui.on('highlightNode', node => {
       this.hoveredNodeData = node || this.ui.selectedNode
       this.highlightHoveredNodeOnGraph()
-      this.highlightOtherOccurrences()
+
+      // when highlighting a frame we want to highilight also the other occurrences of that frame
+      this.flameGraph.update()
     })
 
     this.ui.on('selectNode', node => {
@@ -125,14 +123,12 @@ class FlameGraph extends HtmlContent {
       this.highlightHoveredNodeOnGraph()
 
       this.markNodeAsSelected(node)
-      this.highlightOtherOccurrences()
     })
 
     // hiding the tooltip on scroll and moving the box
     this.d3Chart.node().addEventListener('scroll', () => {
       this.tooltip.hide({ delay: 0 })
       this.updateMarkerBoxes()
-      this.highlightOtherOccurrences()
     })
   }
 
@@ -228,8 +224,6 @@ class FlameGraph extends HtmlContent {
     this.flameGraph.on('animationEnd', () => {
       // Update selection marker with new node position and size
       this.markNodeAsSelected(this.ui.selectedNode)
-      this.highlightOtherOccurrences()
-
       this.isAnimating = false
 
       // Show tooltip and highlight box for zoomed node after zoom completes
@@ -296,38 +290,6 @@ class FlameGraph extends HtmlContent {
     }
   }
 
-  highlightOtherOccurrences (show = this.ui.showOccurrences) {
-    const node = this.ui.highlightedNode || this.ui.selectedNode
-    const nodes = show ? this.ui.selectOtherOccurrences(node) : []
-    const divs = this.d3OccurrencesHighLighter.selectAll('div')
-
-    const scrollTop = this.d3Chart.node().scrollTop
-    const d = divs.data(nodes, d => d.id)
-
-    const setStyle = (el) => {
-      el.each((node, i, div) => {
-        const rect = this.getNodeRect(node)
-        if (rect) {
-          div[i].style = `
-            transform: translate3d(${rect.x}px, ${rect.y - scrollTop - rect.height}px, 0px);
-            width: ${rect.width}px;
-            height: ${rect.height}px;
-          `
-        }
-      })
-    }
-
-    const enterSelection = d.enter()
-      .append('div')
-      .classed('occurrence', true)
-
-    setStyle(enterSelection)
-
-    d.exit().remove()
-
-    setStyle(divs)
-  }
-
   markNodeAsSelected (node = null) {
     this.d3SelectionMarker.classed('hidden', !node)
 
@@ -388,7 +350,6 @@ class FlameGraph extends HtmlContent {
     this.minHeight = minHeight
     this.draw()
     this.updateMarkerBoxes()
-    this.highlightOtherOccurrences()
   }
 
   sort () {

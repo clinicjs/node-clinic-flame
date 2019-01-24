@@ -67,9 +67,7 @@ html {
   --area-color-deps: rgb(63, 125, 198);
   --area-color-core: rgb(156, 170, 159);
 
-  --occurrences-color: 255, 255, 4;
-  --occurrences-main: rgba(var(--occurrences-color), 0.8);
-  --occurrences-border: rgba(var(--occurrences-color), 0.6);
+  --occurrences-border: rgb(255, 255, 4);
 
   /* scrollbars */
   --scrollbar-primary-color-val: 145, 169, 179;

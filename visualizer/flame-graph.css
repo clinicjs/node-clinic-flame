@@ -20,22 +20,6 @@ chart > div {
   border-top: 1px solid var(--light-glare);
 }
 
-/* occurencies-wrapper */
-.occurencies-wrapper {
-  bottom: 0;
-  left: 0;
-  pointer-events: none;
-  position: absolute;
-  right: 0;
-  top: 0;
-}
-.occurencies-wrapper .occurrence {
-  position: absolute;
-  /* background-color:rgba(255,255,100,0.1); */
-  border: 1px solid var(--occurrences-border);
-}
-
-
 /* node-highlighter */
 .node-highlighter {
   pointer-events: none;

@@ -137,7 +137,10 @@ class Ui extends events.EventEmitter {
   }
 
   selectOtherOccurrences (node) {
-    return node ? this.dataTree.activeNodes().filter(n => (n.name === node.name && n.id !== node.id)) : []
+    return node ? this.dataTree.activeNodes().filter(n => {
+      n.isOtherOccurrence = n.name === node.name && n.id !== node.id
+      return (n.name === node.name && n.id !== node.id)
+    }) : []
   }
 
   selectHottestNode (opts) {
@@ -535,11 +538,17 @@ class Ui extends events.EventEmitter {
       'opposite-contrast': computedStyle.getPropertyValue('--opposite-contrast').trim(),
       'max-contrast': computedStyle.getPropertyValue('--max-contrast').trim(),
       'grey-blue': computedStyle.getPropertyValue('--grey-blue').trim(),
-      'primary-grey': computedStyle.getPropertyValue('--primary-grey').trim()
+      'primary-grey': computedStyle.getPropertyValue('--primary-grey').trim(),
+      'occurrences-border': computedStyle.getPropertyValue('--occurrences-border').trim()
     }
   }
 
   getFrameColor (nodeData, role, reverse = nodeData.highlight) {
+    if (role === 'border' && this.showOccurrences) {
+      if (nodeData.isOtherOccurrence) {
+        return this.exposedCSS['occurrences-border']
+      }
+    }
     if ((role === 'background' && !reverse) || (role === 'foreground' && reverse)) {
       return this.exposedCSS['opposite-contrast']
     }
