@@ -5,8 +5,7 @@ const chevronLeftFirst = require('@nearform/clinic-common/icons/chevron-left-fir
 const chevronLeft = require('@nearform/clinic-common/icons/chevron-left')
 const chevronRight = require('@nearform/clinic-common/icons/chevron-right')
 const chevronRightLast = require('@nearform/clinic-common/icons/chevron-right-last')
-const show = require('@nearform/clinic-common/icons/grid-view')
-const hide = require('@nearform/clinic-common/icons/grid-view')
+const gridIcon = require('@nearform/clinic-common/icons/grid-view')
 
 class SelectionControls extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
@@ -77,17 +76,12 @@ class SelectionControls extends HtmlContent {
       const occurrences = [node, ...this.ui.selectOtherOccurrences(node)]
       const totalValue = this.ui.dataTree.activeTree().value
 
-      // this.stackPercentages = {
-      //   top: Math.round(100 * (node.onStackTop.asViewed / totalValue) * 10) / 10,
-      //   overall: Math.round(100 * (node.value / totalValue) * 10) / 10
-      // }
-
       const perc = occurrences.reduce((acc, curr) => acc + curr.onStackTop.asViewed, 0)
 
       this.d3OccurrencesCount
         .classed('on', this.ui.showOccurrences)
         .html(`
-        ${this.ui.showOccurrences ? show : hide}
+        ${gridIcon}
         <span class='count'>${occurrences.length}</span>
         <span class='perc'>${Math.round(100 * (perc / totalValue) * 10) / 10}%</span>
       `)
