@@ -213,8 +213,7 @@ class Ui extends events.EventEmitter {
   }
 
   setOccurrencesVisibility (isVisible, { pushState = true } = {}) {
-    this.dataTree.showOccurrences = isVisible
-    this.showOccurrences = isVisible
+    this.dataTree.showOccurrences = this.showOccurrences = isVisible
     if (pushState) {
       this.pushHistory()
     }
