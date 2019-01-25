@@ -48,7 +48,8 @@ class Tooltip extends HtmlContent {
     const baseDelay = props.showDelay === undefined ? this.showDelay : props.showDelay
     // adding the delay if no tooltip is already displayed, or a shorter delay
     // if the tooltip is already there
-    const delay = this.nodeData === null ? baseDelay : baseDelay / 2
+    const delay = this.isHidden ? baseDelay : baseDelay / 2
+
     clearTimeout(this.tooltipHandler)
 
     this.updateTooltip(props)
@@ -78,11 +79,19 @@ class Tooltip extends HtmlContent {
     }, delay)
   }
 
+  toggle (props, show = !this.isHidden) {
+    if (show) {
+      this.show(props)
+    } else {
+      this.hide(props)
+    }
+  }
+
   updateTooltip ({ msg, d3TargetElement, targetRect, outerRect = document.body.getBoundingClientRect(), offset, pointerCoords, verticalAlign = 'bottom' }) {
     // returns if the tooltip is hidden
     if (this.isHidden) return
 
-    let msgHtmlNode = msg
+    let msgHtmlNode = getMsgHtml(msg)
 
     this.d3TooltipInner.classed('top bottom', false)
     this.d3TooltipInner.classed(verticalAlign, true)
@@ -99,13 +108,6 @@ class Tooltip extends HtmlContent {
       y += offset.y || 0
       width += offset.width || 0
       height += offset.height || 0
-    }
-
-    if (typeof (msg) === 'string') {
-      var node = document.createElement('DIV')
-      node.className = 'tooltip-default-message'
-      node.textContent = msg
-      msgHtmlNode = node
     }
 
     clearTimeout(this.tooltipHandler)
@@ -150,6 +152,24 @@ class Tooltip extends HtmlContent {
   draw () {
     super.draw()
   }
+}
+
+function getMsgHtml (msg) {
+  switch (typeof msg) {
+    case 'string':
+      var node = document.createElement('DIV')
+      node.className = 'tooltip-default-message'
+      node.textContent = msg
+      return node
+
+    case 'function':
+      return getMsgHtml(msg())
+
+    case 'object':
+      if (msg.nodeType === 1) return msg // it is an HTMLElement
+  }
+
+  return getMsgHtml('Error: the provided content is not a String nor an HTMLElement ')
 }
 
 module.exports = Tooltip
