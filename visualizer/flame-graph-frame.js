@@ -63,7 +63,6 @@ function renderStackFrame (globals, locals, rect) {
 
   // Add a light stroke to left, bottom and right indicating code area
   context.save()
-  context.globalAlpha = (this.ui.presentationMode || nodeData.isOtherOccurrence) ? 0.6 : 0.4
 
   context.strokeStyle = borderColor
 
@@ -85,7 +84,7 @@ function renderStackFrame (globals, locals, rect) {
   context.lineTo(right, top)
   context.stroke()
 
-  if (nodeData.isOtherOccurrence) {
+  if (nodeData.isOtherOccurrence && this.ui.showOccurrences) {
     context.beginPath()
     context.lineWidth = thick
     context.moveTo(right, top)

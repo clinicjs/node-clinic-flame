@@ -529,35 +529,42 @@ class Ui extends events.EventEmitter {
     // TODO: When light / dark theme switch implemented, call this after each switch, before redraw
     const computedStyle = window.getComputedStyle(document.body)
     this.exposedCSS = {
-      app: computedStyle.getPropertyValue('--area-color-app').trim(),
-      deps: computedStyle.getPropertyValue('--area-color-deps').trim(),
-      'core': computedStyle.getPropertyValue('--area-color-core').trim(),
-      'all-v8': computedStyle.getPropertyValue('--area-color-core').trim(),
+      app: computedStyle.getPropertyValue('--area-color-app-val').trim(),
+      deps: computedStyle.getPropertyValue('--area-color-deps-val').trim(),
+      'core': computedStyle.getPropertyValue('--area-color-core-val').trim(),
+      'all-v8': computedStyle.getPropertyValue('--area-color-core-val').trim(),
 
       'opposite-contrast': computedStyle.getPropertyValue('--opposite-contrast').trim(),
+      'opposite-contrast-val': computedStyle.getPropertyValue('--opposite-contrast-val').trim(),
       'max-contrast': computedStyle.getPropertyValue('--max-contrast').trim(),
+      'max-contrast-val': computedStyle.getPropertyValue('--max-contrast-val').trim(),
       'grey-blue': computedStyle.getPropertyValue('--grey-blue').trim(),
       'primary-grey': computedStyle.getPropertyValue('--primary-grey').trim(),
-      'occurrences-border': computedStyle.getPropertyValue('--occurrences-border').trim()
+      'primary-grey-val': computedStyle.getPropertyValue('--primary-grey-val').trim(),
+      'occurrences-border-val': computedStyle.getPropertyValue('--occurrences-border-val').trim()
     }
   }
 
   getFrameColor (nodeData, role, reverse = nodeData.highlight) {
-    if (role === 'border' && this.showOccurrences) {
-      if (nodeData.isOtherOccurrence) {
-        return this.exposedCSS['occurrences-border']
+    let opacity = 1
+
+    if (role === 'border') {
+      opacity = this.presentationMode ? 0.6 : 0.4
+
+      if (nodeData.isOtherOccurrence && this.showOccurrences) {
+        return `rgba(${this.exposedCSS['occurrences-border-val']},${opacity})`
       }
     }
     if ((role === 'background' && !reverse) || (role === 'foreground' && reverse)) {
-      return this.exposedCSS['opposite-contrast']
+      return `rgba(${this.exposedCSS['opposite-contrast-val']},${opacity})`
     }
 
     if (this.dataTree.showOptimizationStatus) {
-      if (nodeData.isUnoptimized) return this.exposedCSS['max-contrast']
-      if (nodeData.isOptimized) return this.exposedCSS['primary-grey']
-      return this.exposedCSS['grey-blue']
+      if (nodeData.isUnoptimized) return `rgba(${this.exposedCSS['max-contrast-val']},${opacity})`
+      if (nodeData.isOptimized) return `rgba(${this.exposedCSS['primary-grey-val']},${opacity})`
+      return `rgba(${this.exposedCSS['grey-blue-val']},${opacity})`
     } else {
-      return this.exposedCSS[nodeData.category]
+      return `rgba(${this.exposedCSS[nodeData.category]},${opacity})`
     }
   }
 

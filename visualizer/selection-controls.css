@@ -82,7 +82,7 @@
 }
 
 #selection-controls .occurrences-count.on svg{
-  color: var(--occurrences-border);
+  color: rgb(var(--occurrences-border-val));
   opacity: 0.8;
 }
 #selection-controls .occurrences-count .perc{
