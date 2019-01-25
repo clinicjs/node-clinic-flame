@@ -6,6 +6,7 @@ const chevronLeft = require('@nearform/clinic-common/icons/chevron-left')
 const chevronRight = require('@nearform/clinic-common/icons/chevron-right')
 const chevronRightLast = require('@nearform/clinic-common/icons/chevron-right-last')
 const gridIcon = require('@nearform/clinic-common/icons/grid-view')
+const OccurrencesToolTip = require('./occurrences-tooltip.js')
 
 class SelectionControls extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
@@ -166,17 +167,57 @@ class SelectionControls extends HtmlContent {
     this.d3OccurrencesCount = this.d3Element.append('button')
       .classed('occurrences-count', true)
       .html(`...`)
+
+    const occurrencesTooltipObj = {
+      msg: () => {
+        const div = document.createElement('div')
+        div.addEventListener('mouseover', (e) => {
+          this.ui.selectedNodeOtherOccurrences.forEach(n => {
+            if (parseInt(e.target.dataset.id) === n.id) {
+              this.ui.highlightNode(n)
+            }
+          })
+        })
+
+        div.addEventListener('click', (e) => {
+          this.ui.selectedNodeOtherOccurrences.forEach(n => {
+            if (parseInt(e.target.dataset.id) === n.id) {
+              this.ui.selectNode(n)
+              this.tooltip.hide({ hideDelay: 0 })
+            }
+          })
+        })
+        const totalValue = this.ui.dataTree.activeTree().value
+
+        div.innerHTML = OccurrencesToolTip.getHtml({
+          occurrences: this.ui.selectedNodeOtherOccurrences,
+          isVisible: this.ui.showOccurrences,
+          totalValue,
+          getHeatColor: this.ui.dataTree.getHeatColor.bind(this.ui.dataTree)
+        })
+
+        return div
+      },
+      d3TargetElement: this.d3OccurrencesCount,
+      showDelay: 0,
+      hideDelay: 0,
+      offset: { y: 1 }
+    }
+
+    this.d3OccurrencesCount
       .on('click', () => {
         this.ui.setOccurrencesVisibility(!this.ui.showOccurrences)
+        this.tooltip.show(occurrencesTooltipObj)
       })
-
-    this.tooltip.attach({
-      msg: 'Show/Hide all the occurrences for the highlighted frame',
-      d3TargetElement: this.d3OccurrencesCount,
-      offset: {
-        y: 2
-      }
-    })
+      .on('mouseenter', () => this.tooltip.show(
+        {
+          ...occurrencesTooltipObj,
+          showDelay: this.ui.showOccurrences ? 400 : 1500
+        })
+      )
+      .on('mouseleave', () => {
+        this.tooltip.hide({ hideDelay: 300, callback: () => this.ui.highlightNode(this.ui.selectedNode) })
+      })
   }
 
   selectByRank (rank) {
