@@ -72,7 +72,7 @@
 
 #selection-controls .occurrences-count .count{
   display: inline-block;
-  margin-right: 0.3em;
+  margin-right: 0.8em;
 }
 
 #selection-controls .occurrences-count svg{
@@ -88,7 +88,6 @@
 #selection-controls .occurrences-count .perc{
   font-size: calc(var(--small-text-size) * 0.8);
   opacity: 0.6;
-  align-self: flex-start;
 }
 
 @media screen and (min-width: 530px) {
