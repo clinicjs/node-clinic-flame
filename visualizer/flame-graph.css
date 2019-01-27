@@ -35,7 +35,7 @@ chart > div {
   display: none;
   top: 0px;
   left: 0px;
-  border: 1px dotted rgba(255, 255, 255, 0.5);
+  border: 1px dashed rgba(255, 255, 255, 0.5);
   pointer-events: none;
   position: absolute;
 }
@@ -68,7 +68,7 @@ chart > div {
   content:"";
   flex-grow: 1;
   width: 0px;
-  border-left: 1px dotted rgba(255, 255, 255, 0.5);
+  border-left: 1px dashed rgba(255, 255, 255, 0.5);
 }
 
 .selection-box {
