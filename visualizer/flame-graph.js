@@ -293,10 +293,13 @@ class FlameGraph extends HtmlContent {
       this.applyRectToDiv(this.d3Highlighter, rect, true)
 
       this.d3HighlighterBox.classed('show', true)
-      this.applyRectToDiv(this.d3HighlighterBox, Object.assign({}, rect, {
-        // Align border with horizontal lines and tooltip edge
-        y: rect.y + 1
-      }))
+      this.applyRectToDiv(this.d3HighlighterBox, {
+        // Align border inside frame so it's visible against borders, heat etc
+        x: rect.x + 2,
+        y: rect.y - 1,
+        width: rect.width - 2,
+        height: rect.height - 3
+      })
     } else {
       this.d3Highlighter.classed('show', false)
       this.d3HighlighterBox.classed('show', false)

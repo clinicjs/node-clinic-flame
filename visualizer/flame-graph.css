@@ -30,6 +30,7 @@ chart > div {
   display: none;
   flex-direction: column;
   align-items: center;
+  z-index: 10;
 }
 .highlighter-box {
   display: none;
@@ -74,9 +75,14 @@ chart > div {
 .selection-box {
   position: absolute;
   pointer-events: none;
-  background-color: rgba(var(--grey-highlight-color-val), 0.12);
+  background: rgba(var(--grey-highlight-color-val), 0.12);
+  background: linear-gradient(to bottom,
+    rgba(var(--grey-highlight-color-val), 0.28) 0%,
+    rgba(var(--grey-highlight-color-val), 0.14) 60%,
+    rgba(var(--grey-highlight-color-val), 0) 100%
+  );
   border: 1px solid transparent;
-  box-shadow: 0 1px 4px rgba(var(--grey-highlight-color-val), 0.2);
+  box-shadow: 0 1px 4px rgba(var(--grey-highlight-color-val), 0.14);
   z-index: 10;
 }
 
