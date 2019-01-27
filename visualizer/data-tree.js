@@ -172,10 +172,9 @@ class DataTree {
 
       if (!node.children || this.isNodeExcluded(node)) return
 
-      const nextVisibleDescendents = this.getNextVisible(node)
+      const nextVisibleDescendents = this.getVisibleChildren(node)
 
       nextVisibleDescendents.forEach((child) => {
-        if (!this.isNodeExcluded(child)) console.log(child, node)
         const type = this.getTypeKey(child)
         const value = this.getNodeValue(child)
         if (type in group) {
@@ -229,13 +228,15 @@ class DataTree {
     return arr.find((node) => node.id === id)
   }
 
-  getNextVisible (node = this.activeTree()) {
+  getVisibleChildren (node = this.activeTree()) {
+    // Can pass in data nodes or D3 partition nodes; gets closest visible descendents of same type
+
     let nextVisibleDescendents = []
-    const childCount = node.children.length
+    const childCount = node.children ? node.children.length : 0
     for (let i = 0; i < childCount; i++) {
       const child = node.children[i]
-      if (this.isNodeExcluded(child)) {
-        nextVisibleDescendents = nextVisibleDescendents.concat(this.getNextVisible(child))
+      if (this.isNodeExcluded(child.data || child)) {
+        nextVisibleDescendents = nextVisibleDescendents.concat(this.getVisibleChildren(child))
       } else {
         nextVisibleDescendents.push(child)
       }

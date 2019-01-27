@@ -36,53 +36,131 @@ function renderStackFrame (globals, locals, rect) {
   const left = Math.floor(x) + 1.5
   const right = Math.ceil(left + width) - 1.5
   const bottom = Math.floor(y + height) + 0.5
-
-  // For really tiny frames, draw a 1px thick pixel-aligned 'matchstick' line
-  if (width <= 1.5) {
-    const backgroundColor = this.ui.getFrameColor(nodeData, 'background', false)
-    const foregroundColor = this.ui.getFrameColor(nodeData, 'foreground', false)
-    renderAsLine(context, { x: left, y, height }, backgroundColor, foregroundColor, nodeData.highlight, heatHeight)
-    return
-  }
+  const top = Math.ceil(y) - 0.5
 
   // Don't redraw heat over previous paint on hover events, and don't draw for root node
-  // if (state === STATE_IDLE && nodeData.id !== 0) renderHeatBar(context, nodeData, colorHash, alignedRect)
-  if (state === STATE_IDLE && nodeData.id !== 0) {
-    renderHeatBar(context, nodeData, colorHash, rect, heatHeight)
-  }
+  const doDrawHeatBar = state === STATE_IDLE && nodeData.id !== 0
+  if (doDrawHeatBar) renderHeatBar(context, nodeData, colorHash, rect, heatHeight)
 
   const backgroundColor = this.ui.getFrameColor(nodeData, 'background')
   const foregroundColor = this.ui.getFrameColor(nodeData, 'foreground')
+
+  const visibleParent = getVisibleParent(node)
+  const parentForegroundColor = visibleParent ? this.ui.getFrameColor(visibleParent.data, 'foreground') : foregroundColor
 
   context.fillStyle = backgroundColor
 
   context.beginPath()
   context.rect(left, y, width, height)
-  context.fill()
+
+  context.save()
+
+  // For narrow frames with very little between lines, fade fill or skip fill completely
+  if (width > lineWidth) {
+    context.globalAlpha = Math.min(1, Math.max(width - lineWidth, 0.1) / lineWidth * 3)
+    context.fill()
+  }
+
+  if (!visibleParent) {
+    context.restore()
+    return
+  }
 
   // Add a light stroke to left, bottom and right indicating code area
-  context.save()
-  context.globalAlpha = this.ui.presentationMode ? 0.6 : 0.4
+
+  const visibleSiblings = this.ui.dataTree.getVisibleChildren(visibleParent)
+
+  const indexPosition = visibleSiblings.indexOf(node)
+  const previousSibling = indexPosition > 0 ? visibleSiblings[indexPosition - 1] : null
+  const nextSibling = visibleSiblings[indexPosition + 1] || null
+
+  // .getNodeRect() is not yet accessible here because this is called while the d3-fg Flamegraph is being constructed
+  // but actual pixel width can be calculated using available data
+  const widthRatio = width / (node.x1 - node.x0)
+
+  // On narrow frames with no fill between the two lines, fade lines relative to width. Is 1 if width > two lineWidths
+  const thinFrameReducer = Math.min(1, (width || 0.1) / (lineWidth * 2))
+
+  // For a narrow right-hand edge of a block of frames of the same code area...
+  const rightEdgeReducer = (thinFrameReducer === 1 || !previousSibling || (!!nextSibling && sameArea(nodeData, nextSibling.data))) ? thinFrameReducer
+    // ...fade as above, but based on the width of these same-area siblings, not just this node, so that
+    // something like   [ someFunc    ./file.js ][ f ./file.js ][][]|||   gets a visible right hand edge
+    : Math.min(1, visibleSiblings.slice(0, indexPosition).reduce((acc, sibling) => acc + (sameArea(nodeData, sibling.data) ? (sibling.x1 - sibling.x0) * widthRatio : 0), 0) / (lineWidth * 2))
+
+  const alphaFull = this.ui.presentationMode ? 0.8 : 0.7
+  const alphaReduced = this.ui.presentationMode ? 0.25 : 0.2
+
+  const areaChangeBelow = !sameArea(nodeData, visibleParent.data)
+
+  const areaChangeLeft = !previousSibling || !sameArea(nodeData, previousSibling.data)
+  const areaChangeRight = !nextSibling || !sameArea(nodeData, nextSibling.data)
+  const categoryChangeBelow = nodeData.category !== visibleParent.data.category
+
+  context.globalAlpha = (areaChangeBelow ? alphaFull : alphaReduced) * thinFrameReducer
+
+  context.lineWidth = lineWidth * (categoryChangeBelow ? 2 : 1)
+  if (categoryChangeBelow) {
+    context.strokeStyle = parentForegroundColor
+
+    context.beginPath()
+    context.moveTo(left, bottom - lineWidth * 1.5)
+    context.lineTo(right, bottom - lineWidth * 1.5)
+    context.stroke()
+  }
+
   context.strokeStyle = foregroundColor
 
   context.beginPath()
-  context.lineWidth = thin
-  context.moveTo(left, y)
-  context.lineTo(left, bottom - lineWidth)
+  context.moveTo(left, bottom - lineWidth * (categoryChangeBelow ? 2.5 : 1))
+  context.lineTo(right, bottom - lineWidth * (categoryChangeBelow ? 2.5 : 1))
   context.stroke()
 
-  context.beginPath()
   context.lineWidth = lineWidth
-  context.moveTo(left, bottom - lineWidth)
-  context.lineTo(right, bottom - lineWidth)
-  context.stroke()
 
+  context.globalAlpha = (areaChangeLeft ? alphaFull : alphaReduced) * thinFrameReducer
   context.beginPath()
   context.lineWidth = thin
-  context.moveTo(right, bottom - lineWidth)
-  context.lineTo(right, y)
+  context.moveTo(left, top)
+  context.lineTo(left, bottom - (areaChangeBelow ? lineWidth : 0))
   context.stroke()
+
+  context.globalAlpha = (areaChangeRight ? alphaFull : alphaReduced) * rightEdgeReducer
+  context.beginPath()
+  context.lineWidth = thin
+  context.moveTo(right, bottom - (areaChangeBelow ? lineWidth : 0))
+  context.lineTo(right, top)
+  context.stroke()
+
+  if (doDrawHeatBar) {
+    // Complete the outline at any visible stack top by drawing along the entire top, under any children
+    context.beginPath()
+    context.moveTo(right, top)
+    context.lineTo(right, top - heatHeight)
+    context.lineTo(left, top - heatHeight)
+    context.lineTo(left, top)
+    context.stroke()
+
+    context.globalAlpha = alphaReduced * thinFrameReducer
+    context.beginPath()
+    context.moveTo(left, top)
+    context.lineTo(right, top)
+    context.stroke()
+  }
+
   context.restore()
+
+  if (areaChangeBelow && areaChangeRight) {
+    let priorSiblingWidth = 0
+
+    for (let i = indexPosition - 1; i >= 0; i--) {
+      if (!sameArea(nodeData, visibleSiblings[i].data)) {
+        break
+      }
+      priorSiblingWidth += (visibleSiblings[i].x1 - visibleSiblings[i].x0) * widthRatio
+    }
+
+    this.labelArea({ context: this.overlayContext, node, state }, rect, priorSiblingWidth)
+  }
 }
 
 function renderHeatBar (context, nodeData, colorHash, rect, heatHeight) {
@@ -98,31 +176,13 @@ function renderHeatBar (context, nodeData, colorHash, rect, heatHeight) {
   context.stroke()
 }
 
-function renderAsLine (context, rect, backgroundColor, foregroundColor, isHighlighted, heatHeight) {
-  const {
-    x,
-    y,
-    height
-  } = rect
+function getVisibleParent (node) {
+  if (!node.parent) return null
+  return node.parent.data.hide ? getVisibleParent(node.parent) : node.parent
+}
 
-  // Black solid background line, including black heat area
-  context.strokeStyle = backgroundColor
-  context.beginPath()
-  context.moveTo(x, y - heatHeight)
-  context.lineTo(x, y + height)
-  context.stroke()
-
-  // Add code area tint to the appropriate part of the line
-  context.save()
-
-  // Bolden any tiny active search matches
-  context.globalAlpha = isHighlighted ? 0.9 : 0.2
-  context.strokeStyle = foregroundColor
-  context.beginPath()
-  context.moveTo(x, y)
-  context.lineTo(x, y + height)
-  context.stroke()
-  context.restore()
+function sameArea (nodeDataA, nodeDataB) {
+  return nodeDataA.type === nodeDataB.type && nodeDataA.category === nodeDataB.category
 }
 
 module.exports = getFrameRenderer
