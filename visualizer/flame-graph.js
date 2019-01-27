@@ -6,7 +6,10 @@ const d3Fg = require('d3-fg')
 const HtmlContent = require('./html-content.js')
 
 const FgTooltipContainer = require('./flame-graph-tooltip-container')
-const getLabelRenderer = require('./flame-graph-label.js')
+const {
+  getFrameLabeler,
+  getAreaLabeler
+} = require('./flame-graph-label.js')
 const getFrameRenderer = require('./flame-graph-frame.js')
 
 const searchHighlightColor = 'orange'
@@ -26,7 +29,7 @@ class FlameGraph extends HtmlContent {
 
     this.hoveredNodeData = null
     this.isAnimating = false
-    this.baseCellHeight = this.ui.presentationMode ? 26 : 20
+    this.baseCellHeight = this.ui.presentationMode ? 26 : 24
     this.cellHeight = this.baseCellHeight + this.zoomFactor
     this.sizeChanged = false
 
@@ -82,6 +85,20 @@ class FlameGraph extends HtmlContent {
       .classed('scroll-container', true)
       .style('position', 'relative')
 
+    this.d3CanvasOverlay = this.d3Chart.append('canvas')
+      .classed('flame-overlay', true)
+
+    const { width, height } = this.d3Chart.node().getBoundingClientRect()
+
+    this.d3CanvasOverlay.style('height', height + 'px')
+    this.d3CanvasOverlay.attr('height', height)
+    this.d3CanvasOverlay.style('width', width + 'px')
+    this.d3CanvasOverlay.attr('width', width)
+
+    this.overlayContext = this.d3CanvasOverlay.node().getContext('2d')
+    //  this.overlayContext.setTransform(1, 0, 0, 1, 0, 0)
+    this.overlayContext.scale(window.devicePixelRatio, window.devicePixelRatio)
+
     // creating the component to highlight the hovered node on the flame graph
     this.d3Highlighter = this.d3Element.append('div')
       .classed('node-highlighter', true)
@@ -129,6 +146,9 @@ class FlameGraph extends HtmlContent {
     const { dataTree } = this.ui
 
     this.renderedTree = dataTree.activeTree()
+
+    this.labelArea = getAreaLabeler(this)
+
     this.flameGraph = d3Fg({
       tree: dataTree.activeTree(),
       exclude: dataTree.exclude,
@@ -152,7 +172,7 @@ class FlameGraph extends HtmlContent {
         return this.ui.dataTree.getHeatColor(d)
       },
       clickHandler: null,
-      renderLabel: getLabelRenderer(this),
+      renderLabel: getFrameLabeler(this),
       renderStackFrameBox: getFrameRenderer(this)
     })
 
@@ -333,14 +353,16 @@ class FlameGraph extends HtmlContent {
     this.zoomFactorChanged = this.zoomFactor !== zoomFactor
     this.zoomFactor = zoomFactor
 
-    this.baseCellHeight = this.ui.presentationMode ? 26 : 20
+    this.baseCellHeight = this.ui.presentationMode ? 26 : 24
     const width = this.d3Chart.node().clientWidth
+
     const cellHeight = this.baseCellHeight + zoomFactor
     const minHeight = this.d3Element.node().clientHeight
     this.sizeChanged = this.width !== width || this.cellHeight !== cellHeight || this.minHeight !== minHeight
     this.width = width
     this.cellHeight = cellHeight
     this.minHeight = minHeight
+
     this.draw()
     this.updateMarkerBoxes()
   }
@@ -358,10 +380,19 @@ class FlameGraph extends HtmlContent {
     super.draw()
 
     const { dataTree } = this.ui
+
     if (this.sizeChanged) {
-      this.flameGraph.width(this.width)
       this.flameGraph.cellHeight(this.cellHeight)
       this.flameGraph.minHeight(this.minHeight)
+      const height = this.flameGraph.height()
+      this.d3CanvasOverlay.style('height', height + 'px')
+      this.d3CanvasOverlay.attr('height', height)
+
+      this.d3CanvasOverlay.style('width', this.width + 'px')
+      this.d3CanvasOverlay.attr('width', this.width)
+      // Order matters: setting overlay's width/height attrs wipes canvas, flameGraph.width() redraws it
+      this.flameGraph.width(this.width)
+
       this.sizeChanged = false
     }
 

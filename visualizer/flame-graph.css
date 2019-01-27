@@ -77,6 +77,16 @@ chart > div {
   background-color: rgba(var(--grey-highlight-color-val), 0.12);
   border: 1px solid transparent;
   box-shadow: 0 1px 4px rgba(var(--grey-highlight-color-val), 0.2);
+  z-index: 10;
+}
+
+#flame-main canvas.flame-overlay {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 5;
 }
 
 .zoom-underline {

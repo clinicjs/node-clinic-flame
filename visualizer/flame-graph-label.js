@@ -1,10 +1,14 @@
 'use strict'
 
-function getLabelRenderer (bindTo) {
-  return renderLabel.bind(bindTo)
+function getFrameLabeler (bindTo) {
+  return renderFrameLabel.bind(bindTo)
 }
 
-function renderLabel (frameHeight, options) {
+function getAreaLabeler (bindTo) {
+  return renderAreaLabel.bind(bindTo)
+}
+
+function renderFrameLabel (frameHeight, options) {
   const {
     context,
     node,
@@ -12,7 +16,6 @@ function renderLabel (frameHeight, options) {
     y,
     width
   } = options
-
   const nodeData = node.data
 
   // Don't spend any time in frames with less than one padding width between left/right padding
@@ -21,13 +24,12 @@ function renderLabel (frameHeight, options) {
   // keeping the same font-size used in the App (assuming the user didn't change the browser default font-size)
   const fontSize = 10 + this.zoomFactor
   const btmOffset = (frameHeight - fontSize) / 2
-  const yBottom = y + frameHeight - btmOffset
+  const yBottom = y + frameHeight - btmOffset - 3
 
   context.font = `${fontSize}px ${this.labelFont}`
-
-  // Reverse text and background for any current search matches
   context.fillStyle = this.ui.getFrameColor(nodeData, 'foreground')
 
+  // Reverse text and background for any current search matches
   // Use root node as a zoom out button, blank when not zoomed in
   if (nodeData.id === 0) {
     if (!this.ui.zoomedNode) return
@@ -94,7 +96,62 @@ function renderLabel (frameHeight, options) {
   drawLabel(context, functionName, fileName, coords)
 }
 
+function renderAreaLabel (locals, rect, priorSiblingWidth) {
+  const {
+    context,
+    node
+  } = locals
+  const {
+    x,
+    y,
+    width,
+    height
+  } = rect
+  const nodeData = node.data
+
+  const areaX = x - priorSiblingWidth
+  const xCentre = areaX + (priorSiblingWidth + width) / 2
+
+  const fontSize = 6 + this.zoomFactor
+  const availableWidth = priorSiblingWidth + width - fontSize
+
+  if (availableWidth < fontSize) return
+
+  const areaName = (nodeData.category === 'core' ? 'node' : nodeData.type).toUpperCase()
+  const nameWidth = context.measureText(areaName).width
+  const visibleName = truncateFunctionName(context, availableWidth, areaName, nameWidth)
+  const visibleNameWidth = context.measureText(visibleName).width
+  const yBottom = y + height
+
+  const labelRect = {
+    x: xCentre - visibleNameWidth / 2,
+    width: visibleNameWidth,
+    y: yBottom - fontSize - 1,
+    height: fontSize
+  }
+
+  if (!visibleName) return
+
+  context.save()
+
+  context.textBaseline = 'bottom'
+
+  context.clearRect(labelRect.x, labelRect.y, labelRect.width, labelRect.height)
+  context.fillStyle = 'rgb(0, 0, 0)' // TODO: make dynamic
+  context.fillRect(labelRect.x, labelRect.y, labelRect.width, labelRect.height)
+
+  context.fillStyle = this.ui.getFrameColor(nodeData, 'foreground')
+  context.font = `bold ${fontSize}px ${this.labelFont}`
+  context.textAlign = 'center'
+  context.fillText(visibleName, xCentre, yBottom)
+
+  context.fill()
+  context.restore()
+}
+
 function truncateFunctionName (context, availableWidth, functionName, funcNameWidth) {
+  if (availableWidth >= funcNameWidth) return functionName
+
   const avCharWidth = funcNameWidth / functionName.length
 
   // Ensure there's reasonable space for at least one character plus an ellipsis
@@ -131,8 +188,8 @@ function drawLabel (context, functionName, fileName, coords) {
     context.save()
     context.textAlign = 'right'
     context.fillText(fileName, coords.rightX, coords.y)
+    context.restore()
   }
-  context.restore()
 }
 
 function rootNodeLabel (context, xMid, y, availableWidth, appName) {
@@ -147,4 +204,4 @@ function rootNodeLabel (context, xMid, y, availableWidth, appName) {
   context.restore()
 }
 
-module.exports = getLabelRenderer
+module.exports = { getFrameLabeler, getAreaLabeler }
