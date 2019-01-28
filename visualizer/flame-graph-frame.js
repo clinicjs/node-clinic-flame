@@ -42,7 +42,12 @@ function renderStackFrame (globals, locals, rect) {
 
   // Don't redraw heat over previous paint on hover events, and don't draw for root node
   const doDrawHeatBar = state === STATE_IDLE && nodeData.id !== 0
-  if (doDrawHeatBar) renderHeatBar(context, nodeData, colorHash, rect, heatHeight)
+  if (doDrawHeatBar) renderHeatBar(context, nodeData, colorHash, {
+    x: left,
+    y: top,
+    width: Math.ceil(width) - 1.5,
+    height: heatHeight
+  })
 
   const backgroundColor = this.ui.getFrameColor(nodeData, 'background')
   const foregroundColor = this.ui.getFrameColor(nodeData, 'foreground')
@@ -166,7 +171,7 @@ function renderStackFrame (globals, locals, rect) {
   }
 }
 
-function renderHeatBar (context, nodeData, colorHash, rect, heatHeight) {
+function renderHeatBar (context, nodeData, colorHash, rect) {
   // Extracted from d3-fg so we can pixel-align it to match the rest
   const heatColor = colorHash(nodeData)
   const heatStrokeColor = colorHash(nodeData, 1.1)
@@ -174,7 +179,7 @@ function renderHeatBar (context, nodeData, colorHash, rect, heatHeight) {
   context.fillStyle = heatColor
   context.strokeStyle = heatStrokeColor
   context.beginPath()
-  context.rect(rect.x, rect.y - heatHeight, rect.width, heatHeight)
+  context.rect(rect.x, rect.y - rect.height, rect.width, rect.height)
   context.fill()
   context.stroke()
 }
