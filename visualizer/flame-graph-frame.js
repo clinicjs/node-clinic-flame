@@ -91,10 +91,11 @@ function renderStackFrame (globals, locals, rect) {
   const alphaReduced = this.ui.presentationMode ? 0.25 : 0.2
 
   const areaChangeBelow = !sameArea(nodeData, visibleParent.data)
-
   const areaChangeLeft = !previousSibling || !sameArea(nodeData, previousSibling.data)
   const areaChangeRight = !nextSibling || !sameArea(nodeData, nextSibling.data)
   const categoryChangeBelow = nodeData.category !== visibleParent.data.category
+
+  const leftGapRemover = !areaChangeLeft && areaChangeBelow ? 1 : 0
 
   context.globalAlpha = (areaChangeBelow ? alphaFull : alphaReduced) * thinFrameReducer
 
@@ -103,7 +104,7 @@ function renderStackFrame (globals, locals, rect) {
     context.strokeStyle = parentForegroundColor
 
     context.beginPath()
-    context.moveTo(left, bottom - lineWidth * 1.5)
+    context.moveTo(left - leftGapRemover, bottom - lineWidth * 1.5)
     context.lineTo(right, bottom - lineWidth * 1.5)
     context.stroke()
   }
@@ -111,7 +112,7 @@ function renderStackFrame (globals, locals, rect) {
   context.strokeStyle = foregroundColor
 
   context.beginPath()
-  context.moveTo(left, bottom - lineWidth * (categoryChangeBelow ? 2.5 : 1))
+  context.moveTo(left - leftGapRemover, bottom - lineWidth * (categoryChangeBelow ? 2.5 : 1))
   context.lineTo(right, bottom - lineWidth * (categoryChangeBelow ? 2.5 : 1))
   context.stroke()
 
