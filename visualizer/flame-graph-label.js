@@ -55,6 +55,7 @@ function renderFrameLabel (frameHeight, options) {
     if (nodeData.type === 'v8') fileName = 'Compiled V8 C++'
     if (nodeData.type === 'cpp') fileName = 'Compiled C++'
   }
+  if (nodeData.category === 'deps') fileName = fileName.replace(/\.\.?[\\/]node_modules[\\/]/, '')
 
   const funcNameWidth = context.measureText(functionName).width
   const fileNameWidth = context.measureText(fileName).width
@@ -69,7 +70,7 @@ function renderFrameLabel (frameHeight, options) {
       const lineAndColumn = `:${nodeData.lineNumber}:${nodeData.columnNumber}`
       const extraTextWidth = fullTextWidth + context.measureText(lineAndColumn).width
 
-      fileName = extraTextWidth < width ? nodeData.fileName + lineAndColumn : nodeData.fileName
+      fileName = extraTextWidth < width ? fileName + lineAndColumn : fileName
     }
   } else if (this.labelPadding * 4 + funcNameWidth > width) {
     // No file name at all if there's no space for more than one padding width's worth
@@ -85,7 +86,7 @@ function renderFrameLabel (frameHeight, options) {
     // See if we can isolate a file name from its path and show just that
     const pathSeparator = this.ui.dataTree.pathSeparator
     const availableWidth = width - this.labelPadding * 3 - funcNameWidth
-    fileName = truncateFileName(context, availableWidth, fileName, pathSeparator)
+    fileName = truncateFileName(context, availableWidth, fileName, pathSeparator, nodeData)
   }
 
   const coords = {
@@ -170,7 +171,12 @@ function truncateFunctionName (context, availableWidth, functionName, funcNameWi
   return functionName ? functionName + '…' : ''
 }
 
-function truncateFileName (context, availableWidth, fileName, pathSeparator) {
+function truncateFileName (context, availableWidth, fileName, pathSeparator, nodeData) {
+  if (nodeData.category === 'deps') {
+    const removedDep = fileName.replace(new RegExp(`^${nodeData.type}[\\\\/]`), '…')
+    if (context.measureText(removedDep).width <= availableWidth) return removedDep
+  }
+
   let fileOnly = fileName.split(pathSeparator).pop()
 
   if (fileOnly === fileName) return ''
