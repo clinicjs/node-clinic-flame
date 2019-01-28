@@ -318,31 +318,9 @@ class Ui extends events.EventEmitter {
 
     let reDrawStackBar = debounce(() => this.stackBar.draw(this.highlightedNode), 200)
 
-    let scrollContainer = null
+    this.scrollContainer = null
     this.scrollSelectedFrameIntoView = debounce(() => {
-      if (!scrollContainer) {
-        scrollContainer = flameWrapper.d3Element.select('.scroll-container').node()
-      }
-
-      let scrollAmount = scrollContainer.scrollHeight
-      if (this.selectedNode && this.selectedNode.category !== 'none') {
-        const viewportHeight = scrollContainer.clientHeight
-        const rect = this.flameWrapper.getNodeRect(this.selectedNode)
-
-        scrollAmount = rect.y - viewportHeight * 0.4
-        // scrolling only if the frame is outside the viewport
-        if ((rect.y - rect.height) > scrollContainer.scrollTop && rect.y < scrollContainer.scrollTop + viewportHeight) return
-      }
-
-      if (scrollContainer.scrollTo) {
-        scrollContainer.scrollTo({
-          top: scrollAmount,
-          behavior: 'smooth'
-        })
-      } else {
-        // Fallback for MS Edge
-        scrollContainer.scrollTop = scrollAmount
-      }
+      this.scrollFrameIntoView(this.selectedNode)
     }, 200)
 
     const setFontSize = (zoomFactor) => {
@@ -369,6 +347,32 @@ class Ui extends events.EventEmitter {
       setFontSize(zoomFactor)
       this.scrollSelectedFrameIntoView()
     })
+  }
+
+  scrollFrameIntoView (node) {
+    if (!this.scrollContainer) {
+      this.scrollContainer = this.flameWrapper.d3Element.select('.scroll-container').node()
+    }
+
+    let scrollAmount = this.scrollContainer.scrollHeight
+    if (node && node.category !== 'none') {
+      const viewportHeight = this.scrollContainer.clientHeight
+      const rect = this.flameWrapper.getNodeRect(node)
+
+      scrollAmount = rect.y - viewportHeight * 0.4
+      // scrolling only if the frame is outside the viewport
+      if ((rect.y - rect.height) > this.scrollContainer.scrollTop && rect.y < this.scrollContainer.scrollTop + viewportHeight) return
+    }
+
+    if (this.scrollContainer.scrollTo) {
+      this.scrollContainer.scrollTo({
+        top: scrollAmount,
+        behavior: 'smooth'
+      })
+    } else {
+      // Fallback for MS Edge
+      this.scrollContainer.scrollTop = scrollAmount
+    }
   }
 
   addSection (id, options = {}) {
