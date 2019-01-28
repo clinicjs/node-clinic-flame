@@ -42,12 +42,14 @@ function renderStackFrame (globals, locals, rect) {
 
   // Don't redraw heat over previous paint on hover events, and don't draw for root node
   const doDrawHeatBar = state === STATE_IDLE && nodeData.id !== 0
-  if (doDrawHeatBar) renderHeatBar(context, nodeData, colorHash, {
-    x: left,
-    y: top,
-    width: Math.ceil(width) - 1.5,
-    height: heatHeight
-  })
+  if (doDrawHeatBar) {
+    renderHeatBar(context, nodeData, colorHash, {
+      x: left,
+      y: top,
+      width: Math.ceil(width) - 1.5,
+      height: heatHeight
+    })
+  }
 
   const backgroundColor = this.ui.getFrameColor(nodeData, 'background')
   const foregroundColor = this.ui.getFrameColor(nodeData, 'foreground')
