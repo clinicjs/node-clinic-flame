@@ -50,6 +50,8 @@ class FlameGraph extends HtmlContent {
       if (this.flameGraph) {
         if (cb) this.onNextAnimationEnd = cb
 
+        this.clearOverlay()
+
         this.isAnimating = true
         this.zoomedNodeData = node
 
@@ -266,6 +268,8 @@ class FlameGraph extends HtmlContent {
         this.onNextAnimationEnd()
         this.onNextAnimationEnd = null
       }
+
+      this.flameGraph.update()
     })
 
     // triggering the resize after the canvas rendered to take possible scrollbars into account
@@ -352,6 +356,13 @@ class FlameGraph extends HtmlContent {
     if (this.ui.zoomedNode) this.markNodeAsZoomed(this.ui.zoomedNode)
   }
 
+  clearOverlay () {
+    const overlay = this.d3CanvasOverlay.node()
+    const context = overlay.getContext('2d')
+    context.setTransform(1, 0, 0, 1, 0, 0)
+    context.clearRect(0, 0, overlay.width, overlay.height)
+  }
+
   resize (zoomFactor = 0) {
     this.zoomFactorChanged = this.zoomFactor !== zoomFactor
     this.zoomFactor = zoomFactor
@@ -420,13 +431,8 @@ class FlameGraph extends HtmlContent {
     }
 
     if (toHide.size > 0 || toShow.size > 0) isChanged = true
-    if (isChanged || redrawGraph) {
+    if (isChanged || redrawGraph) this.clearOverlay()
       // Clear the overlay canvas before it is redrawn
-      const overlay = this.d3CanvasOverlay.node()
-      const context = overlay.getContext('2d')
-      context.setTransform(1, 0, 0, 1, 0, 0)
-      context.clearRect(0, 0, overlay.width, overlay.height)
-    }
 
     // Must re-render tree before applying exclusions, else error if tree and exclusions change at same time
     if (redrawGraph) this.flameGraph.renderTree(this.renderedTree)

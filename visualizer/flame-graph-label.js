@@ -98,6 +98,8 @@ function renderFrameLabel (frameHeight, options) {
 }
 
 function renderAreaLabel (locals, rect, priorSiblingWidth) {
+  if (this.isAnimating) return
+
   const {
     context,
     node
