@@ -92,17 +92,7 @@ class FlameGraph extends HtmlContent {
 
     this.d3CanvasOverlay = this.d3Chart.append('canvas')
       .classed('flame-overlay', true)
-
-    const { width, height } = this.d3Chart.node().getBoundingClientRect()
-
-    this.d3CanvasOverlay.style('height', height + 'px')
-    this.d3CanvasOverlay.attr('height', height)
-    this.d3CanvasOverlay.style('width', width + 'px')
-    this.d3CanvasOverlay.attr('width', width)
-
-    this.overlayContext = this.d3CanvasOverlay.node().getContext('2d')
-    //  this.overlayContext.setTransform(1, 0, 0, 1, 0, 0)
-    this.overlayContext.scale(window.devicePixelRatio, window.devicePixelRatio)
+    this.resetOverlayContext()
 
     // creating the component to highlight the hovered node on the flame graph
     this.d3Highlighter = this.d3Element.append('div')
@@ -359,11 +349,28 @@ class FlameGraph extends HtmlContent {
     if (this.ui.zoomedNode) this.markNodeAsZoomed(this.ui.zoomedNode)
   }
 
+  resetOverlayContext () {
+    // Scales the context; and any change to <canvas> width/height attr resets the context content and properties
+    const height = this.flameGraph ? this.flameGraph.height() : this.d3Chart.node().getBoundingClientRect().height
+    const devicePixelRatio = window.devicePixelRatio
+
+    this.d3CanvasOverlay.style('height', height + 'px')
+    this.d3CanvasOverlay.style('width', this.width + 'px')
+
+    this.d3CanvasOverlay.attr('height', height * devicePixelRatio)
+    this.d3CanvasOverlay.attr('width', this.width * devicePixelRatio)
+
+    const context = this.d3CanvasOverlay.node().getContext('2d')
+    context.scale(window.devicePixelRatio, window.devicePixelRatio)
+    this.overlayContext = context
+  }
+
   clearOverlay () {
+    // Simply clear without rescaling or resetting other properties
     const overlay = this.d3CanvasOverlay.node()
-    const context = overlay.getContext('2d')
-    context.setTransform(1, 0, 0, 1, 0, 0)
-    context.clearRect(0, 0, overlay.width, overlay.height)
+    const devicePixelRatio = window.devicePixelRatio
+
+    this.overlayContext.clearRect(0, 0, overlay.width * devicePixelRatio, overlay.height * devicePixelRatio)
   }
 
   resize (zoomFactor = 0) {
@@ -401,12 +408,7 @@ class FlameGraph extends HtmlContent {
     if (this.sizeChanged) {
       this.flameGraph.cellHeight(this.cellHeight)
       this.flameGraph.minHeight(this.minHeight)
-      const height = this.flameGraph.height()
-      this.d3CanvasOverlay.style('height', height + 'px')
-      this.d3CanvasOverlay.attr('height', height)
-
-      this.d3CanvasOverlay.style('width', this.width + 'px')
-      this.d3CanvasOverlay.attr('width', this.width)
+      this.resetOverlayContext()
       // Order matters: setting overlay's width/height attrs wipes canvas, flameGraph.width() redraws it
       this.flameGraph.width(this.width)
 
