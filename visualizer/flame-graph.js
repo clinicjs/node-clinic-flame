@@ -55,7 +55,7 @@ class FlameGraph extends HtmlContent {
         this.zoomedNodeData = node
 
         // Hide tooltip and highlight box / pointer until .on('animationEnd')
-        this.tooltip.hide()
+        this.tooltip.hide({ delay: 0, callback: () => (this.toolTipIsVisible = false) })
         this.hoveredNodeData = null
         this.highlightHoveredNodeOnGraph()
         this.markNodeAsSelected(null)
@@ -127,7 +127,9 @@ class FlameGraph extends HtmlContent {
 
     // hiding the tooltip on scroll and moving the box
     this.d3Chart.node().addEventListener('scroll', () => {
-      this.tooltip.hide({ delay: 0 })
+      if (this.toolTipIsVisible) {
+        this.tooltip.hide({ delay: 0, callback: () => (this.toolTipIsVisible = false) })
+      }
       this.updateMarkerBoxes()
     })
   }
@@ -180,6 +182,7 @@ class FlameGraph extends HtmlContent {
 
         // Show (and hide) tooltip instantly on click, no waiting for timeouts
         if (this.tooltip) {
+          this.toolTipIsVisible = true
           this.tooltip.show({
             nodeData,
             rect,
@@ -192,7 +195,7 @@ class FlameGraph extends HtmlContent {
 
         this.ui.selectNode(nodeData)
       } else {
-        if (this.tooltip) this.tooltip.hide({ delay: 0 })
+        if (this.tooltip) this.tooltip.hide({ delay: 0, callback: () => (this.toolTipIsVisible = false) })
 
         this.ui.zoomNode(null)
       }
@@ -205,6 +208,7 @@ class FlameGraph extends HtmlContent {
       this.ui.highlightNode(nodeData)
 
       if (this.tooltip) {
+        this.toolTipIsVisible = true
         this.tooltip.show({
           nodeData,
           rect,
@@ -217,7 +221,7 @@ class FlameGraph extends HtmlContent {
 
     this.flameGraph.on('hoverout', (node) => {
       if (this.tooltip) {
-        this.tooltip.hide()
+        this.tooltip.hide({ delay: undefined, callback: () => (this.toolTipIsVisible = false) })
       }
     })
 
@@ -230,6 +234,7 @@ class FlameGraph extends HtmlContent {
       if (this.ui.zoomedNode && this.ui.zoomedNode.id !== 0) {
         if (this.tooltip) {
           const rect = this.getNodeRect(this.ui.zoomedNode)
+          this.toolTipIsVisible = true
           this.tooltip.show({
             nodeData: this.ui.zoomedNode,
             rect,
