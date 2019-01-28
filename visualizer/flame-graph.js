@@ -419,21 +419,24 @@ class FlameGraph extends HtmlContent {
       this.zoomFactorChanged = false
     }
 
+    if (toHide.size > 0 || toShow.size > 0) isChanged = true
+    if (isChanged || redrawGraph) {
+      // Clear the overlay canvas before it is redrawn
+      const overlay = this.d3CanvasOverlay.node()
+      const context = overlay.getContext('2d')
+      context.setTransform(1, 0, 0, 1, 0, 0)
+      context.clearRect(0, 0, overlay.width, overlay.height)
+    }
+
     // Must re-render tree before applying exclusions, else error if tree and exclusions change at same time
     if (redrawGraph) this.flameGraph.renderTree(this.renderedTree)
 
-    if (toHide.size > 0) {
-      toHide.forEach((name) => {
-        this.flameGraph.typeHide(name)
-      })
-      isChanged = true
-    }
-    if (toShow.size > 0) {
-      toShow.forEach((name) => {
-        this.flameGraph.typeShow(name)
-      })
-      isChanged = true
-    }
+    toHide.forEach((name) => {
+      this.flameGraph.typeHide(name)
+    })
+    toShow.forEach((name) => {
+      this.flameGraph.typeShow(name)
+    })
 
     if (isChanged || redrawGraph) this.updateMarkerBoxes()
   }
