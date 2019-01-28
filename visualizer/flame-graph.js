@@ -432,7 +432,6 @@ class FlameGraph extends HtmlContent {
 
     if (toHide.size > 0 || toShow.size > 0) isChanged = true
     if (isChanged || redrawGraph) this.clearOverlay()
-      // Clear the overlay canvas before it is redrawn
 
     // Must re-render tree before applying exclusions, else error if tree and exclusions change at same time
     if (redrawGraph) this.flameGraph.renderTree(this.renderedTree)
