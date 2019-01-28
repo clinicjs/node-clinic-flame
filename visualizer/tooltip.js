@@ -169,7 +169,7 @@ function getMsgHtml (msg) {
       if (msg.nodeType === 1) return msg // it is an HTMLElement
   }
 
-  return getMsgHtml('Error: the provided content is not a String nor an HTMLElement ')
+  throw new TypeError('The provided content is not a String nor an HTMLElement ')
 }
 
 module.exports = Tooltip
