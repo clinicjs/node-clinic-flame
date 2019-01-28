@@ -110,7 +110,6 @@ class Ui extends events.EventEmitter {
     if (node && node.id === 0) return
     const changed = node !== this.highlightedNode
     this.highlightedNode = node
-    this.scrollFrameIntoView(node)
     if (changed) this.emit('highlightNode', node)
 
     this.showNodeInfo(node || this.selectedNode)
@@ -319,9 +318,31 @@ class Ui extends events.EventEmitter {
 
     let reDrawStackBar = debounce(() => this.stackBar.draw(this.highlightedNode), 200)
 
-    this.scrollContainer = null
-    this.scrollSelectedFrameIntoView = debounce((frame) => {
-      this.scrollFrameIntoView(this.selectedNode)
+    let scrollContainer = null
+    this.scrollSelectedFrameIntoView = debounce(() => {
+      if (!scrollContainer) {
+        scrollContainer = flameWrapper.d3Element.select('.scroll-container').node()
+      }
+
+      let scrollAmount = scrollContainer.scrollHeight
+      if (this.selectedNode && this.selectedNode.category !== 'none') {
+        const viewportHeight = scrollContainer.clientHeight
+        const rect = this.flameWrapper.getNodeRect(this.selectedNode)
+
+        scrollAmount = rect.y - viewportHeight * 0.4
+        // scrolling only if the frame is outside the viewport
+        if ((rect.y - rect.height) > scrollContainer.scrollTop && rect.y < scrollContainer.scrollTop + viewportHeight) return
+      }
+
+      if (scrollContainer.scrollTo) {
+        scrollContainer.scrollTo({
+          top: scrollAmount,
+          behavior: 'smooth'
+        })
+      } else {
+        // Fallback for MS Edge
+        scrollContainer.scrollTop = scrollAmount
+      }
     }, 200)
 
     const setFontSize = (zoomFactor) => {
@@ -348,33 +369,6 @@ class Ui extends events.EventEmitter {
       setFontSize(zoomFactor)
       this.scrollSelectedFrameIntoView()
     })
-  }
-
-  scrollFrameIntoView (frame) {
-    const selectedNode = frame
-    if (!this.scrollContainer) {
-      this.scrollContainer = this.flameWrapper.d3Element.select('.scroll-container').node()
-    }
-
-    let scrollAmount = this.scrollContainer.scrollHeight
-    if (selectedNode && selectedNode.category !== 'none') {
-      const viewportHeight = this.scrollContainer.clientHeight
-      const rect = this.flameWrapper.getNodeRect(selectedNode)
-
-      scrollAmount = rect.y - viewportHeight * 0.4
-      // scrolling only if the frame is outside the viewport
-      if ((rect.y - rect.height) > this.scrollContainer.scrollTop && rect.y < this.scrollContainer.scrollTop + viewportHeight) return
-    }
-
-    if (this.scrollContainer.scrollTo) {
-      this.scrollContainer.scrollTo({
-        top: scrollAmount,
-        behavior: 'smooth'
-      })
-    } else {
-      // Fallback for MS Edge
-      this.scrollContainer.scrollTop = scrollAmount
-    }
   }
 
   addSection (id, options = {}) {
