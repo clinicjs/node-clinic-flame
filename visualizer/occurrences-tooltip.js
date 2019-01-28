@@ -2,8 +2,16 @@
 
 module.exports = {
   getHtml ({ occurrences, isVisible, totalValue, getHeatColor }) {
+    const defaultMessage = `<div class='tooltip-default-message'>Show/hide all the occurrences for the highlighted frame</div>`
+
+    if (occurrences.length === 0) {
+      return isVisible
+        ? `<div class='tooltip-default-message'>No other occurrences found for this frame</div>`
+        : defaultMessage
+    }
+
     return !isVisible
-      ? `<div class='tooltip-default-message'>Show/hide all the occurrences for the highlighted frame</div>`
+      ? defaultMessage
       : `<div class='occurrences-tooltip'>${
         occurrences
           .sort((a, b) => b.onStackTop.asViewed - a.onStackTop.asViewed)
