@@ -90,13 +90,13 @@
   opacity: 0.6;
 }
 
-@media screen and (min-width: 530px) {
+@media screen and (min-width: 400px) {
   .visible-from-bp-1 {
     display: initial;
   }
 }
 
-@media screen and (min-width: 690px) {
+@media screen and (min-width: 750px) {
   .visible-from-bp-2 {
     display: initial;
   }
