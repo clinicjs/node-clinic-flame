@@ -65,6 +65,16 @@ class InfoBox extends HtmlContent {
 
     this.d3CollapseButton = this.collapseControl.d3Element
       .attr('title', 'Show stack info')
+
+    // Close when the user clicks outside the options menu.
+    document.body.addEventListener('click', (event) => {
+      if (!this.collapseClose.isCollapsed &&
+          !this.d3CollapseButton.node().contains(event.target) &&
+          !this.d3ContentWrapper.node().contains(event.target)) {
+        this.collapseClose()
+      }
+    },
+    true)
   }
 
   contentFromNode (node) {
