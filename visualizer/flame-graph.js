@@ -294,9 +294,9 @@ class FlameGraph extends HtmlContent {
       this.d3HighlighterBox.classed('show', true)
       this.applyRectToDiv(this.d3HighlighterBox, {
         // Align border inside frame so it's visible against borders, heat etc
-        x: rect.x + 2,
+        x: rect.x + Math.min(rect.width - 3, 2),
         y: rect.y,
-        width: rect.width - 2,
+        width: Math.max(rect.width - 2, 3),
         height: rect.height - 2
       })
     } else {
