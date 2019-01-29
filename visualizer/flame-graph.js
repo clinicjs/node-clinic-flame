@@ -43,6 +43,10 @@ class FlameGraph extends HtmlContent {
       this.initializeFromData()
     })
 
+    this.ui.on('showOccurrences', () => {
+      this.flameGraph.update()
+    })
+
     this.ui.on('zoomNode', (node, cb) => {
       if (this.flameGraph) {
         if (cb) this.onNextAnimationEnd = cb
@@ -109,6 +113,9 @@ class FlameGraph extends HtmlContent {
     this.ui.on('highlightNode', node => {
       this.hoveredNodeData = node || this.ui.selectedNode
       this.highlightHoveredNodeOnGraph()
+
+      // when highlighting a frame we want to highilight also the other occurrences of that frame
+      this.flameGraph.update()
     })
 
     this.ui.on('selectNode', node => {

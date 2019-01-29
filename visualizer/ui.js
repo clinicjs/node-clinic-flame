@@ -18,7 +18,10 @@ class Ui extends events.EventEmitter {
     this.dataTree = null
     this.highlightedNode = null
 
+    this.showOccurrences = false
+
     this.selectedNode = getNoDataNode()
+    this.selectedNodeOtherOccurrences = []
 
     this.zoomedNode = null
     this.changedExclusions = {
@@ -49,7 +52,8 @@ class Ui extends events.EventEmitter {
       useMerged: this.dataTree.useMerged,
       showOptimizationStatus: this.dataTree.showOptimizationStatus,
       exclude: this.dataTree.exclude,
-      search: this.searchQuery
+      search: this.searchQuery,
+      showOccurrences: this.showOccurrences
     }, opts)
   }
 
@@ -60,8 +64,12 @@ class Ui extends events.EventEmitter {
       search,
       selectedNodeId,
       showOptimizationStatus,
-      zoomedNodeId
+      zoomedNodeId,
+      showOccurrences
     } = data
+
+    this.dataTree.showOccurrences = showOccurrences
+    this.setOccurrencesVisibility(showOccurrences, { pushState: false })
 
     this.setUseMergedTree(useMerged, { pushState: false,
       selectedNodeId,
@@ -116,6 +124,8 @@ class Ui extends events.EventEmitter {
     if (!node || node.id === 0) return
     const changed = node !== this.selectedNode
     this.selectedNode = node
+    this.selectedNodeOtherOccurrences = this.selectOtherOccurrences(node)
+
     if (changed) this.emit('selectNode', node)
 
     this.scrollSelectedFrameIntoView()
@@ -124,6 +134,13 @@ class Ui extends events.EventEmitter {
     this.highlightNode(node)
 
     if (pushState) this.pushHistory()
+  }
+
+  selectOtherOccurrences (node) {
+    return node ? this.dataTree.activeNodes().filter(n => {
+      n.isOtherOccurrence = n.name === node.name && n.id !== node.id
+      return (n.name === node.name && n.id !== node.id)
+    }) : []
   }
 
   selectHottestNode (opts) {
@@ -193,6 +210,14 @@ class Ui extends events.EventEmitter {
     document.documentElement.classList.toggle('presentation-mode', mode)
     this.setExposedCSS()
     this.emit('presentationMode', mode)
+  }
+
+  setOccurrencesVisibility (isVisible, { pushState = true } = {}) {
+    this.dataTree.showOccurrences = this.showOccurrences = isVisible
+    if (pushState) {
+      this.pushHistory()
+    }
+    this.emit('showOccurrences', isVisible)
   }
 
   /**
@@ -293,31 +318,9 @@ class Ui extends events.EventEmitter {
 
     let reDrawStackBar = debounce(() => this.stackBar.draw(this.highlightedNode), 200)
 
-    let scrollContainer = null
+    this.scrollContainer = null
     this.scrollSelectedFrameIntoView = debounce(() => {
-      if (!scrollContainer) {
-        scrollContainer = flameWrapper.d3Element.select('.scroll-container').node()
-      }
-
-      let scrollAmount = scrollContainer.scrollHeight
-      if (this.selectedNode && this.selectedNode.category !== 'none') {
-        const viewportHeight = scrollContainer.clientHeight
-        const rect = this.flameWrapper.getNodeRect(this.selectedNode)
-
-        scrollAmount = rect.y - viewportHeight * 0.4
-        // scrolling only if the frame is outside the viewport
-        if ((rect.y - rect.height) > scrollContainer.scrollTop && rect.y < scrollContainer.scrollTop + viewportHeight) return
-      }
-
-      if (scrollContainer.scrollTo) {
-        scrollContainer.scrollTo({
-          top: scrollAmount,
-          behavior: 'smooth'
-        })
-      } else {
-        // Fallback for MS Edge
-        scrollContainer.scrollTop = scrollAmount
-      }
+      this.scrollFrameIntoView(this.selectedNode)
     }, 200)
 
     const setFontSize = (zoomFactor) => {
@@ -344,6 +347,32 @@ class Ui extends events.EventEmitter {
       setFontSize(zoomFactor)
       this.scrollSelectedFrameIntoView()
     })
+  }
+
+  scrollFrameIntoView (node) {
+    if (!this.scrollContainer) {
+      this.scrollContainer = this.flameWrapper.d3Element.select('.scroll-container').node()
+    }
+
+    let scrollAmount = this.scrollContainer.scrollHeight
+    if (node && node.category !== 'none') {
+      const viewportHeight = this.scrollContainer.clientHeight
+      const rect = this.flameWrapper.getNodeRect(node)
+
+      scrollAmount = rect.y - viewportHeight * 0.4
+      // scrolling only if the frame is outside the viewport
+      if ((rect.y - rect.height) > this.scrollContainer.scrollTop && rect.y < this.scrollContainer.scrollTop + viewportHeight) return
+    }
+
+    if (this.scrollContainer.scrollTo) {
+      this.scrollContainer.scrollTo({
+        top: scrollAmount,
+        behavior: 'smooth'
+      })
+    } else {
+      // Fallback for MS Edge
+      this.scrollContainer.scrollTop = scrollAmount
+    }
   }
 
   addSection (id, options = {}) {
@@ -504,34 +533,46 @@ class Ui extends events.EventEmitter {
     // TODO: When light / dark theme switch implemented, call this after each switch, before redraw
     const computedStyle = window.getComputedStyle(document.body)
     this.exposedCSS = {
-      app: computedStyle.getPropertyValue('--area-color-app').trim(),
-      deps: computedStyle.getPropertyValue('--area-color-deps').trim(),
-      'core': computedStyle.getPropertyValue('--area-color-core').trim(),
-      'all-v8': computedStyle.getPropertyValue('--area-color-core').trim(),
+      app: computedStyle.getPropertyValue('--area-color-app-val').trim(),
+      deps: computedStyle.getPropertyValue('--area-color-deps-val').trim(),
+      'core': computedStyle.getPropertyValue('--area-color-core-val').trim(),
+      'all-v8': computedStyle.getPropertyValue('--area-color-core-val').trim(),
 
       'opposite-contrast': computedStyle.getPropertyValue('--opposite-contrast').trim(),
+      'opposite-contrast-val': computedStyle.getPropertyValue('--opposite-contrast-val').trim(),
       'max-contrast': computedStyle.getPropertyValue('--max-contrast').trim(),
+      'max-contrast-val': computedStyle.getPropertyValue('--max-contrast-val').trim(),
       'grey-blue': computedStyle.getPropertyValue('--grey-blue').trim(),
-      'primary-grey': computedStyle.getPropertyValue('--primary-grey').trim()
+      'primary-grey': computedStyle.getPropertyValue('--primary-grey').trim(),
+      'primary-grey-val': computedStyle.getPropertyValue('--primary-grey-val').trim(),
+      'occurrences-border-val': computedStyle.getPropertyValue('--occurrences-border-val').trim()
     }
   }
 
   getFrameColor (nodeData, role, reverse = nodeData.highlight) {
+    let opacity = 1
+
+    if (role === 'border') {
+      opacity = this.presentationMode ? 0.6 : 0.4
+
+      if (nodeData.isOtherOccurrence && this.showOccurrences) {
+        return `rgba(${this.exposedCSS['occurrences-border-val']},${opacity})`
+      }
+    }
     if ((role === 'background' && !reverse) || (role === 'foreground' && reverse)) {
-      return this.exposedCSS['opposite-contrast']
+      return `rgba(${this.exposedCSS['opposite-contrast-val']},${opacity})`
     }
 
     if (this.dataTree.showOptimizationStatus) {
-      if (nodeData.isUnoptimized) return this.exposedCSS['max-contrast']
-      if (nodeData.isOptimized) return this.exposedCSS['primary-grey']
-      return this.exposedCSS['grey-blue']
+      if (nodeData.isUnoptimized) return `rgba(${this.exposedCSS['max-contrast-val']},${opacity})`
+      if (nodeData.isOptimized) return `rgba(${this.exposedCSS['primary-grey-val']},${opacity})`
+      return `rgba(${this.exposedCSS['grey-blue-val']},${opacity})`
     } else {
-      return this.exposedCSS[nodeData.category]
+      return `rgba(${this.exposedCSS[nodeData.category]},${opacity})`
     }
   }
 
   initializeElements () {
-
     // Cascades down tree in addContent() append/prepend order
     this.uiContainer.initializeElements()
   }

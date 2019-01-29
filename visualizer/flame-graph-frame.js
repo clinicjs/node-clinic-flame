@@ -33,15 +33,16 @@ function renderStackFrame (globals, locals, rect) {
   // Align with pixel grid to avoid fuzzy 2px lines of inconsistent stroke color
   // Round everything towards being smaller so lines don't draw over each other
 
-  const left = Math.floor(x) + 1.5
-  const right = Math.ceil(left + width) - 1.5
-  const bottom = Math.floor(y + height) + 0.5
+  const top = Math.ceil(y) - 0.5
+  const left = Math.ceil(x) - 0.5
+  const right = Math.floor(x + width) - 0.5
+  const bottom = Math.floor(y + height) - 0.5
 
   // For really tiny frames, draw a 1px thick pixel-aligned 'matchstick' line
   if (width <= 1.5) {
     const backgroundColor = this.ui.getFrameColor(nodeData, 'background', false)
-    const foregroundColor = this.ui.getFrameColor(nodeData, 'foreground', false)
-    renderAsLine(context, { x: left, y, height }, backgroundColor, foregroundColor, nodeData.highlight, heatHeight)
+    const borderColor = this.ui.getFrameColor(nodeData, 'border', false)
+    renderAsLine(context, { x: left, y, height }, backgroundColor, borderColor, nodeData.highlight, heatHeight)
     return
   }
 
@@ -52,7 +53,7 @@ function renderStackFrame (globals, locals, rect) {
   }
 
   const backgroundColor = this.ui.getFrameColor(nodeData, 'background')
-  const foregroundColor = this.ui.getFrameColor(nodeData, 'foreground')
+  const borderColor = this.ui.getFrameColor(nodeData, 'border')
 
   context.fillStyle = backgroundColor
 
@@ -62,12 +63,12 @@ function renderStackFrame (globals, locals, rect) {
 
   // Add a light stroke to left, bottom and right indicating code area
   context.save()
-  context.globalAlpha = this.ui.presentationMode ? 0.6 : 0.4
-  context.strokeStyle = foregroundColor
+
+  context.strokeStyle = borderColor
 
   context.beginPath()
   context.lineWidth = thin
-  context.moveTo(left, y)
+  context.moveTo(left, top)
   context.lineTo(left, bottom - lineWidth)
   context.stroke()
 
@@ -80,8 +81,17 @@ function renderStackFrame (globals, locals, rect) {
   context.beginPath()
   context.lineWidth = thin
   context.moveTo(right, bottom - lineWidth)
-  context.lineTo(right, y)
+  context.lineTo(right, top)
   context.stroke()
+
+  if (nodeData.isOtherOccurrence && this.ui.showOccurrences) {
+    context.beginPath()
+    context.lineWidth = thick
+    context.moveTo(right, top)
+    context.lineTo(left, top)
+    context.stroke()
+  }
+
   context.restore()
 }
 
@@ -98,7 +108,7 @@ function renderHeatBar (context, nodeData, colorHash, rect, heatHeight) {
   context.stroke()
 }
 
-function renderAsLine (context, rect, backgroundColor, foregroundColor, isHighlighted, heatHeight) {
+function renderAsLine (context, rect, backgroundColor, borderColor, isHighlighted, heatHeight) {
   const {
     x,
     y,
@@ -117,7 +127,7 @@ function renderAsLine (context, rect, backgroundColor, foregroundColor, isHighli
 
   // Bolden any tiny active search matches
   context.globalAlpha = isHighlighted ? 0.9 : 0.2
-  context.strokeStyle = foregroundColor
+  context.strokeStyle = borderColor
   context.beginPath()
   context.moveTo(x, y)
   context.lineTo(x, y + height)

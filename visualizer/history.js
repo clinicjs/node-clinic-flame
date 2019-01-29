@@ -108,13 +108,15 @@ class History extends EventEmitter {
     const selectedNodeId = parseInt(params.selectedNode, 10)
     const zoomedNodeId = parseInt(params.zoomedNode, 10)
     const search = params.search || null
+    const showOccurrences = params.showOccurrences === 'true'
     return {
       exclude,
       useMerged,
       showOptimizationStatus,
       selectedNodeId,
       zoomedNodeId,
-      search
+      search,
+      showOccurrences
     }
   }
 
@@ -125,12 +127,14 @@ class History extends EventEmitter {
     showOptimizationStatus,
     selectedNodeId,
     zoomedNodeId,
-    search
+    search,
+    showOccurrences
   }) {
     const params = {
       selectedNode: selectedNodeId,
       zoomedNode: zoomedNodeId,
-      exclude: this.serializeExcludes(exclude)
+      exclude: this.serializeExcludes(exclude),
+      showOccurrences
     }
 
     // Only add the below params if they contain information, to avoid cluttering

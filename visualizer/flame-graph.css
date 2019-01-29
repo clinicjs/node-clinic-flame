@@ -151,6 +151,7 @@ chart > div {
   box-shadow: 0 1px 4px rgba(var(--grey-highlight-color-val), 0.3);
 }
 
+.presentation-mode .occurencies-wrapper .occurrence,
 .presentation-mode .highlighter-box {
   border-width: 2px;
 }

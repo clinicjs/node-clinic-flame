@@ -5,6 +5,8 @@ const chevronLeftFirst = require('@nearform/clinic-common/icons/chevron-left-fir
 const chevronLeft = require('@nearform/clinic-common/icons/chevron-left')
 const chevronRight = require('@nearform/clinic-common/icons/chevron-right')
 const chevronRightLast = require('@nearform/clinic-common/icons/chevron-right-last')
+const gridIcon = require('@nearform/clinic-common/icons/grid-view')
+const OccurrencesToolTip = require('./occurrences-tooltip.js')
 
 class SelectionControls extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
@@ -42,6 +44,8 @@ class SelectionControls extends HtmlContent {
       this.rankNumber = this.ui.dataTree.getSortPosition(node || this.selectedNode)
       this.draw()
     })
+
+    this.ui.on('showOccurrences', () => this.draw())
   }
 
   update () {
@@ -66,6 +70,23 @@ class SelectionControls extends HtmlContent {
     const isColdest = this.rankNumber === this.framesCount - 1
     this.d3SelectCooler.attr('disabled', noNodes || isColdest || null)
     this.d3SelectColdest.attr('disabled', noNodes || isColdest || null)
+
+    const node = this.ui.highlightedNode || this.ui.selectedNode
+
+    if (node) {
+      const occurrences = [node, ...this.ui.selectOtherOccurrences(node)]
+      const totalValue = this.ui.dataTree.activeTree().value
+
+      const perc = occurrences.reduce((acc, curr) => acc + curr.onStackTop.asViewed, 0)
+
+      this.d3OccurrencesCount
+        .classed('on', this.ui.showOccurrences)
+        .html(`
+        ${gridIcon}
+        <span class='count'>${occurrences.length}</span>
+        <span class='perc'>${Math.round(100 * (perc / totalValue) * 10) / 10}%</span>
+      `)
+    }
   }
 
   initializeElements () {
@@ -141,6 +162,62 @@ class SelectionControls extends HtmlContent {
         y: 2
       }
     })
+
+    // occurrences count
+    this.d3OccurrencesCount = this.d3Element.append('button')
+      .classed('occurrences-count', true)
+      .html(`...`)
+
+    const occurrencesTooltipObj = {
+      msg: () => {
+        const div = document.createElement('div')
+        div.addEventListener('mouseover', (e) => {
+          this.ui.selectedNodeOtherOccurrences.forEach(n => {
+            if (parseInt(e.target.dataset.id) === n.id) {
+              this.ui.highlightNode(n)
+            }
+          })
+        })
+
+        div.addEventListener('click', (e) => {
+          this.ui.selectedNodeOtherOccurrences.forEach(n => {
+            if (parseInt(e.target.dataset.id) === n.id) {
+              this.ui.selectNode(n)
+              this.tooltip.hide({ hideDelay: 0 })
+            }
+          })
+        })
+        const totalValue = this.ui.dataTree.activeTree().value
+
+        div.innerHTML = OccurrencesToolTip.getHtml({
+          occurrences: this.ui.selectedNodeOtherOccurrences,
+          isVisible: this.ui.showOccurrences,
+          totalValue,
+          getHeatColor: this.ui.dataTree.getHeatColor.bind(this.ui.dataTree)
+        })
+
+        return div
+      },
+      d3TargetElement: this.d3OccurrencesCount,
+      showDelay: 0,
+      hideDelay: 0,
+      offset: { y: 1 }
+    }
+
+    this.d3OccurrencesCount
+      .on('click', () => {
+        this.ui.setOccurrencesVisibility(!this.ui.showOccurrences)
+        this.tooltip.show(occurrencesTooltipObj)
+      })
+      .on('mouseenter', () => this.tooltip.show(
+        {
+          ...occurrencesTooltipObj,
+          showDelay: this.ui.showOccurrences ? 400 : 1500
+        })
+      )
+      .on('mouseleave', () => {
+        this.tooltip.hide({ hideDelay: 300, callback: () => this.ui.highlightNode(this.ui.selectedNode) })
+      })
   }
 
   selectByRank (rank) {

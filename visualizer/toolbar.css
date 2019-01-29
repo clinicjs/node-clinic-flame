@@ -36,19 +36,13 @@
 }
 
 
-@media screen and (min-width: 500px) {
+@media screen and (min-width: 570px) {
   #selection-controls,
   #toolbar-side-panel {
     margin: 0px;
   }
   #toolbar-top-panel {
     justify-content: space-between;
-  }
-}
-
-@media screen and (min-width: 720px) {
-  #info-box .frame-info {
-    font-size: var(--small-text-size);
   }
 }
 

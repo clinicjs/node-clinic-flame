@@ -59,13 +59,44 @@
   display: none;
 }
 
-@media screen and (min-width: 530px) {
+#selection-controls .occurrences-count{
+  display: flex;
+  align-items: center;
+  color: var(--max-contrast);
+  font-size: var(--small-text-size);
+  background-color: var(--opposite-contrast);
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+#selection-controls .occurrences-count .count{
+  display: inline-block;
+  margin-right: 0.8em;
+}
+
+#selection-controls .occurrences-count svg{
+  opacity: 0.6;
+  font-size: 1em;
+  margin-right: 0.3em;
+}
+
+#selection-controls .occurrences-count.on svg{
+  color: rgb(var(--occurrences-border-val));
+  opacity: 0.8;
+}
+#selection-controls .occurrences-count .perc{
+  font-size: calc(var(--small-text-size) * 0.8);
+  opacity: 0.6;
+}
+
+@media screen and (min-width: 400px) {
   .visible-from-bp-1 {
     display: initial;
   }
 }
 
-@media screen and (min-width: 680px) {
+@media screen and (min-width: 750px) {
   .visible-from-bp-2 {
     display: initial;
   }
