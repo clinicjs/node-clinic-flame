@@ -274,6 +274,11 @@ class FlameGraph extends HtmlContent {
     return this.flameGraph.getNodeRect(node)
   }
 
+  getVisibleParent (d3Node) {
+    if (!d3Node.parent) return null
+    return d3Node.parent.data.hide ? this.getVisibleParent(d3Node.parent) : d3Node.parent
+  }
+
   highlightHoveredNodeOnGraph () {
     if (this.hoveredNodeData === null) {
       this.d3Highlighter.classed('show', false)
@@ -290,9 +295,9 @@ class FlameGraph extends HtmlContent {
       this.applyRectToDiv(this.d3HighlighterBox, {
         // Align border inside frame so it's visible against borders, heat etc
         x: rect.x + 2,
-        y: rect.y - 1,
+        y: rect.y,
         width: rect.width - 2,
-        height: rect.height - 3
+        height: rect.height - 2
       })
     } else {
       this.d3Highlighter.classed('show', false)
