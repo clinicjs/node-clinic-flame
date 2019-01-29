@@ -210,8 +210,6 @@ class DataTree {
   }
 
   getTypeKey (node) {
-    if (this.isNodeExcluded(node)) {
-    }
     return `${node.category}:${node.type}`
   }
 
