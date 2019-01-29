@@ -64,11 +64,11 @@ function renderStackFrame (globals, locals, rect) {
 
   context.save()
 
-  // For narrow frames with very little between lines, fade fill or skip fill completely
-  if (width > lineWidth) {
-    context.globalAlpha = Math.min(1, Math.max(width - lineWidth, 0.1) / lineWidth * 3)
-    context.fill()
-  }
+  // Make the very narrowest frames feinter relative to how narrow they are
+  if (width > lineWidth) context.globalAlpha = Math.min(1, Math.max(width - lineWidth, 0.5) / lineWidth * 3)
+  // Clear before fill so that even if very narrow frames are feint, height from below doesn't show through
+  context.clearRect(left, y, Math.min(width, 0.1), height)
+  context.fill()
 
   if (!visibleParent) {
     context.restore()
