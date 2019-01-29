@@ -166,7 +166,13 @@ function getMsgHtml (msg) {
       return getMsgHtml(msg())
 
     case 'object':
-      if (msg.nodeType === 1) return msg // it is an HTMLElement
+      if (msg.nodeType === 1) {
+        // it is an HTMLElement
+        if (msg.classList.length === 0) {
+          msg.className = 'tooltip-default-message'
+        }
+        return msg
+      }
   }
 
   throw new TypeError('The provided content is not a String nor an HTMLElement ')
