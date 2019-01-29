@@ -155,6 +155,7 @@ class Ui extends events.EventEmitter {
       this.pushHistory()
     }
     this.scrollSelectedFrameIntoView()
+    this.showNodeInfo(this.selectedNode)
   }
 
   clearSearch ({ pushState = true } = {}) {
@@ -531,7 +532,6 @@ class Ui extends events.EventEmitter {
   }
 
   initializeElements () {
-
     // Cascades down tree in addContent() append/prepend order
     this.uiContainer.initializeElements()
   }

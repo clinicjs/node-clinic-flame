@@ -1,6 +1,8 @@
 'use strict'
 const HtmlContent = require('./html-content.js')
 const getNoDataNode = require('./no-data-node.js')
+const zoomInIcon = require('@nearform/clinic-common/icons/zoom-in')
+const zoomOutIcon = require('@nearform/clinic-common/icons/zoom-out')
 
 class InfoBox extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
@@ -14,6 +16,8 @@ class InfoBox extends HtmlContent {
     this.functionText = functionName
     this.pathHtml = fileName
     this.areaText = 'Processing data...'
+    this.node = null
+    this.tooltip = contentProperties.customTooltip
   }
 
   initializeElements () {
@@ -24,9 +28,26 @@ class InfoBox extends HtmlContent {
       .classed('frame-info', true)
       .classed('panel', true)
 
-    this.d3FrameFunction = this.d3FrameInfo.append('strong')
+    this.d3FrameZoomButton = this.d3FrameInfo.append('button')
       .classed('frame-info-item', true)
+      .classed('frame-zoom-button', true)
       .classed('frame-function', true)
+      .on('click', () => {
+        this.ui.zoomNode(this.node)
+      })
+
+    this.tooltip.attach({
+      d3TargetElement: this.d3FrameZoomButton,
+      msg: () => {
+        const msgHtml = document.createElement('div')
+        const fnName = `<strong>${this.node.functionName}</strong>`
+        msgHtml.innerHTML = this.node === this.ui.zoomedNode ? `Zoom ${fnName} in` : `Zoom ${fnName}  out`
+        return msgHtml
+      }
+    })
+
+    this.d3FrameFunctionWrapper = this.d3FrameZoomButton.append('div')
+      .classed('text-wrapper', true)
 
     this.d3FramePath = this.d3FrameInfo.append('span')
       .classed('frame-info-item', true)
@@ -42,6 +63,8 @@ class InfoBox extends HtmlContent {
       console.error('`node` argument cannot be undefined/null')
       return
     }
+
+    this.node = node
 
     this.functionText = node.functionName
 
@@ -74,8 +97,8 @@ class InfoBox extends HtmlContent {
 
   draw () {
     super.draw()
-
-    this.d3FrameFunction.text(this.functionText)
+    const func = `<strong>${this.functionText}</strong>`
+    this.d3FrameFunctionWrapper.html(this.node === this.ui.zoomedNode ? `${zoomOutIcon}${func}` : `${zoomInIcon}${func}`)
     this.d3FramePath.html(this.pathHtml)
     this.d3FrameArea.text(this.areaText)
   }
