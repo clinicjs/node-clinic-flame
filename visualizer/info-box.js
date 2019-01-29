@@ -41,7 +41,7 @@ class InfoBox extends HtmlContent {
       msg: () => {
         const msgHtml = document.createElement('div')
         const fnName = `<strong>${this.node.functionName}</strong>`
-        msgHtml.innerHTML = this.node === this.ui.zoomedNode ? `Zoom ${fnName} in` : `Zoom ${fnName}  out`
+        msgHtml.innerHTML = this.node === this.ui.zoomedNode ? `Zoom ${fnName} out` : `Zoom ${fnName}  in`
         return msgHtml
       }
     })
