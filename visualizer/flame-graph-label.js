@@ -97,7 +97,7 @@ function renderFrameLabel (frameHeight, options) {
   drawLabel(context, functionName, fileName, coords)
 }
 
-function renderAreaLabel (locals, rect, priorSiblingWidth) {
+function renderAreaLabel (locals, rect, priorSiblingWidth, lineWidth, lineAlpha) {
   if (this.isAnimating) return
 
   const {
@@ -112,8 +112,9 @@ function renderAreaLabel (locals, rect, priorSiblingWidth) {
   } = rect
   const nodeData = node.data
 
-  const areaX = x - priorSiblingWidth
-  const xCentre = areaX + (priorSiblingWidth + width) / 2
+  const areaX = Math.ceil(x - priorSiblingWidth) + lineWidth
+  const areaWidth = Math.floor(priorSiblingWidth + width)
+  const xCentre = areaX + areaWidth / 2
 
   const fontSize = 6 + this.zoomFactor
   const availableWidth = priorSiblingWidth + width - fontSize
@@ -133,27 +134,48 @@ function renderAreaLabel (locals, rect, priorSiblingWidth) {
   const labelRect = {
     x: xCentre - visibleNameWidth / 2,
     width: visibleNameWidth,
-    y: yBottom - fontSize - 1,
+    y: yBottom - fontSize,
     height: fontSize
   }
 
   if (!visibleName) return
 
-  context.save()
-
   context.textBaseline = 'bottom'
 
-  context.clearRect(labelRect.x, labelRect.y, labelRect.width, labelRect.height)
-  context.fillStyle = 'rgb(0, 0, 0)' // TODO: make dynamic
-  context.fillRect(labelRect.x, labelRect.y, labelRect.width, labelRect.height)
+  context.clearRect(areaX, labelRect.y, areaWidth, labelRect.height + lineWidth)
 
-  context.fillStyle = this.ui.getFrameColor(nodeData, 'foreground')
+  const foregroundColor = this.ui.getFrameColor(nodeData, 'foreground')
+
+  context.fillStyle = foregroundColor
   context.font = `bold ${fontSize}px ${this.labelFont}`
   context.textAlign = 'center'
-  context.fillText(visibleName, xCentre, yBottom)
+  context.fillText(visibleName, xCentre, yBottom - lineWidth / 2)
 
-  context.fill()
-  context.restore()
+  const visibleParent = this.getVisibleParent(node)
+  if (visibleParent && nodeData.category !== visibleParent.data.category) {
+    context.save()
+
+    context.lineWidth = lineWidth
+    context.strokeStyle = foregroundColor
+    context.beginPath()
+
+    context.moveTo(areaX, yBottom)
+    context.lineTo(areaX + areaWidth, yBottom)
+
+    context.stroke()
+    context.closePath()
+
+    context.globalAlpha = lineAlpha
+    context.strokeStyle = this.ui.getFrameColor(visibleParent.data, 'foreground')
+    context.beginPath()
+
+    context.moveTo(areaX, yBottom + lineWidth / 2)
+    context.lineTo(areaX + areaWidth, yBottom + lineWidth / 2)
+
+    context.stroke()
+    context.closePath()
+    context.restore()
+  }
 }
 
 function truncateFunctionName (context, availableWidth, functionName, funcNameWidth) {

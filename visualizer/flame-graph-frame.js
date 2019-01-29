@@ -52,7 +52,7 @@ function renderStackFrame (globals, locals, rect) {
   const backgroundColor = this.ui.getFrameColor(nodeData, 'background')
   const foregroundColor = this.ui.getFrameColor(nodeData, 'foreground')
 
-  const visibleParent = getVisibleParent(node)
+  const visibleParent = this.getVisibleParent(node)
   const parentForegroundColor = visibleParent ? this.ui.getFrameColor(visibleParent.data, 'foreground') : foregroundColor
 
   context.fillStyle = backgroundColor
@@ -100,27 +100,18 @@ function renderStackFrame (globals, locals, rect) {
   const areaChangeBelow = !sameArea(nodeData, visibleParent.data)
   const areaChangeLeft = !previousSibling || !sameArea(nodeData, previousSibling.data)
   const areaChangeRight = !nextSibling || !sameArea(nodeData, nextSibling.data)
-  const categoryChangeBelow = nodeData.category !== visibleParent.data.category
 
   const leftGapRemover = !areaChangeLeft && areaChangeBelow ? 1 : 0
 
   context.globalAlpha = (areaChangeBelow ? alphaFull : alphaReduced) * thinFrameReducer
 
-  context.lineWidth = lineWidth * (categoryChangeBelow ? 2 : 1)
-  if (categoryChangeBelow) {
-    context.strokeStyle = parentForegroundColor
-
-    context.beginPath()
-    context.moveTo(left - leftGapRemover, bottom - lineWidth * 1.5)
-    context.lineTo(right, bottom - lineWidth * 1.5)
-    context.stroke()
-  }
+  context.lineWidth = lineWidth
 
   context.strokeStyle = foregroundColor
 
   context.beginPath()
-  context.moveTo(left - leftGapRemover, bottom - lineWidth * (categoryChangeBelow ? 2.5 : 1))
-  context.lineTo(right, bottom - lineWidth * (categoryChangeBelow ? 2.5 : 1))
+  context.moveTo(left - leftGapRemover, bottom - lineWidth)
+  context.lineTo(right, bottom - lineWidth)
   context.stroke()
 
   context.lineWidth = lineWidth
@@ -167,7 +158,7 @@ function renderStackFrame (globals, locals, rect) {
       priorSiblingWidth += (visibleSiblings[i].x1 - visibleSiblings[i].x0) * widthRatio
     }
 
-    this.labelArea({ context: this.overlayContext, node, state }, rect, priorSiblingWidth)
+    this.labelArea({ context: this.overlayContext, node, state }, rect, priorSiblingWidth, lineWidth, alphaFull)
   }
 }
 
@@ -182,11 +173,6 @@ function renderHeatBar (context, nodeData, colorHash, rect) {
   context.rect(rect.x, rect.y - rect.height, rect.width, rect.height)
   context.fill()
   context.stroke()
-}
-
-function getVisibleParent (node) {
-  if (!node.parent) return null
-  return node.parent.data.hide ? getVisibleParent(node.parent) : node.parent
 }
 
 function sameArea (nodeDataA, nodeDataB) {
