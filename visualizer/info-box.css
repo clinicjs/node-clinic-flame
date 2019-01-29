@@ -33,6 +33,7 @@
   background-color: black;
   color: white;
   border: 0;
+  cursor: pointer;
 }
 
 #info-box .frame-dropdown:focus {
