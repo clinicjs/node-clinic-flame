@@ -122,7 +122,7 @@ function renderAreaLabel (locals, rect, priorSiblingWidth) {
 
   const areaName = (
     nodeData.category === 'core' ? 'node'
-      : nodeData.category === 'all-v8' ? this.ui.getLabelFromKey(`all-v8:${nodeData.type}`)
+      : nodeData.category === 'all-v8' ? this.ui.getLabelFromKey(this.ui.dataTree.getTypeKey(nodeData))
         : nodeData.type
   ).toUpperCase()
   const nameWidth = context.measureText(areaName).width
