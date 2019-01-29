@@ -54,9 +54,6 @@ function renderStackFrame (globals, locals, rect) {
   const backgroundColor = this.ui.getFrameColor(nodeData, 'background')
   const foregroundColor = this.ui.getFrameColor(nodeData, 'foreground')
 
-  const visibleParent = this.getVisibleParent(node)
-  const parentForegroundColor = visibleParent ? this.ui.getFrameColor(visibleParent.data, 'foreground') : foregroundColor
-
   context.fillStyle = backgroundColor
 
   context.beginPath()
@@ -70,6 +67,7 @@ function renderStackFrame (globals, locals, rect) {
   context.clearRect(left, y, Math.min(width, 0.1), height)
   context.fill()
 
+  const visibleParent = this.getVisibleParent(node)
   if (!visibleParent) {
     context.restore()
     return
