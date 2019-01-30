@@ -40,6 +40,7 @@ class DataTree {
     this.mean = d3.mean(this.flatByHottest, node => node.onStackTop.asViewed)
     this.highestStackTop = this.flatByHottest[0].onStackTop.asViewed
     this.calculateRoots()
+    this.computeGroupedSortValues()
   }
 
   show (name) {
@@ -148,11 +149,55 @@ class DataTree {
 
   getFilteredStackSorter () {
     return (nodeA, nodeB) => {
+      /** TODO enable grouped sorting when UI is ready
+      const groupA = this.groupedSortValues.get(nodeA)
+      const groupB = this.groupedSortValues.get(nodeB)
+      if (groupA > groupB) return -1
+      if (groupA < groupB) return 1
+      */
+
       const valueA = this.getNodeValue(nodeA)
       const valueB = this.getNodeValue(nodeB)
 
       return valueA === valueB ? 0 : valueA > valueB ? -1 : 1
     }
+  }
+
+  computeGroupedSortValues () {
+    this.groupedSortValues = new Map()
+
+    function getTypeKey (node) {
+      return `${node.category}:${node.typeTEMP !== undefined ? node.typeTEMP : node.type}`
+    }
+
+    const walk = (node) => {
+      if (!node.children) return
+      const group = Object.create(null)
+      node.children.forEach((child) => {
+        const type = getTypeKey(child)
+        const value = this.getNodeValue(child)
+        if (type in group) {
+          group[type] += value
+        } else {
+          group[type] = value
+        }
+      })
+
+      node.children.forEach((child) => {
+        const type = getTypeKey(child)
+        this.groupedSortValues.set(child, group[type])
+        walk(child)
+      })
+
+      node.childGroups = group
+    }
+
+    walk(this.activeTree())
+  }
+
+  isOffScreen (node) {
+    // d3-fg sets `value` to 0 to hide off-screen nodes. The "real" value is stored on `.original`.
+    return node.value === 0 && typeof node.original === 'number'
   }
 
   getNodeValue (node) {
@@ -163,12 +208,7 @@ class DataTree {
       }, 0) : 0
     }
 
-    // d3-fg sets `value` to 0 to hide off-screen nodes.
-    // there's no other property to indicate this but the original value is stored on `.original`.
-    if (node.value === 0 && typeof node.original === 'number') {
-      return node.original
-    }
-    return node.value
+    return this.isOffScreen(node) ? node.original : node.value
   }
 
   getSortPosition (node, arr = this.flatByHottest) {
@@ -188,7 +228,10 @@ class DataTree {
 function getFlatArray (children) {
   // Flatten the tree, excluding the root node itself (i.e. the 'all stacks' node)
   return [...children].concat(children.reduce((arr, child) => {
-    if (child.children) return arr.concat(getFlatArray(child.children))
+    if (child.children) {
+      return arr.concat(getFlatArray(child.children))
+    }
+    return arr
   }, []))
 }
 
