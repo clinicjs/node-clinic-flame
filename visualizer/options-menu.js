@@ -7,10 +7,6 @@ const checkboxCheckedIcon = require('@nearform/clinic-common/icons/checkbox-chec
 const checkboxUncheckedIcon = require('@nearform/clinic-common/icons/checkbox-unchecked')
 const checkboxIndeterminedIcon = require('@nearform/clinic-common/icons/checkbox-indetermined')
 
-// const caretUpIcon = require('@nearform/clinic-common/icons')
-// const caretUpIcon = require('@nearform/clinic-common/icons')
-// const caretUpIcon = require('@nearform/clinic-common/icons')
-
 const preferences = [
   {
     id: 'presentation_mode',
@@ -219,11 +215,23 @@ class OptionsMenu extends HtmlContent {
     // for use with a d3.enter() selection.
     function createOptionElement (li) {
       li.classed('visible', d => d.visible === true)
+      li.classed('disabled', (d) => {
+        // check Dependencies only
+        if (d.excludeKey === 'deps') {
+          return self.getDataCountFromKey(d.excludeKey) === 0
+        }
+        return false
+      })
       const wrapper = li.append('div')
         .classed('overflow-wrapper', true)
       const label = wrapper.append('label')
       label.append('input')
         .attr('type', 'checkbox')
+        .attr('disabled', (d) => {
+          // check Dependencies only
+          if (d.excludeKey !== 'deps') return null
+          return self.getDataCountFromKey(d.excludeKey) === 0 ? true : null
+        })
         .on('change', onchange)
       label.append('span')
         .classed('icon-wrapper', true)
@@ -272,6 +280,9 @@ class OptionsMenu extends HtmlContent {
     }
 
     this.codeAreasChanged = false
+  }
+  getDataCountFromKey (key) {
+    return this.ui.dataTree ? this.ui.dataTree.activeNodes().filter(n => n.category === key).length : 0
   }
 
   setData () {
