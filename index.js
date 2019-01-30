@@ -9,18 +9,11 @@ const getLoggingPaths = require('./collect/get-logging-paths.js')
 const systemInfo = require('./collect/system-info.js')
 const inlinedFunctions = require('./collect/inlined-functions.js')
 const analyse = require('./analysis/index.js')
-var inlineSvg = require('browserify-inline-svg')
-
-// TODO: These will likely be moved to a generic Clinic tool visualizer
-const { promisify } = require('util')
-const readFile = promisify(require('fs').readFile)
-const postcss = require('postcss')
-const postcssImport = require('postcss-import')
-// const minifyStream = require('minify-stream')
-const streamTemplate = require('stream-template')
+const inlineSvg = require('browserify-inline-svg')
 const pump = require('pump')
-const browserify = require('browserify')
-const envify = require('loose-envify/custom')
+const buildJs = require('@nearform/clinic-common/scripts/build-js')
+const buildCss = require('@nearform/clinic-common/scripts/build-css')
+const mainTemplate = require('@nearform/clinic-common/templates/main')
 
 class ClinicFlame extends events.EventEmitter {
   constructor (settings = {}) {
@@ -122,70 +115,43 @@ class ClinicFlame extends events.EventEmitter {
     const nearFormLogoFile = fs.createReadStream(nearFormLogoPath)
     const clinicFaviconBase64 = fs.createReadStream(clinicFaviconPath)
 
-    const b = browserify({
-      'basedir': __dirname,
-      'debug': this.debug,
-      'noParse': [fakeDataPath]
-    })
-    b.require({
-      'source': JSON.stringify(data),
-      'file': fakeDataPath
-    })
-    b.add(scriptPath)
-    b.transform('brfs')
-    b.transform(envify({
-      DEBUG_MODE: this.debug,
-      PRESENTATION_MODE: process.env.PRESENTATION_MODE
+    // build JS
+    const scriptFile = buildJs({
+      basedir: __dirname,
+      debug: this.debug,
+      fakeDataPath,
+      scriptPath,
+      beforeBundle: b => b.require({
+        source: JSON.stringify(data),
+        file: fakeDataPath
+      }),
+      env: {
+        PRESENTATION_MODE: process.env.PRESENTATION_MODE
+      }
+    }).pipe(inlineSvg({
+      basePath: __dirname
     }))
 
-    let scriptFile = b
-      .bundle()
-      .pipe(inlineSvg({
-        basePath: __dirname
-      }))
+    // uild CSS
+    const styleFile = buildCss({
+      stylePath,
+      debug: this.debug
+    })
 
-    // create style-file stream
-    const processor = postcss([
-      postcssImport()
-    ])
-    const styleFile = readFile(stylePath, 'utf8')
-      .then((css) => processor.process(css, {
-        from: stylePath,
-        map: this.debug ? { inline: true } : false
-      }))
-      .then((result) => {
-        return result.css
-      })
-
-    // This basic HTML template will be migrated to node-clinic-common and shared between tools,
-    // piping in tool name, logo etc. Customise tool-specific html in node-clinic-toolname/visualizer
-    const outputFile = streamTemplate`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="utf8">
-          <style>${styleFile}</style>
-          <meta name="viewport" content="width=device-width">
-          <title>Clinic Flame</title>
-          <link rel="shortcut icon" type="image/png" href="${clinicFaviconBase64}">
-        </head>
-        <body>
-          <div id="header">
-            <div id="banner">
-              <a id="main-logo" href="https://github.com/nearform/node-clinic-flame" title="Clinic Flame on GitHub" target="_blank">
-                ${logoFile}<span>Flame</span>
-              </a>
-              <a id="company-logo" href="https://nearform.com" title="nearForm" target="_blank">
-                ${nearFormLogoFile}
-              </a>
-            </div>
-          </div>
-
-          <main></main>
-          <script>${scriptFile}</script>
-        </body>
-      </html>
-    `
+    // generate HTML
+    const outputFile = mainTemplate({
+      favicon: clinicFaviconBase64,
+      title: 'Clinic Flame',
+      styles: styleFile,
+      script: scriptFile,
+      headerLogoUrl: 'https://github.com/nearform/node-clinic-flame',
+      headerLogoTitle: 'Clinic Flame on GitHub',
+      headerLogo: logoFile,
+      headerText: 'Flame',
+      nearFormLogo: nearFormLogoFile,
+      uploadId: outputFilename.split('/').pop().split('.html').shift(),
+      body: `<main></main>`
+    })
 
     pump(
       outputFile,
