@@ -5,7 +5,7 @@ const jsFrameRx = /^([~*])?((?:\S+?\(anonymous function\)|\S+)?(?: [a-zA-Z]+)*) 
 const cppFrameRx = /^(.*) (\[CPP]|\[SHARED_LIB]|\[CODE:\w+])( \[INIT])?$/m
 
 class FrameNode {
-  constructor (data) {
+  constructor (data, fixedType = null) {
     this.id = null
 
     /* istanbul ignore next: must be a string; can be null but can't replicate in tests */
@@ -24,8 +24,10 @@ class FrameNode {
     this.lineNumber = null
     this.columnNumber = null
 
-    // Don't try to identify anything for the root node.
-    if (this.name === 'all stacks') {
+    // Don't try to identify anything for the root node
+    if (fixedType) {
+      this.category = 'none'
+      this.type = fixedType
       return this
     }
 
@@ -81,6 +83,7 @@ class FrameNode {
   }
 
   categorise (systemInfo, appName) {
+    if (this.category === 'none') return
     const { name } = this // this.name remains unmutated: the initial name returned by 0x
 
     const {
@@ -190,6 +193,7 @@ class FrameNode {
   }
 
   format (systemInfo) {
+    if (this.category === 'none') return
     this.anonymise(systemInfo)
     this.target = this.getTarget(systemInfo) // Optional; where a user can view the source (e.g. path, url...)
   }

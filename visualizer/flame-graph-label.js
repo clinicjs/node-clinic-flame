@@ -1,10 +1,14 @@
 'use strict'
 
-function getLabelRenderer (bindTo) {
-  return renderLabel.bind(bindTo)
+function getFrameLabeler (bindTo) {
+  return renderFrameLabel.bind(bindTo)
 }
 
-function renderLabel (frameHeight, options) {
+function getAreaLabeler (bindTo) {
+  return renderAreaLabel.bind(bindTo)
+}
+
+function renderFrameLabel (frameHeight, options) {
   const {
     context,
     node,
@@ -12,7 +16,6 @@ function renderLabel (frameHeight, options) {
     y,
     width
   } = options
-
   const nodeData = node.data
 
   // Don't spend any time in frames with less than one padding width between left/right padding
@@ -21,13 +24,12 @@ function renderLabel (frameHeight, options) {
   // keeping the same font-size used in the App (assuming the user didn't change the browser default font-size)
   const fontSize = 10 + this.zoomFactor
   const btmOffset = (frameHeight - fontSize) / 2
-  const yBottom = y + frameHeight - btmOffset
+  const yBottom = y + frameHeight - btmOffset - 3
 
   context.font = `${fontSize}px ${this.labelFont}`
-
-  // Reverse text and background for any current search matches
   context.fillStyle = this.ui.getFrameColor(nodeData, 'foreground')
 
+  // Reverse text and background for any current search matches
   // Use root node as a zoom out button, blank when not zoomed in
   if (nodeData.id === 0) {
     if (!this.ui.zoomedNode) return
@@ -53,6 +55,7 @@ function renderLabel (frameHeight, options) {
     if (nodeData.type === 'v8') fileName = 'Compiled V8 C++'
     if (nodeData.type === 'cpp') fileName = 'Compiled C++'
   }
+  if (nodeData.category === 'deps') fileName = fileName.replace(/\.\.?[\\/]node_modules[\\/]/, '')
 
   const funcNameWidth = context.measureText(functionName).width
   const fileNameWidth = context.measureText(fileName).width
@@ -67,7 +70,7 @@ function renderLabel (frameHeight, options) {
       const lineAndColumn = `:${nodeData.lineNumber}:${nodeData.columnNumber}`
       const extraTextWidth = fullTextWidth + context.measureText(lineAndColumn).width
 
-      fileName = extraTextWidth < width ? nodeData.fileName + lineAndColumn : nodeData.fileName
+      fileName = extraTextWidth < width ? fileName + lineAndColumn : fileName
     }
   } else if (this.labelPadding * 4 + funcNameWidth > width) {
     // No file name at all if there's no space for more than one padding width's worth
@@ -83,7 +86,7 @@ function renderLabel (frameHeight, options) {
     // See if we can isolate a file name from its path and show just that
     const pathSeparator = this.ui.dataTree.pathSeparator
     const availableWidth = width - this.labelPadding * 3 - funcNameWidth
-    fileName = truncateFileName(context, availableWidth, fileName, pathSeparator)
+    fileName = truncateFileName(context, availableWidth, fileName, pathSeparator, nodeData)
   }
 
   const coords = {
@@ -94,7 +97,90 @@ function renderLabel (frameHeight, options) {
   drawLabel(context, functionName, fileName, coords)
 }
 
+function renderAreaLabel (locals, rect, priorSiblingWidth, lineWidth, lineAlpha) {
+  if (this.isAnimating) return
+
+  const {
+    context,
+    node
+  } = locals
+  const {
+    x,
+    y,
+    width,
+    height
+  } = rect
+  const nodeData = node.data
+
+  const areaX = Math.ceil(x - priorSiblingWidth) + lineWidth
+  const areaWidth = Math.floor(priorSiblingWidth + width)
+  const xCentre = areaX + areaWidth / 2
+
+  const fontSize = 6 + this.zoomFactor
+  const availableWidth = priorSiblingWidth + width - fontSize
+
+  if (availableWidth < fontSize) return
+
+  const areaName = (
+    nodeData.category === 'core' ? 'node'
+      : nodeData.category === 'all-v8' ? this.ui.getLabelFromKey(this.ui.dataTree.getTypeKey(nodeData))
+        : nodeData.type
+  ).toUpperCase()
+  const nameWidth = context.measureText(areaName).width
+  const visibleName = truncateFunctionName(context, availableWidth, areaName, nameWidth)
+  const visibleNameWidth = context.measureText(visibleName).width
+  const yBottom = y + height
+
+  const labelRect = {
+    x: xCentre - visibleNameWidth / 2,
+    width: visibleNameWidth,
+    y: yBottom - fontSize,
+    height: fontSize
+  }
+
+  if (!visibleName) return
+
+  context.textBaseline = 'bottom'
+
+  context.clearRect(areaX, labelRect.y, areaWidth, labelRect.height + lineWidth)
+
+  const foregroundColor = this.ui.getFrameColor(nodeData, 'foreground')
+
+  context.fillStyle = foregroundColor
+  context.font = `bold ${fontSize}px ${this.labelFont}`
+  context.textAlign = 'center'
+  context.fillText(visibleName, xCentre, yBottom - lineWidth / 2)
+
+  const visibleParent = this.getVisibleParent(node)
+  if (visibleParent && nodeData.category !== visibleParent.data.category) {
+    context.save()
+
+    context.lineWidth = lineWidth
+    context.strokeStyle = foregroundColor
+    context.beginPath()
+
+    context.moveTo(areaX, yBottom)
+    context.lineTo(areaX + areaWidth, yBottom)
+
+    context.stroke()
+    context.closePath()
+
+    context.globalAlpha = lineAlpha
+    context.strokeStyle = this.ui.getFrameColor(visibleParent.data, 'foreground')
+    context.beginPath()
+
+    context.moveTo(areaX, yBottom + lineWidth / 2)
+    context.lineTo(areaX + areaWidth, yBottom + lineWidth / 2)
+
+    context.stroke()
+    context.closePath()
+    context.restore()
+  }
+}
+
 function truncateFunctionName (context, availableWidth, functionName, funcNameWidth) {
+  if (availableWidth >= funcNameWidth) return functionName
+
   const avCharWidth = funcNameWidth / functionName.length
 
   // Ensure there's reasonable space for at least one character plus an ellipsis
@@ -113,7 +199,12 @@ function truncateFunctionName (context, availableWidth, functionName, funcNameWi
   return functionName ? functionName + '…' : ''
 }
 
-function truncateFileName (context, availableWidth, fileName, pathSeparator) {
+function truncateFileName (context, availableWidth, fileName, pathSeparator, nodeData) {
+  if (nodeData.category === 'deps') {
+    const removedDep = fileName.replace(new RegExp(`^${nodeData.type}[\\\\/]`), '…')
+    if (context.measureText(removedDep).width <= availableWidth) return removedDep
+  }
+
   let fileOnly = fileName.split(pathSeparator).pop()
 
   if (fileOnly === fileName) return ''
@@ -131,8 +222,8 @@ function drawLabel (context, functionName, fileName, coords) {
     context.save()
     context.textAlign = 'right'
     context.fillText(fileName, coords.rightX, coords.y)
+    context.restore()
   }
-  context.restore()
 }
 
 function rootNodeLabel (context, xMid, y, availableWidth, appName) {
@@ -147,4 +238,4 @@ function rootNodeLabel (context, xMid, y, availableWidth, appName) {
   context.restore()
 }
 
-module.exports = getLabelRenderer
+module.exports = { getFrameLabeler, getAreaLabeler }
