@@ -1,0 +1,86 @@
+#filters-content ul {
+  margin: 0;
+  padding: 0 10px;
+  list-style: none;
+  color: var(--grey-highlight);
+}
+
+#filters-content ul ul {
+  padding-left: 14px;
+}
+
+
+#filters-content .options label {
+  
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  cursor: pointer;
+  
+  line-height: 1.3;
+  padding: 0.7em 5px;
+}
+
+
+
+#filters-content .options input {
+  margin: 0 8px 0 0;
+  vertical-align: middle;
+  display: none;
+}
+
+#filters-content .options .icon-wrapper {
+  align-items: center;
+  border-radius: 3px;
+  display: flex;
+  font-size: 1.4em;
+  margin-right: 0.5em;
+  flex-shrink: 0;
+  justify-content: center;
+  color: var(--checkbox-border-color);
+}
+#filters-content .options .icon-wrapper svg{
+  display: none;
+}
+#filters-content .options .icon-wrapper .checkbox-unchecked-svg{
+  display: initial;
+}
+
+#filters-content .options :checked ~ .icon-wrapper .checkbox-unchecked-svg{
+  display: none;
+}
+
+#filters-content .options :checked ~ .icon-wrapper{
+  color: var(--max-contrast);
+}
+
+#filters-content .options :checked ~ .icon-wrapper .checkbox-checked-svg{
+  display: initial;
+}
+
+#filters-content .options :indeterminate ~ .icon-wrapper {
+  color: var(--grey-highlight);
+}
+
+#filters-content .options :indeterminate ~ .icon-wrapper .checkbox-indetermined-svg {
+  display: initial;
+}
+
+#filters-content .options :indeterminate ~ .icon-wrapper .checkbox-unchecked-svg,
+#filters-content .options :indeterminate ~ .icon-wrapper .checkbox-checked-svg{
+  display: none;
+}
+
+
+#filters-content .options .app {
+  color: var(--area-color-app);
+}
+
+#filters-content .options .core,
+#filters-content .options .all-v8 {
+  color: var(--area-color-core);
+}
+
+#filters-content .options .deps {
+  color: var(--area-color-deps);
+}
