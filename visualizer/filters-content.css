@@ -3,6 +3,7 @@
   padding: 0 10px;
   list-style: none;
   color: var(--grey-highlight);
+  background-color: var(--options-menu-bg-color);
 }
 
 #filters-content ul ul {
@@ -21,6 +22,12 @@
   padding: 0.7em 5px;
 }
 
+#filters-content .options li.disabled {
+  opacity: 0.3;
+}
+#filters-content .options li.disabled label {
+  cursor: default;
+}
 
 
 #filters-content .options input {
