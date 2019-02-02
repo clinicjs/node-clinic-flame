@@ -463,6 +463,8 @@ class Ui extends events.EventEmitter {
       if (pushState) this.pushHistory()
 
       if (cb) cb()
+
+      this.emit('updateExclusions')
     } })
   }
 
@@ -470,6 +472,7 @@ class Ui extends events.EventEmitter {
     this.dataTree.showOptimizationStatus = showOptimizationStatus
     this.draw()
     this.pushHistory()
+    this.emit('updateExclusions')
   }
 
   setData (dataTree) {
