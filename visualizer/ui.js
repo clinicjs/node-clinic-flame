@@ -94,7 +94,8 @@ class Ui extends events.EventEmitter {
         if (search !== this.searchQuery) {
           this.search(search, { pushState: false })
         }
-      } })
+      }
+    })
   }
 
   // Temporary e.g. on mouseover, erased on mouseout
@@ -240,20 +241,6 @@ class Ui extends events.EventEmitter {
       customTooltip: tooltip
     })
 
-    const toolbarSidePanel = toolbarTopPanel.addContent(undefined, {
-      id: 'toolbar-side-panel',
-      classNames: 'toolbar-section'
-    })
-    toolbarSidePanel.addContent('SearchBox', {
-      id: 'search-box',
-      classNames: 'inline-panel'
-    })
-    toolbarSidePanel.addContent('OptionsMenu', {
-      id: 'options-menu',
-      classNames: 'inline-panel',
-      customTooltip: tooltip
-    })
-
     const getZoomFactor = () => {
       // getting the zoomFactor when the viewport is larger than 600px
       // and as long as the width / height proportion equals to 16/9
@@ -282,9 +269,9 @@ class Ui extends events.EventEmitter {
       id: 'footer',
       htmlElementType: 'section'
     })
-    footer.addContent('Key', {
-      id: 'key-panel',
-      classNames: 'panel'
+
+    footer.addContent('FiltersContainer', {
+      id: 'filters-container'
     })
 
     // TODO: add these ↴
@@ -531,7 +518,6 @@ class Ui extends events.EventEmitter {
   }
 
   initializeElements () {
-
     // Cascades down tree in addContent() append/prepend order
     this.uiContainer.initializeElements()
   }
