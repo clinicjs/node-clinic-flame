@@ -1,0 +1,25 @@
+.button {
+  padding: 2px 4px;
+  background-color: var(--opposite-contrast);
+  color: var(--max-contrast);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  line-height: 1;
+
+  font-size: var(--small-text-size);
+}
+.button:hover:not(:disabled) {
+  background-color: var(--clickable-bg-hover);
+  outline: 1px dotted var(--light-glare);  
+}
+
+.button .icon-img {
+  font-size: 1.5em;
+  margin: 2px 4px;
+}
+
+.button .label {
+  margin: 2px 4px;
+}
