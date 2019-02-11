@@ -256,7 +256,11 @@ class Ui extends events.EventEmitter {
       return 0
     }
 
-    const flameWrapper = this.uiContainer.addContent('FlameGraph', {
+    this.mainContent = this.uiContainer.addContent('HtmlContent', {
+      id: 'main-content'
+    })
+
+    const flameWrapper = this.mainContent.addContent('FlameGraph', {
       id: 'flame-main',
       htmlElementType: 'section',
       customTooltip: tooltip,
@@ -265,13 +269,26 @@ class Ui extends events.EventEmitter {
     })
     this.flameWrapper = flameWrapper
 
+    this.sideBar = this.mainContent.addContent('SideBar', {
+      id: 'side-bar',
+      animationEnd: () => {
+        const zoomFactor = getZoomFactor()
+        flameWrapper.resize(zoomFactor)
+      }
+    })
+
+    this.sideBar.addContent('FiltersContent', {
+      classNames: 'filters-options'
+    })
+
     const footer = this.uiContainer.addContent(undefined, {
       id: 'footer',
       htmlElementType: 'section'
     })
 
     footer.addContent('FiltersContainer', {
-      id: 'filters-container'
+      id: 'filters-bar',
+      toggleSideBar: (mode) => this.sideBar.toggle(mode)
     })
 
     // TODO: add these ↴

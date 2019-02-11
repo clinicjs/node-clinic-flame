@@ -1,0 +1,24 @@
+#filters-bar{
+   background-color: var(--banner-bg-color);
+   padding: 8px;
+
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+}
+
+#filters-bar .options-menu-toggle {
+  min-width: 130px;
+}
+
+#filters-bar .col-wrapper {
+  display: flex;
+}
+#filters-bar .col-wrapper > * {
+  margin: 0 2px;
+}
+
+.tooltip-checkbox {
+  color: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+}

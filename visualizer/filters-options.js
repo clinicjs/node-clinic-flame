@@ -1,9 +1,7 @@
 'use strict'
 
 const HtmlContent = require('./html-content.js')
-const checkboxCheckedIcon = require('@nearform/clinic-common/icons/checkbox-checked')
-const checkboxUncheckedIcon = require('@nearform/clinic-common/icons/checkbox-unchecked')
-const checkboxIndeterminedIcon = require('@nearform/clinic-common/icons/checkbox-indetermined')
+const checkbox = require('./common/checkbox.js')
 
 class FiltersContent extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
@@ -132,8 +130,11 @@ class FiltersContent extends HtmlContent {
 
   initializeElements () {
     super.initializeElements()
-    // creating the main sections
+    this.d3ContentWrapper
+      .classed('filters-options', true)
+      .classed('scroll-container', true)
 
+    // creating the main sections
     // *  *  *  * Code Areas *  *  *  *
     this.d3CodeArea = this.d3ContentWrapper.append('div')
       .classed('code-area section', true)
@@ -162,13 +163,20 @@ class FiltersContent extends HtmlContent {
 
     if (this.sections) {
       // *  *  *  * Code Areas *  *  *  *
-      let d3NewLi = createListItems(this.d3CodeArea.select('ul'), this.sections.codeAreas)
-
-      const d3SubUl = d3NewLi.selectAll('ul').data(d => d.children ? [d.children] : [])
-      d3SubUl.exit().remove()
-      const newUl = d3SubUl.enter().append('ul')
+      const codeAreas = this.sections.codeAreas.map(d => {
+        return {
+          ...d,
+          children: d.children && d.children.length ? d.children : undefined
+        }
+      })
+      let d3NewLi = createListItems(this.d3CodeArea.select('ul'), codeAreas)
 
       // subfilters
+      const d3SubUl = d3NewLi.selectAll('ul').data(d => d.children ? [d.children] : [])
+      d3SubUl.exit().remove()
+
+      const newUl = d3SubUl.enter().append('ul')
+
       let dataSelection = d3SubUl.merge(newUl).selectAll('li').data(data => data.map(d => {
         d.label = this.ui.getLabelFromKey(d.excludeKey)
         d.description = this.ui.getDescriptionFromKey(d.excludeKey)
@@ -241,22 +249,17 @@ function updateOptionElement (li) {
 function createOptionElementSL (li) {
   li.html(data => `
     <div class="${data.excludeKey ? data.excludeKey.split(':')[0] : ''}">
-      <label>
-        <input type="checkbox" />
-        <span class="icon-wrapper">
-          ${checkboxCheckedIcon}
-          ${checkboxUncheckedIcon}
-          ${checkboxIndeterminedIcon}
-        </span>
-        <span class="copy-wrapper">
-          <span class="name">${data.label}</span>
-          <description class="description">
-            ${data.description && `- ${data.description}`}
-          </description>
-        </span>
-      </label>
+      ${checkbox({
+    rightLabel: `
+        <span class="name">${data.label}</span>
+        <description class="description">
+          ${data.description && `- ${data.description}`}
+        </description>        
+        `
+  }).outerHTML}      
     </div>
   `)
 
-  li.select('input').on('change', (datum, i, nodes) => { datum.onChange && datum.onChange(datum, i, nodes) })
+  li.select('input')
+    .on('change', (datum, i, nodes) => { datum.onChange && datum.onChange(datum, i, nodes) })
 }

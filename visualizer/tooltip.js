@@ -71,6 +71,7 @@ class Tooltip extends HtmlContent {
 
     this.tooltipHandler = setTimeout(() => {
       this.isHidden = true
+
       this.draw()
       if (this.onHideCallback) {
         this.onHideCallback()
@@ -79,7 +80,10 @@ class Tooltip extends HtmlContent {
     }, delay)
   }
 
-  toggle (props, show = !this.isHidden) {
+  toggle (props, show = this.isHidden) {
+    // Callback will be called on next hide, even if this timeout cleared, e.g. moving mouse from frame to tooltip
+    if (props.callback) this.onHideCallback = props.callback
+
     if (show) {
       this.show(props)
     } else {

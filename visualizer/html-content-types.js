@@ -15,8 +15,9 @@ module.exports = {
   StackBar: require('./stack-bar.js'),
   SelectionControls: require('./selection-controls.js'),
   InfoBox: require('./info-box.js'),
-  FiltersContainer: require('./filters-container.js'),
-  FiltersContent: require('./filters-content.js')
+  FiltersContainer: require('./filters-bar.js'),
+  FiltersContent: require('./filters-options.js'),
+  SideBar: require('./side-bar.js')
 
   // TODO: add these ↴
   // FrameInfo: require('./frame-info.js'),
