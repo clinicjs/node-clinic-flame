@@ -30,12 +30,13 @@ chart > div {
   display: none;
   flex-direction: column;
   align-items: center;
+  z-index: 10;
 }
 .highlighter-box {
   display: none;
   top: 0px;
   left: 0px;
-  border: 1px dotted rgba(255, 255, 255, 0.5);
+  border: 1px dashed rgba(255, 255, 255, 0.5);
   pointer-events: none;
   position: absolute;
 }
@@ -68,15 +69,30 @@ chart > div {
   content:"";
   flex-grow: 1;
   width: 0px;
-  border-left: 1px dotted rgba(255, 255, 255, 0.5);
+  border-left: 1px dashed rgba(255, 255, 255, 0.5);
 }
 
 .selection-box {
   position: absolute;
   pointer-events: none;
-  background-color: rgba(var(--grey-highlight-color-val), 0.12);
+  background: rgba(var(--grey-highlight-color-val), 0.12);
+  background: linear-gradient(to bottom,
+    rgba(var(--grey-highlight-color-val), 0.28) 0%,
+    rgba(var(--grey-highlight-color-val), 0.14) 60%,
+    rgba(var(--grey-highlight-color-val), 0) 100%
+  );
   border: 1px solid transparent;
-  box-shadow: 0 1px 4px rgba(var(--grey-highlight-color-val), 0.2);
+  box-shadow: 0 1px 4px rgba(var(--grey-highlight-color-val), 0.14);
+  z-index: 10;
+}
+
+#flame-main canvas.flame-overlay {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 3;
 }
 
 .zoom-underline {

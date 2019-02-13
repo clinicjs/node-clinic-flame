@@ -6,7 +6,10 @@ const d3Fg = require('d3-fg')
 const HtmlContent = require('./html-content.js')
 
 const FgTooltipContainer = require('./flame-graph-tooltip-container')
-const getLabelRenderer = require('./flame-graph-label.js')
+const {
+  getFrameLabeler,
+  getAreaLabeler
+} = require('./flame-graph-label.js')
 const getFrameRenderer = require('./flame-graph-frame.js')
 
 const searchHighlightColor = 'orange'
@@ -26,7 +29,7 @@ class FlameGraph extends HtmlContent {
 
     this.hoveredNodeData = null
     this.isAnimating = false
-    this.baseCellHeight = this.ui.presentationMode ? 26 : 20
+    this.baseCellHeight = this.ui.presentationMode ? 26 : 24
     this.cellHeight = this.baseCellHeight + this.zoomFactor
     this.sizeChanged = false
 
@@ -46,6 +49,8 @@ class FlameGraph extends HtmlContent {
     this.ui.on('zoomNode', (node, cb) => {
       if (this.flameGraph) {
         if (cb) this.onNextAnimationEnd = cb
+
+        this.clearOverlay()
 
         this.isAnimating = true
         this.zoomedNodeData = node
@@ -81,6 +86,10 @@ class FlameGraph extends HtmlContent {
       .classed('flamegraph-outer', true)
       .classed('scroll-container', true)
       .style('position', 'relative')
+
+    this.d3CanvasOverlay = this.d3Chart.append('canvas')
+      .classed('flame-overlay', true)
+    this.resetOverlayContext()
 
     // creating the component to highlight the hovered node on the flame graph
     this.d3Highlighter = this.d3Element.append('div')
@@ -129,6 +138,9 @@ class FlameGraph extends HtmlContent {
     const { dataTree } = this.ui
 
     this.renderedTree = dataTree.activeTree()
+
+    this.labelArea = getAreaLabeler(this)
+
     this.flameGraph = d3Fg({
       tree: dataTree.activeTree(),
       exclude: dataTree.exclude,
@@ -152,7 +164,7 @@ class FlameGraph extends HtmlContent {
         return this.ui.dataTree.getHeatColor(d)
       },
       clickHandler: null,
-      renderLabel: getLabelRenderer(this),
+      renderLabel: getFrameLabeler(this),
       renderStackFrameBox: getFrameRenderer(this)
     })
 
@@ -246,6 +258,8 @@ class FlameGraph extends HtmlContent {
         this.onNextAnimationEnd()
         this.onNextAnimationEnd = null
       }
+
+      this.flameGraph.update()
     })
 
     // triggering the resize after the canvas rendered to take possible scrollbars into account
@@ -258,6 +272,11 @@ class FlameGraph extends HtmlContent {
 
     // Get a { x, y, width, height } object from d3-fg for regular nodes
     return this.flameGraph.getNodeRect(node)
+  }
+
+  getVisibleParent (d3Node) {
+    if (!d3Node.parent) return null
+    return d3Node.parent.data.hide ? this.getVisibleParent(d3Node.parent) : d3Node.parent
   }
 
   highlightHoveredNodeOnGraph () {
@@ -273,10 +292,13 @@ class FlameGraph extends HtmlContent {
       this.applyRectToDiv(this.d3Highlighter, rect, true)
 
       this.d3HighlighterBox.classed('show', true)
-      this.applyRectToDiv(this.d3HighlighterBox, Object.assign({}, rect, {
-        // Align border with horizontal lines and tooltip edge
-        y: rect.y + 1
-      }))
+      this.applyRectToDiv(this.d3HighlighterBox, {
+        // Align border inside frame so it's visible against borders, heat etc
+        x: rect.x + Math.min(rect.width - 3, 2),
+        y: rect.y,
+        width: Math.max(rect.width - 2, 3),
+        height: rect.height - 2
+      })
     } else {
       this.d3Highlighter.classed('show', false)
       this.d3HighlighterBox.classed('show', false)
@@ -329,18 +351,44 @@ class FlameGraph extends HtmlContent {
     if (this.ui.zoomedNode) this.markNodeAsZoomed(this.ui.zoomedNode)
   }
 
+  resetOverlayContext () {
+    // Scales the context; and any change to <canvas> width/height attr resets the context content and properties
+    const height = this.flameGraph ? this.flameGraph.height() : this.d3Chart.node().getBoundingClientRect().height
+    const devicePixelRatio = window.devicePixelRatio
+
+    this.d3CanvasOverlay.style('height', height + 'px')
+    this.d3CanvasOverlay.style('width', this.width + 'px')
+
+    this.d3CanvasOverlay.attr('height', height * devicePixelRatio)
+    this.d3CanvasOverlay.attr('width', this.width * devicePixelRatio)
+
+    const context = this.d3CanvasOverlay.node().getContext('2d')
+    context.scale(window.devicePixelRatio, window.devicePixelRatio)
+    this.overlayContext = context
+  }
+
+  clearOverlay () {
+    // Simply clear without rescaling or resetting other properties
+    const overlay = this.d3CanvasOverlay.node()
+    const devicePixelRatio = window.devicePixelRatio
+
+    this.overlayContext.clearRect(0, 0, overlay.width * devicePixelRatio, overlay.height * devicePixelRatio)
+  }
+
   resize (zoomFactor = 0) {
     this.zoomFactorChanged = this.zoomFactor !== zoomFactor
     this.zoomFactor = zoomFactor
 
-    this.baseCellHeight = this.ui.presentationMode ? 26 : 20
+    this.baseCellHeight = this.ui.presentationMode ? 26 : 24
     const width = this.d3Chart.node().clientWidth
+
     const cellHeight = this.baseCellHeight + zoomFactor
     const minHeight = this.d3Element.node().clientHeight
     this.sizeChanged = this.width !== width || this.cellHeight !== cellHeight || this.minHeight !== minHeight
     this.width = width
     this.cellHeight = cellHeight
     this.minHeight = minHeight
+
     this.draw()
     this.updateMarkerBoxes()
   }
@@ -358,10 +406,14 @@ class FlameGraph extends HtmlContent {
     super.draw()
 
     const { dataTree } = this.ui
+
     if (this.sizeChanged) {
-      this.flameGraph.width(this.width)
       this.flameGraph.cellHeight(this.cellHeight)
       this.flameGraph.minHeight(this.minHeight)
+      this.resetOverlayContext()
+      // Order matters: setting overlay's width/height attrs wipes canvas, flameGraph.width() redraws it
+      this.flameGraph.width(this.width)
+
       this.sizeChanged = false
     }
 
@@ -385,21 +437,18 @@ class FlameGraph extends HtmlContent {
       this.zoomFactorChanged = false
     }
 
+    if (toHide.size > 0 || toShow.size > 0) isChanged = true
+    if (isChanged || redrawGraph) this.clearOverlay()
+
     // Must re-render tree before applying exclusions, else error if tree and exclusions change at same time
     if (redrawGraph) this.flameGraph.renderTree(this.renderedTree)
 
-    if (toHide.size > 0) {
-      toHide.forEach((name) => {
-        this.flameGraph.typeHide(name)
-      })
-      isChanged = true
-    }
-    if (toShow.size > 0) {
-      toShow.forEach((name) => {
-        this.flameGraph.typeShow(name)
-      })
-      isChanged = true
-    }
+    toHide.forEach((name) => {
+      this.flameGraph.typeHide(name)
+    })
+    toShow.forEach((name) => {
+      this.flameGraph.typeShow(name)
+    })
 
     if (isChanged || redrawGraph) this.updateMarkerBoxes()
   }
