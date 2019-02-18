@@ -3,22 +3,14 @@
 const HtmlContent = require('./html-content.js')
 const sidePanelExpand = require('@nearform/clinic-common/icons/sidepanel-expand')
 const sidePanelCollapse = require('@nearform/clinic-common/icons/sidepanel-collapse')
-const listView = require('@nearform/clinic-common/icons/list-view')
 
 const button = require('./common/button.js')
-const checkButtonCombo = require('./common/check-button-combo.js')
 const checkbox = require('./common/checkbox.js')
+const dropdown = require('./common/drop-down.js')
 
 class FiltersContainer extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
     super(parentContent, contentProperties)
-
-    // creating the tooltip instance that the Ui's components can share
-    const tooltip = this.addContent('Tooltip', {
-      htmlElementType: 'div',
-      id: 'filters-tooltip'
-    })
-    this.tooltip = tooltip
 
     // layout wrappers
     this.d3Left = this.addContent('HtmlContent', {
@@ -50,92 +42,140 @@ class FiltersContainer extends HtmlContent {
 
   initializeElements () {
     super.initializeElements()
-    this.d3Center.d3Element.append(() =>
-      button({
-        label: 'V8',
-        rightIcon: listView
+
+    // call stacks
+    this.d3CallStacksButton = this.d3Left.d3Element.append(() => dropdown({
+      label: 'Call stacks by duration. More info',
+      content: 'Some cool content here!',
+      expandAbove: true
+    }))
+
+    // App checkbox
+    this.d3AppCheckBox = this.d3Center.d3Element.append(() =>
+      checkbox({
+        leftLabel: 'app',
+        onChange: e => this.setCodeAreaVisibility('app', e.target.checked)
       }))
-      .on('click', this.toggleSideBar)
 
     // Dependencies combo ****
-    const d3DepCombo = this.d3Center.d3Element.append(() => checkButtonCombo({
-      label: 'Dependecies',
-      indeterminate: true
+    this.d3DepsCombo = this.d3Center.d3Element.append(() => dropdown({
+      label: checkbox({
+        leftLabel: 'Dependencies',
+        onChange: e => this.setCodeAreaVisibility('deps', e.target.checked)
+      }),
+      content: 'No children... for now',
+      expandAbove: true
     }))
 
-    d3DepCombo.select('input')
-      .on('change', () => {
-        console.log('change!')
-      })
-    d3DepCombo.select('button')
-      .on('click', (datum, index, nodes) => {
-        this.tooltip.toggle({
-          msg: getDependenciesChildren,
-          targetRect: nodes[index].getBoundingClientRect(),
-          verticalAlign: 'top',
-          showDelay: 0,
-          hideDelay: 0
-        })
-        // this.toggleSideBar()
-        // nodes[index].closest('button').classList.toggle('show', this.showSideBar)
-      })
+    // NodeJS checkbox ****
+    this.d3NodeCheckBox = this.d3Center.d3Element.append(() =>
+      checkbox({
+        leftLabel: 'Node JS',
+        onChange: e => this.setCodeAreaVisibility('core', e.target.checked)
+      }))
 
     // V8 combo ****
-    const d3V8Combo = this.d3Center.d3Element.append(() => checkButtonCombo({
-      label: 'V8',
-      indeterminate: true
+    this.d3V8Combo = this.d3Center.d3Element.append(() => dropdown({
+      label: checkbox({
+        leftLabel: 'V8',
+        onChange: e => {
+          this.setCodeAreaVisibility('all-v8', e.target.checked)
+        }
+      }),
+      content: getV8Children.bind(this),
+      expandAbove: true
     }))
-
-    d3V8Combo.select('input')
-      .on('change', () => {
-        console.log('change!')
-      })
-    d3V8Combo.select('button')
-      .on('click', (datum, index, nodes) => {
-        this.tooltip.toggle({
-          msg: this.getV8Children.bind(this),
-          offset: { x: -20, y: -2 },
-          targetRect: nodes[index].getBoundingClientRect(),
-          verticalAlign: 'top',
-          showDelay: 0,
-          callback: () => {
-            console.log('hide!')
-            
-            nodes[index].closest('button').classList.toggle('show', !this.ui.tooltip.isHidden)
-          }
-        })
-
-        nodes[index].closest('button').classList.toggle('show', this.ui.tooltip.isHidden)
-      })
 
     this.d3Right.d3Element
       .append(button)
       .on('click', this.toggleSideBar)
   }
 
-  getV8Children () {
-    const list = this.ui.dataTree.codeAreas
+  setCodeAreaVisibility (key, value) {
+    const area = this.ui.dataTree.codeAreas
       .find(
-        data => data.excludeKey === 'all-v8'
-      ).children
-      .map(c => checkbox({ rightLabel: c.label }))
-
-    const wrapper = document.createElement('div')
-    wrapper.classList.add('tooltip-checkbox')
-    list.forEach(l => wrapper.appendChild(l))
-
-    return wrapper
+        data => data.excludeKey === key
+      )
+    this.ui.setCodeAreaVisibility(area, value)
+    this.ui.updateExclusions()
+    this.ui.draw()
   }
 
   draw () {
     super.draw()
+
     this.d3Right.d3Element.select('button')
       .html(`<span class='label'>Options</span> ${this.showSideBar ? sidePanelCollapse : sidePanelExpand}`)
+
+    // app
+    this.d3AppCheckBox.select('input').node()
+      .checked = !this.ui.dataTree.exclude.has('app')
+    this.d3AppCheckBox.select('.copy-wrapper')
+      .text(this.ui.dataTree.appName)
+
+    // node js
+    this.d3NodeCheckBox.select('input').node()
+      .checked = !this.ui.dataTree.exclude.has('core')
+
+    // deps
+    this.d3DepsCombo.select('input').node()
+      .checked = !this.ui.dataTree.exclude.has('deps')
+
+    // V8
+    const d3V8Input = this.d3V8Combo.select('input').node()
+    const V8 = this.ui.dataTree.codeAreas
+      .find(
+        data => data.excludeKey === 'all-v8'
+      )
+    d3V8Input.indeterminate = (() => {
+      const { children } = V8
+      if (!Array.isArray(children) || children.length === 0) {
+        return false
+      }
+      const first = this.ui.dataTree.exclude.has(children[0].excludeKey)
+
+      return children.some((child) => this.ui.dataTree.exclude.has(child.excludeKey) !== first)
+    })()
+    d3V8Input.checked = (() => {
+      if (V8.children && V8.children.length) {
+        return V8.children.some((child) => {
+          return !this.ui.dataTree.exclude.has(child.excludeKey)
+        })
+      }
+      return !this.ui.dataTree.exclude.has(V8.excludeKey)
+    })()
   }
 }
 
-function getDependenciesChildren () {
-  return this.ui.dataTree.codeAreas.filter(data => data.excludeKey === 'deps').children
+function getV8Children () {
+  const V8 = this.ui.dataTree.codeAreas
+    .find(
+      data => data.excludeKey === 'all-v8'
+    )
+  const list = V8.children
+    .map(d => {
+      const elem = checkbox({
+        rightLabel: d.label,
+        checked: !this.ui.dataTree.exclude.has(d.excludeKey)
+      })
+      elem.querySelector('input').dataset.excludeKey = d.excludeKey
+      return elem
+    })
+
+  const wrapper = document.createElement('div')
+
+  list.forEach(l => wrapper.appendChild(l))
+
+  wrapper.addEventListener('change', e => {
+    const target = e.target
+    const codeArea = V8.children.find(d => d.excludeKey === target.dataset.excludeKey)
+
+    this.ui.setCodeAreaVisibility(codeArea, target.checked)
+    this.ui.updateExclusions()
+    this.ui.draw()
+  })
+
+  return wrapper
 }
 
 module.exports = FiltersContainer

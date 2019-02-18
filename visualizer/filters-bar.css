@@ -18,7 +18,11 @@
   margin: 0 2px;
 }
 
-.tooltip-checkbox {
+.dropdown-content-wrapper {
   color: rgba(255, 255, 255, 0.6);
   white-space: nowrap;
+}
+
+#filters-bar .center-col > .checkbox {
+  border: 1px solid rgba(255, 255, 255, 0.6);
 }
