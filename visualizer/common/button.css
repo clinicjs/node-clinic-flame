@@ -1,5 +1,5 @@
 .button {
-  padding: 2px 4px;
+  padding: 0.2em 0.3em;
   background-color: var(--opposite-contrast);
   color: var(--max-contrast);
   border: none;
@@ -17,9 +17,9 @@
 
 .button .icon-img {
   font-size: 1.5em;
-  margin: 2px 4px;
+  margin: 0.133em 0.2em;
 }
 
 .button .label {
-  margin: 2px 4px;
+  margin: 0.2em 0.3em;
 }
