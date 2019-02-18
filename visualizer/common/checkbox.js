@@ -2,7 +2,7 @@ const checkboxCheckedIcon = require('@nearform/clinic-common/icons/checkbox-chec
 const checkboxUncheckedIcon = require('@nearform/clinic-common/icons/checkbox-unchecked')
 const checkboxIndeterminedIcon = require('@nearform/clinic-common/icons/checkbox-indetermined')
 
-module.exports = ({ leftLabel, rightLabel, classes = [], checked = false, disabled = false, indeterminate = false } = {}) => {
+module.exports = ({ leftLabel, rightLabel, classes = [], checked = false, disabled = false, indeterminate = false, onChange } = {}) => {
   const wrappingLabel = document.createElement('label')
   wrappingLabel.classList.add('checkbox', ...classes)
 
@@ -26,6 +26,11 @@ module.exports = ({ leftLabel, rightLabel, classes = [], checked = false, disabl
           ${rightLabel}
         </span>` : ``}
     `
-  wrappingLabel.querySelector('input').indeterminate = indeterminate
+  const input = wrappingLabel.querySelector('input')
+  input.indeterminate = indeterminate
+
+  if (onChange) {
+    input.addEventListener('change', onChange)
+  }
   return wrappingLabel
 }
