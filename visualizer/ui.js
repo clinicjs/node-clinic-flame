@@ -369,7 +369,7 @@ class Ui extends events.EventEmitter {
 
   getLabelFromKey (key, singular = false) {
     const keysToLabels = {
-      'app': 'profiled application',
+      'app': this.dataTree.appName || 'profiled application',
       'deps': singular ? 'Dependency' : 'Dependencies',
       'core': 'Node JS',
 
@@ -419,19 +419,26 @@ class Ui extends events.EventEmitter {
     return null
   }
 
-  setCodeAreaVisibility (name, visible, manyTimes) {
+  setCodeAreaVisibility (codeArea, visible) {
     // Apply a single possible change to dataTree.exclude, updating what's necessary
     let isChanged = false
 
-    if (visible) {
-      isChanged = this.dataTree.show(name)
-      if (isChanged) this.changedExclusions.toShow.add(name)
+    if (codeArea.children && codeArea.children.length) {
+      const childrenChanged = codeArea.children.forEach(child => this.setCodeAreaVisibility(child, visible))
+      this.updateExclusions()
+      return childrenChanged
     } else {
-      isChanged = this.dataTree.hide(name)
-      if (isChanged) this.changedExclusions.toHide.add(name)
-    }
+      const name = codeArea.excludeKey
+      if (visible) {
+        isChanged = this.dataTree.show(name)
+        if (isChanged) this.changedExclusions.toShow.add(name)
+      } else {
+        isChanged = this.dataTree.hide(name)
+        if (isChanged) this.changedExclusions.toHide.add(name)
+      }
 
-    if (isChanged && !manyTimes) this.updateExclusions()
+      if (isChanged) this.updateExclusions()
+    }
 
     return isChanged
   }
