@@ -10,7 +10,7 @@
 
 #side-bar.slide-in{
   display: block;
-  animation: var(--anim-duration) expand;
+  animation: var(--anim-duration) sidebar-expand;
 }
 
 #side-bar>*{
@@ -18,20 +18,20 @@
 }
 
 #side-bar.slide-in>*{
-  animation: var(--anim-duration) slidein;
+  animation: var(--anim-duration) sidebar-slidein;
 }
 
 #side-bar.slide-out{
   display: block;
-  animation: var(--anim-duration) contract;
+  animation: var(--anim-duration) side-bar-contract;
 }
 
 #side-bar.slide-out>*{
-  animation: var(--anim-duration) slideout;
+  animation: var(--anim-duration) sidebar-slideout;
 }
 
 /* side-bar animation */
-@keyframes slidein {
+@keyframes sidebar-slidein {
   0% {
     transform: translateX(-100%);
     opacity: 0;
@@ -43,7 +43,7 @@
   }
 }
 
-@keyframes slideout {
+@keyframes sidebar-slideout {
   0% {
     transform: translateX(0%);
     opacity: 1;
@@ -55,7 +55,7 @@
   }
 }
 
-@keyframes expand {
+@keyframes sidebar-expand {
   0% {
     width: 0%;
   }
@@ -65,7 +65,7 @@
   }
 }
 
-@keyframes contract {
+@keyframes side-bar-contract {
   0% {
     width: var(--width);
   }
