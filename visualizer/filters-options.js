@@ -76,8 +76,7 @@ class FiltersContent extends HtmlContent {
           return children.some((child) => exclude.has(child.excludeKey) !== first)
         })()
 
-        return {
-          ...area,
+        return Object.assign({}, area, {
           count: this.getDataCountFromKey(area.excludeKey),
           label: this.ui.getLabelFromKey(area.excludeKey),
           description: this.ui.getDescriptionFromKey(area.excludeKey),
@@ -87,7 +86,7 @@ class FiltersContent extends HtmlContent {
           onChange: (datum, i, nodes) => {
             onVisibilityChange(datum, i, nodes, this.ui)
           }
-        }
+        })
       })
 
       // *  *  *  * Advanced *  *  *  *
@@ -164,10 +163,7 @@ class FiltersContent extends HtmlContent {
     if (this.sections) {
       // *  *  *  * Code Areas *  *  *  *
       const codeAreas = this.sections.codeAreas.map(d => {
-        return {
-          ...d,
-          children: d.children && d.children.length ? d.children : undefined
-        }
+        return Object.assign({}, d, { children: d.children && d.children.length ? d.children : undefined })
       })
       let d3NewLi = createListItems(this.d3CodeArea.select('ul'), codeAreas)
 
@@ -193,7 +189,7 @@ class FiltersContent extends HtmlContent {
         return d
       }))
       dataSelection.enter().append('li')
-        .call(createOptionElementSL)
+        .call(createOptionElement)
         .call(updateOptionElement)
       dataSelection.exit().remove()
 
@@ -211,25 +207,14 @@ module.exports = FiltersContent
 function onVisibilityChange (datum, i, nodes, ui) {
   const checked = nodes[i].checked
 
-  if (datum.children && datum.children.length) {
-    let anyChanges = false
-    datum.children.forEach((child) => {
-      // Pass flag to only call ui.updateExclusions() when all changes are made
-      const isChanged = ui.setCodeAreaVisibility(child.excludeKey, checked, true)
-      if (isChanged) anyChanges = true
-    })
-    if (anyChanges) ui.updateExclusions()
-  } else {
-    ui.setCodeAreaVisibility(datum.excludeKey, checked)
-  }
-
+  ui.setCodeAreaVisibility(datum, checked)
   ui.draw()
 }
 
 function createListItems (ul, data) {
   const dataSelection = ul.selectAll('li').data(data)
   dataSelection.exit().remove()
-  const d3NewLi = dataSelection.enter().append('li').call(createOptionElementSL)
+  const d3NewLi = dataSelection.enter().append('li').call(createOptionElement)
   return d3NewLi.merge(dataSelection).call(updateOptionElement)
 }
 
@@ -246,14 +231,14 @@ function updateOptionElement (li) {
     .property('class', d => d.disabled ? 'disabled' : '')
 }
 
-function createOptionElementSL (li) {
+function createOptionElement (li) {
   li.html(data => `
     <div class="${data.excludeKey ? data.excludeKey.split(':')[0] : ''}">
       ${checkbox({
     rightLabel: `
         <span class="name">${data.label}</span>
         <description class="description">
-          ${data.description && `- ${data.description}`}
+          ${data.description ? `- ${data.description}` : ``}
         </description>        
         `
   }).outerHTML}      

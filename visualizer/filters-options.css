@@ -42,3 +42,15 @@
 .filters-options .options .deps {
   color: var(--area-color-deps);
 }
+
+.filters-options .options .description .more-info{
+  color: white;
+  opacity: 0.7;
+  text-decoration: none;
+  display: block;
+  text-align: right;
+}
+
+.filters-options .options .description .more-info:hover{
+  opacity: 1;
+}
