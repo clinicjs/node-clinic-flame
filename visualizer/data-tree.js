@@ -40,6 +40,7 @@ class DataTree {
     this.mean = d3.mean(this.flatByHottest, node => node.onStackTop.asViewed)
     this.highestStackTop = this.flatByHottest[0].onStackTop.asViewed
     this.calculateRoots()
+    this.computeGroupedSortValues()
   }
 
   show (name) {
@@ -148,11 +149,53 @@ class DataTree {
 
   getFilteredStackSorter () {
     return (nodeA, nodeB) => {
+      const groupA = this.groupedSortValues.get(nodeA)
+      const groupB = this.groupedSortValues.get(nodeB)
+      if (groupA > groupB) return -1
+      if (groupA < groupB) return 1
+
       const valueA = this.getNodeValue(nodeA)
       const valueB = this.getNodeValue(nodeB)
 
       return valueA === valueB ? 0 : valueA > valueB ? -1 : 1
     }
+  }
+
+  computeGroupedSortValues () {
+    this.groupedSortValues = new Map()
+
+    const completeNodesArray = [ this.activeTree() ].concat(this.activeNodes())
+
+    completeNodesArray.forEach(node => {
+      const group = Object.create(null)
+      node.childGroups = group
+
+      if (!node.children || this.isNodeExcluded(node)) return
+
+      const nextVisibleDescendents = this.getVisibleChildren(node)
+
+      nextVisibleDescendents.forEach((child) => {
+        const type = this.getTypeKey(child)
+        const value = this.getNodeValue(child)
+        if (type in group) {
+          group[type] += value
+        } else {
+          group[type] = value
+        }
+      })
+
+      nextVisibleDescendents.forEach((child) => {
+        const type = this.getTypeKey(child)
+        this.groupedSortValues.set(child, group[type])
+      })
+
+      node.childGroups = group
+    })
+  }
+
+  isOffScreen (node) {
+    // d3-fg sets `value` to 0 to hide off-screen nodes. The "real" value is stored on `.original`.
+    return node.value === 0 && typeof node.original === 'number'
   }
 
   getNodeValue (node) {
@@ -163,12 +206,11 @@ class DataTree {
       }, 0) : 0
     }
 
-    // d3-fg sets `value` to 0 to hide off-screen nodes.
-    // there's no other property to indicate this but the original value is stored on `.original`.
-    if (node.value === 0 && typeof node.original === 'number') {
-      return node.original
-    }
-    return node.value
+    return this.isOffScreen(node) ? node.original : node.value
+  }
+
+  getTypeKey (node) {
+    return `${node.category}:${node.type}`
   }
 
   getSortPosition (node, arr = this.flatByHottest) {
@@ -183,12 +225,31 @@ class DataTree {
     const arr = this.activeNodes()
     return arr.find((node) => node.id === id)
   }
+
+  getVisibleChildren (node = this.activeTree()) {
+    // Can pass in data nodes or D3 partition nodes; gets closest visible descendents of same type
+
+    let nextVisibleDescendents = []
+    const childCount = node.children ? node.children.length : 0
+    for (let i = 0; i < childCount; i++) {
+      const child = node.children[i]
+      if (this.isNodeExcluded(child.data || child)) {
+        nextVisibleDescendents = nextVisibleDescendents.concat(this.getVisibleChildren(child))
+      } else {
+        nextVisibleDescendents.push(child)
+      }
+    }
+    return nextVisibleDescendents
+  }
 }
 
 function getFlatArray (children) {
   // Flatten the tree, excluding the root node itself (i.e. the 'all stacks' node)
   return [...children].concat(children.reduce((arr, child) => {
-    if (child.children) return arr.concat(getFlatArray(child.children))
+    if (child.children) {
+      return arr.concat(getFlatArray(child.children))
+    }
+    return arr
   }, []))
 }
 
