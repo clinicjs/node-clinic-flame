@@ -1,6 +1,6 @@
-module.exports = ({ label, classes = [], leftIcon = '', rightIcon = '', disabled = false, onClick } = {}) => {
+module.exports = ({ label, classNames = [], leftIcon = '', rightIcon = '', disabled = false, onClick } = {}) => {
   const button = document.createElement('button')
-  button.classList.add('button', ...classes)
+  button.classList.add('button', ...classNames)
   if (disabled) button.attr('disabled', true)
 
   if (onClick) {

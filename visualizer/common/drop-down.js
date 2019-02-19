@@ -12,12 +12,16 @@ document.body.addEventListener('click', (event) => {
   }
 })
 
-module.exports = ({ label, classes = [], disabled = false, expandAbove = false, content } = {}) => {
+module.exports = ({ label, classNames = [], disabled = false, expandAbove = false, content } = {}) => {
   const wrapper = document.createElement('div')
-  wrapper.classList.add('dropdown', ...classes)
+  wrapper.classList.add('dropdown', ...classNames)
   wrapper.classList.toggle('direction-up', expandAbove)
+
+  const labelWrapper = document.createElement('div')
+  labelWrapper.classList.add('label-wrapper')
   const labelHtml = toHtml(label, 'label')
-  wrapper.appendChild(labelHtml)
+  labelWrapper.appendChild(labelHtml)
+  wrapper.appendChild(labelWrapper)
 
   wrapper.appendChild(button({
     disabled,
