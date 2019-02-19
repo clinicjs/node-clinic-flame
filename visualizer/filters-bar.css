@@ -1,10 +1,10 @@
 #filters-bar{
+   align-items     : center;
    background-color: var(--banner-bg-color);
-   padding: 8px;
-
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
+   display         : flex;
+   justify-content : space-between;
+   padding         : 8px;
+   position        : relative;
 }
 
 #filters-bar .options-menu-toggle {
@@ -13,9 +13,11 @@
 
 #filters-bar .col-wrapper {
   display: flex;
+  min-width: 0;
 }
 #filters-bar .col-wrapper > * {
   margin: 0 2px;
+  min-width: 0;
 }
 
 .dropdown-content-wrapper {
@@ -26,3 +28,4 @@
 #filters-bar .center-col > .checkbox {
   border: 1px solid rgba(255, 255, 255, 0.6);
 }
+

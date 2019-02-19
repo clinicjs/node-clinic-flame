@@ -1,8 +1,9 @@
 'use strict'
-
 const HtmlContent = require('./html-content.js')
 const sidePanelExpand = require('@nearform/clinic-common/icons/sidepanel-expand')
 const sidePanelCollapse = require('@nearform/clinic-common/icons/sidepanel-collapse')
+const circleQuestion = require('@nearform/clinic-common/icons/circle-question')
+const search = require('@nearform/clinic-common/icons/search')
 
 const button = require('./common/button.js')
 const checkbox = require('./common/checkbox.js')
@@ -28,7 +29,7 @@ class FiltersContainer extends HtmlContent {
     // components
     this.d3Right.addContent('SearchBox', {
       id: 'search-box',
-      classNames: 'inline-panel'
+      classNames: 'inline-panel after-bp-2'
     })
 
     this.showSideBar = false
@@ -43,11 +44,16 @@ class FiltersContainer extends HtmlContent {
   initializeElements () {
     super.initializeElements()
 
-    // call stacks
-    this.d3CallStacksButton = this.d3Left.d3Element.append(() => dropdown({
+    this.d3Left.d3Element.append(() => dropdown({
+      classNames: ['after-bp-2'],
       label: 'Call stacks by duration. More info',
       content: 'Some cool content here!',
       expandAbove: true
+    }))
+
+    this.d3Left.d3Element.append(() => button({
+      classNames: ['before-bp-2'],
+      leftIcon: circleQuestion
     }))
 
     // App checkbox
@@ -60,7 +66,10 @@ class FiltersContainer extends HtmlContent {
     // Dependencies combo ****
     this.d3DepsCombo = this.d3Center.d3Element.append(() => dropdown({
       label: checkbox({
-        leftLabel: 'Dependencies',
+        leftLabel: `
+          <span class='after-bp-1'>Dependencies</span>
+          <span class='before-bp-1'>Deps</span>
+        `,
         onChange: e => this.setCodeAreaVisibility('deps', e.target.checked)
       }),
       content: 'No children... for now',
@@ -70,7 +79,10 @@ class FiltersContainer extends HtmlContent {
     // NodeJS checkbox ****
     this.d3NodeCheckBox = this.d3Center.d3Element.append(() =>
       checkbox({
-        leftLabel: 'Node JS',
+        leftLabel: `
+          <span class='after-bp-1'>Node JS</span>
+          <span class='before-bp-1'>Node</span>
+        `,
         onChange: e => this.setCodeAreaVisibility('core', e.target.checked)
       }))
 
@@ -87,7 +99,16 @@ class FiltersContainer extends HtmlContent {
     }))
 
     this.d3Right.d3Element
-      .append(button)
+      .append(() => button({
+        leftIcon: search,
+        classNames: ['before-bp-2'],
+        onClick: () => {
+          this.ui.toggleMobileSearchBox()
+        }
+      }))
+
+    this.d3Right.d3Element
+      .append(() => button({ classNames: ['sidebar-toggler'] }))
       .on('click', this.toggleSideBar)
   }
 
@@ -104,14 +125,22 @@ class FiltersContainer extends HtmlContent {
   draw () {
     super.draw()
 
-    this.d3Right.d3Element.select('button')
-      .html(`<span class='label'>Options</span> ${this.showSideBar ? sidePanelCollapse : sidePanelExpand}`)
+    this.d3Right.d3Element.select('.sidebar-toggler')
+      .html(`
+        <span class='label after-bp-1'>Options</span>
+        ${this.showSideBar ? sidePanelCollapse : sidePanelExpand}
+      `)
 
     // app
     this.d3AppCheckBox.select('input').node()
       .checked = !this.ui.dataTree.exclude.has('app')
     this.d3AppCheckBox.select('.copy-wrapper')
-      .text(this.ui.dataTree.appName)
+      .html(`
+        <span class='after-bp-2'>
+          ${this.ui.dataTree.appName}
+        </span>
+        <span class='before-bp-2'>App</span>
+      `)
 
     // node js
     this.d3NodeCheckBox.select('input').node()

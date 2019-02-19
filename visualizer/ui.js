@@ -6,6 +6,9 @@ const debounce = require('lodash.debounce')
 const DataTree = require('./data-tree.js')
 const History = require('./history.js')
 
+const button = require('./common/button.js')
+const close = require('@nearform/clinic-common/icons/close')
+
 const TooltipHtmlContent = require('./flame-graph-tooltip-content')
 const getNoDataNode = require('./no-data-node.js')
 
@@ -286,6 +289,16 @@ class Ui extends events.EventEmitter {
       htmlElementType: 'section'
     })
 
+    // mobile search-box
+    this.mSearchBoxWrapper = footer.addContent(undefined, {
+      id: 'm-search-box-wrapper',
+      classNames: 'before-bp-2'
+    })
+    this.mSearchBoxWrapper.addContent('SearchBox', {
+      id: 'm-search-box',
+      classNames: 'inline-panel'
+    })
+
     footer.addContent('FiltersContainer', {
       id: 'filters-bar',
       toggleSideBar: (mode) => this.sideBar.toggle(mode)
@@ -510,6 +523,12 @@ class Ui extends events.EventEmitter {
     this.infoBox.showNodeInfo(nodeData)
   }
 
+  toggleMobileSearchBox (show = !this.mSearchBoxWrapper.d3Element.classed('show')) {
+    clearTimeout(this.mSearchBoxAutoHideHnd)
+    this.mSearchBoxWrapper.d3Element.classed('show', show)
+    if (show) this.mSearchBoxWrapper.d3Element.select('input').node().focus()
+  }
+
   /**
    * Initialization and draw
    **/
@@ -547,6 +566,26 @@ class Ui extends events.EventEmitter {
   initializeElements () {
     // Cascades down tree in addContent() append/prepend order
     this.uiContainer.initializeElements()
+
+    // auto hiding mobile search-box on blur if empty
+    this.mSearchBoxWrapper.d3Element.select('input')
+      .on('blur', (datum, index, nodes) => {
+        this.mSearchBoxAutoHideHnd = setTimeout(() => {
+          // this little delay is to avoid clashes between the 'blur' cb and clicking on the search button
+          if (nodes[index].value.trim() === '') {
+            this.toggleMobileSearchBox(false)
+          }
+        }, 300)
+      })
+
+    // adding the close button
+    this.mSearchBoxWrapper.d3Element.append(() => button({
+      leftIcon: close,
+      onClick: () => {
+        this.clearSearch()
+        // this.toggleMobileSearchBox(false)
+      }
+    }))
   }
 
   draw () {
