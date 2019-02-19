@@ -2,10 +2,16 @@ const helpers = {
   toHtml: (content, defaultClass) => {
     switch (typeof content) {
       case 'string':
-        var node = document.createElement('span')
-        node.className = defaultClass || ''
-        node.textContent = content
-        return node
+        if (content.indexOf('<') === 0) {
+          const parser = new window.DOMParser()
+          return parser.parseFromString(content, 'text/html')
+          // returns a HTMLDocument, which also is a Document.
+        } else {
+          var node = document.createElement('span')
+          node.className = defaultClass || ''
+          node.textContent = content
+          return node
+        }
 
       case 'function':
         return helpers.toHtml(content())
