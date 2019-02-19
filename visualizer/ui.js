@@ -582,8 +582,14 @@ class Ui extends events.EventEmitter {
     this.mSearchBoxWrapper.d3Element.append(() => button({
       leftIcon: close,
       onClick: () => {
-        this.clearSearch()
-        // this.toggleMobileSearchBox(false)
+        clearTimeout(this.mSearchBoxAutoHideHnd)
+        if (this.searchQuery === null) {
+          // close if empty
+          this.toggleMobileSearchBox(false)
+        } else {
+          // clear otherwise
+          this.clearSearch()
+        }
       }
     }))
   }
