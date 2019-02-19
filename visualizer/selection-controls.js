@@ -83,7 +83,7 @@ class SelectionControls extends HtmlContent {
 
     this.d3SelectHottest = this.d3Element.append(() => button({
       rightIcon: chevronLeftFirst,
-      classes: ['hotness-selector'],
+      classNames: ['hotness-selector'],
       onClick: () => this.selectByRank(0)
     }))
     this.tooltip.attach({
@@ -129,7 +129,7 @@ class SelectionControls extends HtmlContent {
     this.d3SelectCooler = this.d3Element.append(() => button({
       rightIcon: chevronRight,
       label: `Next hottest`,
-      classes: ['hotness-selector', 'visible-from-bp-2'],
+      classNames: ['hotness-selector', 'visible-from-bp-2'],
       onClick: () => this.selectByRank(this.rankNumber + 1)
     }))
 
