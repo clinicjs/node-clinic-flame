@@ -5,12 +5,14 @@ const { toHtml } = require('./helpers.js')
 
 let currentlyExpandedDropDown = null
 
-// Close when the user clicks outside the dropdown content.
+// Closes when the user clicks outside the dropdown content.
 document.body.addEventListener('click', (event) => {
-  if (currentlyExpandedDropDown) {
-    event.target.closest('.dropdown-content-wrapper') !== currentlyExpandedDropDown && currentlyExpandedDropDown.closest('.dropdown').close()
-  }
+  if (event.target.closest('.dropdown-content-wrapper') !== currentlyExpandedDropDown) closeCurrentlyExpandedDropDown()
 })
+
+function closeCurrentlyExpandedDropDown () {
+  currentlyExpandedDropDown && currentlyExpandedDropDown.closest('.dropdown').close()
+}
 
 module.exports = ({ label, classNames = [], disabled = false, expandAbove = false, content } = {}) => {
   const wrapper = document.createElement('div')
@@ -50,6 +52,7 @@ module.exports = ({ label, classNames = [], disabled = false, expandAbove = fals
     currentlyExpandedDropDown = null
   }
   wrapper.open = () => {
+    closeCurrentlyExpandedDropDown()
     contentWrapper.innerHTML = ''
     if (content) {
       contentWrapper.appendChild(toHtml(content), 'content')
