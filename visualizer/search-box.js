@@ -3,7 +3,12 @@ const debounce = require('lodash.debounce')
 
 class SearchBox extends HtmlContent {
   constructor (parentContent, contentProperties) {
-    super(parentContent, contentProperties)
+    const properties = Object.assign({}, contentProperties)
+    properties.classNames = properties.classNames.split(' ')
+    properties.classNames.push('search-box')
+    properties.classNames = properties.classNames.join(' ')
+
+    super(parentContent, properties)
 
     this.ui.on('clearSearch', () => {
       this.d3Input.property('value', '')
