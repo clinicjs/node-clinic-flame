@@ -1,9 +1,10 @@
 .checkbox {
   background-color: var(--opposite-contrast);
-  padding: 0.2em 0.3em;
-  display: flex;
-  cursor: pointer;
-  align-items: center;
+  padding         : 0.3em;
+  display         : flex;
+  cursor          : pointer;
+  align-items     : center;
+  min-width       : 0;
 }
 
 .checkbox input {
@@ -11,7 +12,11 @@
 }
 
 .checkbox .copy-wrapper {
-  margin: 0.2em 0.3em;
+  margin       : 0.3em;
+  overflow     : hidden;
+  text-overflow: ellipsis;
+  white-space  : nowrap;
+  min-width    : 0;
 }
 
 .checkbox:hover:not(:disabled) {
@@ -20,14 +25,14 @@
 }
 
 .checkbox .icon-wrapper {
-  align-items: center;
-  border-radius: 3px;
-  display: flex;
-  font-size: 1.5em;
-  margin: 0.133em 0.2em;
-  flex-shrink: 0;
+  align-items    : center;
+  border-radius  : 3px;
+  display        : flex;
+  font-size      : 1.5em;
+  margin         : 0.133em 0.2em;
+  flex-shrink    : 0;
   justify-content: center;
-  color: var(--checkbox-border-color);
+  color          : var(--checkbox-border-color);
 }
 .checkbox .icon-wrapper svg{
   display: none;

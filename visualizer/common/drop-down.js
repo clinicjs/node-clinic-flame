@@ -5,19 +5,25 @@ const { toHtml } = require('./helpers.js')
 
 let currentlyExpandedDropDown = null
 
-// Close when the user clicks outside the dropdown content.
+// Closes when the user clicks outside the dropdown content.
 document.body.addEventListener('click', (event) => {
-  if (currentlyExpandedDropDown) {
-    event.target.closest('.dropdown-content-wrapper') !== currentlyExpandedDropDown && currentlyExpandedDropDown.closest('.dropdown').close()
-  }
+  if (event.target.closest('.dropdown-content-wrapper') !== currentlyExpandedDropDown) closeCurrentlyExpandedDropDown()
 })
 
-module.exports = ({ label, classes = [], disabled = false, expandAbove = false, content } = {}) => {
+function closeCurrentlyExpandedDropDown () {
+  currentlyExpandedDropDown && currentlyExpandedDropDown.closest('.dropdown').close()
+}
+
+module.exports = ({ label, classNames = [], disabled = false, expandAbove = false, content } = {}) => {
   const wrapper = document.createElement('div')
-  wrapper.classList.add('dropdown', ...classes)
+  wrapper.classList.add('dropdown', ...classNames)
   wrapper.classList.toggle('direction-up', expandAbove)
+
+  const labelWrapper = document.createElement('div')
+  labelWrapper.classList.add('label-wrapper')
   const labelHtml = toHtml(label, 'label')
-  wrapper.appendChild(labelHtml)
+  labelWrapper.appendChild(labelHtml)
+  wrapper.appendChild(labelWrapper)
 
   wrapper.appendChild(button({
     disabled,
@@ -46,6 +52,7 @@ module.exports = ({ label, classes = [], disabled = false, expandAbove = false, 
     currentlyExpandedDropDown = null
   }
   wrapper.open = () => {
+    closeCurrentlyExpandedDropDown()
     contentWrapper.innerHTML = ''
     if (content) {
       contentWrapper.appendChild(toHtml(content), 'content')

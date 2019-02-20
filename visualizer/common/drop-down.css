@@ -5,10 +5,17 @@
   position: relative;
 }
 .dropdown .label{
-  background-color: var(--opposite-contrast);
-  display: flex;
-  align-items: center;
   padding: 0.2em 0.5em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;  
+}
+
+.dropdown .label-wrapper {
+  background-color: var(--opposite-contrast);
+  align-items: center;
+  display: flex;
+  min-width: 2.4em;    
 }
 
 .dropdown .button{
