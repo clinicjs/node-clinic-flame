@@ -234,17 +234,6 @@ div#main-content {
 }
 
 
-#side-bar {
-  flex-shrink: 0;
-  position: relative; 
-  z-index: 10;
-}
-
-#side-bar .filters-options{
-  overflow: auto;
-  height: 100%;
-}
-
 /* Footer */
 #footer {
   background-color: var(--opposite-contrast);
