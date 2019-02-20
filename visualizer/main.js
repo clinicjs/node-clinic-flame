@@ -14,6 +14,7 @@ const ui = new Ui('main')
 const drawUi = () => {
   fontSpinner.hide()
   document.body.classList.remove('is-loading-font')
+  document.body.classList.add('is-font-loaded')
 
   ui.initializeElements()
 
