@@ -583,7 +583,7 @@ class Ui extends events.EventEmitter {
         }, 300)
       })
 
-    // adding the close button
+    // adding the mSearchBox close button
     this.mSearchBoxWrapper.d3Element.append(() => button({
       leftIcon: close,
       onClick: () => {

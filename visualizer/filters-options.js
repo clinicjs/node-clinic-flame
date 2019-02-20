@@ -2,6 +2,8 @@
 
 const HtmlContent = require('./html-content.js')
 const checkbox = require('./common/checkbox.js')
+const button = require('./common/button.js')
+const close = require('@nearform/clinic-common/icons/close')
 
 class FiltersContent extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
@@ -97,7 +99,7 @@ class FiltersContent extends HtmlContent {
           description: 'Show initialization operations hidden by default, like module loading',
           checked: !exclude.has('is:init'),
           onChange: (datum, i, nodes) => {
-            this.ui.setCodeAreaVisibility('is:init', nodes[i].checked)
+            this.ui.setCodeAreaVisibility({ excludeKey: 'is:init' }, nodes[i].checked)
             this.ui.draw()
           }
         },
@@ -132,6 +134,14 @@ class FiltersContent extends HtmlContent {
     this.d3ContentWrapper
       .classed('filters-options', true)
       .classed('scroll-container', true)
+
+    this.d3ContentWrapper.append(() => button({
+      leftIcon: close,
+      classNames: ['side-bar-close-btn'],
+      onClick: () => {
+        this.ui.toggleSideBar(false)
+      }
+    }))
 
     // creating the main sections
     // *  *  *  * Code Areas *  *  *  *

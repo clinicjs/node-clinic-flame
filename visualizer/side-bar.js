@@ -1,7 +1,5 @@
 'use strict'
 const HtmlContent = require('./html-content.js')
-const button = require('./common/button.js')
-const close = require('@nearform/clinic-common/icons/close')
 
 class SideBar extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
@@ -12,13 +10,7 @@ class SideBar extends HtmlContent {
 
   initializeElements () {
     super.initializeElements()
-    this.d3ContentWrapper.append(() => button({
-      leftIcon: close,
-      classNames: ['side-bar-close-btn'],
-      onClick: () => {
-        this.ui.toggleSideBar(false)
-      }
-    }))
+
     this.d3ContentWrapper.attr('id', 'side-bar')
 
     this.d3ContentWrapper.on('animationend', () => {

@@ -3,6 +3,13 @@
   box-shadow: 3px 0px 4px -1px rgba(0,0,0,0.7) inset;
   color     : var(--grey-highlight);
 }
+
+.filters-options .side-bar-close-btn {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+}
+
 .filters-options ul {
   margin    : 0;
   padding   : 0;
