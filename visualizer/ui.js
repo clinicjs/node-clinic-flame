@@ -301,7 +301,7 @@ class Ui extends events.EventEmitter {
 
     footer.addContent('FiltersContainer', {
       id: 'filters-bar',
-      toggleSideBar: (mode) => this.sideBar.toggle(mode)
+      toggleSideBar: this.toggleSideBar
     })
 
     // TODO: add these ↴
@@ -527,6 +527,11 @@ class Ui extends events.EventEmitter {
     clearTimeout(this.mSearchBoxAutoHideHnd)
     this.mSearchBoxWrapper.d3Element.classed('show', show)
     if (show) this.mSearchBoxWrapper.d3Element.select('input').node().focus()
+  }
+
+  toggleSideBar (show = !this.sideBar.d3Element.classed('expand')) {
+    this.sideBar.toggle(show)
+    this.emit('sideBar', show)
   }
 
   /**
