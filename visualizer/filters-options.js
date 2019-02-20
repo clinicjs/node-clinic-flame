@@ -58,10 +58,12 @@ class FiltersContent extends HtmlContent {
       this.sections.codeAreas = codeAreas.map(area => {
         const dataCount = this.getDataCountFromKey(area.excludeKey)
 
-        const disabled = area.excludeKey === 'deps'
+        let disabled = data.disabled === true
+
+        if (area.excludeKey === 'deps') {
           // checking Dependencies only
-          ? dataCount === 0
-          : data.disabled === true
+          disabled = dataCount === 0 || data.disabled === true
+        }
 
         const checked = (() => {
           if (area.children && area.children.length) {
