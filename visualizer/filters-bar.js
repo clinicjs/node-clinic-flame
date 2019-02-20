@@ -40,11 +40,6 @@ class FiltersContainer extends HtmlContent {
     })
 
     this.toggleSideBar = contentProperties.toggleSideBar.bind(this.ui)
-    // this.toggleSideBar = () => {
-    //   this.showSideBar = !this.showSideBar
-    //   contentProperties.toggleSideBar(this.showSideBar)
-    //   this.draw()
-    // }
   }
 
   initializeElements () {
