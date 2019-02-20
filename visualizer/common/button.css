@@ -9,7 +9,7 @@
   justify-content: center;
   line-height     : 1;
   min-width       : 0;
-  padding         : 0.2em 0.3em;
+  padding         : 0.3em;
 }
 .button:hover:not(:disabled) {
   background-color: var(--clickable-bg-hover);
@@ -23,7 +23,7 @@
 }
 
 .button .label {
-  margin       : 0.2em 0.3em;
+  margin       : 0.3em;
   overflow     : hidden;
   text-overflow: ellipsis;
   white-space  : nowrap;

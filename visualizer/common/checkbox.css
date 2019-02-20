@@ -1,6 +1,6 @@
 .checkbox {
   background-color: var(--opposite-contrast);
-  padding         : 0.2em 0.3em;
+  padding         : 0.3em;
   display         : flex;
   cursor          : pointer;
   align-items     : center;
@@ -12,7 +12,7 @@
 }
 
 .checkbox .copy-wrapper {
-  margin       : 0.2em 0.3em;
+  margin       : 0.3em;
   overflow     : hidden;
   text-overflow: ellipsis;
   white-space  : nowrap;
