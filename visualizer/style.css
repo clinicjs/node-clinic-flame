@@ -9,7 +9,6 @@
 @import "./flame-graph.css";
 @import "./message.css";
 @import "./tooltip.css";
-@import "./options-menu.css";
 @import "./selection-controls.css";
 @import "./info-box.css";
 @import "@nearform/clinic-common/spinner/style.css";
@@ -59,8 +58,6 @@ html {
   --clickable-bg-hover : rgb(15, 15, 15);
 
   --dark-grey-val: 25, 26, 30;
-  --options-menu-bg-color: rgb(var(--dark-grey-val));
-  --options-menu-bg-hover: var(--clickable-bg-hover);
 
   --grey-blue: rgb(76, 92, 138);
   --primary-grey: rgb(121, 122, 124);
@@ -115,7 +112,7 @@ html.presentation-mode {
   --area-color-deps: rgb(145, 210, 255);
   --area-color-core: rgb(160, 155, 215);
 
-  --options-menu-bg-hover: rgb(0, 0, 0);
+  --clickable-bg-hover : rgb(0, 0, 0);
 }
 
 /* Main layout */

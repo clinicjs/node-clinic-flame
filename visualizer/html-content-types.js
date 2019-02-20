@@ -10,7 +10,6 @@ module.exports = {
   Key: require('./key.js'),
   FlameGraph: require('./flame-graph.js'),
   Tooltip: require('./tooltip.js'),
-  OptionsMenu: require('./options-menu.js'),
   SearchBox: require('./search-box.js'),
   StackBar: require('./stack-bar.js'),
   SelectionControls: require('./selection-controls.js'),
