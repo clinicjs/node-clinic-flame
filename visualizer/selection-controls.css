@@ -11,10 +11,6 @@
 #selection-controls .hotness-selector {
   margin-right: 4px;
 }
-/* #selection-controls button.hotness-selector:hover:not(:disabled) {
-  background-color: var(--clickable-bg-hover);
-  outline: 1px dotted var(--light-glare);  
-} */
 
 #selection-controls .rank-wrapper {
   margin: 0px 8px;
@@ -29,10 +25,6 @@
   text-align: center;
   height: 100%;
 }
-
-/* #selection-controls svg{
-  font-size: 1.5em;
-} */
 
 #selection-controls .hotness-selector,
 #selection-controls label {

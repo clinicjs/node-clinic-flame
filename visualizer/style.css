@@ -205,7 +205,7 @@ div#main-content {
   border-top: 1px solid rgba(0, 0, 0, 0.5);
 }
 
-#footer #m-search-box-wrapper {
+#footer .m-search-box-wrapper {
   display: flex;
   width: 100%;
   padding: 10px;
@@ -214,12 +214,14 @@ div#main-content {
   display: none;
 }
 
-#footer #m-search-box-wrapper.show {
+#footer .m-search-box-wrapper.show {
   display: flex;
 }
+
 #footer #m-search-box input{
   font-size: 1.6rem;
 }
+
 #footer #m-search-box{
   width: 100%;
   margin-right: 10px;

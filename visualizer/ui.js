@@ -292,7 +292,7 @@ class Ui extends events.EventEmitter {
     // mobile search-box
     this.mSearchBoxWrapper = footer.addContent(undefined, {
       id: 'm-search-box-wrapper',
-      classNames: 'before-bp-2'
+      classNames: 'before-bp-2 m-search-box-wrapper'
     })
     this.mSearchBoxWrapper.addContent('SearchBox', {
       id: 'm-search-box',

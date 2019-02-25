@@ -1,7 +1,7 @@
 .filters-options{
-  padding   : 10px 14px;
+  padding: 10px 14px;
   box-shadow: 3px 0px 4px -1px rgba(0,0,0,0.7) inset;
-  color     : var(--grey-highlight);
+  color: var(--grey-highlight);
 }
 
 .filters-options .side-bar-close-btn {
@@ -11,8 +11,8 @@
 }
 
 .filters-options ul {
-  margin    : 0;
-  padding   : 0;
+  margin: 0;
+  padding: 0;
   list-style: none;
 }
 
@@ -21,13 +21,13 @@
 }
 
 .filters-options .options label {
-  align-items     : flex-start;
+  align-items: flex-start;
   background-color: transparent;
-  cursor          : pointer;
-  display         : flex;
-  line-height     : 1.3;
-  padding         : 0.7em 5px;
-  width           : 100%;
+  cursor: pointer;
+  display: flex;
+  line-height: 1.3;
+  padding: 0.7em 5px;
+  width: 100%;
 }
 
 .filters-options .options li.disabled {
