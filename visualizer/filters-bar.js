@@ -52,6 +52,7 @@ class FiltersContainer extends HtmlContent {
     }))
 
     this.d3Left.d3Element.append(() => button({
+      title: 'Call stacks by duration. More info',
       classNames: ['before-bp-2'],
       leftIcon: circleQuestion
     }))
@@ -87,8 +88,8 @@ class FiltersContainer extends HtmlContent {
 
     // V8 combo ****
     this.d3V8Combo = this.d3Center.d3Element.append(() => dropdown({
+      classNames: ['key-v8'],
       label: checkbox({
-        classNames: ['key-v8'],
         leftLabel: 'V8',
         onChange: e => {
           this.setCodeAreaVisibility('all-v8', e.target.checked)
