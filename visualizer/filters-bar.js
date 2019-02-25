@@ -61,16 +61,16 @@ class FiltersContainer extends HtmlContent {
     this.d3AppCheckBox = this.d3Center.d3Element.append(() =>
       checkbox({
         leftLabel: 'app',
+        classNames: ['key-app'],
         onChange: e => this.setCodeAreaVisibility('app', e.target.checked)
       }))
 
     // Dependencies combo ****
     this.d3DepsCombo = this.d3Center.d3Element.append(() => dropdown({
+      classNames: ['key-deps'],
       label: checkbox({
-        leftLabel: `
-          <span class='after-bp-1'>Dependencies</span>
-          <span class='before-bp-1'>Deps</span>
-        `,
+        leftLabel: `<span class='after-bp-1'>Dependencies</span>
+          <span class='before-bp-1'>Deps</span>`,
         onChange: e => this.setCodeAreaVisibility('deps', e.target.checked)
       }),
       content: 'No children... for now',
@@ -80,16 +80,16 @@ class FiltersContainer extends HtmlContent {
     // NodeJS checkbox ****
     this.d3NodeCheckBox = this.d3Center.d3Element.append(() =>
       checkbox({
-        leftLabel: `
-          <span class='after-bp-1'>Node JS</span>
-          <span class='before-bp-1'>Node</span>
-        `,
+        classNames: ['key-core'],
+        leftLabel: `<span class='after-bp-1'>Node JS</span>
+          <span class='before-bp-1'>Node</span>`,
         onChange: e => this.setCodeAreaVisibility('core', e.target.checked)
       }))
 
     // V8 combo ****
     this.d3V8Combo = this.d3Center.d3Element.append(() => dropdown({
       label: checkbox({
+        classNames: ['key-v8'],
         leftLabel: 'V8',
         onChange: e => {
           this.setCodeAreaVisibility('all-v8', e.target.checked)
@@ -135,7 +135,7 @@ class FiltersContainer extends HtmlContent {
     // app
     this.d3AppCheckBox.select('input').node()
       .checked = !this.ui.dataTree.exclude.has('app')
-    this.d3AppCheckBox.select('.copy-wrapper')
+    this.d3AppCheckBox.select('.checkbox-copy-label')
       .html(`
         <span class='after-bp-2'>
           ${this.ui.dataTree.appName}

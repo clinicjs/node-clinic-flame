@@ -159,10 +159,14 @@ html * {
   display: none!important;
 }
 
+
 @media screen and (min-width: 630px) {
   .after-bp-1 {
     display: inherit!important;
   }
+  .checkbox .after-bp-1{
+    display: inline!important;
+  }  
 
   .before-bp-1 {
     display: none!important;
@@ -174,6 +178,9 @@ html * {
   .after-bp-2 {
     display: inherit!important;
   }
+  .checkbox .after-bp-2{
+    display: inline!important;
+  }  
 
   .before-bp-2 {
     display: none!important;

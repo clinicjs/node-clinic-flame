@@ -1,4 +1,4 @@
-#filters-bar{
+#filters-bar {
    align-items     : center;
    background-color: var(--banner-bg-color);
    display         : flex;
@@ -29,3 +29,28 @@
   border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
+#filters-bar .key-app {
+  color: var(--area-color-app);
+}
+
+#filters-bar .key-deps {
+  color: var(--area-color-deps);
+}
+
+#filters-bar .key-core,
+#filters-bar .key-v8 {
+  color: var(--area-color-core);
+}
+
+#filters-bar .key-app .checkbox-copy-label:before,
+#filters-bar .key-deps .checkbox-copy-label:before,
+#filters-bar .key-core .checkbox-copy-label:before {
+  content: '';
+  display: inline-flex;
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  background-color: currentColor;
+  vertical-align: text-top;
+  margin-right: 0.3em;
+}
