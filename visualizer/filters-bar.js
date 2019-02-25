@@ -45,11 +45,10 @@ class FiltersContainer extends HtmlContent {
   initializeElements () {
     super.initializeElements()
 
-    this.d3Left.d3Element.append(() => dropdown({
+    this.d3Left.d3Element.append(() => button({
       classNames: ['after-bp-2'],
       label: 'Call stacks by duration. More info',
-      content: 'Some cool content here!',
-      expandAbove: true
+      rightIcon: circleQuestion
     }))
 
     this.d3Left.d3Element.append(() => button({
