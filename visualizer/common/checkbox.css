@@ -16,7 +16,7 @@
   overflow     : hidden;
   text-overflow: ellipsis;
   white-space  : nowrap;
-  min-width    : 1.5em;
+  min-width    : 1.3em;
 }
 
 .checkbox:hover:not(:disabled) {
