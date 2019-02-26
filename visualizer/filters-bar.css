@@ -25,8 +25,13 @@
   white-space: nowrap;
 }
 
+/* #filters-bar .center-col > .dropdown{
+  padding-bottom: 2px;
+} */
+
 #filters-bar .center-col > .checkbox {
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border: 1px solid currentColor;
+  /* border-bottom-width: 2px;  */
 }
 
 #filters-bar .key-app {
@@ -35,11 +40,17 @@
 
 #filters-bar .key-deps {
   color: var(--area-color-deps);
+  background-color: var(--area-color-deps);
 }
 
 #filters-bar .key-core,
-#filters-bar .key-v8 {
+#filters-bar .key-v8,
+#filters-bar .key-v8 .dropdown-content-wrapper {
   color: var(--area-color-core);
+}
+
+#filters-bar .key-v8 {
+  background-color: var(--area-color-core);
 }
 
 #filters-bar .key-app .checkbox-copy-label:before,
