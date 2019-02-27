@@ -171,18 +171,12 @@ class FlameGraph extends HtmlContent {
     this.sort()
 
     const wrapperNode = this.d3Chart.node()
-    this.flameGraph.on('dblClick', (nodeData) => {
+    this.flameGraph.on('dblClick', nodeData => {
       this.ui.zoomNode(nodeData)
     })
 
-    this.flameGraph.on('click', (nodeData, rect, pointerCoords) => {
+    this.flameGraph.on('contextmenu', (nodeData, rect, pointerCoords) => {
       if (nodeData) {
-        // Treat root node as a zoom out button
-        if (nodeData.id === 0) {
-          if (this.ui.zoomedNode) this.ui.zoomNode(null)
-          return
-        }
-
         // Show (and hide) tooltip instantly on click, no waiting for timeouts
         if (this.tooltip) {
           this.tooltip.show({
@@ -194,6 +188,30 @@ class FlameGraph extends HtmlContent {
             delay: 0
           })
         }
+
+        this.ui.selectNode(nodeData)
+      }
+    })
+
+    this.flameGraph.on('click', (nodeData, rect, pointerCoords) => {
+      if (nodeData) {
+        // Treat root node as a zoom out button
+        if (nodeData.id === 0) {
+          if (this.ui.zoomedNode) this.ui.zoomNode(null)
+          return
+        }
+
+        // Show (and hide) tooltip instantly on click, no waiting for timeouts
+        // if (this.tooltip) {
+        //   this.tooltip.show({
+        //     nodeData,
+        //     rect,
+        //     pointerCoords,
+        //     frameIsZoomed: this.zoomedNodeData === nodeData,
+        //     wrapperNode,
+        //     delay: 0
+        //   })
+        // }
 
         this.ui.selectNode(nodeData)
       } else {
@@ -210,14 +228,18 @@ class FlameGraph extends HtmlContent {
       this.ui.highlightNode(nodeData)
 
       if (this.tooltip) {
-        this.tooltip.show({
-          nodeData,
-          rect,
-          pointerCoords,
-          frameIsZoomed: this.zoomedNodeData === nodeData,
-          wrapperNode
-        })
-      }
+        this.tooltip.hide()
+      }      
+
+      // if (this.tooltip) {
+      //   this.tooltip.show({
+      //     nodeData,
+      //     rect,
+      //     pointerCoords,
+      //     frameIsZoomed: this.zoomedNodeData === nodeData,
+      //     wrapperNode
+      //   })
+      // }
     })
 
     this.flameGraph.on('hoverout', (node) => {
@@ -233,20 +255,20 @@ class FlameGraph extends HtmlContent {
 
       // Show tooltip and highlight box for zoomed node after zoom completes
       if (this.ui.zoomedNode && this.ui.zoomedNode.id !== 0) {
-        if (this.tooltip) {
-          const rect = this.getNodeRect(this.ui.zoomedNode)
-          this.tooltip.show({
-            nodeData: this.ui.zoomedNode,
-            rect,
-            frameIsZoomed: true,
-            wrapperNode: this.d3Chart.node(),
-            pointerCoords: {
-              x: rect.x + rect.width / 2,
-              y: rect.y + rect.height
-            },
-            delay: 100
-          })
-        }
+        // if (this.tooltip) {
+        //   const rect = this.getNodeRect(this.ui.zoomedNode)
+        //   this.tooltip.show({
+        //     nodeData: this.ui.zoomedNode,
+        //     rect,
+        //     frameIsZoomed: true,
+        //     wrapperNode: this.d3Chart.node(),
+        //     pointerCoords: {
+        //       x: rect.x + rect.width / 2,
+        //       y: rect.y + rect.height
+        //     },
+        //     delay: 100
+        //   })
+        // }
         this.ui.highlightNode(this.ui.zoomedNode)
         this.markNodeAsZoomed(this.ui.zoomedNode)
       } else {
