@@ -29,7 +29,7 @@
   bottom: 100%;
   transform: translateY(-8px);
   min-width: 70px;
-  padding: 0.3em;
+  padding: 0.5em 0.3em;
   font-size: inherit;
   font-weight: bold;
   background-color: var(--opposite-contrast);
