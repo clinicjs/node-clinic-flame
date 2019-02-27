@@ -10,34 +10,13 @@
 
 #toolbar-top-panel {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   margin: 8px;
   flex-wrap: wrap;
-}
-
-#selection-controls {
-  margin: 8px 8px 0px;
-}
-
-
-@media screen and (min-width: 500px) {
-  #selection-controls {
-    margin: 0px;
-  }
-
-  #toolbar-top-panel {
-    justify-content: space-between;
-  }
 }
 
 @media screen and (min-width: 720px) {
   #info-box .frame-info {
     font-size: var(--small-text-size);
   }
-}
-
-/* presentation mode */
-.presentation-mode #toolbar-side-panel {
-  background-color: transparent;
-  padding: 0px;
 }
