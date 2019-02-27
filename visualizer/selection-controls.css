@@ -36,7 +36,7 @@
 }
 
 .visible-from-bp-1,
-.visible-from-bp-2 .label{
+.visible-from-bp-2 .label {
   display: none;
 }
 
@@ -47,7 +47,7 @@
 }
 
 @media screen and (min-width: 680px) {
-  .visible-from-bp-2 .label{
+  .visible-from-bp-2 .label {
     display: initial;
   }
 }
