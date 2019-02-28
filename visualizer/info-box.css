@@ -6,9 +6,7 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  align-items: center;
   font-size: var(--normal-text-size);
-  /*height: 2.9em;*/
   margin: 0;
   padding: 4px 8px;
   font-family: monospace, monospace;
@@ -28,7 +26,7 @@
   bottom: 100%;
   transform: translateY(-8px);
   min-width: 70px;
-  padding: 0.3em;
+  padding: 0.5em 0.3em;
   font-size: inherit;
   font-weight: bold;
   background-color: var(--opposite-contrast);
