@@ -12,6 +12,9 @@ const close = require('@nearform/clinic-common/icons/close')
 const TooltipHtmlContent = require('./flame-graph-tooltip-content')
 const getNoDataNode = require('./no-data-node.js')
 
+const WT = require('./walkthrough-player.js')
+const wtSteps = require('./walkthrough-steps.js')
+
 class Ui extends events.EventEmitter {
   constructor (wrapperSelector) {
     super()
@@ -237,6 +240,10 @@ class Ui extends events.EventEmitter {
     toolbarTopPanel.addContent('SelectionControls', {
       id: 'selection-controls',
       customTooltip: tooltip
+    })
+
+    this.helpBtn = toolbarTopPanel.addContent(undefined, {
+      id: 'helpBtn'
     })
 
     this.infoBox = toolbar.addContent('InfoBox', {
@@ -596,6 +603,18 @@ class Ui extends events.EventEmitter {
           this.clearSearch()
         }
       }
+    }))
+
+    // walkthrough init
+    this.wt = new WT({
+      steps: wtSteps,
+      tooltip: this.tooltip
+    })
+
+    this.helpBtn.d3Element.append(() => button({
+      label: 'How does this work?',
+      classNames: ['how-does-it-work'],
+      onClick: () => this.wt.start()
     }))
   }
 
