@@ -4,6 +4,7 @@
 @import "./common/checkbox.css";
 @import "./common/drop-down.css";
 @import "./walkthrough-player.css";
+@import "./walkthrough-steps.css";
 @import "./toolbar.css";
 @import "./stack-bar.css";
 @import "./key.css";
@@ -292,4 +293,9 @@ svg.icon-img {
   width: 1em;
   height: 1em;
   display: block;
+}
+
+.how-does-it-work{
+  background-color: transparent;
+  color: blueviolet;
 }

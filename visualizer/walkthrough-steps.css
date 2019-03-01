@@ -1,0 +1,9 @@
+.walkthrough-content .scrollable{
+  max-height: 200px;
+  overflow: auto;
+}
+
+.walkthrough-content .step-1 {
+  display: flex;
+  align-items: center;
+}
