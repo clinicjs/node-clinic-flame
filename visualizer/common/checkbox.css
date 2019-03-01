@@ -1,4 +1,4 @@
-.checkbox {
+.c_checkbox {
   background-color: var(--opposite-contrast);
   padding         : 0.3em;
   display         : flex;
@@ -7,11 +7,11 @@
   min-width       : 0;
 }
 
-.checkbox input {
+.c_checkbox input {
   display: none;
 }
 
-.checkbox .copy-wrapper {
+.c_checkbox .copy-wrapper {
   margin       : 0.3em;
   overflow     : hidden;
   text-overflow: ellipsis;
@@ -24,44 +24,44 @@
   outline: 1px dotted var(--light-glare);  
 }
 
-.checkbox .icon-wrapper {
+.c_checkbox .icon-wrapper {
   align-items    : center;
   border-radius  : 3px;
   display        : flex;
   font-size      : 1.5em;
-  margin         : 0.133em 0.2em;
+  margin         : 0.133em;
   flex-shrink    : 0;
   justify-content: center;
   color          : var(--checkbox-border-color);
 }
-.checkbox .icon-wrapper svg{
+.c_checkbox .icon-wrapper svg{
   display: none;
 }
-.checkbox .icon-wrapper .checkbox-unchecked-svg{
+.c_checkbox .icon-wrapper .checkbox-unchecked-svg{
   display: initial;
 }
 
-.checkbox :checked ~ .icon-wrapper .checkbox-unchecked-svg{
+.c_checkbox :checked ~ .icon-wrapper .checkbox-unchecked-svg{
   display: none;
 }
 
-.checkbox :checked ~ .icon-wrapper{
+.c_checkbox :checked ~ .icon-wrapper{
   color: var(--max-contrast);
 }
 
-.checkbox :checked ~ .icon-wrapper .checkbox-checked-svg{
+.c_checkbox :checked ~ .icon-wrapper .checkbox-checked-svg{
   display: initial;
 }
 
-.checkbox :indeterminate ~ .icon-wrapper {
+.c_checkbox :indeterminate ~ .icon-wrapper {
   color: var(--grey-highlight);
 }
 
-.checkbox :indeterminate ~ .icon-wrapper .checkbox-indetermined-svg {
+.c_checkbox :indeterminate ~ .icon-wrapper .checkbox-indetermined-svg {
   display: initial;
 }
 
-.checkbox :indeterminate ~ .icon-wrapper .checkbox-unchecked-svg,
-.checkbox :indeterminate ~ .icon-wrapper .checkbox-checked-svg{
+.c_checkbox :indeterminate ~ .icon-wrapper .checkbox-unchecked-svg,
+.c_checkbox :indeterminate ~ .icon-wrapper .checkbox-checked-svg{
   display: none;
 }

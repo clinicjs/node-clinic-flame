@@ -11,12 +11,12 @@ document.body.addEventListener('click', (event) => {
 })
 
 function closeCurrentlyExpandedDropDown () {
-  currentlyExpandedDropDown && currentlyExpandedDropDown.closest('.dropdown').close()
+  currentlyExpandedDropDown && currentlyExpandedDropDown.closest('.c_dropdown').close()
 }
 
 module.exports = ({ label, classNames = [], disabled = false, expandAbove = false, content } = {}) => {
   const wrapper = document.createElement('div')
-  wrapper.classList.add('dropdown', ...classNames)
+  wrapper.classList.add('c_dropdown', ...classNames)
   wrapper.classList.toggle('direction-up', expandAbove)
 
   const labelWrapper = document.createElement('div')

@@ -1,4 +1,4 @@
-.button {
+.c_button {
   align-items     : center;
   background-color: var(--opposite-contrast);
   border          : none;
@@ -11,18 +11,24 @@
   min-width       : 0;
   padding         : 0.3em;
 }
-.button:hover:not(:disabled) {
+.c_button:hover:not(:disabled) {
   background-color: var(--clickable-bg-hover);
   outline         : 1px dotted var(--light-glare);
 }
 
-.button .icon-img {
+.c_button:disabled {
+  opacity: 0.5;
+  cursor: auto;
+  filter: saturate(0);
+}
+
+.c_button .icon-img {
   font-size: 1.5em;
-  margin   : 0.133em 0.2em;
+  margin   : 0.133em;
   flex-shrink: 0;
 }
 
-.button .label {
+.c_button .label {
   margin       : 0.3em;
   overflow     : hidden;
   text-overflow: ellipsis;

@@ -1,39 +1,38 @@
-.dropdown {
+.c_dropdown {
   background-color: rgba(255, 255, 255, 0.7);
   padding: 1px;
   display: flex;
   position: relative;
 }
-.dropdown .label{
+.c_dropdown .label{
   padding: 0.2em 0.5em;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;  
 }
 
-.dropdown .label-wrapper {
+.c_dropdown .label-wrapper {
   background-color: var(--opposite-contrast);
   align-items: center;
   display: flex;
   min-width: 2.4em;    
 }
 
-.dropdown .button{
+.c_dropdown .c_button{
   margin-left: 1px;
-  padding: 2px;
 }
 
-.dropdown .button .icon-img {
+.c_dropdown .c_button .icon-img {
   margin: 2px;
   transition: transform 0.6s cubic-bezier(0.42, 0, 0.23, 1.65);
   transform-origin: 50%;
 }
 
-.dropdown.expanded .button .icon-img {
+.c_dropdown.expanded .c_button .icon-img {
   transform: rotateZ(-90deg);
 }
 
-.dropdown .dropdown-content-wrapper {
+.c_dropdown .dropdown-content-wrapper {
   background-color: var(--opposite-contrast);
   position: absolute;
   right: 0;
@@ -45,15 +44,15 @@
   border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
-.dropdown.contracted .dropdown-content-wrapper {  
+.c_dropdown.contracted .dropdown-content-wrapper {  
   display: block;
   animation: var(--anim-duration) dropdown-contract 0s 1 normal forwards;
 }
-.dropdown.expanded .dropdown-content-wrapper {  
+.c_dropdown.expanded .dropdown-content-wrapper {  
   display: block;
   animation: var(--anim-duration) dropdown-expand 0.001s 1 normal forwards;
 }
-.dropdown.direction-up .dropdown-content-wrapper {
+.c_dropdown.direction-up .dropdown-content-wrapper {
   top: auto;
   bottom: calc(100% + 2px);
 }

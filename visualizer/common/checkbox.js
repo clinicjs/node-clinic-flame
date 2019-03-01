@@ -4,7 +4,7 @@ const checkboxIndeterminedIcon = require('@nearform/clinic-common/icons/checkbox
 
 module.exports = ({ leftLabel, rightLabel, classNames = [], checked = false, disabled = false, indeterminate = false, onChange } = {}) => {
   const wrappingLabel = document.createElement('label')
-  wrappingLabel.classList.add('checkbox', ...classNames)
+  wrappingLabel.classList.add('c_checkbox', ...classNames)
 
   wrappingLabel.innerHTML = `
         <input type="checkbox" 
