@@ -1,4 +1,5 @@
-.walkthrough-wrapper {
+
+.wt-container .c_context-overlay-inner {
   background-color: #fff;
   border-radius   : 3px;
   box-shadow      : 0 2px 3px rgba(0, 0, 0, 0.5);
@@ -6,16 +7,23 @@
   overflow        : hidden;
 }
 
+.walkthrough-wrapper {
+  display       : flex;
+  flex-direction: column;
+  min-width : 300px;
+}
+
 .walkthrough-content{
   border-top: 1px solid rgba(0, 0, 0, 0.5);
-  min-width : 300px;
   padding   : 20px;
+  flex-grow : 1;
 }
 
 .walkthrough-controls {
   display        : flex;
   justify-content: space-between;
   padding        : 3px;
+  flex-shrink    : 0;
 }
 
 .walkthrough-controls .c_button,

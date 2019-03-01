@@ -1,6 +1,6 @@
 const { toHtml } = require('./common/helpers.js')
 const button = require('./common/button.js')
-const overlay = require('./common/overlay.js')
+const overlay = require('./common/context-overlay.js')
 
 const chevronRight = require('@nearform/clinic-common/icons/chevron-right')
 const chevronLeft = require('@nearform/clinic-common/icons/chevron-left')
@@ -109,6 +109,7 @@ class WalkthroughPlayer {
 
     overlay.show({
       msg: this.wrapper,
+      classNames: ['wt-container'],
       offset: { y: 3 },
       targetElement: document.querySelector(step.attachTo)
     })
