@@ -1,0 +1,78 @@
+.walkthrough-wrapper {
+  background-color: #fff;
+  border-radius   : 3px;
+  box-shadow      : 0 2px 3px rgba(0, 0, 0, 0.5);
+  color           : rgb(39, 39, 39);
+  overflow        : hidden;
+}
+
+.walkthrough-content{
+  border-top: 1px solid rgba(0, 0, 0, 0.5);
+  min-width : 300px;
+  padding   : 20px;
+}
+
+.walkthrough-controls {
+  display        : flex;
+  justify-content: space-between;
+  padding        : 3px;
+}
+
+.walkthrough-controls .c_button,
+.closeBtn {
+  --clickable-bg-hover: rgba(15, 15, 15, 0.2);
+  background-color    : transparent;
+  color               : rgba(0, 0, 0, 0.5);
+  flex-shrink         : 0;
+  padding             : 0;
+}
+
+.walkthrough-wrapper .closeBtn {
+  font-size: 10px;
+  padding  : 5px;
+  position : absolute;
+  right    : 0;
+  top      : 1px;
+}
+
+.walkthrough-wrapper .doneBtn {
+  display: none;
+}
+
+.walkthrough-wrapper.done .doneBtn {
+  --clickable-bg-hover: rgb(2, 112, 2);
+  background-color    : green;
+  color               : white;
+  display             : initial;
+  padding             : 0 0.3em;
+}
+
+.walkthrough-controls .nextBtn{
+  --clickable-bg-hover: var(--flame-orange);
+  background-color    : var(--flame-orange);
+  color               : white;
+  padding-left        : 0.3em;
+}
+
+.walkthrough-wrapper.done .nextBtn{
+  display: none;
+}
+
+.walkthrough-controls-steps {
+  align-items    : center;
+  display        : flex;
+  flex-grow      : 1;
+  justify-content: center;
+}
+
+.walkthrough-controls-steps .step {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius   : 10px;
+  height          : 10px;
+  margin          : 2px;
+  width           : 10px;
+}
+
+.walkthrough-controls-steps .step.current {
+  background-color: var(--flame-orange);
+}
