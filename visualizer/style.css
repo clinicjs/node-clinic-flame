@@ -1,5 +1,5 @@
 @import '@nearform/clinic-common/styles/styles.css';
-@import "./common/overlay.css";
+@import "./common/context-overlay.css";
 @import "./common/button.css";
 @import "./common/checkbox.css";
 @import "./common/drop-down.css";
