@@ -1,18 +1,14 @@
 'use strict'
-
+require('@nearform/clinic-common/spinner')
 const Ui = require('./ui.js')
-const spinner = require('@nearform/clinic-common/spinner')
 const askBehaviours = require('@nearform/clinic-common/behaviours/ask')
 const loadFonts = require('@nearform/clinic-common/behaviours/font-loader')
 
-// Create spinner
-const fontSpinner = spinner.attachTo(document.querySelector('main'))
 // Create UI
 const ui = new Ui('main')
 
 // Called on font load or timeout
 const drawUi = () => {
-  fontSpinner.hide()
   document.body.classList.remove('is-loading-font')
   document.body.classList.add('is-font-loaded')
 
@@ -31,18 +27,16 @@ const drawUi = () => {
   }
 }
 
-// Show spinner
-fontSpinner.show()
 // Attach ask tray behaviours
 askBehaviours()
 
 // Orchestrate font loading
 loadFonts({
-  criticalFonts: ['Archia:n4'],
-  onLoad: drawUi,
-  onTimeout: drawUi,
-  onLoadAfterTimeout: () => ui.emit('uiFontLoaded')
+  onLoad: () => ui.emit('uiFontLoaded'),
+  onTimeout: () => ui.emit('uiFontLoaded')
 })
+
+drawUi()
 
 if (process.env.DEBUG_MODE) {
   window.ui = ui
