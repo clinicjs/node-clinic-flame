@@ -23,6 +23,7 @@ const elementHighLighter = {
   options: null,
 
   show: options => {
+    wrapper.classList.add('show')
     elementHighLighter.options = options
     elementHighLighter._render()
   },
@@ -33,8 +34,9 @@ const elementHighLighter = {
   },
 
   _render: () => {
+    if (!elementHighLighter.options) return
     const { element, padding = 5, showBorder = true } = elementHighLighter.options
-    wrapper.classList.add('show')
+
     wrapper.classList.toggle('showBorder', showBorder)
     const pos = element.getBoundingClientRect()
 
