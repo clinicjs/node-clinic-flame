@@ -2,9 +2,9 @@ const helpers = {
   toHtml: (content, defaultClass) => {
     switch (typeof content) {
       case 'string':
-        if (content.indexOf('<') === 0) {
+        if (content.trim().indexOf('<') === 0) {
           const parser = new window.DOMParser()
-          return parser.parseFromString(content, 'text/html')
+          return parser.parseFromString(content, 'text/html').body.firstElementChild
           // returns a HTMLDocument, which also is a Document.
         } else {
           var node = document.createElement('span')
