@@ -17,3 +17,41 @@
   top: 0px;
   transition: left 1s ease-in-out, top 1s ease-in-out, height 0.5s ease-in-out, width 0.5s ease-in-out;
 }
+
+.c_context-overlay-arrow {
+  position: absolute;
+  border: 10px solid transparent;  
+  left: -10px;
+  display: none;
+}
+
+.c_context-overlay.arrowTop .c_context-overlay-arrow {
+  border-bottom-color: white;
+  top: -19px;
+  display: block;
+}
+
+.c_context-overlay.arrowBottom .c_context-overlay-arrow {
+  border-top-color: white;
+  bottom: -19px;
+  display: block;
+}
+
+.c_context-overlay-arrow.fade-in {
+  animation: 1s context-overlay-arrow-fade-in 1 normal forwards;
+}
+
+ /* arrow animation */
+ @keyframes context-overlay-arrow-fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  90% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

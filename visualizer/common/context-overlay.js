@@ -9,24 +9,40 @@ overlayInnerEl.classList.add('c_context-overlay-inner')
 
 overlayEl.appendChild(overlayInnerEl)
 
+const overlayArrow = document.createElement('div')
+overlayArrow.classList.add('c_context-overlay-arrow')
+overlayEl.appendChild(overlayArrow)
+
+overlayArrow.addEventListener('animationend', () => {
+  overlayArrow.classList.remove('fade-in')
+})
+
 document.body.appendChild(overlayEl)
 
 const overlay = {
-  el: overlayEl,
+  el: overlayInnerEl,
   options: null,
+  position: null,
+
   show: (options) => {
     overlay.options = options
     overlayEl.classList.add('show', ...options.classNames || [])
     overlay._render()
   },
+
   hide: () => {
     overlayInnerEl.innerHTML = ''
     overlayEl.style.cssText = ''
     overlayInnerEl.style.cssText = ''
     overlayEl.classList.remove('show')
   },
+
+  getPosition: () => this.position,
+
   _render: () => {
     if (!overlayEl.classList.contains('show')) return
+
+    overlayEl.classList.toggle('showArrow', overlay.options.showArrow)
 
     let {
       msg,
@@ -51,22 +67,30 @@ const overlay = {
 
     let msgHtmlNode = toHtml(msg)
 
+    const arrowHeight = overlay.options.showArrow ? 10 : 0
+
     if (offset) {
       x += offset.x || 0
       y += offset.y || 0
       width += offset.width || 0
       height += offset.height || 0
     }
-    console.log(targetElement.getBoundingClientRect(), width)
 
     let ttLeft = x + width / 2
+
     // if the element is in the lower half of the screen than align the overlay to the top side
-    let ttTop = y + (verticalAlign === 'bottom' ? height : -(2 * offset.y))
+    let ttTop = y + (verticalAlign === 'bottom' ? height + arrowHeight : -arrowHeight)
+
+    overlayArrow.classList.add('fade-in')
+
+    overlayEl.classList.toggle('arrowTop', verticalAlign === 'bottom')
+    overlayEl.classList.toggle('arrowBottom', verticalAlign === 'top')
 
     if (pointerCoords) {
       // centering on the mouse pointer horizontally
       ttLeft = x + pointerCoords.x
     }
+
     const oldWidth = overlayInnerEl.style.width
     overlayInnerEl.style.width = 'auto'
 
@@ -80,7 +104,7 @@ const overlay = {
 
     overlayInnerEl.style.width = oldWidth
 
-    const justToForceARedraw = overlayInnerEl.offsetWidth
+    const justToForceRedraw = overlayInnerEl.offsetWidth
 
     // positioning the overlay content
     // making sure that it doesn't go over the element right edge
@@ -98,6 +122,14 @@ const overlay = {
     const maxWidth = outerRect ? outerRect.width + 'px' : 'auto'
     const top = verticalAlign === 'top' ? -ttHeight : 0
     overlayInnerEl.style.cssText = `left:-${deltaX}px; max-width:${maxWidth}; top:${top}px; height:${ttHeight}px; width:${ttWidth}px`
+
+    // making a note of the position
+    this.position = {
+      left: ttLeft - deltaX,
+      top: ttTop - top,
+      height: ttHeight,
+      width: ttWidth
+    }
   }
 }
 
