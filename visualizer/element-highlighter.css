@@ -21,25 +21,26 @@
 }
 .element-highlighter .element-highlighter-border {
   position: fixed;
+  transition: all 0.8s cubic-bezier(0.455, 0.03, 0.515, 0.955);
 }
 
-.element-highlighter .element-highlighter-border:before,
-.element-highlighter .element-highlighter-border:after {
-  content : "";
-  position: absolute;
-  width   : 10px;
-  height  : 10px;
-  color   : var(--flame-orange);
+.element-highlighter .element-highlighter-border::before,
+.element-highlighter .element-highlighter-border::after {
+  content   : "";
+  position  : absolute;
+  width     : 10px;
+  height    : 10px;
+  color     : var(--flame-orange);
 }
 
-.element-highlighter .element-highlighter-border:before {
+.element-highlighter .element-highlighter-border::before {
   border-top : 2px solid;
   border-left: 2px solid;
   top        : -1px;
   left       : -1px;
 }
 
-.element-highlighter .element-highlighter-border:after {
+.element-highlighter .element-highlighter-border::after {
   border-bottom: 2px solid;
   border-right : 2px solid;
   right        : -1px;
