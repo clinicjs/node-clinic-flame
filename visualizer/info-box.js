@@ -1,7 +1,7 @@
 'use strict'
 const HtmlContent = require('./html-content.js')
 const getNoDataNode = require('./no-data-node.js')
-const caretUpIcon = require('@nearform/clinic-common/icons/caret-up')
+// const caretUpIcon = require('@nearform/clinic-common/icons/caret-up')
 
 class InfoBox extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
@@ -15,16 +15,16 @@ class InfoBox extends HtmlContent {
     this.functionText = functionName
     this.pathHtml = fileName
     this.areaText = 'Processing data...'
-    this.stackPercentages = {
-      top: 0,
-      overall: 0
-    }
+    // this.stackPercentages = {
+    //   top: 0,
+    //   overall: 0
+    // }
 
-    this.addCollapseControl(true, {
-      classNames: 'frame-dropdown',
-      htmlElementType: 'button',
-      htmlContent: `<span>0%</span> ${caretUpIcon}`
-    })
+    // this.addCollapseControl(true, {
+    //   classNames: 'frame-dropdown',
+    //   htmlElementType: 'button',
+    //   htmlContent: `<span>0%</span> ${caretUpIcon}`
+    // })
   }
 
   initializeElements () {
@@ -47,34 +47,34 @@ class InfoBox extends HtmlContent {
       .classed('frame-info-item', true)
       .classed('frame-area', true)
 
-    this.d3StackInfoTitle = this.d3ContentWrapper
-      .append('h2')
-      .text('Stack info')
+    // this.d3StackInfoTitle = this.d3ContentWrapper
+    //   .append('h2')
+    //   .text('Stack info')
 
-    this.d3StackPercentageTop = this.d3ContentWrapper
-      .append('p')
-      .classed('frame-percentage', true)
-      .classed('frame-percentage-top', true)
-      .text('0%')
+    // this.d3StackPercentageTop = this.d3ContentWrapper
+    //   .append('p')
+    //   .classed('frame-percentage', true)
+    //   .classed('frame-percentage-top', true)
+    //   .text('0%')
 
-    this.d3StackPercentageOverall = this.d3ContentWrapper
-      .append('p')
-      .classed('frame-percentage', true)
-      .classed('frame-percentage-overall', true)
-      .text('0%')
+    // this.d3StackPercentageOverall = this.d3ContentWrapper
+    //   .append('p')
+    //   .classed('frame-percentage', true)
+    //   .classed('frame-percentage-overall', true)
+    //   .text('0%')
 
-    this.d3CollapseButton = this.collapseControl.d3Element
-      .attr('title', 'Show stack info')
+    // this.d3CollapseButton = this.collapseControl.d3Element
+    //   .attr('title', 'Show stack info')
 
     // Close when the user clicks outside the options menu.
-    document.body.addEventListener('click', (event) => {
-      if (!this.collapseClose.isCollapsed &&
-          !this.d3CollapseButton.node().contains(event.target) &&
-          !this.d3ContentWrapper.node().contains(event.target)) {
-        this.collapseClose()
-      }
-    },
-    true)
+    // document.body.addEventListener('click', (event) => {
+    //   if (!this.collapseClose.isCollapsed &&
+    //       !this.d3CollapseButton.node().contains(event.target) &&
+    //       !this.d3ContentWrapper.node().contains(event.target)) {
+    //     this.collapseClose()
+    //   }
+    // },
+    // true)
   }
 
   contentFromNode (node) {
@@ -126,9 +126,9 @@ class InfoBox extends HtmlContent {
     this.d3FrameFunction.text(this.functionText).attr('title', this.functionText)
     this.d3FramePath.html(this.pathHtml).attr('title', this.pathHtml.replace(/(<([^>]+)>)/ig, ''))
     this.d3FrameArea.text(this.areaText).attr('title', this.areaText)
-    this.d3CollapseButton.select('span').text(`${this.stackPercentages.top}%`)
-    this.d3StackPercentageTop.text(`Top of stack: ${this.stackPercentages.top}%`)
-    this.d3StackPercentageOverall.text(`On stack: ${this.stackPercentages.overall}%`)
+    // this.d3CollapseButton.select('span').text(`${this.stackPercentages.top}%`)
+    // this.d3StackPercentageTop.text(`Top of stack: ${this.stackPercentages.top}%`)
+    // this.d3StackPercentageOverall.text(`On stack: ${this.stackPercentages.overall}%`)
   }
 }
 

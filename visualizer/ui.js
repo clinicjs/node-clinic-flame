@@ -6,6 +6,8 @@ const debounce = require('lodash.debounce')
 const DataTree = require('./data-tree.js')
 const History = require('./history.js')
 
+const PercDropdown = require('./perc-dropdown.js')
+
 const button = require('./common/button.js')
 const close = require('@nearform/clinic-common/icons/close')
 
@@ -237,6 +239,10 @@ class Ui extends events.EventEmitter {
     toolbarTopPanel.addContent('SelectionControls', {
       id: 'selection-controls',
       customTooltip: tooltip
+    })
+
+    this.percDropdownWrapper = toolbarTopPanel.addContent(undefined, {
+      id: 'perc-dropdown-wrapper'
     })
 
     this.infoBox = toolbar.addContent('InfoBox', {
@@ -521,6 +527,7 @@ class Ui extends events.EventEmitter {
 
   showNodeInfo (nodeData) {
     this.infoBox.showNodeInfo(nodeData)
+    this.percDropdown.showNodeInfo(nodeData, this.dataTree)
   }
 
   toggleMobileSearchBox (show = !this.mSearchBoxWrapper.d3Element.classed('show')) {
@@ -597,6 +604,9 @@ class Ui extends events.EventEmitter {
         }
       }
     }))
+
+    this.percDropdown = PercDropdown()
+    this.percDropdownWrapper.d3Element.append(() => this.percDropdown)
   }
 
   draw () {
