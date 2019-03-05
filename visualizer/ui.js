@@ -608,6 +608,7 @@ class Ui extends events.EventEmitter {
     // walkthrough init
     this.wt = new WT({
       steps: wtSteps,
+      showBackdrop: true,
       tooltip: this.tooltip
     })
 

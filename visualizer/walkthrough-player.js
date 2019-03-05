@@ -1,21 +1,19 @@
 const { toHtml } = require('./common/helpers.js')
 const button = require('./common/button.js')
 const overlay = require('./common/context-overlay.js')
+const elHighlighter = require('./element-highlighter.js')
 
 const chevronRight = require('@nearform/clinic-common/icons/chevron-right')
 const chevronLeft = require('@nearform/clinic-common/icons/chevron-left')
 const close = require('@nearform/clinic-common/icons/close')
 
 class WalkthroughPlayer {
-  constructor ({ steps = [], backdrop = false, showControls = true }) {
+  constructor ({ steps = [], showBackdrop = false, showControls = true }) {
     this.steps = steps
-    this.backdrop = backdrop
+    this.showBackdrop = showBackdrop
     this.currentStepIndex = -1
 
-    if (backdrop) {
-      this.backdrop = document.createElement('div')
-      this.backdrop.classList.add('walkthrough-backdrop')
-    }
+    this.distanceFromElement = 5
 
     this.wrapper = document.createElement('div')
     this.wrapper.classList.add('walkthrough-wrapper')
@@ -87,7 +85,20 @@ class WalkthroughPlayer {
 
   end () {
     overlay.hide()
+    this._hideBackDrop()
     return this.currentStepIndex
+  }
+
+  _showBackDrop () {
+    const step = this.steps[this.currentStepIndex]
+    elHighlighter.show({
+      element: document.querySelector(step.attachTo),
+      padding: this.distanceFromElement - 2
+    })
+  }
+
+  _hideBackDrop () {
+    elHighlighter.hide()
   }
 
   _render () {
@@ -110,13 +121,16 @@ class WalkthroughPlayer {
     overlay.show({
       msg: this.wrapper,
       classNames: ['wt-container'],
-      offset: { y: 3 },
-      targetElement: document.querySelector(step.attachTo)
+      offset: { y: -this.distanceFromElement, height: this.distanceFromElement * 2 },
+      targetElement: document.querySelector(step.attachTo),
+      showArrow: true
     })
 
     Array.from(this.stepsWrapper.children).forEach((c, i) => {
       c.classList.toggle('current', i === this.currentStepIndex)
     })
+
+    if (this.showBackdrop) this._showBackDrop()
 
     return this.currentStepIndex
   }
