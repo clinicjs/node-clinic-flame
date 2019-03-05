@@ -3,7 +3,10 @@
   padding: 1px;
   display: flex;
   position: relative;
+  color: var(--max-contrast);
 }
+
+
 .dropdown .label{
   padding: 0.2em 0.5em;
   overflow: hidden;
@@ -43,6 +46,7 @@
   --anim-duration: 0.2s;
   transform-origin: right bottom;
   border: 1px solid rgba(255, 255, 255, 0.5);
+  z-index: 2;
 }
 
 .dropdown.contracted .dropdown-content-wrapper {  

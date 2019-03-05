@@ -15,14 +15,14 @@ function closeCurrentlyExpandedDropDown () {
 }
 
 module.exports = ({ label, classNames = [], disabled = false, expandAbove = false, content } = {}) => {
+  let ddContent = content
   const wrapper = document.createElement('div')
   wrapper.classList.add('dropdown', ...classNames)
   wrapper.classList.toggle('direction-up', expandAbove)
 
   const labelWrapper = document.createElement('div')
   labelWrapper.classList.add('label-wrapper')
-  const labelHtml = toHtml(label, 'label')
-  labelWrapper.appendChild(labelHtml)
+
   wrapper.appendChild(labelWrapper)
 
   wrapper.appendChild(button({
@@ -39,6 +39,21 @@ module.exports = ({ label, classNames = [], disabled = false, expandAbove = fals
     }
   }))
 
+  wrapper.update = ({ label, content }) => {
+    console.log('drop-down update');
+    
+    if (label) {
+      const labelHtml = toHtml(label, 'label')
+      labelWrapper.innerHTML = ''
+      labelWrapper.appendChild(labelHtml)
+    }
+
+    if (content) {
+      ddContent = content
+      updateContent()
+    }
+  }
+
   wrapper.addEventListener('animationend', () => {
     wrapper.classList.toggle('contracted', false)
   })
@@ -53,16 +68,20 @@ module.exports = ({ label, classNames = [], disabled = false, expandAbove = fals
   }
   wrapper.open = () => {
     closeCurrentlyExpandedDropDown()
-    contentWrapper.innerHTML = ''
-    if (content) {
-      contentWrapper.appendChild(toHtml(content), 'content')
-    }
+    updateContent()
     wrapper.classList.toggle('contracted', false)
     wrapper.classList.toggle('expanded', true)
     currentlyExpandedDropDown = contentWrapper
   }
 
-  wrapper.appendChild(contentWrapper)
+  function updateContent () {
+    contentWrapper.innerHTML = ''
+    if (ddContent) {
+      contentWrapper.appendChild(toHtml(ddContent))
+    }
+  }
 
+  wrapper.appendChild(contentWrapper)
+  wrapper.update({ label })
   return wrapper
 }
