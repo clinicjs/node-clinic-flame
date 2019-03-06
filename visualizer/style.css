@@ -1,10 +1,5 @@
 @import '@nearform/clinic-common/styles/styles.css';
-@import "./element-highlighter.css";
-@import "./common/context-overlay.css";
-@import "./common/button.css";
-@import "./common/checkbox.css";
-@import "./common/drop-down.css";
-@import "./walkthrough-player.css";
+@import '@nearform/clinic-common/base/base.css';
 @import "./walkthrough-steps.css";
 @import "./toolbar.css";
 @import "./stack-bar.css";

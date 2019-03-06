@@ -6,13 +6,12 @@ const debounce = require('lodash.debounce')
 const DataTree = require('./data-tree.js')
 const History = require('./history.js')
 
-const button = require('./common/button.js')
 const close = require('@nearform/clinic-common/icons/close')
 
 const TooltipHtmlContent = require('./flame-graph-tooltip-content')
 const getNoDataNode = require('./no-data-node.js')
 
-const WT = require('./walkthrough-player.js')
+const { button, Walkthrough } = require('@nearform/clinic-common/base/index.js')
 const wtSteps = require('./walkthrough-steps.js')
 
 class Ui extends events.EventEmitter {
@@ -606,7 +605,7 @@ class Ui extends events.EventEmitter {
     }))
 
     // walkthrough init
-    this.wt = new WT({
+    this.wt = new Walkthrough({
       steps: wtSteps,
       showBackdrop: true,
       tooltip: this.tooltip
