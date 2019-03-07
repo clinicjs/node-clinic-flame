@@ -1,4 +1,4 @@
-const dropdown = require('./common/drop-down.js')
+const dropdown = require('@nearform/clinic-common/base/drop-down.js')
 
 module.exports = () => {
   const wrapper = dropdown()

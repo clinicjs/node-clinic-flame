@@ -1,0 +1,20 @@
+#perc-dropdown-wrapper .dropdown-content-wrapper {
+  color: white;
+  min-width: 200px;
+}
+
+#perc-dropdown-wrapper h2 {
+  padding: 12px;
+  margin: 0;
+  font-size: var(--small-text-size);
+  border-bottom: 3px solid var(--main-bg-color);
+}
+
+#perc-dropdown-wrapper .frame-percentage {
+  margin: 12px;
+}
+
+#perc-dropdown-wrapper .label {
+  min-width: 4em;
+  text-align: center;
+}
