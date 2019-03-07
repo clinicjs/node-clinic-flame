@@ -12,6 +12,7 @@ const TooltipHtmlContent = require('./flame-graph-tooltip-content')
 const getNoDataNode = require('./no-data-node.js')
 
 const { button, Walkthrough } = require('@nearform/clinic-common/base/index.js')
+const helpIcon = require('@nearform/clinic-common/icons/circle-question.js')
 const wtSteps = require('./walkthrough-steps.js')
 
 class Ui extends events.EventEmitter {
@@ -612,8 +613,9 @@ class Ui extends events.EventEmitter {
     })
 
     this.helpBtn.d3Element.append(() => button({
-      label: 'How does this work?',
-      classNames: ['how-does-it-work'],
+      label: 'How does this work',
+      rightIcon: helpIcon,
+      classNames: ['how-does-it-work', 'nc-animation-pulse'],
       onClick: () => this.wt.start()
     }))
   }
