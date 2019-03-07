@@ -84,13 +84,19 @@ html {
   /* Define text sizes */
   --main-text-size: 1.2rem;
   --small-text-size: 1rem;
-  
+
   /* base component style */
   --nc-button-bgColor: var(--opposite-contrast);
   --nc-button-color: var(--max-contrast);
   --nc-button-fontSize: var(--small-text-size);
   --nc-button-bgHover: var(--clickable-bg-hover);
   --nc-button-hoverOutline: var(--light-glare);
+
+  /* --nc-link-bgColor */
+  --nc-link-color: rgb(63, 125, 198);
+  --nc-link-fontSize: var(--small-text-size);
+  /* --nc-link-bgHover */
+  /* --nc-link-hoverOutline */
   
   --nc-checkbox-bgColor: var(--opposite-contrast);
   --nc-checkbox-hoverColor: var(--clickable-bg-hover);
@@ -308,9 +314,4 @@ svg.icon-img {
   width: 1em;
   height: 1em;
   display: block;
-}
-
-.how-does-it-work{
-  background-color: transparent;
-  color: blueviolet;
 }
