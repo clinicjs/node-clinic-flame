@@ -1,7 +1,7 @@
 'use strict'
 
 const HtmlContent = require('./html-content.js')
-const { toHtml } = require('./common/helpers.js')
+const { toHtml } = require('@nearform/clinic-common/base/helpers.js')
 
 class Tooltip extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {

@@ -6,7 +6,7 @@ const chevronLeft = require('@nearform/clinic-common/icons/chevron-left')
 const chevronRight = require('@nearform/clinic-common/icons/chevron-right')
 const chevronRightLast = require('@nearform/clinic-common/icons/chevron-right-last')
 
-const button = require('./common/button.js')
+const button = require('@nearform/clinic-common/base/button.js')
 
 class SelectionControls extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
@@ -106,7 +106,7 @@ class SelectionControls extends HtmlContent {
     d3RankWrapper.append('label').text('#')
 
     this.d3SelectNumber = d3RankWrapper.append('input')
-      .classed('hotness-selector button', true)
+      .classed('hotness-selector', true)
       .property('value', this.rankNumber)
 
     this.d3FramesCount = d3RankWrapper.append('label').html('<span class="visible-from-bp-2">hottest frame, </span> ').append('span')

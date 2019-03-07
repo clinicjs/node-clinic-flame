@@ -8,7 +8,7 @@ const History = require('./history.js')
 
 const PercDropdown = require('./perc-dropdown.js')
 
-const button = require('./common/button.js')
+const button = require('@nearform/clinic-common/base/button.js')
 const close = require('@nearform/clinic-common/icons/close')
 
 const TooltipHtmlContent = require('./flame-graph-tooltip-content')

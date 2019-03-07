@@ -24,6 +24,9 @@
   padding: 0;
   text-align: center;
   height: 100%;
+  background: var(--opposite-contrast);
+  color: var(--max-contrast);
+  border: none;
 }
 
 #selection-controls .hotness-selector,

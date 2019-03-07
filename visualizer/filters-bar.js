@@ -5,9 +5,9 @@ const sidePanelCollapse = require('@nearform/clinic-common/icons/sidepanel-colla
 const circleQuestion = require('@nearform/clinic-common/icons/circle-question')
 const search = require('@nearform/clinic-common/icons/search')
 
-const button = require('./common/button.js')
-const checkbox = require('./common/checkbox.js')
-const dropdown = require('./common/drop-down.js')
+const button = require('@nearform/clinic-common/base/button.js')
+const checkbox = require('@nearform/clinic-common/base/checkbox.js')
+const dropdown = require('@nearform/clinic-common/base/drop-down.js')
 
 class FiltersContainer extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
