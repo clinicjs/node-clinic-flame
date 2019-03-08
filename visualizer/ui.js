@@ -11,8 +11,7 @@ const close = require('@nearform/clinic-common/icons/close')
 const TooltipHtmlContent = require('./flame-graph-tooltip-content')
 const getNoDataNode = require('./no-data-node.js')
 
-const { button, Walkthrough } = require('@nearform/clinic-common/base/index.js')
-const helpIcon = require('@nearform/clinic-common/icons/circle-question.js')
+const { button, howDoesThisWork } = require('@nearform/clinic-common/base/index.js')
 const wtSteps = require('./walkthrough-steps.js')
 
 class Ui extends events.EventEmitter {
@@ -55,7 +54,8 @@ class Ui extends events.EventEmitter {
       useMerged: this.dataTree.useMerged,
       showOptimizationStatus: this.dataTree.showOptimizationStatus,
       exclude: this.dataTree.exclude,
-      search: this.searchQuery
+      search: this.searchQuery,
+      walkthroughIndex: this.howDoesThisWork.WtPlayer.currentStepIndex
     }, opts)
   }
 
@@ -66,7 +66,8 @@ class Ui extends events.EventEmitter {
       search,
       selectedNodeId,
       showOptimizationStatus,
-      zoomedNodeId
+      zoomedNodeId,
+      walkthroughIndex
     } = data
 
     this.setUseMergedTree(useMerged, { pushState: false,
@@ -99,6 +100,10 @@ class Ui extends events.EventEmitter {
 
         if (search !== this.searchQuery) {
           this.search(search, { pushState: false })
+        }
+
+        if (walkthroughIndex !== undefined) {
+          this.howDoesThisWork.WtPlayer.skipTo(walkthroughIndex)
         }
       }
     })
@@ -606,18 +611,10 @@ class Ui extends events.EventEmitter {
     }))
 
     // walkthrough init
-    this.wt = new Walkthrough({
-      steps: wtSteps,
-      showBackdrop: true,
-      tooltip: this.tooltip
+    this.howDoesThisWork = howDoesThisWork(wtSteps, () => {
+      this.pushHistory()
     })
-
-    this.helpBtn.d3Element.append(() => button({
-      label: 'How does this work',
-      rightIcon: helpIcon,
-      classNames: ['how-does-it-work', 'nc-animation-pulse'],
-      onClick: () => this.wt.start()
-    }))
+    this.helpBtn.d3Element.append(() => this.howDoesThisWork.button)
   }
 
   draw () {
