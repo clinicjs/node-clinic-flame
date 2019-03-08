@@ -1,21 +1,9 @@
-.walkthrough-content .scrollable{
+.nc-walkthrough-content .scrollable{
   max-height: 200px;
   overflow: auto;
 }
 
-.walkthrough-content .step-1 {
+.nc-walkthrough-content .step-1 {
   display: flex;
   align-items: center;
-}
-
-.walkthrough-content .docs {
-  margin-top: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: right;
-  color: #2165e5;
-  font-size: 16px;
-  font-family: Archia,Helvetica Neue,Helvetica,Arial,sans-serif;
-  text-decoration: none;
 }
