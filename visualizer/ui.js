@@ -11,7 +11,7 @@ const close = require('@nearform/clinic-common/icons/close')
 const TooltipHtmlContent = require('./flame-graph-tooltip-content')
 const getNoDataNode = require('./no-data-node.js')
 
-const { button, howDoesThisWork } = require('@nearform/clinic-common/base/index.js')
+const { button, walkthroughButton } = require('@nearform/clinic-common/base/index.js')
 const wtSteps = require('./walkthrough-steps.js')
 
 class Ui extends events.EventEmitter {
@@ -611,7 +611,7 @@ class Ui extends events.EventEmitter {
     }))
 
     // walkthrough init
-    this.howDoesThisWork = howDoesThisWork(wtSteps, () => {
+    this.howDoesThisWork = walkthroughButton(wtSteps, () => {
       this.pushHistory()
     })
     this.helpBtn.d3Element.append(() => this.howDoesThisWork.button)
