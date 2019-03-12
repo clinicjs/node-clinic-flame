@@ -31,10 +31,12 @@ const drawUi = () => {
 askBehaviours()
 
 // Orchestrate font loading
-loadFonts({
-  onLoad: () => ui.emit('uiFontLoaded'),
-  onTimeout: () => ui.emit('uiFontLoaded')
-})
+setTimeout(() => (
+  loadFonts({
+    onLoad: () => ui.emit('uiFontLoaded'),
+    onTimeout: () => ui.emit('uiFontLoaded')
+  })
+))
 
 drawUi()
 
