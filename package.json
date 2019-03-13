@@ -29,7 +29,7 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "0x": "^4.7.2",
-    "@nearform/clinic-common": "github:nearform/node-clinic-common#feature/brand-fonts",
+    "@nearform/clinic-common": "^2.0.0",
     "browserify-inline-svg": "^1.0.2",
     "copy-to-clipboard": "^3.0.8",
     "d3-array": "^2.0.2",
