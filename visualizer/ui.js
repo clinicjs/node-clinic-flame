@@ -55,7 +55,7 @@ class Ui extends events.EventEmitter {
       showOptimizationStatus: this.dataTree.showOptimizationStatus,
       exclude: this.dataTree.exclude,
       search: this.searchQuery,
-      walkthroughIndex: this.howDoesThisWork.WtPlayer.currentStepIndex
+      walkthroughIndex: this.helpButton.WtPlayer.currentStepIndex
     }, opts)
   }
 
@@ -97,16 +97,15 @@ class Ui extends events.EventEmitter {
 
         this.zoomNode(this.dataTree.getNodeById(zoomedNodeId), { pushState: false })
         this.selectNode(this.dataTree.getNodeById(selectedNodeId), { pushState: false })
-
-        if (search !== this.searchQuery) {
-          this.search(search, { pushState: false })
-        }
-
-        if (walkthroughIndex !== undefined) {
-          this.howDoesThisWork.WtPlayer.skipTo(walkthroughIndex)
-        }
       }
     })
+
+    if (search !== this.searchQuery) {
+      this.search(search, { pushState: false })
+    }
+    if (walkthroughIndex !== undefined) {
+      this.helpButton.WtPlayer.skipTo(walkthroughIndex)
+    }
   }
 
   // Temporary e.g. on mouseover, erased on mouseout
@@ -247,10 +246,6 @@ class Ui extends events.EventEmitter {
       customTooltip: tooltip
     })
 
-    this.helpBtn = toolbarTopPanel.addContent(undefined, {
-      id: 'helpBtn'
-    })
-
     this.infoBox = toolbar.addContent('InfoBox', {
       id: 'info-box',
       customTooltip: tooltip
@@ -296,13 +291,13 @@ class Ui extends events.EventEmitter {
       classNames: 'filters-options'
     })
 
-    const footer = this.uiContainer.addContent(undefined, {
+    this.footer = this.uiContainer.addContent(undefined, {
       id: 'footer',
       htmlElementType: 'section'
     })
 
     // mobile search-box
-    this.mSearchBoxWrapper = footer.addContent(undefined, {
+    this.mSearchBoxWrapper = this.footer.addContent(undefined, {
       id: 'm-search-box-wrapper',
       classNames: 'before-bp-2 m-search-box-wrapper'
     })
@@ -311,7 +306,7 @@ class Ui extends events.EventEmitter {
       classNames: 'inline-panel'
     })
 
-    footer.addContent('FiltersContainer', {
+    this.footer.addContent('FiltersContainer', {
       id: 'filters-bar',
       toggleSideBar: this.toggleSideBar
     })
@@ -611,10 +606,15 @@ class Ui extends events.EventEmitter {
     }))
 
     // walkthrough init
-    this.howDoesThisWork = walkthroughButton(wtSteps, () => {
-      this.pushHistory()
+    this.helpButton = walkthroughButton({
+      steps: wtSteps,
+      onProgress: () => {
+        this.pushHistory()
+      },
+      label: '<span class="before-bp-1">Guide</span><span class="after-bp-1">Show how to use this</span>',
+      title: 'Click to start the step-by-step UI features guide!'
     })
-    this.helpBtn.d3Element.append(() => this.howDoesThisWork.button)
+    this.footer.d3Element.select('#filters-bar .left-col').append(() => this.helpButton.button)
   }
 
   draw () {
