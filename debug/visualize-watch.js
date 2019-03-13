@@ -6,8 +6,7 @@ const v = require('./visualize-mod.js')
 
 const buildImg = require('@nearform/clinic-common/scripts/build-images')
 // build images
-const imgSourceDir = `${__dirname}/../visualizer/assets/images`
-const imgDestDir = imgSourceDir
+const imgDestDir = `${__dirname}/../visualizer/assets/images`
 
 const debounce = require('lodash.debounce')
 
