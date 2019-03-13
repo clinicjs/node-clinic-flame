@@ -3,7 +3,7 @@
   overflow: auto;
 }
 
-.nc-walkthrough-content .step-1 {
+.nc-walkthrough-content .welcome-step {
   display: flex;
   align-items: center;
 }
