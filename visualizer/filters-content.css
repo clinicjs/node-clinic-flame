@@ -1,26 +1,28 @@
-.filters-options{
-  padding: 10px 14px;
+.filters-content {
+  padding: 1px;
   box-shadow: 3px 0px 4px -1px rgba(0,0,0,0.7) inset;
   color: var(--grey-highlight);
 }
 
-.filters-options .side-bar-close-btn {
-  position: absolute;
-  top: 1px;
-  right: 1px;
+.filters-content .nc-accordion > .nc-button {
+  font-size: 1.4rem;
 }
 
-.filters-options ul {
+.filters-content ul {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.filters-options ul ul {
+.filters-content ul ul {
   padding-left: 24px;
 }
 
-.filters-options .options label {
+.filters-content .section {
+  margin: 1px;
+}
+
+.filters-content .options label {
   align-items: flex-start;
   background-color: transparent;
   cursor: pointer;
@@ -30,27 +32,27 @@
   width: 100%;
 }
 
-.filters-options .options li.disabled {
+.filters-content .options li.disabled {
   opacity: 0.3;
 }
-.filters-options .options li.disabled label {
+.filters-content .options li.disabled label {
   cursor: default;
 }
 
-.filters-options .options .app {
+.filters-content .options .app {
   color: var(--area-color-app);
 }
 
-.filters-options .options .core,
-.filters-options .options .all-v8 {
+.filters-content .options .core,
+.filters-content .options .all-v8 {
   color: var(--area-color-core);
 }
 
-.filters-options .options .deps {
+.filters-content .options .deps {
   color: var(--area-color-deps);
 }
 
-.filters-options .options .description .more-info{
+.filters-content .options .description .more-info{
   color: white;
   opacity: 0.7;
   text-decoration: none;
@@ -58,6 +60,11 @@
   text-align: right;
 }
 
-.filters-options .options .description .more-info:hover{
+.filters-content .options .description .more-info:hover{
   opacity: 1;
+}
+
+.filters-content .nc-checkbox .copy-wrapper {
+  flex-grow: 1;
+  white-space: normal;
 }

@@ -1,15 +1,15 @@
 'use strict'
 
 const HtmlContent = require('./html-content.js')
-const checkbox = require('@nearform/clinic-common/base/checkbox.js')
-const button = require('@nearform/clinic-common/base/button.js')
-const close = require('@nearform/clinic-common/icons/close')
+const { checkbox, accordion } = require('@nearform/clinic-common/base')
+// const close = require('@nearform/clinic-common/icons/close')
 
 class FiltersContent extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
     super(parentContent, contentProperties)
 
     this.sections = null
+    this.currentAccordion = null
 
     this.ui.on('presentationMode', mode => {
       if (this.presentationMode !== mode) {
@@ -135,39 +135,70 @@ class FiltersContent extends HtmlContent {
   initializeElements () {
     super.initializeElements()
     this.d3ContentWrapper
-      .classed('filters-options', true)
+      .classed('filters-content', true)
       .classed('scroll-container', true)
 
-    this.d3ContentWrapper.append(() => button({
-      leftIcon: close,
-      classNames: ['side-bar-close-btn'],
-      onClick: () => {
-        this.ui.toggleSideBar(false)
-      }
-    }))
+    // this.d3ContentWrapper.append(() => button({
+    //   leftIcon: close,
+    //   classNames: ['side-bar-close-btn'],
+    //   onClick: () => {
+    //     this.ui.toggleSideBar(false)
+    //   }
+    // }))
 
     // creating the main sections
     // *  *  *  * Code Areas *  *  *  *
     this.d3CodeArea = this.d3ContentWrapper.append('div')
       .classed('code-area section', true)
-    this.d3CodeArea.append('h2').text('Visibility by code area')
-    this.d3CodeArea.append('ul').classed('options', true)
+
+    const visibilityAcc = accordion({
+      label: 'Visibility by code area',
+      isExpanded: true,
+      content: `<ul class="options"></ul>`,
+      classNames: ['visibility-acc'],
+      onClick: () => {
+        this.exclusiveAccordion(visibilityAcc)
+      }
+    })
+    this.d3CodeArea.append(() => visibilityAcc)
+    this.currentAccordion = visibilityAcc
 
     // *  *  *  * Advanced *  *  *  *
     this.d3Advanced = this.d3ContentWrapper.append('div')
       .classed('advanced section', true)
-    this.d3Advanced.append('h2').text('Advanced')
-    this.d3Advanced.append('ul').classed('options', true)
+
+    const advancedAcc = accordion({
+      label: 'Advanced',
+      content: `<ul class="options"></ul>`,
+      classNames: ['advanced-acc'],
+      onClick: () => {
+        this.exclusiveAccordion(advancedAcc)
+      }
+    })
+    this.d3Advanced.append(() => advancedAcc)
 
     // *  *  *  * Preferences *  *  *  *
     this.d3Preferences = this.d3ContentWrapper.append('div')
       .classed('preferences section', true)
-    this.d3Preferences.append('h2').text('Preferences')
-    this.d3Preferences.append('ul').classed('options', true)
+
+    const preferencesAcc = accordion({
+      label: 'Preferences',
+      content: `<ul class="options"></ul>`,
+      classNames: ['preferences-acc'],
+      onClick: () => {
+        this.exclusiveAccordion(preferencesAcc)
+      }
+    })
+    this.d3Preferences.append(() => preferencesAcc)
   }
 
   getDataCountFromKey (key) {
     return this.ui.dataTree ? this.ui.dataTree.activeNodes().filter(n => n.category === key).length : 0
+  }
+
+  exclusiveAccordion (clickedAccordion) {
+    (this.currentAccordion !== clickedAccordion) && this.currentAccordion.toggle(false)
+    this.currentAccordion = clickedAccordion
   }
 
   draw () {
