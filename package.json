@@ -4,7 +4,7 @@
   "engines": {
     "node": "^11.0.0 || ^10.0.0 || ^8.11.1"
   },
-  "description": "Programmable interface to clinic flame",
+  "description": "Programmable interface to Clinic.js Flame",
   "repository": "nearform/node-clinic-flame",
   "main": "index.js",
   "scripts": {
