@@ -447,13 +447,17 @@ class Ui extends events.EventEmitter {
     return null
   }
 
-  setCodeAreaVisibility (codeArea, visible, update = true) {
+  setCodeAreaVisibility ({ codeArea, visible, pushState = true }) {
     // Apply a single possible change to dataTree.exclude, updating what's necessary
     let isChanged = false
 
     if (codeArea.children && codeArea.children.length) {
-      const childrenChanged = codeArea.children.forEach(child => this.setCodeAreaVisibility(child, visible, false))
-      if (update) this.updateExclusions()
+      const childrenChanged = codeArea.children.forEach(child => this.setCodeAreaVisibility({
+        codeArea: child,
+        visible,
+        pushState: false
+      }))
+      this.updateExclusions({ pushState })
       return childrenChanged
     } else {
       const name = codeArea.excludeKey
@@ -465,7 +469,7 @@ class Ui extends events.EventEmitter {
         if (isChanged) this.changedExclusions.toHide.add(name)
       }
 
-      if (isChanged && update) this.updateExclusions()
+      if (isChanged) this.updateExclusions({ pushState })
     }
 
     return isChanged
@@ -482,10 +486,7 @@ class Ui extends events.EventEmitter {
 
     const cb = () => {
       if (!initial) this.emit('updateExclusions')
-      if (pushState) {
-        console.trace('pushHistory')
-        this.pushHistory()
-      }
+      if (pushState) this.pushHistory()
     }
 
     // Zoom out before updating exclusions if the user excludes the node they're zoomed in on

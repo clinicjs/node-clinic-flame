@@ -13,7 +13,7 @@ class FiltersContent extends HtmlContent {
     this.currentAccordion = null
     this.expandedSubAccordions = {}
 
-    this.maxVisibleSubItemsCount = 4
+    this.maxVisibleSubItemsCount = 0
 
     this.ui.on('presentationMode', mode => {
       if (this.presentationMode !== mode) {
@@ -226,7 +226,10 @@ class FiltersContent extends HtmlContent {
   }
 
   _onVisibilityChange (datum, checked) {
-    this.ui.setCodeAreaVisibility(datum, checked)
+    this.ui.setCodeAreaVisibility({
+      codeArea: datum,
+      visible: checked
+    })
     this.ui.draw()
   }
 
