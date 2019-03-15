@@ -64,8 +64,7 @@
   color: white;
   opacity: 0.7;
   text-decoration: none;
-  display: block;
-  text-align: right;
+  float: right;
 }
 
 .filters-content .options .description .more-info:hover{
