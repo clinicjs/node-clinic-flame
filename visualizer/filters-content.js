@@ -1,7 +1,8 @@
 'use strict'
 
 const HtmlContent = require('./html-content.js')
-const { checkbox, accordion } = require('@nearform/clinic-common/base')
+const { checkbox, accordion, helpers } = require('@nearform/clinic-common/base')
+
 // const close = require('@nearform/clinic-common/icons/close')
 
 class FiltersContent extends HtmlContent {
@@ -10,6 +11,9 @@ class FiltersContent extends HtmlContent {
 
     this.sections = null
     this.currentAccordion = null
+    this.expandedSubAccordions = {}
+
+    this.maxVisibleSubItemsCount = 4
 
     this.ui.on('presentationMode', mode => {
       if (this.presentationMode !== mode) {
@@ -37,8 +41,8 @@ class FiltersContent extends HtmlContent {
           id: 'presentation_mode',
           label: 'Presentation mode',
           value: false,
-          onChange: (datum, i, nodes) => {
-            this.ui.setPresentationMode(nodes[i].checked)
+          onChange: (datum, event) => {
+            this.ui.setPresentationMode(event.target.checked)
           }
         }
       ]
@@ -65,6 +69,25 @@ class FiltersContent extends HtmlContent {
           disabled = dataCount === 0 || data.disabled === true
         }
 
+        if (area.children) {
+          area.children = area.children.map(c => {
+            const child = Object.assign({}, c)
+            child.label = this.ui.getLabelFromKey(child.excludeKey)
+            child.description = this.ui.getDescriptionFromKey(child.excludeKey)
+            child.checked = (() => {
+              if (child.children) {
+                return child.children.some((ch) => !exclude.has(ch.excludeKey))
+              }
+              return !exclude.has(child.excludeKey)
+            })()
+            child.onChange = (datum, event) => {
+              this._onVisibilityChange(datum, event.target.checked)
+            }
+
+            return child
+          })
+        }
+
         const checked = (() => {
           if (area.children && area.children.length) {
             return area.children.some((child) => !exclude.has(child.excludeKey))
@@ -88,8 +111,8 @@ class FiltersContent extends HtmlContent {
           disabled,
           checked,
           indeterminate,
-          onChange: (datum, i, nodes) => {
-            onVisibilityChange(datum, i, nodes, this.ui)
+          onChange: (datum, event) => {
+            this._onVisibilityChange(datum, event.target.checked)
           }
         })
       })
@@ -101,8 +124,8 @@ class FiltersContent extends HtmlContent {
           label: 'Init',
           description: 'Show initialization operations hidden by default, like module loading',
           checked: !exclude.has('is:init'),
-          onChange: (datum, i, nodes) => {
-            this.ui.setCodeAreaVisibility({ excludeKey: 'is:init' }, nodes[i].checked)
+          onChange: (datum, event) => {
+            this.ui.setCodeAreaVisibility({ excludeKey: 'is:init' }, event.target.checked)
             this.ui.draw()
           }
         },
@@ -111,8 +134,8 @@ class FiltersContent extends HtmlContent {
           label: 'Merge',
           description: 'Join optimized and unoptimized versions of frames',
           checked: useMerged,
-          onChange: (datum, i, nodes) => {
-            this.ui.setUseMergedTree(nodes[i].checked)
+          onChange: (datum, event) => {
+            this.ui.setUseMergedTree(event.target.checked)
           }
         },
         {
@@ -121,8 +144,8 @@ class FiltersContent extends HtmlContent {
           description: 'Highlight frames that are optimized functions',
           disabled: useMerged,
           checked: showOptimizationStatus,
-          onChange: (datum, i, nodes) => {
-            this.ui.setShowOptimizationStatus(nodes[i].checked)
+          onChange: (datum, event) => {
+            this.ui.setShowOptimizationStatus(event.target.checked)
           }
         }
 
@@ -157,7 +180,7 @@ class FiltersContent extends HtmlContent {
       content: `<ul class="options"></ul>`,
       classNames: ['visibility-acc'],
       onClick: () => {
-        this.exclusiveAccordion(visibilityAcc)
+        this._exclusiveAccordion(visibilityAcc)
       }
     })
     this.d3CodeArea.append(() => visibilityAcc)
@@ -172,7 +195,7 @@ class FiltersContent extends HtmlContent {
       content: `<ul class="options"></ul>`,
       classNames: ['advanced-acc'],
       onClick: () => {
-        this.exclusiveAccordion(advancedAcc)
+        this._exclusiveAccordion(advancedAcc)
       }
     })
     this.d3Advanced.append(() => advancedAcc)
@@ -186,7 +209,7 @@ class FiltersContent extends HtmlContent {
       content: `<ul class="options"></ul>`,
       classNames: ['preferences-acc'],
       onClick: () => {
-        this.exclusiveAccordion(preferencesAcc)
+        this._exclusiveAccordion(preferencesAcc)
       }
     })
     this.d3Preferences.append(() => preferencesAcc)
@@ -196,9 +219,69 @@ class FiltersContent extends HtmlContent {
     return this.ui.dataTree ? this.ui.dataTree.activeNodes().filter(n => n.category === key).length : 0
   }
 
-  exclusiveAccordion (clickedAccordion) {
+  _exclusiveAccordion (clickedAccordion) {
+    // auto collapses the previously expanded accordion
     (this.currentAccordion !== clickedAccordion) && this.currentAccordion.toggle(false)
     this.currentAccordion = clickedAccordion
+  }
+
+  _onVisibilityChange (datum, checked) {
+    this.ui.setCodeAreaVisibility(datum, checked)
+    this.ui.draw()
+  }
+
+  _createListItems (items) {
+    const fragment = document.createDocumentFragment()
+
+    items.forEach(item => {
+      const li = helpers.toHtml('<li></li>')
+      fragment.appendChild(li)
+      li.appendChild(this._createOptionElement(item))
+
+      if (item.children && item.children.length > 0) {
+        const visibleUl = helpers.toHtml(`<ul></ul>`)
+        const visibleChildren = item.children.slice(0, this.maxVisibleSubItemsCount)
+
+        visibleUl.appendChild(this._createListItems(visibleChildren))
+        li.appendChild(visibleUl)
+
+        if (item.children.length > this.maxVisibleSubItemsCount) {
+          const collapsedChildren = item.children.slice(this.maxVisibleSubItemsCount)
+          const collapsedUl = helpers.toHtml(`<ul></ul>`)
+
+          collapsedUl.appendChild(this._createListItems(collapsedChildren))
+
+          const acc = accordion({
+            isExpanded: this.expandedSubAccordions[item.excludeKey] === true,
+            classNames: [`${item.excludeKey}-show-all-acc`, `nc-accordion--secondary`],
+            label: `Show more (${collapsedChildren.length})`,
+            content: collapsedUl,
+            onClick: (expanded) => {
+              this.expandedSubAccordions[item.excludeKey] = expanded
+            }
+          })
+
+          li.appendChild(acc)
+        }
+      }
+    })
+
+    return fragment
+  }
+
+  _createOptionElement (data) {
+    const div = helpers.toHtml(`<div class="${data.excludeKey ? data.excludeKey.split(':')[0] : ''}"></div>`)
+
+    div.appendChild(checkbox({
+      checked: data.checked,
+      rightLabel: `
+          <span class="name">${data.label}</span>
+          <description class="description">${data.description ? `- ${data.description}` : ``}</description>        
+          `,
+      onChange: (event) => { data.onChange && data.onChange(data, event) }
+    }))
+
+    return div
   }
 
   draw () {
@@ -209,86 +292,21 @@ class FiltersContent extends HtmlContent {
       const codeAreas = this.sections.codeAreas.map(d => {
         return Object.assign({}, d, { children: d.children && d.children.length ? d.children : undefined })
       })
-      const d3NewLi = createListItems(this.d3CodeArea.select('ul'), codeAreas)
-
-      // subfilters
-      const d3SubUl = d3NewLi.selectAll('ul').data(d => d.children ? [d.children] : [])
-      d3SubUl.exit().remove()
-
-      const newUl = d3SubUl.enter().append('ul')
-
-      const dataSelection = d3SubUl.merge(newUl).selectAll('li').data(data => data.map(d => {
-        d.label = this.ui.getLabelFromKey(d.excludeKey)
-        d.description = this.ui.getDescriptionFromKey(d.excludeKey)
-        d.checked = (() => {
-          if (d.children) {
-            return d.children.some((child) => !this.exclude.has(child.excludeKey))
-          }
-          return !this.exclude.has(d.excludeKey)
-        })()
-        d.onChange = (datum, i, nodes) => {
-          onVisibilityChange(datum, i, nodes, this.ui)
-        }
-
-        return d
-      }))
-      dataSelection.enter().append('li')
-        .call(createOptionElement)
-        .call(updateOptionElement)
-      dataSelection.exit().remove()
+      let ul = this.d3CodeArea.select('ul').node()
+      ul.innerHTML = ''
+      ul.appendChild(this._createListItems(codeAreas))
 
       // *  *  *  * Advanced *  *  *  *
-      createListItems(this.d3Advanced.select('ul'), this.sections.advanced)
+      ul = this.d3Advanced.select('ul').node()
+      ul.innerHTML = ''
+      ul.appendChild(this._createListItems(this.sections.advanced))
 
       // *  *  *  * Preferences *  *  *  *
-      createListItems(this.d3Preferences.select('ul'), this.sections.preferences)
+      ul = this.d3Preferences.select('ul').node()
+      ul.innerHTML = ''
+      ul.appendChild(this._createListItems(this.sections.preferences))
     }
   }
 }
 
 module.exports = FiltersContent
-
-function onVisibilityChange (datum, i, nodes, ui) {
-  const checked = nodes[i].checked
-
-  ui.setCodeAreaVisibility(datum, checked)
-  ui.draw()
-}
-
-function createListItems (ul, data) {
-  const dataSelection = ul.selectAll('li').data(data)
-  dataSelection.exit().remove()
-  const d3NewLi = dataSelection.enter().append('li').call(createOptionElement)
-  return d3NewLi.merge(dataSelection).call(updateOptionElement)
-}
-
-function updateOptionElement (li) {
-  li
-    .classed('visible', d => d.visible === true)
-    .classed('childrenVisibilityToggle', d => d.childrenVisibilityToggle === true)
-    .classed('disabled', (data) => data.disabled === true)
-
-    .select('input')
-    .attr('disabled', d => d.disabled || null)
-    .property('checked', d => d.checked)
-    .property('indeterminate', (d) => d.indeterminate)
-    .property('class', d => d.disabled ? 'disabled' : '')
-}
-
-function createOptionElement (li) {
-  li.html(data => `
-    <div class="${data.excludeKey ? data.excludeKey.split(':')[0] : ''}">
-      ${checkbox({
-    rightLabel: `
-        <span class="name">${data.label}</span>
-        <description class="description">
-          ${data.description ? `- ${data.description}` : ``}
-        </description>        
-        `
-  }).outerHTML}      
-    </div>
-  `)
-
-  li.select('input')
-    .on('change', (datum, i, nodes) => { datum.onChange && datum.onChange(datum, i, nodes) })
-}
