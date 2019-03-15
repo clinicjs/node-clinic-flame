@@ -274,35 +274,6 @@ div#main-content {
   flex-shrink: 0;
 }
 
-#one-col-layout .scroll-container {
-  flex-grow: 1;
-  flex-shrink: 1;
-  overflow: auto;
-  overflow-x: hidden;
-  position: relative;
-}
-
-.scroll-container::-webkit-scrollbar {
-  width: 13px;
-  background-color: var(--scrollbar-bg);
-}
-
-.scroll-container::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 2px var(--scrollbar-shadow);
-}
-
-.scroll-container::-webkit-scrollbar-thumb {
-  background-color: var(--scrollbar-thumb);
-  outline: 1px solid var(--scrollbar-thumb-outline);
-  border-radius: 2px;
-  box-shadow: 4px 1px 6px -2px var(--light-glare) inset;
-}
-
-@media (pointer: coarse) {
-  .scroll-container::-webkit-scrollbar {
-    width: 30px;
-  }
-}
 /* SVG icons */
 svg.icon-img path {
   /* Default to same fill as adjacent text */
@@ -314,4 +285,33 @@ svg.icon-img {
   width: 1em;
   height: 1em;
   display: block;
+}
+
+
+/* custom accordion style */
+.nc-accordion.nc-accordion--secondary {
+  padding: 0 5px;
+  background-color: transparent;
+  border: none;
+  font-size: 1em;
+}
+
+.nc-accordion.nc-accordion--secondary .nc-collapsible-container {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nc-accordion.nc-accordion--secondary.expanded .nc-collapsible-container {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nc-accordion.nc-accordion--secondary > .nc-button {
+  --nc-button-bgColor: rgba(255, 255, 255, 0.1);
+  --nc-button-bgHover: rgba(255, 255, 255, 0.08);
+  width: auto;
+  font-size: 0.8rem;
+  padding: 0 0.5em;
+}
+
+.nc-accordion.nc-accordion--secondary > .nc-button .nc-button__inner-container {
+  padding-right: 3em;
 }
