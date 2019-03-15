@@ -36,6 +36,9 @@ class FiltersContainer extends HtmlContent {
       this.draw()
     })
 
+    this.ui.on('setData', () => {
+      this.draw()
+    })
     this.toggleSideBar = contentProperties.toggleSideBar.bind(this.ui)
   }
 
@@ -51,16 +54,17 @@ class FiltersContainer extends HtmlContent {
       }))
 
     // Dependencies combo ****
-    this.d3DepsCombo = this.d3Center.d3Element.append(() => dropdown({
+    this.DepsDropDown = dropdown({
       classNames: ['key-deps'],
       label: checkbox({
         leftLabel: `<span class='after-bp-1'>Dependencies</span>
           <span class='before-bp-1'>Deps</span>`,
         onChange: e => this.setCodeAreaVisibility('deps', e.target.checked)
       }),
-      content: 'No children... for now',
+      content: getChildren.bind(this, 'deps'),
       expandAbove: true
-    }))
+    })
+    this.d3DepsCombo = this.d3Center.d3Element.append(() => this.DepsDropDown)
 
     // NodeJS checkbox ****
     this.d3NodeCheckBox = this.d3Center.d3Element.append(() =>
@@ -80,7 +84,7 @@ class FiltersContainer extends HtmlContent {
           this.setCodeAreaVisibility('all-v8', e.target.checked)
         }
       }),
-      content: getV8Children.bind(this),
+      content: getChildren.bind(this, 'all-v8'),
       expandAbove: true
     }))
 
@@ -149,6 +153,10 @@ class FiltersContainer extends HtmlContent {
     this.d3DepsCombo.select('input').node()
       .checked = !this.ui.dataTree.exclude.has('deps')
 
+    this.DepsDropDown.update({
+      content: getChildren.bind(this, 'deps')
+    })
+
     // V8
     const d3V8Input = this.d3V8Combo.select('input').node()
     const V8 = this.ui.dataTree.codeAreas
@@ -175,12 +183,14 @@ class FiltersContainer extends HtmlContent {
   }
 }
 
-function getV8Children () {
-  const V8 = this.ui.dataTree.codeAreas
+function getChildren (key) {
+  const area = this.ui.dataTree.codeAreas
     .find(
-      data => data.excludeKey === 'all-v8'
+      data => data.excludeKey === key
     )
-  const list = V8.children
+
+  if (!area.children) return ''
+  const list = area.children
     .map(d => {
       const elem = checkbox({
         rightLabel: d.label,
@@ -196,7 +206,7 @@ function getV8Children () {
 
   wrapper.addEventListener('change', e => {
     const target = e.target
-    const codeArea = V8.children.find(d => d.excludeKey === target.dataset.excludeKey)
+    const codeArea = area.children.find(d => d.excludeKey === target.dataset.excludeKey)
 
     this.ui.setCodeAreaVisibility(codeArea, target.checked)
     this.ui.updateExclusions()
