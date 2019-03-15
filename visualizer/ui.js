@@ -447,13 +447,13 @@ class Ui extends events.EventEmitter {
     return null
   }
 
-  setCodeAreaVisibility (codeArea, visible) {
+  setCodeAreaVisibility (codeArea, visible, update = true) {
     // Apply a single possible change to dataTree.exclude, updating what's necessary
     let isChanged = false
 
     if (codeArea.children && codeArea.children.length) {
-      const childrenChanged = codeArea.children.forEach(child => this.setCodeAreaVisibility(child, visible))
-      this.updateExclusions()
+      const childrenChanged = codeArea.children.forEach(child => this.setCodeAreaVisibility(child, visible, false))
+      if (update) this.updateExclusions()
       return childrenChanged
     } else {
       const name = codeArea.excludeKey
@@ -465,7 +465,7 @@ class Ui extends events.EventEmitter {
         if (isChanged) this.changedExclusions.toHide.add(name)
       }
 
-      if (isChanged) this.updateExclusions()
+      if (isChanged && update) this.updateExclusions()
     }
 
     return isChanged
@@ -483,6 +483,7 @@ class Ui extends events.EventEmitter {
     const cb = () => {
       if (!initial) this.emit('updateExclusions')
       if (pushState) {
+        console.trace('pushHistory')
         this.pushHistory()
       }
     }
