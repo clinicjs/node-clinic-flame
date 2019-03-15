@@ -400,7 +400,11 @@ class Ui extends events.EventEmitter {
       'all-v8:native': 'V8 native',
       'all-v8:v8': 'V8 runtime',
       'all-v8:cpp': 'V8 C++',
-      'all-v8:regexp': 'RegExp'
+      'all-v8:regexp': 'RegExp',
+
+      'dummy_1': 'Dummy content 1',
+      'dummy_2': 'Dummy content 2',
+      'dummy_3': 'Dummy content 3'
     }
 
     if (keysToLabels[key]) {
@@ -418,12 +422,16 @@ class Ui extends events.EventEmitter {
 
   getDescriptionFromKey (key) {
     const keysToDescriptions = {
-      core: `JS functions in core Node.js APIs.`,
-      'all-v8': `The JavaScript engine used by default in Node.js. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8')}`,
-      'all-v8:v8': `Operations in V8's implementation of JS. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-runtime')}`,
-      'all-v8:native': `JS compiled into V8, such as prototype methods and eval. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-native')}`,
-      'all-v8:cpp': `Native C++ operations called by V8, including shared libraries. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-cpp')}`,
-      'all-v8:regexp': `The RegExp notation is shown as the function name. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-regexp')}`
+      core: `<span>JS functions in core Node.js APIs.</span>`,
+      'all-v8': `<span>The JavaScript engine used by default in Node.js.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8')}`,
+      'all-v8:v8': `<span>Operations in V8's implementation of JS.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-runtime')}`,
+      'all-v8:native': `<span>JS compiled into V8, such as prototype methods and eval.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-native')}`,
+      'all-v8:cpp': `<span>Native C++ operations called by V8, including shared libraries.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-cpp')}`,
+      'all-v8:regexp': `<span>The RegExp notation is shown as the function name.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-regexp')}`,
+
+      'dummy_1': `<span>Some dummy text.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8')}`,
+      'dummy_2': `<span>Some more dummy text to play with.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8')}`,
+      'dummy_3': `<span>Another dummy content to fill the space!</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8')}`
     }
 
     if (keysToDescriptions[key]) {
@@ -520,6 +528,18 @@ class Ui extends events.EventEmitter {
   }
 
   setData (dataTree) {
+    dataTree.codeAreas[1] = {
+      ...dataTree.codeAreas[1],
+      children: Array.from(Array(20), (x, i) => {
+        const n = parseInt(Math.random() * 3) + 1
+        return {
+          excludeKey: `dummy_${n}`,
+          id: `dummy_${n}`
+        }
+      })
+
+    }
+
     this.dataTree = new DataTree(dataTree)
     this.updateExclusions({ pushState: false, initial: true })
     this.emit('setData')
