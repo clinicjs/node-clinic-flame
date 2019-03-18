@@ -530,18 +530,6 @@ class Ui extends events.EventEmitter {
   }
 
   setData (dataTree) {
-    dataTree.codeAreas[1] = {
-      ...dataTree.codeAreas[1],
-      children: Array.from(Array(20), (x, i) => {
-        const n = parseInt(Math.random() * 3) + 1
-        return {
-          excludeKey: `dummy_${n}`,
-          id: `dummy_${n}`
-        }
-      })
-
-    }
-
     this.dataTree = new DataTree(dataTree)
     this.updateExclusions({ pushState: false, initial: true })
     this.emit('setData')
