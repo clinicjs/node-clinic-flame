@@ -242,23 +242,16 @@ class FiltersContent extends HtmlContent {
       li.appendChild(this._createOptionElement(item))
 
       if (item.children && item.children.length > 0) {
-        const visibleUl = helpers.toHtml(`<ul></ul>`)
-        const visibleChildren = item.children.slice(0, this.maxVisibleSubItemsCount)
+        const childrenUl = helpers.toHtml(`<ul></ul>`)
+        childrenUl.appendChild(this._createListItems(item.children))
+        li.appendChild(childrenUl)
 
-        visibleUl.appendChild(this._createListItems(visibleChildren))
-        li.appendChild(visibleUl)
-
-        if (item.children.length > this.maxVisibleSubItemsCount) {
-          const collapsedChildren = item.children.slice(this.maxVisibleSubItemsCount)
-          const collapsedUl = helpers.toHtml(`<ul></ul>`)
-
-          collapsedUl.appendChild(this._createListItems(collapsedChildren))
-
+        if (item.childrenVisibilityToggle) {
           const acc = accordion({
             isExpanded: this.expandedSubAccordions[item.excludeKey] === true,
             classNames: [`${item.excludeKey}-show-all-acc`, `nc-accordion--secondary`],
-            label: `Show more (${collapsedChildren.length})`,
-            content: collapsedUl,
+            label: `Show more (${item.children.length})`,
+            content: childrenUl,
             onClick: (expanded) => {
               this.expandedSubAccordions[item.excludeKey] = expanded
             }
@@ -277,6 +270,7 @@ class FiltersContent extends HtmlContent {
 
     div.appendChild(checkbox({
       checked: data.checked,
+      indeterminate: data.indeterminate,
       rightLabel: `
           <span class="name">${data.label}</span>
           <description class="description">${data.description ? `- ${data.description}` : ``}</description>        
