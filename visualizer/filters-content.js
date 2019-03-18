@@ -13,13 +13,12 @@ class FiltersContent extends HtmlContent {
     this.currentAccordion = null
     this.expandedSubAccordions = {}
 
-    this.maxVisibleSubItemsCount = 0
+    this.getSpinner = contentProperties.getSpinner
 
     this.ui.on('presentationMode', mode => {
-      if (this.presentationMode !== mode) {
-        this.presentationMode = mode
-        this.draw()
-      }
+      this.presentationMode = mode
+      this.update()
+      this.draw()
     })
 
     this.ui.on('updateExclusions', () => {
@@ -40,6 +39,7 @@ class FiltersContent extends HtmlContent {
         {
           id: 'presentation_mode',
           label: 'Presentation mode',
+          checked: this.ui.presentationMode === true,
           value: false,
           onChange: (datum, event) => {
             this.ui.setPresentationMode(event.target.checked)
@@ -226,11 +226,22 @@ class FiltersContent extends HtmlContent {
   }
 
   _onVisibilityChange (datum, checked) {
-    this.ui.setCodeAreaVisibility({
-      codeArea: datum,
-      visible: checked
-    })
-    this.ui.draw()
+    const spinner = this.getSpinner()
+    spinner.show(
+      'Applying filters...'
+    )
+
+    // Need to give the browser the time to actually execute spinner.show
+    setTimeout(
+      () => {
+        this.ui.setCodeAreaVisibility({
+          codeArea: datum,
+          visible: checked
+        })
+        this.ui.draw()
+        spinner.hide()
+      }
+      , 1)
   }
 
   _createListItems (items) {
@@ -275,7 +286,9 @@ class FiltersContent extends HtmlContent {
           <span class="name">${data.label}</span>
           <description class="description">${data.description ? `- ${data.description}` : ``}</description>        
           `,
-      onChange: (event) => { data.onChange && data.onChange(data, event) }
+      onChange: (event) => {
+        data.onChange && data.onChange(data, event)
+      }
     }))
 
     return div
