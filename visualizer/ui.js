@@ -5,6 +5,7 @@ const htmlContentTypes = require('./html-content-types.js')
 const debounce = require('lodash.debounce')
 const DataTree = require('./data-tree.js')
 const History = require('./history.js')
+const spinner = require('@nearform/clinic-common/spinner')
 
 const close = require('@nearform/clinic-common/icons/close')
 
@@ -18,6 +19,7 @@ class Ui extends events.EventEmitter {
   constructor (wrapperSelector) {
     super()
 
+    this.flameWrapperSpinner = null
     this.history = new History()
 
     this.dataTree = null
@@ -288,7 +290,8 @@ class Ui extends events.EventEmitter {
     })
 
     this.sideBar.addContent('FiltersContent', {
-      classNames: 'filters-options'
+      classNames: 'filters-options',
+      getSpinner: () => this.flameWrapperSpinner
     })
 
     this.footer = this.uiContainer.addContent(undefined, {
@@ -308,7 +311,8 @@ class Ui extends events.EventEmitter {
 
     this.footer.addContent('FiltersContainer', {
       id: 'filters-bar',
-      toggleSideBar: this.toggleSideBar
+      toggleSideBar: this.toggleSideBar,
+      getSpinner: () => this.flameWrapperSpinner
     })
 
     // TODO: add these ↴
@@ -625,6 +629,8 @@ class Ui extends events.EventEmitter {
       title: 'Click to start the step-by-step UI features guide!'
     })
     this.footer.d3Element.select('#filters-bar .left-col').append(() => this.helpButton.button)
+
+    this.flameWrapperSpinner = spinner.attachTo(document.querySelector('#flame-main'))
   }
 
   draw () {
