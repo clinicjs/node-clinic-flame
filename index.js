@@ -9,7 +9,6 @@ const getLoggingPaths = require('./collect/get-logging-paths.js')
 const systemInfo = require('./collect/system-info.js')
 const inlinedFunctions = require('./collect/inlined-functions.js')
 const analyse = require('./analysis/index.js')
-const inlineSvg = require('browserify-inline-svg')
 const pump = require('pump')
 const buildJs = require('@nearform/clinic-common/scripts/build-js')
 const buildCss = require('@nearform/clinic-common/scripts/build-css')
@@ -128,9 +127,7 @@ class ClinicFlame extends events.EventEmitter {
       env: {
         PRESENTATION_MODE: process.env.PRESENTATION_MODE
       }
-    }).pipe(inlineSvg({
-      basePath: __dirname
-    }))
+    })
 
     // uild CSS
     const styleFile = buildCss({
