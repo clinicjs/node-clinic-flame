@@ -1,8 +1,8 @@
 'use strict'
 
 const HtmlContent = require('./html-content.js')
-const checkbox = require('./common/checkbox.js')
-const button = require('./common/button.js')
+const checkbox = require('@nearform/clinic-common/base/checkbox.js')
+const button = require('@nearform/clinic-common/base/button.js')
 const close = require('@nearform/clinic-common/icons/close')
 
 class FiltersContent extends HtmlContent {

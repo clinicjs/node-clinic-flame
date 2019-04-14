@@ -2,12 +2,6 @@
   display: flex;
 }
 
-#selection-controls .hotness-selector:disabled {
-  color: var(--primary-grey);
-  cursor: auto;
-  background: rgba(var(--opposite-color-val), 0.5);
-}
-
 #selection-controls .hotness-selector {
   margin-right: 4px;
 }
@@ -20,10 +14,13 @@
 }
 
 #selection-controls input.hotness-selector {
-  width: 3.3em;
+  background-color: var(--opposite-contrast);
+  border: none;
+  color: var(--max-contrast);
+  height: 100%;
   padding: 0;
   text-align: center;
-  height: 100%;
+  width: 3.3em;
 }
 
 #selection-controls .hotness-selector,

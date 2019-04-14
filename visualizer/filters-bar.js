@@ -2,12 +2,9 @@
 const HtmlContent = require('./html-content.js')
 const sidePanelExpand = require('@nearform/clinic-common/icons/sidepanel-expand')
 const sidePanelCollapse = require('@nearform/clinic-common/icons/sidepanel-collapse')
-const circleQuestion = require('@nearform/clinic-common/icons/circle-question')
 const search = require('@nearform/clinic-common/icons/search')
 
-const button = require('./common/button.js')
-const checkbox = require('./common/checkbox.js')
-const dropdown = require('./common/drop-down.js')
+const { button, checkbox, dropdown } = require('@nearform/clinic-common/base')
 
 class FiltersContainer extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
@@ -44,18 +41,6 @@ class FiltersContainer extends HtmlContent {
 
   initializeElements () {
     super.initializeElements()
-
-    this.d3Left.d3Element.append(() => button({
-      classNames: ['after-bp-2'],
-      label: 'Call stacks by duration. More info',
-      rightIcon: circleQuestion
-    }))
-
-    this.d3Left.d3Element.append(() => button({
-      title: 'Call stacks by duration. More info',
-      classNames: ['before-bp-2'],
-      leftIcon: circleQuestion
-    }))
 
     // App checkbox
     this.d3AppCheckBox = this.d3Center.d3Element.append(() =>
@@ -103,14 +88,26 @@ class FiltersContainer extends HtmlContent {
       .append(() => button({
         leftIcon: search,
         classNames: ['before-bp-2'],
-        onClick: () => {
-          this.ui.toggleMobileSearchBox()
-        }
+        onClick: () => this.ui.toggleMobileSearchBox()
       }))
 
+    this.optionsBp1 = button({
+      classNames: ['sidebar-toggler', 'before-bp-1'],
+      rightIcon: sidePanelExpand,
+      onClick: () => this.toggleSideBar()
+    })
+
     this.d3Right.d3Element
-      .append(() => button({ classNames: ['sidebar-toggler'] }))
-      .on('click', this.toggleSideBar)
+      .append(() => this.optionsBp1)
+
+    this.optionsBp2 = button({
+      classNames: ['sidebar-toggler', 'after-bp-1'],
+      label: 'Options',
+      rightIcon: sidePanelExpand,
+      onClick: () => this.toggleSideBar()
+    })
+    this.d3Right.d3Element
+      .append(() => this.optionsBp2)
   }
 
   setCodeAreaVisibility (key, value) {
@@ -126,11 +123,12 @@ class FiltersContainer extends HtmlContent {
   draw () {
     super.draw()
 
-    this.d3Right.d3Element.select('.sidebar-toggler')
-      .html(`
-        <span class='label after-bp-1'>Options</span>
-        ${this.showSideBar ? sidePanelCollapse : sidePanelExpand}
-      `)
+    this.optionsBp1.update({
+      rightIcon: this.showSideBar ? sidePanelCollapse : sidePanelExpand
+    })
+    this.optionsBp2.update({
+      rightIcon: this.showSideBar ? sidePanelCollapse : sidePanelExpand
+    })
 
     // app
     this.d3AppCheckBox.select('input').node()

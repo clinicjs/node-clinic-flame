@@ -20,68 +20,6 @@
   min-height: 2.9em;
 }
 
-#info-box .frame-dropdown {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  right: 0;
-  bottom: 100%;
-  transform: translateY(-8px);
-  min-width: 70px;
-  padding: 0.5em 0.3em;
-  font-size: inherit;
-  font-weight: bold;
-  background-color: var(--opposite-contrast);
-  color: var(--max-contrast);
-  border: 0;
-  cursor: pointer;
-}
-
-#info-box .frame-dropdown:hover {
-  outline: 1px dotted var(--light-glare);
-}
-
-#info-box .frame-dropdown span {
-  min-width: 36px;
-  text-align: left;
-}
-
-#info-box .frame-dropdown svg {
-  margin-right: -8px;
-  font-size: 1.5em;
-  transition: transform 0.6s cubic-bezier(0.42, 0, 0.23, 1.65);
-}
-
-#info-box.collapsed .frame-dropdown svg {
-  transform: rotate(180deg);
-}
-
-#info-box .collapsible-content-wrapper {
-  position: absolute;
-  right: 0;
-  top: -8px;
-  min-width: 320px;
-  padding: 8px;
-  font-size: inherit;
-  color: white;
-  background-color: var(--opposite-contrast);
-}
-
-#info-box .collapsible-content-wrapper h2 {
-  padding: 0 8px 6px 8px;
-  margin: 0 -8px;
-  font-size: var(--small-text-size);
-  border-bottom: 3px solid var(--main-bg-color);
-}
-
-#info-box .collapsible-content-wrapper > :first-child {
-  margin-top: 0;
-}
-
-#info-box .collapsible-content-wrapper > :last-child {
-  margin-bottom: 0;
-}
 
 #info-box .frame-info strong {
   color: var(--max-contrast);

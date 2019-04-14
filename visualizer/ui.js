@@ -6,11 +6,13 @@ const debounce = require('lodash.debounce')
 const DataTree = require('./data-tree.js')
 const History = require('./history.js')
 
-const button = require('./common/button.js')
 const close = require('@nearform/clinic-common/icons/close')
 
 const TooltipHtmlContent = require('./flame-graph-tooltip-content')
 const getNoDataNode = require('./no-data-node.js')
+
+const { button, walkthroughButton } = require('@nearform/clinic-common/base/index.js')
+const wtSteps = require('./walkthrough-steps.js')
 
 class Ui extends events.EventEmitter {
   constructor (wrapperSelector) {
@@ -52,7 +54,8 @@ class Ui extends events.EventEmitter {
       useMerged: this.dataTree.useMerged,
       showOptimizationStatus: this.dataTree.showOptimizationStatus,
       exclude: this.dataTree.exclude,
-      search: this.searchQuery
+      search: this.searchQuery,
+      walkthroughIndex: this.helpButton.WtPlayer.currentStepIndex
     }, opts)
   }
 
@@ -63,7 +66,8 @@ class Ui extends events.EventEmitter {
       search,
       selectedNodeId,
       showOptimizationStatus,
-      zoomedNodeId
+      zoomedNodeId,
+      walkthroughIndex
     } = data
 
     this.setUseMergedTree(useMerged, { pushState: false,
@@ -93,12 +97,15 @@ class Ui extends events.EventEmitter {
 
         this.zoomNode(this.dataTree.getNodeById(zoomedNodeId), { pushState: false })
         this.selectNode(this.dataTree.getNodeById(selectedNodeId), { pushState: false })
-
-        if (search !== this.searchQuery) {
-          this.search(search, { pushState: false })
-        }
       }
     })
+
+    if (search !== this.searchQuery) {
+      this.search(search, { pushState: false })
+    }
+    if (walkthroughIndex !== undefined) {
+      this.helpButton.WtPlayer.skipTo(walkthroughIndex)
+    }
   }
 
   // Temporary e.g. on mouseover, erased on mouseout
@@ -284,13 +291,13 @@ class Ui extends events.EventEmitter {
       classNames: 'filters-options'
     })
 
-    const footer = this.uiContainer.addContent(undefined, {
+    this.footer = this.uiContainer.addContent(undefined, {
       id: 'footer',
       htmlElementType: 'section'
     })
 
     // mobile search-box
-    this.mSearchBoxWrapper = footer.addContent(undefined, {
+    this.mSearchBoxWrapper = this.footer.addContent(undefined, {
       id: 'm-search-box-wrapper',
       classNames: 'before-bp-2 m-search-box-wrapper'
     })
@@ -299,7 +306,7 @@ class Ui extends events.EventEmitter {
       classNames: 'inline-panel'
     })
 
-    footer.addContent('FiltersContainer', {
+    this.footer.addContent('FiltersContainer', {
       id: 'filters-bar',
       toggleSideBar: this.toggleSideBar
     })
@@ -597,6 +604,17 @@ class Ui extends events.EventEmitter {
         }
       }
     }))
+
+    // walkthrough init
+    this.helpButton = walkthroughButton({
+      steps: wtSteps,
+      onProgress: () => {
+        this.pushHistory()
+      },
+      label: '<span class="before-bp-1">Guide</span><span class="after-bp-1">Show how to use this</span>',
+      title: 'Click to start the step-by-step UI features guide!'
+    })
+    this.footer.d3Element.select('#filters-bar .left-col').append(() => this.helpButton.button)
   }
 
   draw () {
