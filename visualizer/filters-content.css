@@ -5,11 +5,34 @@
 }
 
 .filters-content .nc-accordion > .nc-button {
+  position: relative; /* Appear above button hover */
   font-size: 1.4rem;
 }
 
-.filters-content .nc-accordion.nc-accordion--secondary{
-  padding: 0 0 2em 2em;
+.filters-content .nc-accordion.nc-accordion--secondary > .nc-button {
+  /* Solid colors overriding default */
+  --nc-button-bgColor: var(--banner-bg-color);
+  --nc-button-bgHover: var(--banner-bg-color);
+}
+
+.filters-content .nc-accordion.nc-accordion--secondary {
+  margin-top: -8px;
+  padding-right: 8px;
+  text-align: right;
+}
+
+.filters-content .nc-accordion.nc-accordion--secondary .nc-collapsible-container {
+  text-align: left;
+  border-bottom: none;
+  margin-left: 2px;
+}
+
+.filters-content .nc-accordion.nc-accordion--secondary.expanded .nc-collapsible-container {
+  margin-bottom: 8px;
+}
+
+.filters-content .options > li {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .filters-content li>ul {
@@ -64,7 +87,6 @@
   color: white;
   opacity: 0.7;
   text-decoration: none;
-  float: right;
 }
 
 .filters-content .options .description .more-info:hover{
