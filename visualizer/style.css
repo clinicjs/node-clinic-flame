@@ -1,7 +1,6 @@
 @import '@nearform/clinic-common/styles/styles.css';
-@import "./common/button.css";
-@import "./common/checkbox.css";
-@import "./common/drop-down.css";
+@import '@nearform/clinic-common/base/style.css';
+@import "./walkthrough-steps.css";
 @import "./toolbar.css";
 @import "./stack-bar.css";
 @import "./key.css";
@@ -85,7 +84,32 @@ html {
   /* Define text sizes */
   --main-text-size: 1.2rem;
   --small-text-size: 1rem;
+
+  /* base component style */
+  --nc-button-bgColor: var(--opposite-contrast);
+  --nc-button-color: var(--max-contrast);
+  --nc-button-fontSize: var(--small-text-size);
+  --nc-button-bgHover: var(--clickable-bg-hover);
+  --nc-button-hoverOutline: var(--light-glare);
+
+  /* --nc-link-bgColor */
+  --nc-link-color: rgb(63, 125, 198);
+  --nc-link-fontSize: var(--small-text-size);
+  /* --nc-link-bgHover */
+  /* --nc-link-hoverOutline */
+  
+  --nc-checkbox-bgColor: var(--opposite-contrast);
+  --nc-checkbox-hoverColor: var(--clickable-bg-hover);
+  --nc-checkbox-hoverOutline: var(--light-glare);
+  --nc-checkbox-borderColor: var(--checkbox-border-color);
+  --nc-checkbox-checkedIconColor: var(--max-contrast);
+  --nc-checkbox-indeterminateIconColor: var(--grey-highlight);
+  
+  --nc-dropdown-color: var(--max-contrast);
+  --nc-dropdown-bgColor: var(--opposite-contrast);
+  --nc-dropdown-contentBg: var(--opposite-contrast);
 }
+
 
 /* Overrides for light theme */
 /* just a poc for now... */
