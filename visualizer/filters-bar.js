@@ -48,16 +48,19 @@ class FiltersContainer extends HtmlContent {
     super.initializeElements()
 
     // App checkbox
-    this.d3AppCheckBox = this.d3Center.d3Element.append(() =>
-      checkbox({
-        leftLabel: 'app',
-        classNames: ['key-app'],
-        onChange: e => this.setCodeAreaVisibility('app', e.target.checked)
-      }))
+    this.d3AppCheckBox = this.d3Center.d3Element.append('div')
+      .classed('filter-option', true)
+      .classed('key-app', true)
+      .append(() =>
+        checkbox({
+          leftLabel: 'app',
+          onChange: e => this.setCodeAreaVisibility('app', e.target.checked)
+        })
+      )
 
     // Dependencies combo ****
     this.DepsDropDown = dropdown({
-      classNames: ['key-deps'],
+      classNames: ['filter-option', 'key-deps'],
       label: checkbox({
         leftLabel: `<span class='after-bp-1'>Dependencies</span>
           <span class='before-bp-1'>Deps</span>`,
@@ -69,17 +72,20 @@ class FiltersContainer extends HtmlContent {
     this.d3DepsCombo = this.d3Center.d3Element.append(() => this.DepsDropDown)
 
     // NodeJS checkbox ****
-    this.d3NodeCheckBox = this.d3Center.d3Element.append(() =>
-      checkbox({
-        classNames: ['key-core'],
-        leftLabel: `<span class='after-bp-1'>Node JS</span>
-          <span class='before-bp-1'>Node</span>`,
-        onChange: e => this.setCodeAreaVisibility('core', e.target.checked)
-      }))
+    this.d3NodeCheckBox = this.d3Center.d3Element.append('div')
+      .classed('filter-option', true)
+      .classed('key-core', true)
+      .append(() =>
+        checkbox({
+          leftLabel: `<span class='after-bp-1'>Node JS</span>
+            <span class='before-bp-1'>Node</span>`,
+          onChange: e => this.setCodeAreaVisibility('core', e.target.checked)
+        })
+      )
 
     // V8 combo ****
     this.d3V8Combo = this.d3Center.d3Element.append(() => dropdown({
-      classNames: ['key-v8'],
+      classNames: ['filter-option', 'key-v8'],
       label: checkbox({
         leftLabel: 'V8',
         onChange: e => {
