@@ -9,6 +9,10 @@
   font-size: 1.4rem;
 }
 
+.filters-content .description {
+  color: var(--primary-grey);
+}
+
 .filters-content .nc-accordion.nc-accordion--secondary > .nc-button {
   /* Solid colors overriding default */
   --nc-button-bgColor: var(--banner-bg-color);

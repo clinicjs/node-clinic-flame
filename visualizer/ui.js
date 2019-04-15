@@ -426,6 +426,8 @@ class Ui extends events.EventEmitter {
 
   getDescriptionFromKey (key) {
     const keysToDescriptions = {
+      app: `<span>Functions in the code of the application being profiled.</span>`,
+      deps: `<span>External modules in the application's node_modules directory.</span>`,
       core: `<span>JS functions in core Node.js APIs.</span>`,
       'all-v8': `<span>The JavaScript engine used by default in Node.js.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8')}`,
       'all-v8:v8': `<span>Operations in V8's implementation of JS.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-runtime')}`,
