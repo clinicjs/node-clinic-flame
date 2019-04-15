@@ -451,7 +451,7 @@ class Ui extends events.EventEmitter {
     return null
   }
 
-  setCodeAreaVisibility ({ codeArea, visible, pushState = true }) {
+  setCodeAreaVisibility ({ codeArea, visible, pushState = true, isRecursing = false }) {
     // Apply a single possible change to dataTree.exclude, updating what's necessary
     let isChanged = false
 
@@ -459,7 +459,8 @@ class Ui extends events.EventEmitter {
       const childrenChanged = codeArea.children.forEach(child => this.setCodeAreaVisibility({
         codeArea: child,
         visible,
-        pushState: false
+        pushState: false,
+        isRecursing: true
       }))
       this.updateExclusions({ pushState })
       return childrenChanged
@@ -473,7 +474,7 @@ class Ui extends events.EventEmitter {
         if (isChanged) this.changedExclusions.toHide.add(name)
       }
 
-      if (isChanged) this.updateExclusions({ pushState })
+      if (isChanged && !isRecursing) this.updateExclusions({ pushState })
     }
 
     return isChanged
