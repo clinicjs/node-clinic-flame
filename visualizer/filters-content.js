@@ -81,7 +81,7 @@ class FiltersContent extends HtmlContent {
               return !exclude.has(child.excludeKey)
             })()
             child.onChange = (datum, event) => {
-              this._onVisibilityChange(datum, event.target.checked)
+              this._onVisibilityChange(datum, event.target)
             }
 
             return child
@@ -112,7 +112,7 @@ class FiltersContent extends HtmlContent {
           checked,
           indeterminate,
           onChange: (datum, event) => {
-            this._onVisibilityChange(datum, event.target.checked)
+            this._onVisibilityChange(datum, event.target)
           }
         })
       })
@@ -225,13 +225,13 @@ class FiltersContent extends HtmlContent {
     this.currentAccordion = clickedAccordion
   }
 
-  _onVisibilityChange (datum, checked) {
-    const spinner = this.getSpinner()
-    spinner.show(
-      'Applying filters...'
-    )
+  _onVisibilityChange (datum, targetElement, updatingChildren) {
+    const checked = targetElement.checked
+    const parent = targetElement.parentElement
 
-    // Need to give the browser the time to actually execute spinner.show
+    parent.classList.add('pulsing')
+
+    // Need to give the browser the time to apply the class
     setTimeout(
       () => {
         this.ui.setCodeAreaVisibility({
@@ -239,9 +239,8 @@ class FiltersContent extends HtmlContent {
           visible: checked
         })
         this.ui.draw()
-        spinner.hide()
-      }
-      , 1)
+        parent.classList.remove('pulsing')
+      }, 15)
   }
 
   _createListItems (items) {

@@ -315,3 +315,20 @@ svg.icon-img {
 .nc-accordion.nc-accordion--secondary > .nc-button .nc-button__inner-container {
   padding-right: 3em;
 }
+
+/* TODO: refine this then migrate it to Clinic Common */
+.pulsing {
+  animation: pulse 0.8s infinite linear;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.5;
+  }
+  80% {
+    opacity: 0.1;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}

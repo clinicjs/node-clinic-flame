@@ -51,10 +51,12 @@ class FiltersContainer extends HtmlContent {
     this.d3AppCheckBox = this.d3Center.d3Element.append('div')
       .classed('filter-option', true)
       .classed('key-app', true)
+      .append('div')
+      .classed('label-wrapper', true)
       .append(() =>
         checkbox({
           leftLabel: 'app',
-          onChange: e => this.setCodeAreaVisibility('app', e.target.checked)
+          onChange: e => this.setCodeAreaVisibility('app', e.target)
         })
       )
 
@@ -64,7 +66,7 @@ class FiltersContainer extends HtmlContent {
       label: checkbox({
         leftLabel: `<span class='after-bp-1'>Dependencies</span>
           <span class='before-bp-1'>Deps</span>`,
-        onChange: e => this.setCodeAreaVisibility('deps', e.target.checked)
+        onChange: e => this.setCodeAreaVisibility('deps', e.target)
       }),
       content: getChildrenHtml.bind(this, 'deps'),
       expandAbove: true
@@ -75,11 +77,13 @@ class FiltersContainer extends HtmlContent {
     this.d3NodeCheckBox = this.d3Center.d3Element.append('div')
       .classed('filter-option', true)
       .classed('key-core', true)
+      .append('div')
+      .classed('label-wrapper', true)
       .append(() =>
         checkbox({
           leftLabel: `<span class='after-bp-1'>Node JS</span>
             <span class='before-bp-1'>Node</span>`,
-          onChange: e => this.setCodeAreaVisibility('core', e.target.checked)
+          onChange: e => this.setCodeAreaVisibility('core', e.target)
         })
       )
 
@@ -89,7 +93,7 @@ class FiltersContainer extends HtmlContent {
       label: checkbox({
         leftLabel: 'V8',
         onChange: e => {
-          this.setCodeAreaVisibility('all-v8', e.target.checked)
+          this.setCodeAreaVisibility('all-v8', e.target)
         }
       }),
       content: getChildrenHtml.bind(this, 'all-v8'),
@@ -122,11 +126,10 @@ class FiltersContainer extends HtmlContent {
       .append(() => this.optionsBp2)
   }
 
-  setCodeAreaVisibility (key, value) {
-    const spinner = this.getSpinner()
-    spinner.show(
-      'Applying filters...'
-    )
+  setCodeAreaVisibility (key, checkboxElement) {
+    const parent = checkboxElement.parentElement
+    const checked = checkboxElement.checked
+    parent.classList.add('pulsing')
 
     // Need to give the browser the time to actually execute spinner.show
     setTimeout(
@@ -137,13 +140,13 @@ class FiltersContainer extends HtmlContent {
           )
         this.ui.setCodeAreaVisibility({
           codeArea: area,
-          visible: value
+          visible: checked
         })
         this.ui.updateExclusions()
         this.ui.draw()
-        spinner.hide()
+        parent.classList.remove('pulsing')
       }
-      , 1)
+      , 15)
   }
 
   draw () {
@@ -246,12 +249,10 @@ function getChildrenHtml (key) {
 
   wrapper.addEventListener('change', e => {
     const target = e.target
-    const codeArea = area.children.find(d => d.excludeKey === target.dataset.excludeKey)
+    const parent = target.parentElement
+    parent.classList.add('pulsing')
 
-    const spinner = this.getSpinner()
-    spinner.show(
-      'Applying filters...'
-    )
+    const codeArea = area.children.find(d => d.excludeKey === target.dataset.excludeKey)
 
     setTimeout(() => {
       this.ui.setCodeAreaVisibility({
@@ -261,8 +262,8 @@ function getChildrenHtml (key) {
 
       this.ui.updateExclusions()
       this.ui.draw()
-      spinner.hide()
-    }, 1)
+      parent.classList.remove('pulsing')
+    }, 15)
   })
 
   return wrapper

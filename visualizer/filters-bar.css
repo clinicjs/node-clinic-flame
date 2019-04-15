@@ -29,6 +29,10 @@
   padding: 1px;
 }
 
+#filters-bar .filter-option .label-wrapper {
+  background-color: var(--opposite-contrast);
+}
+
 #filters-bar .filter-option.nc-dropdown > .nc-button .nc-button__inner-container {
   padding-left: 0;
   padding-right: 0;
