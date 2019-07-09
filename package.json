@@ -2,7 +2,7 @@
   "name": "@nearform/flame",
   "version": "4.0.3",
   "engines": {
-    "node": "^11.0.0 || ^10.0.0 || ^8.11.1"
+    "node": ">= 10.0.0 || ^8.11.1"
   },
   "description": "Programmable interface to Clinic.js Flame",
   "repository": "nearform/node-clinic-flame",
