@@ -21,7 +21,7 @@ function removeDependencyAreasFromCodeAreas (codeAreas) {
 }
 
 async function analyse (paths) {
-  const [ systemInfo, ticks, inlined ] = await Promise.all([
+  const [systemInfo, ticks, inlined] = await Promise.all([
     readFile(paths['/systeminfo'], 'utf8').then(JSON.parse),
     readFile(paths['/samples'], 'utf8').then(JSON.parse),
     readFile(paths['/inlinedfunctions'], 'utf8').then(JSON.parse)

@@ -281,6 +281,7 @@ class OptionsMenu extends HtmlContent {
 
     this.codeAreasChanged = false
   }
+
   getDataCountFromKey (key) {
     return this.ui.dataTree ? this.ui.dataTree.activeNodes().filter(n => n.category === key).length : 0
   }
