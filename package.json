@@ -1,10 +1,10 @@
 {
   "name": "@nearform/flame",
-  "version": "4.0.0",
+  "version": "4.0.4",
   "engines": {
-    "node": "^11.0.0 || ^10.0.0 || ^8.11.1"
+    "node": ">= 10.0.0 || ^8.11.1"
   },
-  "description": "Programmable interface to clinic flame",
+  "description": "Programmable interface to Clinic.js Flame",
   "repository": "nearform/node-clinic-flame",
   "main": "index.js",
   "scripts": {
@@ -30,7 +30,6 @@
   "dependencies": {
     "0x": "^4.7.2",
     "@nearform/clinic-common": "^2.0.0",
-    "browserify-inline-svg": "^1.0.2",
     "copy-to-clipboard": "^3.0.8",
     "d3-array": "^2.0.2",
     "d3-fg": "^6.13.1",
@@ -39,13 +38,13 @@
     "flame-gradient": "^1.0.0",
     "lodash.debounce": "^4.0.8",
     "pump": "^3.0.0",
-    "querystringify": "^2.1.0"
+    "querystringify": "^2.1.0",
+    "rimraf": "^2.6.3"
   },
   "devDependencies": {
     "chokidar": "^2.0.4",
-    "rimraf": "^2.6.2",
     "snazzy": "^8.0.0",
-    "standard": "^12.0.1",
+    "standard": "^13.0.0",
     "tap": "^12.0.0"
   }
 }

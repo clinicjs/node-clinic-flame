@@ -1,11 +1,11 @@
-# node-clinic-flame
+# Clinic.js Flame
 
 [![npm version][npm-version]][npm-url] [![Stability Stable][stability-stable]][stability-docs] [![Azure Pipelines build status][azure-status]][azure-url]
 [![Downloads][npm-downloads]][npm-url] [![Code style][lint-standard]][lint-standard-url]
 
-Programmable interface to [clinic][clinic-url] flame. Learn more about clinic: https://clinicjs.org/
+Programmable interface to [Clinic.js][clinic-url] Flame. Learn more about Clinic.js: https://clinicjs.org/
 
-![banner](logo.png)
+![Screenshot](screenshot.png)
 
 ## Supported node versions
 

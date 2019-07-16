@@ -291,7 +291,7 @@ class Ui extends events.EventEmitter {
     // footer.addContent('FlameGraph', { id: 'flame-chronological' })
     // footer.addContent('TimeFilter')
 
-    let reDrawStackBar = debounce(() => this.stackBar.draw(this.highlightedNode), 200)
+    const reDrawStackBar = debounce(() => this.stackBar.draw(this.highlightedNode), 200)
 
     let scrollContainer = null
     this.scrollSelectedFrameIntoView = debounce(() => {
@@ -365,9 +365,9 @@ class Ui extends events.EventEmitter {
 
   getLabelFromKey (key, singular = false) {
     const keysToLabels = {
-      'app': 'profiled application',
-      'deps': singular ? 'Dependency' : 'Dependencies',
-      'core': 'Node JS',
+      app: 'profiled application',
+      deps: singular ? 'Dependency' : 'Dependencies',
+      core: 'Node JS',
 
       'is:inlinable': 'Inlinable',
       'is:init': 'Init',
@@ -394,7 +394,7 @@ class Ui extends events.EventEmitter {
 
   getDescriptionFromKey (key) {
     const keysToDescriptions = {
-      'core': `JS functions in core Node.js APIs.`,
+      core: `JS functions in core Node.js APIs.`,
       'all-v8': `The JavaScript engine used by default in Node.js. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8')}`,
       'all-v8:v8': `Operations in V8's implementation of JS. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-runtime')}`,
       'all-v8:native': `JS compiled into V8, such as prototype methods and eval. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-native')}`,
@@ -506,7 +506,7 @@ class Ui extends events.EventEmitter {
     this.exposedCSS = {
       app: computedStyle.getPropertyValue('--area-color-app').trim(),
       deps: computedStyle.getPropertyValue('--area-color-deps').trim(),
-      'core': computedStyle.getPropertyValue('--area-color-core').trim(),
+      core: computedStyle.getPropertyValue('--area-color-core').trim(),
       'all-v8': computedStyle.getPropertyValue('--area-color-core').trim(),
 
       'opposite-contrast': computedStyle.getPropertyValue('--opposite-contrast').trim(),
