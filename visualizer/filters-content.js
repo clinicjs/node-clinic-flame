@@ -3,8 +3,6 @@
 const HtmlContent = require('./html-content.js')
 const { checkbox, accordion, helpers } = require('@nearform/clinic-common/base')
 
-// const close = require('@nearform/clinic-common/icons/close')
-
 class FiltersContent extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
     super(parentContent, contentProperties)
@@ -33,7 +31,7 @@ class FiltersContent extends HtmlContent {
   }
 
   update () {
-    // *  *  *  * Preferences *  *  *  *
+    // Preferences
     this.sections = {
       preferences: [
         {
@@ -58,7 +56,7 @@ class FiltersContent extends HtmlContent {
         exclude
       } = data
 
-      // *  *  *  * Code Areas *  *  *  *
+      // Code Areas
       this.sections.codeAreas = codeAreas.map(area => {
         const dataCount = this.getDataCountFromKey(area.excludeKey)
 
@@ -117,7 +115,7 @@ class FiltersContent extends HtmlContent {
         })
       })
 
-      // *  *  *  * Advanced *  *  *  *
+      // Advanced
       this.sections.advanced = [
         {
           id: 'option-init',
@@ -162,7 +160,7 @@ class FiltersContent extends HtmlContent {
       .classed('scroll-container', true)
 
     // creating the main sections
-    // *  *  *  * Code Areas *  *  *  *
+    // Code Areas
     this.d3CodeArea = this.d3ContentWrapper.append('div')
       .classed('code-area section', true)
 
@@ -178,7 +176,7 @@ class FiltersContent extends HtmlContent {
     this.d3CodeArea.append(() => visibilityAcc)
     this.currentAccordion = visibilityAcc
 
-    // *  *  *  * Advanced *  *  *  *
+    // Advanced
     this.d3Advanced = this.d3ContentWrapper.append('div')
       .classed('advanced section', true)
 
@@ -192,7 +190,7 @@ class FiltersContent extends HtmlContent {
     })
     this.d3Advanced.append(() => advancedAcc)
 
-    // *  *  *  * Preferences *  *  *  *
+    // Preferences
     this.d3Preferences = this.d3ContentWrapper.append('div')
       .classed('preferences section', true)
 
@@ -289,7 +287,7 @@ class FiltersContent extends HtmlContent {
     super.draw()
 
     if (this.sections) {
-      // *  *  *  * Code Areas *  *  *  *
+      // Code Areas
       const codeAreas = this.sections.codeAreas.map(d => {
         return Object.assign({}, d, { children: d.children && d.children.length ? d.children : undefined })
       })
@@ -297,12 +295,12 @@ class FiltersContent extends HtmlContent {
       ul.innerHTML = ''
       ul.appendChild(this._createListItems(codeAreas))
 
-      // *  *  *  * Advanced *  *  *  *
+      // Advanced
       ul = this.d3Advanced.select('ul').node()
       ul.innerHTML = ''
       ul.appendChild(this._createListItems(this.sections.advanced))
 
-      // *  *  *  * Preferences *  *  *  *
+      // Preferences
       ul = this.d3Preferences.select('ul').node()
       ul.innerHTML = ''
       ul.appendChild(this._createListItems(this.sections.preferences))
