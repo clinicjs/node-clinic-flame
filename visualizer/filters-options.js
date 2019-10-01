@@ -178,7 +178,7 @@ class FiltersContent extends HtmlContent {
       const codeAreas = this.sections.codeAreas.map(d => {
         return Object.assign({}, d, { children: d.children && d.children.length ? d.children : undefined })
       })
-      let d3NewLi = createListItems(this.d3CodeArea.select('ul'), codeAreas)
+      const d3NewLi = createListItems(this.d3CodeArea.select('ul'), codeAreas)
 
       // subfilters
       const d3SubUl = d3NewLi.selectAll('ul').data(d => d.children ? [d.children] : [])
@@ -186,7 +186,7 @@ class FiltersContent extends HtmlContent {
 
       const newUl = d3SubUl.enter().append('ul')
 
-      let dataSelection = d3SubUl.merge(newUl).selectAll('li').data(data => data.map(d => {
+      const dataSelection = d3SubUl.merge(newUl).selectAll('li').data(data => data.map(d => {
         d.label = this.ui.getLabelFromKey(d.excludeKey)
         d.description = this.ui.getDescriptionFromKey(d.excludeKey)
         d.checked = (() => {
