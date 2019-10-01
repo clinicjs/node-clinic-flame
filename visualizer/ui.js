@@ -5,6 +5,7 @@ const htmlContentTypes = require('./html-content-types.js')
 const debounce = require('lodash.debounce')
 const DataTree = require('./data-tree.js')
 const History = require('./history.js')
+const spinner = require('@nearform/clinic-common/spinner')
 
 const close = require('@nearform/clinic-common/icons/close')
 
@@ -18,6 +19,7 @@ class Ui extends events.EventEmitter {
   constructor (wrapperSelector) {
     super()
 
+    this.flameWrapperSpinner = null
     this.history = new History()
 
     this.dataTree = null
@@ -288,7 +290,8 @@ class Ui extends events.EventEmitter {
     })
 
     this.sideBar.addContent('FiltersContent', {
-      classNames: 'filters-options'
+      classNames: 'filters-options',
+      getSpinner: () => this.flameWrapperSpinner
     })
 
     this.footer = this.uiContainer.addContent(undefined, {
@@ -308,7 +311,8 @@ class Ui extends events.EventEmitter {
 
     this.footer.addContent('FiltersContainer', {
       id: 'filters-bar',
-      toggleSideBar: this.toggleSideBar
+      toggleSideBar: this.toggleSideBar,
+      getSpinner: () => this.flameWrapperSpinner
     })
 
     // TODO: add these ↴
@@ -418,12 +422,14 @@ class Ui extends events.EventEmitter {
 
   getDescriptionFromKey (key) {
     const keysToDescriptions = {
-      core: `JS functions in core Node.js APIs.`,
-      'all-v8': `The JavaScript engine used by default in Node.js. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8')}`,
-      'all-v8:v8': `Operations in V8's implementation of JS. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-runtime')}`,
-      'all-v8:native': `JS compiled into V8, such as prototype methods and eval. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-native')}`,
-      'all-v8:cpp': `Native C++ operations called by V8, including shared libraries. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-cpp')}`,
-      'all-v8:regexp': `The RegExp notation is shown as the function name. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-regexp')}`
+      app: `<span>Functions in the code of the application being profiled.</span>`,
+      deps: `<span>External modules in the application's node_modules directory.</span>`,
+      core: `<span>JS functions in core Node.js APIs.</span>`,
+      'all-v8': `<span>The JavaScript engine used by default in Node.js.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8')}`,
+      'all-v8:v8': `<span>Operations in V8's implementation of JS.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-runtime')}`,
+      'all-v8:native': `<span>JS compiled into V8, such as prototype methods and eval.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-native')}`,
+      'all-v8:cpp': `<span>Native C++ operations called by V8, including shared libraries.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-cpp')}`,
+      'all-v8:regexp': `<span>The RegExp notation is shown as the function name.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-regexp')}`
     }
 
     if (keysToDescriptions[key]) {
@@ -439,13 +445,18 @@ class Ui extends events.EventEmitter {
     return null
   }
 
-  setCodeAreaVisibility (codeArea, visible) {
+  setCodeAreaVisibility ({ codeArea, visible, pushState = true, isRecursing = false }) {
     // Apply a single possible change to dataTree.exclude, updating what's necessary
     let isChanged = false
 
     if (codeArea.children && codeArea.children.length) {
-      const childrenChanged = codeArea.children.forEach(child => this.setCodeAreaVisibility(child, visible))
-      this.updateExclusions()
+      const childrenChanged = codeArea.children.forEach(child => this.setCodeAreaVisibility({
+        codeArea: child,
+        visible,
+        pushState: false,
+        isRecursing: true
+      }))
+      this.updateExclusions({ pushState })
       return childrenChanged
     } else {
       const name = codeArea.excludeKey
@@ -457,7 +468,7 @@ class Ui extends events.EventEmitter {
         if (isChanged) this.changedExclusions.toHide.add(name)
       }
 
-      if (isChanged) this.updateExclusions()
+      if (isChanged && !isRecursing) this.updateExclusions({ pushState })
     }
 
     return isChanged
@@ -474,9 +485,7 @@ class Ui extends events.EventEmitter {
 
     const cb = () => {
       if (!initial) this.emit('updateExclusions')
-      if (pushState) {
-        this.pushHistory()
-      }
+      if (pushState) this.pushHistory()
     }
 
     // Zoom out before updating exclusions if the user excludes the node they're zoomed in on
@@ -615,6 +624,8 @@ class Ui extends events.EventEmitter {
       title: 'Click to start the step-by-step UI features guide!'
     })
     this.footer.d3Element.select('#filters-bar .left-col').append(() => this.helpButton.button)
+
+    this.flameWrapperSpinner = spinner.attachTo(document.querySelector('#flame-main'))
   }
 
   draw () {
