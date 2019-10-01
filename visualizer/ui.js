@@ -404,11 +404,7 @@ class Ui extends events.EventEmitter {
       'all-v8:native': 'V8 native',
       'all-v8:v8': 'V8 runtime',
       'all-v8:cpp': 'V8 C++',
-      'all-v8:regexp': 'RegExp',
-
-      'dummy_1': 'Dummy content 1',
-      'dummy_2': 'Dummy content 2',
-      'dummy_3': 'Dummy content 3'
+      'all-v8:regexp': 'RegExp'
     }
 
     if (keysToLabels[key]) {
@@ -433,11 +429,7 @@ class Ui extends events.EventEmitter {
       'all-v8:v8': `<span>Operations in V8's implementation of JS.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-runtime')}`,
       'all-v8:native': `<span>JS compiled into V8, such as prototype methods and eval.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-native')}`,
       'all-v8:cpp': `<span>Native C++ operations called by V8, including shared libraries.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-cpp')}`,
-      'all-v8:regexp': `<span>The RegExp notation is shown as the function name.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-regexp')}`,
-
-      'dummy_1': `<span>Some dummy text.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8')}`,
-      'dummy_2': `<span>Some more dummy text to play with.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8')}`,
-      'dummy_3': `<span>Another dummy content to fill the space!</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8')}`
+      'all-v8:regexp': `<span>The RegExp notation is shown as the function name.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-regexp')}`
     }
 
     if (keysToDescriptions[key]) {
