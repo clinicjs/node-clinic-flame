@@ -100,7 +100,7 @@ class Tooltip extends HtmlContent {
     // returns if the tooltip is hidden
     if (this.isHidden) return
 
-    let msgHtmlNode = toHtml(msg, 'tooltip-default-message')
+    const msgHtmlNode = toHtml(msg, 'tooltip-default-message')
 
     this.d3TooltipInner.classed('top bottom', false)
     this.d3TooltipInner.classed(verticalAlign, true)
@@ -122,7 +122,7 @@ class Tooltip extends HtmlContent {
     clearTimeout(this.tooltipHandler)
 
     let ttLeft = x + width / 2
-    let ttTop = y + (verticalAlign === 'bottom' ? height : 0)
+    const ttTop = y + (verticalAlign === 'bottom' ? height : 0)
 
     if (pointerCoords) {
       // centering on the mouse pointer horizontally

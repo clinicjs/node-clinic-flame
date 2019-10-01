@@ -188,7 +188,7 @@ function truncateFunctionName (context, availableWidth, functionName, funcNameWi
   if (availableWidth <= avCharWidth) return ''
 
   // Estimate how much truncation is likely needed, to reduce iterations
-  let chars = Math.ceil(availableWidth / avCharWidth) + 1
+  const chars = Math.ceil(availableWidth / avCharWidth) + 1
   if (chars < functionName.length) functionName = functionName.slice(0, chars)
 
   while (functionName && context.measureText(functionName).width > availableWidth) {
