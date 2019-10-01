@@ -161,14 +161,6 @@ class FiltersContent extends HtmlContent {
       .classed('filters-content', true)
       .classed('scroll-container', true)
 
-    // this.d3ContentWrapper.append(() => button({
-    //   leftIcon: close,
-    //   classNames: ['side-bar-close-btn'],
-    //   onClick: () => {
-    //     this.ui.toggleSideBar(false)
-    //   }
-    // }))
-
     // creating the main sections
     // *  *  *  * Code Areas *  *  *  *
     this.d3CodeArea = this.d3ContentWrapper.append('div')
@@ -282,9 +274,9 @@ class FiltersContent extends HtmlContent {
       checked: data.checked,
       indeterminate: data.indeterminate,
       rightLabel: `
-          <span class="name">${data.label}</span>
-          <description class="description">${data.description ? `- ${data.description}` : ``}</description>        
-          `,
+        <span class="name">${data.label}</span>
+        <description class="description">${data.description ? `- ${data.description}` : ``}</description>
+      `,
       onChange: (event) => {
         data.onChange && data.onChange(data, event)
       }
