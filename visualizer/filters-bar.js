@@ -61,7 +61,7 @@ class FiltersContainer extends HtmlContent {
       )
 
     // Dependencies combo ****
-    this.DepsDropDown = dropdown({
+    this.depsDropDown = dropdown({
       classNames: ['filter-option', 'key-deps'],
       label: checkbox({
         leftLabel: `<span class='after-bp-1'>Dependencies</span>
@@ -71,7 +71,7 @@ class FiltersContainer extends HtmlContent {
       content: getChildrenHtml.bind(this, 'deps'),
       expandAbove: true
     })
-    this.d3DepsCombo = this.d3Center.d3Element.append(() => this.DepsDropDown)
+    this.d3DepsCombo = this.d3Center.d3Element.append(() => this.depsDropDown)
 
     // NodeJS checkbox ****
     this.d3NodeCheckBox = this.d3Center.d3Element.append('div')
@@ -179,7 +179,7 @@ class FiltersContainer extends HtmlContent {
     const deps = this.ui.dataTree.codeAreas.find(
       data => data.excludeKey === 'deps'
     )
-    this.DepsDropDown.update({
+    this.depsDropDown.update({
       content: getChildrenHtml.bind(this, 'deps')
     })
     d3DepsInput.indeterminate = (() => {
