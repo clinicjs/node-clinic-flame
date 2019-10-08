@@ -71,19 +71,22 @@ class FrameNode {
       this.functionName = isSharedLib ? '[SHARED_LIB]' : functionName
       this.fileName = isSharedLib ? functionName : null
       this.isInit = isInit != null
-    } else if ((m = this.name.match(wasmFrameRx))) {
-      const [
-        input, // eslint-disable-line no-unused-vars
-        functionName,
-        optimizationTag
-      ] = m
-      this.functionName = functionName
-      this.fileName = null
-      this.isOptimized = optimizationTag === 'Opt'
-      this.isUnoptimized = optimizationTag === 'Unopt'
-      this.isWasm = true
     } else {
-      throw new Error(`Encountered an unparseable frame "${this.name}"`)
+      /* istanbul ignore else: if none of the regexes we are missing a feature */
+      if ((m = this.name.match(wasmFrameRx))) {
+        const [
+          input, // eslint-disable-line no-unused-vars
+          functionName,
+          optimizationTag
+        ] = m
+        this.functionName = functionName
+        this.fileName = null
+        this.isOptimized = optimizationTag === 'Opt'
+        this.isUnoptimized = optimizationTag === 'Unopt'
+        this.isWasm = true
+      } else {
+        throw new Error(`Encountered an unparseable frame "${this.name}"`)
+      }
     }
   }
 
