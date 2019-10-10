@@ -54,7 +54,7 @@ function renderFrameLabel (frameHeight, options) {
   if (fileName === null) {
     if (nodeData.type === 'v8') fileName = 'Compiled V8 C++'
     if (nodeData.type === 'cpp') fileName = 'Compiled C++'
-    if (nodeData.isWasm) fileName = 'Compiled WebAssembly'
+    if (nodeData.type === 'wasm') fileName = 'Compiled WebAssembly'
   }
   if (nodeData.category === 'deps') fileName = fileName.replace(/\.\.?[\\/]node_modules[\\/]/, '')
 

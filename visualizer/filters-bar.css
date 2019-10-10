@@ -53,6 +53,7 @@
 }
 
 #filters-bar .key-core,
+#filters-bar .key-wasm,
 #filters-bar .key-v8,
 #filters-bar .key-v8 .dropdown-content-wrapper {
   color: var(--area-color-core);
@@ -61,7 +62,8 @@
 
 #filters-bar .key-app .checkbox-copy-label:before,
 #filters-bar .key-deps .checkbox-copy-label:before,
-#filters-bar .key-core .checkbox-copy-label:before {
+#filters-bar .key-core .checkbox-copy-label:before,
+#filters-bar .key-wasm .checkbox-copy-label:before {
   content: '';
   width: 1em;
   height: 1em;
@@ -74,7 +76,8 @@
 @media screen and (min-width: 630px) {
   #filters-bar .key-app .checkbox-copy-label:before,
   #filters-bar .key-deps .checkbox-copy-label:before,
-  #filters-bar .key-core .checkbox-copy-label:before {
+  #filters-bar .key-core .checkbox-copy-label:before,
+  #filters-bar .key-wasm .checkbox-copy-label:before {
     display: inline-flex;
   }
 }

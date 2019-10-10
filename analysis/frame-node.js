@@ -106,7 +106,8 @@ class FrameNode {
     const {
       category,
       type
-    } = this.getCoreOrV8Type(name, systemInfo) ||
+    } = this.getWasmType() ||
+      this.getCoreOrV8Type(name, systemInfo) ||
       this.getDepType(name, systemInfo) ||
       this.getAppType(name, appName)
 
@@ -133,6 +134,13 @@ class FrameNode {
     // TODO: add more cases like this
   }
 
+  getWasmType () {
+    if (this.isWasm) {
+      return { type: 'wasm', category: 'wasm' }
+    }
+    return null
+  }
+
   getCoreOrV8Type (name, systemInfo) {
     // TODO: see if any subdivisions of core are useful
     const core = { type: 'core', category: 'core' }
@@ -141,7 +149,7 @@ class FrameNode {
 
     if (/\[CODE:RegExp]$/.test(name)) {
       type = 'regexp'
-    } else if (!/\.m?js/.test(name) && !this.isWasm) {
+    } else if (!/\.m?js/.test(name)) {
       if (/\[CODE:.*?]$/.test(name) || /v8::internal::.*\[CPP]$/.test(name)) {
         type = 'v8'
       } else /* istanbul ignore next */ if (/\.$/.test(name)) {
