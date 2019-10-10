@@ -29,7 +29,6 @@ class FrameNode {
     this.isInlinable = false
     this.isOptimized = false
     this.isUnoptimized = false
-    this.isWasm = false
 
     // Don't try to identify anything for the root node
     if (fixedType) {
@@ -83,7 +82,6 @@ class FrameNode {
         this.fileName = null
         this.isOptimized = optimizationTag === 'Opt'
         this.isUnoptimized = optimizationTag === 'Unopt'
-        this.isWasm = true
       } else {
         throw new Error(`Encountered an unparseable frame "${this.name}"`)
       }
@@ -106,7 +104,7 @@ class FrameNode {
     const {
       category,
       type
-    } = this.getWasmType() ||
+    } = this.getWasmType(name) ||
       this.getCoreOrV8Type(name, systemInfo) ||
       this.getDepType(name, systemInfo) ||
       this.getAppType(name, appName)
@@ -134,8 +132,8 @@ class FrameNode {
     // TODO: add more cases like this
   }
 
-  getWasmType () {
-    if (this.isWasm) {
+  getWasmType (name) {
+    if (/\[WASM:\w+]$/.test(name)) {
       return { type: 'wasm', category: 'wasm' }
     }
     return null
