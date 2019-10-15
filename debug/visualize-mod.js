@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-
+const chalk = require('chalk')
 const Tool = require('../')
 
 module.exports = {
@@ -7,6 +7,7 @@ module.exports = {
     for (const file of process.argv.slice(2).map(trim)) {
       const tool = new Tool({ debug: true })
 
+      console.log(chalk.blue('building...'))
       tool.visualize(
         file,
         file + '.html',
@@ -14,7 +15,8 @@ module.exports = {
           if (err) {
             throw err
           } else {
-            console.log('Wrote', file + '.html')
+            console.log('-------')
+            console.log(chalk.bgBlue(' WROTE '), file + '.html')
           }
         }
       )

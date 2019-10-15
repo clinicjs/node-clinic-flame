@@ -2,16 +2,15 @@
 const HtmlContent = require('./html-content.js')
 const sidePanelExpand = require('@nearform/clinic-common/icons/sidepanel-expand')
 const sidePanelCollapse = require('@nearform/clinic-common/icons/sidepanel-collapse')
-const circleQuestion = require('@nearform/clinic-common/icons/circle-question')
 const search = require('@nearform/clinic-common/icons/search')
 
-const button = require('./common/button.js')
-const checkbox = require('./common/checkbox.js')
-const dropdown = require('./common/drop-down.js')
+const { button, checkbox, dropdown } = require('@nearform/clinic-common/base')
 
 class FiltersContainer extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
     super(parentContent, contentProperties)
+
+    this.getSpinner = contentProperties.getSpinner
 
     // layout wrappers
     this.d3Left = this.addContent('HtmlContent', {
@@ -39,63 +38,79 @@ class FiltersContainer extends HtmlContent {
       this.draw()
     })
 
+    this.ui.on('setData', () => {
+      this.draw()
+    })
     this.toggleSideBar = contentProperties.toggleSideBar.bind(this.ui)
   }
 
   initializeElements () {
     super.initializeElements()
 
-    this.d3Left.d3Element.append(() => button({
-      classNames: ['after-bp-2'],
-      label: 'Call stacks by duration. More info',
-      rightIcon: circleQuestion
-    }))
-
-    this.d3Left.d3Element.append(() => button({
-      title: 'Call stacks by duration. More info',
-      classNames: ['before-bp-2'],
-      leftIcon: circleQuestion
-    }))
-
     // App checkbox
-    this.d3AppCheckBox = this.d3Center.d3Element.append(() =>
-      checkbox({
-        leftLabel: 'app',
-        classNames: ['key-app'],
-        onChange: e => this.setCodeAreaVisibility('app', e.target.checked)
-      }))
+    this.d3AppCheckBox = this.d3Center.d3Element.append('div')
+      .classed('filter-option', true)
+      .classed('key-app', true)
+      .append('div')
+      .classed('label-wrapper', true)
+      .append(() =>
+        checkbox({
+          leftLabel: 'app',
+          onChange: e => this.setCodeAreaVisibility('app', e.target)
+        })
+      )
 
     // Dependencies combo ****
-    this.d3DepsCombo = this.d3Center.d3Element.append(() => dropdown({
-      classNames: ['key-deps'],
+    this.depsDropDown = dropdown({
+      classNames: ['filter-option', 'key-deps'],
       label: checkbox({
         leftLabel: `<span class='after-bp-1'>Dependencies</span>
           <span class='before-bp-1'>Deps</span>`,
-        onChange: e => this.setCodeAreaVisibility('deps', e.target.checked)
+        onChange: e => this.setCodeAreaVisibility('deps', e.target)
       }),
-      content: 'No children... for now',
+      content: getChildrenHtml.bind(this, 'deps'),
       expandAbove: true
-    }))
+    })
+    this.d3DepsCombo = this.d3Center.d3Element.append(() => this.depsDropDown)
+
+    // TODO maybe disable if there are no wasm frames?
+    this.d3WasmCheckBox = this.d3Center.d3Element.append('div')
+      .classed('filter-option', true)
+      .classed('key-wasm', true)
+      .append('div')
+      .classed('label-wrapper', true)
+      .append(() =>
+        checkbox({
+          leftLabel: `<span class='after-bp-1'>WebAssembly</span>
+            <span class='before-bp-1'>WASM</span>`,
+          onChange: e => this.setCodeAreaVisibility('wasm', e.target)
+        })
+      )
 
     // NodeJS checkbox ****
-    this.d3NodeCheckBox = this.d3Center.d3Element.append(() =>
-      checkbox({
-        classNames: ['key-core'],
-        leftLabel: `<span class='after-bp-1'>Node JS</span>
-          <span class='before-bp-1'>Node</span>`,
-        onChange: e => this.setCodeAreaVisibility('core', e.target.checked)
-      }))
+    this.d3NodeCheckBox = this.d3Center.d3Element.append('div')
+      .classed('filter-option', true)
+      .classed('key-core', true)
+      .append('div')
+      .classed('label-wrapper', true)
+      .append(() =>
+        checkbox({
+          leftLabel: `<span class='after-bp-1'>Node JS</span>
+            <span class='before-bp-1'>Node</span>`,
+          onChange: e => this.setCodeAreaVisibility('core', e.target)
+        })
+      )
 
     // V8 combo ****
     this.d3V8Combo = this.d3Center.d3Element.append(() => dropdown({
-      classNames: ['key-v8'],
+      classNames: ['filter-option', 'key-v8'],
       label: checkbox({
         leftLabel: 'V8',
         onChange: e => {
-          this.setCodeAreaVisibility('all-v8', e.target.checked)
+          this.setCodeAreaVisibility('all-v8', e.target)
         }
       }),
-      content: getV8Children.bind(this),
+      content: getChildrenHtml.bind(this, 'all-v8'),
       expandAbove: true
     }))
 
@@ -103,34 +118,64 @@ class FiltersContainer extends HtmlContent {
       .append(() => button({
         leftIcon: search,
         classNames: ['before-bp-2'],
-        onClick: () => {
-          this.ui.toggleMobileSearchBox()
-        }
+        onClick: () => this.ui.toggleMobileSearchBox()
       }))
 
+    this.optionsBp1 = button({
+      classNames: ['sidebar-toggler', 'before-bp-1'],
+      rightIcon: sidePanelExpand,
+      onClick: () => this.toggleSideBar()
+    })
+
     this.d3Right.d3Element
-      .append(() => button({ classNames: ['sidebar-toggler'] }))
-      .on('click', this.toggleSideBar)
+      .append(() => this.optionsBp1)
+
+    this.optionsBp2 = button({
+      classNames: ['sidebar-toggler', 'after-bp-1'],
+      label: 'Options',
+      rightIcon: sidePanelExpand,
+      onClick: () => this.toggleSideBar()
+    })
+    this.d3Right.d3Element
+      .append(() => this.optionsBp2)
   }
 
-  setCodeAreaVisibility (key, value) {
-    const area = this.ui.dataTree.codeAreas
-      .find(
-        data => data.excludeKey === key
-      )
-    this.ui.setCodeAreaVisibility(area, value)
-    this.ui.updateExclusions()
-    this.ui.draw()
+  setCodeAreaVisibility (key, checkboxElement) {
+    const parent = checkboxElement.parentElement
+    const checked = checkboxElement.checked
+    parent.classList.add('pulsing')
+
+    // Need to give the browser the time to actually execute spinner.show
+    setTimeout(
+      () => {
+        const area = this.ui.dataTree.codeAreas
+          .find(
+            data => data.excludeKey === key
+          )
+        if (area) {
+          this.ui.setCodeAreaVisibility({
+            codeArea: area,
+            visible: checked
+          })
+          this.ui.updateExclusions()
+          this.ui.draw()
+        } else {
+          console.error('Could not find code area for', key, 'in', this.ui)
+        }
+        parent.classList.remove('pulsing')
+      }
+      , 15)
   }
 
   draw () {
     super.draw()
 
-    this.d3Right.d3Element.select('.sidebar-toggler')
-      .html(`
-        <span class='label after-bp-1'>Options</span>
-        ${this.showSideBar ? sidePanelCollapse : sidePanelExpand}
-      `)
+    this.optionsBp1.update({
+      rightIcon: this.showSideBar ? sidePanelCollapse : sidePanelExpand
+    })
+    this.optionsBp2.update({
+      rightIcon: this.showSideBar ? sidePanelCollapse : sidePanelExpand
+    })
 
     // app
     this.d3AppCheckBox.select('input').node()
@@ -143,20 +188,44 @@ class FiltersContainer extends HtmlContent {
         <span class='before-bp-2'>App</span>
       `)
 
+    this.d3WasmCheckBox.select('input').node()
+      .checked = !this.ui.dataTree.exclude.has('wasm')
+
     // node js
     this.d3NodeCheckBox.select('input').node()
       .checked = !this.ui.dataTree.exclude.has('core')
 
     // deps
-    this.d3DepsCombo.select('input').node()
-      .checked = !this.ui.dataTree.exclude.has('deps')
+    const d3DepsInput = this.d3DepsCombo.select('input').node()
+    const deps = this.ui.dataTree.codeAreas.find(
+      data => data.excludeKey === 'deps'
+    )
+    this.depsDropDown.update({
+      content: getChildrenHtml.bind(this, 'deps')
+    })
+    d3DepsInput.indeterminate = (() => {
+      const { children } = deps
+      if (!Array.isArray(children) || children.length === 0) {
+        return false
+      }
+      const first = this.ui.dataTree.exclude.has(children[0].excludeKey)
+
+      return children.some((child) => this.ui.dataTree.exclude.has(child.excludeKey) !== first)
+    })()
+    d3DepsInput.checked = (() => {
+      if (deps.children && deps.children.length) {
+        return deps.children.some((child) => {
+          return !this.ui.dataTree.exclude.has(child.excludeKey)
+        })
+      }
+      return !this.ui.dataTree.exclude.has(deps.excludeKey)
+    })()
 
     // V8
     const d3V8Input = this.d3V8Combo.select('input').node()
-    const V8 = this.ui.dataTree.codeAreas
-      .find(
-        data => data.excludeKey === 'all-v8'
-      )
+    const V8 = this.ui.dataTree.codeAreas.find(
+      data => data.excludeKey === 'all-v8'
+    )
     d3V8Input.indeterminate = (() => {
       const { children } = V8
       if (!Array.isArray(children) || children.length === 0) {
@@ -177,18 +246,21 @@ class FiltersContainer extends HtmlContent {
   }
 }
 
-function getV8Children () {
-  const V8 = this.ui.dataTree.codeAreas
+function getChildrenHtml (key) {
+  const area = this.ui.dataTree.codeAreas
     .find(
-      data => data.excludeKey === 'all-v8'
+      data => data.excludeKey === key
     )
-  const list = V8.children
+
+  if (!area.children) return ''
+  const list = area.children
     .map(d => {
       const elem = checkbox({
         rightLabel: d.label,
         checked: !this.ui.dataTree.exclude.has(d.excludeKey)
       })
       elem.querySelector('input').dataset.excludeKey = d.excludeKey
+
       return elem
     })
 
@@ -198,11 +270,21 @@ function getV8Children () {
 
   wrapper.addEventListener('change', e => {
     const target = e.target
-    const codeArea = V8.children.find(d => d.excludeKey === target.dataset.excludeKey)
+    const parent = target.parentElement
+    parent.classList.add('pulsing')
 
-    this.ui.setCodeAreaVisibility(codeArea, target.checked)
-    this.ui.updateExclusions()
-    this.ui.draw()
+    const codeArea = area.children.find(d => d.excludeKey === target.dataset.excludeKey)
+
+    setTimeout(() => {
+      this.ui.setCodeAreaVisibility({
+        codeArea,
+        visible: target.checked
+      })
+
+      this.ui.updateExclusions()
+      this.ui.draw()
+      parent.classList.remove('pulsing')
+    }, 15)
   })
 
   return wrapper

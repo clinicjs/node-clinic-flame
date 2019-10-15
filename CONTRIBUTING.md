@@ -1,22 +1,22 @@
-# Contributing to Node Clinic
+# Contributing to Clinic.js
 
-The Node Clinic project welcomes all contributions from anyone willing to
+The Clinic.js project welcomes all contributions from anyone willing to
 work in good faith with other contributors and the community. No contribution
 is too small and all contributions are valued.
 
 ## Code of Conduct
 
-The Node Clinic project has a [Code of Conduct][CoC] that all contributors are
+The Clinic.js project has a [Code of Conduct][CoC] that all contributors are
 expected to follow.
 
 ## Licensing and Certification
 
-While the Node Clinic project as a whole is distributed under the GPL 3.0
-license, all contributions to the Node Clinic project are submitted *to* the
+While the Clinic.js project as a whole is distributed under the GPL 3.0
+license, all contributions to the Clinic.js project are submitted *to* the
 project under the MIT license. This gives the project maintainers flexibility
 while ensuring that your rights to your contributions do not change.
 
-The Node Clinic project uses a Contribution Certification that is derived from
+The Clinic.js project uses a Contribution Certification that is derived from
 the [Developer Certificate of Origin][DCO]. It is important to note that the
 Contribution Certification *is not the same as the standard DCO* and we do not
 use the term "DCO" or "Developer Certificate of Origin" to describe it to avoid

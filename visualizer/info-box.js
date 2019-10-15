@@ -1,7 +1,6 @@
 'use strict'
 const HtmlContent = require('./html-content.js')
 const getNoDataNode = require('./no-data-node.js')
-const caretUpIcon = require('@nearform/clinic-common/icons/caret-up')
 
 const stripTags = html => html.replace(/(<([^>]+)>)/ig, '')
 
@@ -23,12 +22,6 @@ class InfoBox extends HtmlContent {
       top: 0,
       overall: 0
     }
-
-    this.addCollapseControl(true, {
-      classNames: 'frame-dropdown',
-      htmlElementType: 'button',
-      htmlContent: `<span>0%</span> ${caretUpIcon}`
-    })
   }
 
   initializeElements () {
@@ -50,35 +43,6 @@ class InfoBox extends HtmlContent {
     this.d3FrameArea = this.d3FrameInfo.append('span')
       .classed('frame-info-item', true)
       .classed('frame-area', true)
-
-    this.d3StackInfoTitle = this.d3ContentWrapper
-      .append('h2')
-      .text('Stack info')
-
-    this.d3StackPercentageTop = this.d3ContentWrapper
-      .append('p')
-      .classed('frame-percentage', true)
-      .classed('frame-percentage-top', true)
-      .text('0%')
-
-    this.d3StackPercentageOverall = this.d3ContentWrapper
-      .append('p')
-      .classed('frame-percentage', true)
-      .classed('frame-percentage-overall', true)
-      .text('0%')
-
-    this.d3CollapseButton = this.collapseControl.d3Element
-      .attr('title', 'Show stack info')
-
-    // Close when the user clicks outside the options menu.
-    document.body.addEventListener('click', (event) => {
-      if (!this.collapseClose.isCollapsed &&
-          !this.d3CollapseButton.node().contains(event.target) &&
-          !this.d3ContentWrapper.node().contains(event.target)) {
-        this.collapseClose()
-      }
-    },
-    true)
   }
 
   contentFromNode (node) {

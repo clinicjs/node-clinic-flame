@@ -5,17 +5,21 @@ const htmlContentTypes = require('./html-content-types.js')
 const debounce = require('lodash.debounce')
 const DataTree = require('./data-tree.js')
 const History = require('./history.js')
+const spinner = require('@nearform/clinic-common/spinner')
 
-const button = require('./common/button.js')
 const close = require('@nearform/clinic-common/icons/close')
 
 const TooltipHtmlContent = require('./flame-graph-tooltip-content')
 const getNoDataNode = require('./no-data-node.js')
 
+const { button, walkthroughButton } = require('@nearform/clinic-common/base/index.js')
+const wtSteps = require('./walkthrough-steps.js')
+
 class Ui extends events.EventEmitter {
   constructor (wrapperSelector) {
     super()
 
+    this.flameWrapperSpinner = null
     this.history = new History()
 
     this.dataTree = null
@@ -52,7 +56,8 @@ class Ui extends events.EventEmitter {
       useMerged: this.dataTree.useMerged,
       showOptimizationStatus: this.dataTree.showOptimizationStatus,
       exclude: this.dataTree.exclude,
-      search: this.searchQuery
+      search: this.searchQuery,
+      walkthroughIndex: this.helpButton.WtPlayer.currentStepIndex
     }, opts)
   }
 
@@ -63,7 +68,8 @@ class Ui extends events.EventEmitter {
       search,
       selectedNodeId,
       showOptimizationStatus,
-      zoomedNodeId
+      zoomedNodeId,
+      walkthroughIndex
     } = data
 
     this.setUseMergedTree(useMerged, { pushState: false,
@@ -93,12 +99,15 @@ class Ui extends events.EventEmitter {
 
         this.zoomNode(this.dataTree.getNodeById(zoomedNodeId), { pushState: false })
         this.selectNode(this.dataTree.getNodeById(selectedNodeId), { pushState: false })
-
-        if (search !== this.searchQuery) {
-          this.search(search, { pushState: false })
-        }
       }
     })
+
+    if (search !== this.searchQuery) {
+      this.search(search, { pushState: false })
+    }
+    if (walkthroughIndex !== undefined) {
+      this.helpButton.WtPlayer.skipTo(walkthroughIndex)
+    }
   }
 
   // Temporary e.g. on mouseover, erased on mouseout
@@ -281,16 +290,17 @@ class Ui extends events.EventEmitter {
     })
 
     this.sideBar.addContent('FiltersContent', {
-      classNames: 'filters-options'
+      classNames: 'filters-options',
+      getSpinner: () => this.flameWrapperSpinner
     })
 
-    const footer = this.uiContainer.addContent(undefined, {
+    this.footer = this.uiContainer.addContent(undefined, {
       id: 'footer',
       htmlElementType: 'section'
     })
 
     // mobile search-box
-    this.mSearchBoxWrapper = footer.addContent(undefined, {
+    this.mSearchBoxWrapper = this.footer.addContent(undefined, {
       id: 'm-search-box-wrapper',
       classNames: 'before-bp-2 m-search-box-wrapper'
     })
@@ -299,16 +309,17 @@ class Ui extends events.EventEmitter {
       classNames: 'inline-panel'
     })
 
-    footer.addContent('FiltersContainer', {
+    this.footer.addContent('FiltersContainer', {
       id: 'filters-bar',
-      toggleSideBar: this.toggleSideBar
+      toggleSideBar: this.toggleSideBar,
+      getSpinner: () => this.flameWrapperSpinner
     })
 
     // TODO: add these ↴
     // footer.addContent('FlameGraph', { id: 'flame-chronological' })
     // footer.addContent('TimeFilter')
 
-    let reDrawStackBar = debounce(() => this.stackBar.draw(this.highlightedNode), 200)
+    const reDrawStackBar = debounce(() => this.stackBar.draw(this.highlightedNode), 200)
 
     let scrollContainer = null
     this.scrollSelectedFrameIntoView = debounce(() => {
@@ -382,9 +393,10 @@ class Ui extends events.EventEmitter {
 
   getLabelFromKey (key, singular = false) {
     const keysToLabels = {
-      'app': this.dataTree.appName || 'profiled application',
-      'deps': singular ? 'Dependency' : 'Dependencies',
-      'core': 'Node JS',
+      app: this.dataTree.appName || 'profiled application',
+      deps: singular ? 'Dependency' : 'Dependencies',
+      core: 'Node JS',
+      wasm: 'WebAssembly',
 
       'is:inlinable': 'Inlinable',
       'is:init': 'Init',
@@ -411,12 +423,15 @@ class Ui extends events.EventEmitter {
 
   getDescriptionFromKey (key) {
     const keysToDescriptions = {
-      'core': `JS functions in core Node.js APIs.`,
-      'all-v8': `The JavaScript engine used by default in Node.js. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8')}`,
-      'all-v8:v8': `Operations in V8's implementation of JS. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-runtime')}`,
-      'all-v8:native': `JS compiled into V8, such as prototype methods and eval. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-native')}`,
-      'all-v8:cpp': `Native C++ operations called by V8, including shared libraries. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-cpp')}`,
-      'all-v8:regexp': `The RegExp notation is shown as the function name. ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-regexp')}`
+      app: `<span>Functions in the code of the application being profiled.</span>`,
+      deps: `<span>External modules in the application's node_modules directory.</span>`,
+      core: `<span>JS functions in core Node.js APIs.</span>`,
+      wasm: `<span>Compiled WebAssembly code.</span>`,
+      'all-v8': `<span>The JavaScript engine used by default in Node.js.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8')}`,
+      'all-v8:v8': `<span>Operations in V8's implementation of JS.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-runtime')}`,
+      'all-v8:native': `<span>JS compiled into V8, such as prototype methods and eval.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-native')}`,
+      'all-v8:cpp': `<span>Native C++ operations called by V8, including shared libraries.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-cpp')}`,
+      'all-v8:regexp': `<span>The RegExp notation is shown as the function name.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-regexp')}`
     }
 
     if (keysToDescriptions[key]) {
@@ -432,13 +447,18 @@ class Ui extends events.EventEmitter {
     return null
   }
 
-  setCodeAreaVisibility (codeArea, visible) {
+  setCodeAreaVisibility ({ codeArea, visible, pushState = true, isRecursing = false }) {
     // Apply a single possible change to dataTree.exclude, updating what's necessary
     let isChanged = false
 
     if (codeArea.children && codeArea.children.length) {
-      const childrenChanged = codeArea.children.forEach(child => this.setCodeAreaVisibility(child, visible))
-      this.updateExclusions()
+      const childrenChanged = codeArea.children.forEach(child => this.setCodeAreaVisibility({
+        codeArea: child,
+        visible,
+        pushState: false,
+        isRecursing: true
+      }))
+      this.updateExclusions({ pushState })
       return childrenChanged
     } else {
       const name = codeArea.excludeKey
@@ -450,7 +470,7 @@ class Ui extends events.EventEmitter {
         if (isChanged) this.changedExclusions.toHide.add(name)
       }
 
-      if (isChanged) this.updateExclusions()
+      if (isChanged && !isRecursing) this.updateExclusions({ pushState })
     }
 
     return isChanged
@@ -467,9 +487,7 @@ class Ui extends events.EventEmitter {
 
     const cb = () => {
       if (!initial) this.emit('updateExclusions')
-      if (pushState) {
-        this.pushHistory()
-      }
+      if (pushState) this.pushHistory()
     }
 
     // Zoom out before updating exclusions if the user excludes the node they're zoomed in on
@@ -544,7 +562,8 @@ class Ui extends events.EventEmitter {
     this.exposedCSS = {
       app: computedStyle.getPropertyValue('--area-color-app').trim(),
       deps: computedStyle.getPropertyValue('--area-color-deps').trim(),
-      'core': computedStyle.getPropertyValue('--area-color-core').trim(),
+      core: computedStyle.getPropertyValue('--area-color-core').trim(),
+      wasm: computedStyle.getPropertyValue('--area-color-core').trim(),
       'all-v8': computedStyle.getPropertyValue('--area-color-core').trim(),
 
       'opposite-contrast': computedStyle.getPropertyValue('--opposite-contrast').trim(),
@@ -597,6 +616,19 @@ class Ui extends events.EventEmitter {
         }
       }
     }))
+
+    // walkthrough init
+    this.helpButton = walkthroughButton({
+      steps: wtSteps,
+      onProgress: () => {
+        this.pushHistory()
+      },
+      label: '<span class="before-bp-1">Guide</span><span class="after-bp-1">Show how to use this</span>',
+      title: 'Click to start the step-by-step UI features guide!'
+    })
+    this.footer.d3Element.select('#filters-bar .left-col').append(() => this.helpButton.button)
+
+    this.flameWrapperSpinner = spinner.attachTo(document.querySelector('#flame-main'))
   }
 
   draw () {

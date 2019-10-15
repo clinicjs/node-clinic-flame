@@ -15,6 +15,11 @@
   flex-wrap: wrap;
 }
 
+#helpBtn {
+  display: flex;
+  align-items: stretch;
+}
+
 @media screen and (min-width: 720px) {
   #info-box .frame-info {
     font-size: var(--small-text-size);

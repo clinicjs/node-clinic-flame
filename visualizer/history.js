@@ -108,13 +108,15 @@ class History extends EventEmitter {
     const selectedNodeId = parseInt(params.selectedNode, 10)
     const zoomedNodeId = parseInt(params.zoomedNode, 10)
     const search = params.search || null
+    const walkthroughIndex = params.walkthroughIndex ? parseInt(params.walkthroughIndex) : undefined
     return {
       exclude,
       useMerged,
       showOptimizationStatus,
       selectedNodeId,
       zoomedNodeId,
-      search
+      search,
+      walkthroughIndex
     }
   }
 
@@ -125,7 +127,8 @@ class History extends EventEmitter {
     showOptimizationStatus,
     selectedNodeId,
     zoomedNodeId,
-    search
+    search,
+    walkthroughIndex
   }) {
     const params = {
       selectedNode: selectedNodeId,
@@ -137,6 +140,10 @@ class History extends EventEmitter {
     // the hash with empty strings and falses.
     if (search != null && search !== '') {
       params.search = search
+    }
+
+    if (walkthroughIndex !== undefined) {
+      params.walkthroughIndex = walkthroughIndex
     }
     if (useMerged) {
       params.merged = true

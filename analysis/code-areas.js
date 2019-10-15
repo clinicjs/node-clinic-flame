@@ -36,6 +36,7 @@ function collectCodeAreas (trees) {
     { id: 'deps',
       children: toCodeAreaChildren(depCodeAreas),
       childrenVisibilityToggle: depCodeAreas.size > 2 },
+    { id: 'wasm' },
     { id: 'core' },
     { id: 'all-v8',
       children: [

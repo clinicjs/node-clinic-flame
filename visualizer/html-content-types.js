@@ -15,7 +15,7 @@ module.exports = {
   SelectionControls: require('./selection-controls.js'),
   InfoBox: require('./info-box.js'),
   FiltersContainer: require('./filters-bar.js'),
-  FiltersContent: require('./filters-options.js'),
+  FiltersContent: require('./filters-content.js'),
   SideBar: require('./side-bar.js')
 
   // TODO: add these ↴
