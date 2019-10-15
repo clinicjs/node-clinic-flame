@@ -102,7 +102,7 @@ class StackBar extends HtmlContent {
   }
 
   getNodeAtX (x) {
-    let totalWidth = this.d3StacksWrapper.node().getBoundingClientRect().width
+    const totalWidth = this.d3StacksWrapper.node().getBoundingClientRect().width
 
     let left = 0
     return this.frames.find(frame => {
@@ -117,8 +117,8 @@ class StackBar extends HtmlContent {
     let left = 0
     let margin = 0
     let i = 0
-    let frames = this.frames
-    let totalWidth = this.d3StacksWrapper.node().getBoundingClientRect().width
+    const frames = this.frames
+    const totalWidth = this.d3StacksWrapper.node().getBoundingClientRect().width
     if (!frames || !node) return '0px'
 
     while (!found && i < frames.length - 1) {

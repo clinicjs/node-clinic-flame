@@ -1,0 +1,87 @@
+#filters-bar {
+   align-items     : center;
+   background-color: var(--banner-bg-color);
+   display         : flex;
+   justify-content : space-between;
+   padding         : 8px;
+   position        : relative;
+}
+
+#filters-bar .options-menu-toggle {
+  min-width: 130px;
+}
+
+#filters-bar .col-wrapper {
+  display: flex;
+  min-width: 0;
+}
+#filters-bar .col-wrapper > * {
+  margin: 0 2px;
+  min-width: 0;
+}
+
+.dropdown-content-wrapper {
+  color: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+}
+
+#filters-bar .filter-option {
+  padding: 1px;
+}
+
+#filters-bar .filter-option .label-wrapper {
+  background-color: var(--opposite-contrast);
+}
+
+#filters-bar .filter-option.nc-dropdown > .nc-button .nc-button__inner-container {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+#filters-bar .filter-option .nc-dropdown-content-wrapper {
+  min-width: 100%;
+}
+
+#filters-bar .key-app {
+  color: var(--area-color-app);
+  background-color: var(--area-color-app);
+}
+
+#filters-bar .key-deps {
+  color: var(--area-color-deps);
+  background-color: var(--area-color-deps);
+}
+
+#filters-bar .key-core,
+#filters-bar .key-wasm,
+#filters-bar .key-v8,
+#filters-bar .key-v8 .dropdown-content-wrapper {
+  color: var(--area-color-core);
+  background-color: var(--area-color-core);
+}
+
+#filters-bar .key-app .checkbox-copy-label:before,
+#filters-bar .key-deps .checkbox-copy-label:before,
+#filters-bar .key-core .checkbox-copy-label:before,
+#filters-bar .key-wasm .checkbox-copy-label:before {
+  content: '';
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  background-color: currentColor;
+  vertical-align: text-top;
+  margin-right: 0.3em;
+}
+
+@media screen and (min-width: 630px) {
+  #filters-bar .key-app .checkbox-copy-label:before,
+  #filters-bar .key-deps .checkbox-copy-label:before,
+  #filters-bar .key-core .checkbox-copy-label:before,
+  #filters-bar .key-wasm .checkbox-copy-label:before {
+    display: inline-flex;
+  }
+}
+
+#filters-bar .filter-option .nc-dropdown-content-wrapper .checkbox-copy-label:before {
+  display: none;
+}

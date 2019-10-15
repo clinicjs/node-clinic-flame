@@ -1,0 +1,105 @@
+.filters-content {
+  padding: 1px;
+  box-shadow: 3px 0px 4px -1px rgba(0,0,0,0.7) inset;
+  color: var(--grey-highlight);
+}
+
+.filters-content .nc-accordion > .nc-button {
+  position: relative; /* Appear above button hover */
+  font-size: 1.4rem;
+}
+
+.filters-content .description {
+  color: var(--primary-grey);
+}
+
+.filters-content .nc-accordion.nc-accordion--secondary > .nc-button {
+  /* Solid colors overriding default */
+  --nc-button-bgColor: var(--banner-bg-color);
+  --nc-button-bgHover: var(--banner-bg-color);
+}
+
+.filters-content .nc-accordion.nc-accordion--secondary {
+  margin-top: -8px;
+  padding-right: 8px;
+  text-align: right;
+}
+
+.filters-content .nc-accordion.nc-accordion--secondary .nc-collapsible-container {
+  text-align: left;
+  border-bottom: none;
+  margin-left: 2px;
+}
+
+.filters-content .nc-accordion.nc-accordion--secondary.expanded .nc-collapsible-container {
+  margin-bottom: 8px;
+}
+
+.filters-content .options > li {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.filters-content li>ul {
+  padding-left: 24px;
+}
+
+.filters-content ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.filters-content .section {
+  margin: 1px;
+}
+
+.filters-content .options {
+  padding-bottom: 1em;
+}
+
+.filters-content .options label {
+  align-items: flex-start;
+  background-color: transparent;
+  cursor: pointer;
+  display: flex;
+  line-height: 1.3;
+  padding: 0.7em 5px;
+  width: 100%;
+}
+
+.filters-content .options li.disabled {
+  opacity: 0.3;
+}
+.filters-content .options li.disabled label {
+  cursor: default;
+}
+
+.filters-content .options .app {
+  color: var(--area-color-app);
+}
+
+.filters-content .options .core,
+.filters-content .options .all-v8 {
+  color: var(--area-color-core);
+}
+
+.filters-content .options .deps {
+  color: var(--area-color-deps);
+}
+
+.filters-content .options .description .more-info{
+  color: white;
+  opacity: 0.7;
+  text-decoration: none;
+}
+
+.filters-content .options .description .more-info:hover{
+  opacity: 1;
+}
+
+.filters-content .nc-checkbox .copy-wrapper {
+  flex-grow: 1;
+  white-space: normal;
+}
+
+

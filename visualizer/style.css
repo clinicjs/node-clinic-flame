@@ -1,4 +1,6 @@
 @import '@nearform/clinic-common/styles/styles.css';
+@import '@nearform/clinic-common/base/style.css';
+@import "./walkthrough-steps.css";
 @import "./toolbar.css";
 @import "./stack-bar.css";
 @import "./key.css";
@@ -6,11 +8,12 @@
 @import "./flame-graph.css";
 @import "./message.css";
 @import "./tooltip.css";
-@import "./options-menu.css";
 @import "./selection-controls.css";
 @import "./info-box.css";
 @import "@nearform/clinic-common/spinner/style.css";
-
+@import "./filters-bar.css";
+@import "./filters-content.css";
+@import "./side-bar.css";
 
 html {
   font-family: sans-serif;
@@ -48,19 +51,21 @@ html {
   --banner-bg-color: rgb(var(--banner-bg-color-val));
   --nc-colour-header-background: rgb(var(--banner-bg-color-val));
 
+  --options-menu-bg-color: rgb(15, 18, 26);
   --footer-bg-color: rgb(15, 18, 26);
   --footer-color: rgba(255, 255, 255, 0.9);
 
   --clickable-bg-hover : rgb(15, 15, 15);
 
-  --options-menu-bg-color: rgba(0, 0, 0, 0.85);
-  --options-menu-bg-hover: var(--clickable-bg-hover);
+  --dark-grey-val: 25, 26, 30;
 
   --grey-blue: rgb(76, 92, 138);
   --primary-grey: rgb(121, 122, 124);
   --grey-highlight-color-val: 191, 192, 194;
   --grey-highlight: rgb(var(--grey-highlight-color-val));
   --flame-orange: rgb(255, 170, 43);
+
+
 
   --checkbox-border-color: rgba(var(--grey-highlight-color-val), 0.9);
 
@@ -79,7 +84,32 @@ html {
   /* Define text sizes */
   --main-text-size: 1.2rem;
   --small-text-size: 1rem;
+
+  /* base component style */
+  --nc-button-bgColor: var(--opposite-contrast);
+  --nc-button-color: var(--max-contrast);
+  --nc-button-fontSize: var(--small-text-size);
+  --nc-button-bgHover: var(--clickable-bg-hover);
+  --nc-button-hoverOutline: var(--light-glare);
+
+  /* --nc-link-bgColor */
+  --nc-link-color: rgb(63, 125, 198);
+  --nc-link-fontSize: var(--small-text-size);
+  /* --nc-link-bgHover */
+  /* --nc-link-hoverOutline */
+  
+  --nc-checkbox-bgColor: var(--opposite-contrast);
+  --nc-checkbox-hoverColor: var(--clickable-bg-hover);
+  --nc-checkbox-hoverOutline: var(--light-glare);
+  --nc-checkbox-borderColor: var(--checkbox-border-color);
+  --nc-checkbox-checkedIconColor: var(--max-contrast);
+  --nc-checkbox-indeterminateIconColor: var(--grey-highlight);
+  
+  --nc-dropdown-color: var(--max-contrast);
+  --nc-dropdown-bgColor: var(--opposite-contrast);
+  --nc-dropdown-contentBg: var(--opposite-contrast);
 }
+
 
 /* Overrides for light theme */
 /* just a poc for now... */
@@ -90,6 +120,7 @@ html.light {
   --opposite-contrast: rgb(255, 255, 255);
 
   --banner-bg-color: rgba(0, 0, 0, 0.1);
+  --options-menu-bg-color: rgba(0, 0, 0, 0.1);
   --footer-bg-color: rgba(0, 0, 0, 0.1);
   --footer-color: rgba(0, 0, 0, 0.9);
   --nc-colour-header-background: rgba(0, 0, 0, 0.1);
@@ -107,7 +138,7 @@ html.presentation-mode {
   --area-color-deps: rgb(145, 210, 255);
   --area-color-core: rgb(160, 155, 215);
 
-  --options-menu-bg-hover: rgb(0, 0, 0);
+  --clickable-bg-hover : rgb(0, 0, 0);
 }
 
 /* Main layout */
@@ -146,19 +177,87 @@ html * {
   display: none;
 }
 
+
+/* breakpoints helpers */
+
+.after-bp-1,
+.after-bp-2 {
+  display: none!important;
+}
+
+
+@media screen and (min-width: 630px) {
+  .after-bp-1 {
+    display: inherit!important;
+  }
+  .checkbox .after-bp-1{
+    display: inline!important;
+  }
+
+  .before-bp-1 {
+    display: none!important;
+  }
+}
+
+
+@media screen and (min-width: 930px) {
+  .after-bp-2 {
+    display: inherit!important;
+  }
+  .checkbox .after-bp-2{
+    display: inline!important;
+  }
+
+  .before-bp-2 {
+    display: none!important;
+  }
+}
+
 /* Header */
 
 .nc-header {
   flex-shrink: 0;
 }
 
+div#main-content {
+  display: flex;
+  flex-grow: 1;
+  flex-shrink: 1;
+  overflow: hidden;
+  position: relative;
+  z-index: 0;
+}
+
+
 /* Footer */
 #footer {
   background-color: var(--opposite-contrast);
   color: var(--footer-color);
   flex-shrink: 0;
-  padding: 0 8px 6px;
+  padding: 0;
   border-top: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+#footer .m-search-box-wrapper {
+  display: flex;
+  width: 100%;
+  padding: 10px;
+  background-color: var(--banner-bg-color);
+  border-bottom: 1px solid var(--light-glare);
+  display: none;
+}
+
+#footer .m-search-box-wrapper.show {
+  display: flex;
+}
+
+#footer #m-search-box input{
+  font-size: 1.6rem;
+}
+
+#footer #m-search-box{
+  width: 100%;
+  margin-right: 10px;
 }
 
 /* Layout definition */
@@ -175,34 +274,6 @@ html * {
   flex-shrink: 0;
 }
 
-#one-col-layout .scroll-container {
-  flex-grow: 1;
-  flex-shrink: 1;
-  overflow: auto;
-  position: relative;
-}
-
-.scroll-container::-webkit-scrollbar {
-  width: 13px;
-  background-color: var(--scrollbar-bg);
-}
-
-.scroll-container::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 2px var(--scrollbar-shadow);
-}
-
-.scroll-container::-webkit-scrollbar-thumb {
-  background-color: var(--scrollbar-thumb);
-  outline: 1px solid var(--scrollbar-thumb-outline);
-  border-radius: 2px;
-  box-shadow: 4px 1px 6px -2px var(--light-glare) inset;
-}
-
-@media (pointer: coarse) {
-  .scroll-container::-webkit-scrollbar {
-    width: 30px;
-  }
-}
 /* SVG icons */
 svg.icon-img path {
   /* Default to same fill as adjacent text */
@@ -214,4 +285,50 @@ svg.icon-img {
   width: 1em;
   height: 1em;
   display: block;
+}
+
+
+/* custom accordion style */
+.nc-accordion.nc-accordion--secondary {
+  padding: 0 5px;
+  background-color: transparent;
+  border: none;
+  font-size: 1em;
+}
+
+.nc-accordion.nc-accordion--secondary .nc-collapsible-container {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nc-accordion.nc-accordion--secondary.expanded .nc-collapsible-container {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nc-accordion.nc-accordion--secondary > .nc-button {
+  --nc-button-bgColor: rgba(255, 255, 255, 0.1);
+  --nc-button-bgHover: rgba(255, 255, 255, 0.08);
+  width: auto;
+  font-size: 0.8rem;
+  padding: 0 0.5em;
+}
+
+.nc-accordion.nc-accordion--secondary > .nc-button .nc-button__inner-container {
+  padding-right: 3em;
+}
+
+/* TODO: refine this then migrate it to Clinic Common */
+.pulsing {
+  animation: pulse 0.8s infinite linear;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.5;
+  }
+  80% {
+    opacity: 0.1;
+  }
+  100% {
+    opacity: 0.5;
+  }
 }

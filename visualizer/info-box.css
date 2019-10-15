@@ -27,7 +27,8 @@
   align-items: center;
   justify-content: center;
   min-width: 70px;
-  padding: 2px 8px;
+  padding: 2px 4px;
+  white-space: pre-wrap;
   font-weight: bold;
   background-color: black;
   color: white;
@@ -42,6 +43,11 @@
 #info-box .frame-dropdown span {
   min-width: 36px;
   text-align: left;
+}
+
+#info-box .frame-info strong {
+  color: var(--max-contrast);
+  word-break: break-word;
 }
 
 #info-box .frame-dropdown svg {
@@ -76,6 +82,10 @@
   margin-top: 0;
 }
 
+#info-box .frame-info-item {
+  padding: 0 4px;
+}
+
 #info-box .collapsible-content-wrapper > :last-child {
   margin-bottom: 0;
 }
@@ -97,6 +107,10 @@
 
 #info-box .frame-line-col {
   color: var(--primary-grey);
+}
+
+#info-box .frame-line-col span {
+  display: none;
 }
 
 .visible-md {
@@ -140,6 +154,14 @@
   #info-box .frame-info-item {
     overflow: initial;
     text-overflow: initial;
+  }
+
+  #info-box .frame-info {
+    align-items: center;
+  }
+
+  #info-box .frame-line-col span {
+    display: inline-block;
   }
 }
 

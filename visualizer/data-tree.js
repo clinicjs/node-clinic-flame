@@ -65,7 +65,7 @@ class DataTree {
   sortFramesByHottest (customRootNode) {
     if (customRootNode) {
       // Flattened tree, sorted hottest first, including the root node
-      let frames = getFlatArray(customRootNode.children)
+      const frames = getFlatArray(customRootNode.children)
       this.flatByHottest = this.getFlattenedSorted(this.getStackTopSorter(), [customRootNode].concat(frames))
     } else {
       // Flattened tree, sorted hottest first, excluding the 'all stacks' root node
@@ -118,7 +118,7 @@ class DataTree {
   getFlattenedSorted (sorter, arr) {
     const filtered = arr.filter(node => !this.isNodeExcluded(node))
     if (filtered.length) return filtered.sort(sorter)
-    return [ getNoDataNode() ]
+    return [getNoDataNode()]
   }
 
   getHeatColor (node, arr = this.flatByHottest) {
@@ -167,7 +167,7 @@ class DataTree {
   computeGroupedSortValues () {
     this.groupedSortValues = new Map()
 
-    const completeNodesArray = [ this.activeTree() ].concat(this.activeNodes())
+    const completeNodesArray = [this.activeTree()].concat(this.activeNodes())
 
     completeNodesArray.forEach(node => {
       const group = Object.create(null)
