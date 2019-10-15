@@ -73,6 +73,20 @@ class FiltersContainer extends HtmlContent {
     })
     this.d3DepsCombo = this.d3Center.d3Element.append(() => this.depsDropDown)
 
+    // TODO maybe disable if there are no wasm frames?
+    this.d3WasmCheckBox = this.d3Center.d3Element.append('div')
+      .classed('filter-option', true)
+      .classed('key-wasm', true)
+      .append('div')
+      .classed('label-wrapper', true)
+      .append(() =>
+        checkbox({
+          leftLabel: `<span class='after-bp-1'>WebAssembly</span>
+            <span class='before-bp-1'>WASM</span>`,
+          onChange: e => this.setCodeAreaVisibility('wasm', e.target)
+        })
+      )
+
     // NodeJS checkbox ****
     this.d3NodeCheckBox = this.d3Center.d3Element.append('div')
       .classed('filter-option', true)
@@ -138,12 +152,16 @@ class FiltersContainer extends HtmlContent {
           .find(
             data => data.excludeKey === key
           )
-        this.ui.setCodeAreaVisibility({
-          codeArea: area,
-          visible: checked
-        })
-        this.ui.updateExclusions()
-        this.ui.draw()
+        if (area) {
+          this.ui.setCodeAreaVisibility({
+            codeArea: area,
+            visible: checked
+          })
+          this.ui.updateExclusions()
+          this.ui.draw()
+        } else {
+          console.error('Could not find code area for', key, 'in', this.ui)
+        }
         parent.classList.remove('pulsing')
       }
       , 15)
@@ -169,6 +187,9 @@ class FiltersContainer extends HtmlContent {
         </span>
         <span class='before-bp-2'>App</span>
       `)
+
+    this.d3WasmCheckBox.select('input').node()
+      .checked = !this.ui.dataTree.exclude.has('wasm')
 
     // node js
     this.d3NodeCheckBox.select('input').node()
