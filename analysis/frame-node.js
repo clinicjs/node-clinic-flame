@@ -1,6 +1,7 @@
 const path = require('path')
 
 const jsFrameRx = /^([~*])?((?:\S+?\(anonymous function\)|\S+)?(?: [a-zA-Z]+)*) (.*?):(\d+):(\d+)( \[INIT])?( \[INLINABLE])?$/
+const wasmFrameRx = /^(.*?) \[WASM:(\w+)]$/
 // This one has the /m flag because regexes may contain \n
 const cppFrameRx = /^(.*) (\[CPP]|\[SHARED_LIB]|\[CODE:\w+])( \[INIT])?$/m
 
@@ -24,6 +25,11 @@ class FrameNode {
     this.lineNumber = null
     this.columnNumber = null
 
+    this.isInit = false
+    this.isInlinable = false
+    this.isOptimized = false
+    this.isUnoptimized = false
+
     // Don't try to identify anything for the root node
     if (fixedType) {
       this.category = 'none'
@@ -32,8 +38,8 @@ class FrameNode {
     }
 
     // C++ and v8 functions don't match, but they don't need to
-    const m = this.name.match(jsFrameRx)
-    if (m) {
+    let m
+    if ((m = this.name.match(jsFrameRx))) {
       const [
         input, // eslint-disable-line no-unused-vars
         optimizationFlag,
@@ -53,20 +59,29 @@ class FrameNode {
       this.isInlinable = isInlinable != null
       this.isOptimized = optimizationFlag === '~'
       this.isUnoptimized = optimizationFlag === '*'
+    } else if ((m = this.name.match(cppFrameRx))) {
+      const [
+        input, // eslint-disable-line no-unused-vars
+        functionName,
+        tag,
+        isInit
+      ] = m
+      const isSharedLib = tag === '[SHARED_LIB]'
+      this.functionName = isSharedLib ? '[SHARED_LIB]' : functionName
+      this.fileName = isSharedLib ? functionName : null
+      this.isInit = isInit != null
     } else {
-      const m = this.name.match(cppFrameRx)
-      /* istanbul ignore else: Only triggers if there's a bug */
-      if (m) {
+      /* istanbul ignore else: if none of the regexes we are missing a feature */
+      if ((m = this.name.match(wasmFrameRx))) {
         const [
           input, // eslint-disable-line no-unused-vars
           functionName,
-          tag,
-          isInit
+          optimizationTag
         ] = m
-        const isSharedLib = tag === '[SHARED_LIB]'
-        this.functionName = isSharedLib ? '[SHARED_LIB]' : functionName
-        this.fileName = isSharedLib ? functionName : null
-        this.isInit = isInit != null
+        this.functionName = functionName
+        this.fileName = null
+        this.isOptimized = optimizationTag === 'Opt'
+        this.isUnoptimized = optimizationTag === 'Unopt'
       } else {
         throw new Error(`Encountered an unparseable frame "${this.name}"`)
       }
@@ -89,7 +104,8 @@ class FrameNode {
     const {
       category,
       type
-    } = this.getCoreOrV8Type(name, systemInfo) ||
+    } = this.getWasmType(name) ||
+      this.getCoreOrV8Type(name, systemInfo) ||
       this.getDepType(name, systemInfo) ||
       this.getAppType(name, appName)
 
@@ -114,6 +130,13 @@ class FrameNode {
     }
 
     // TODO: add more cases like this
+  }
+
+  getWasmType (name) {
+    if (/\[WASM:\w+]$/.test(name)) {
+      return { type: 'wasm', category: 'wasm' }
+    }
+    return null
   }
 
   getCoreOrV8Type (name, systemInfo) {
@@ -236,6 +259,7 @@ class FrameNode {
       isUnoptimized: this.isUnoptimized,
       isInlinable: this.isInlinable,
       isInit: this.isInit,
+      isWasm: this.isWasm,
 
       value: this.onStack,
       onStackTop: this.onStackTop,

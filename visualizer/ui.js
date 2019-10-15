@@ -396,6 +396,7 @@ class Ui extends events.EventEmitter {
       app: this.dataTree.appName || 'profiled application',
       deps: singular ? 'Dependency' : 'Dependencies',
       core: 'Node JS',
+      wasm: 'WebAssembly',
 
       'is:inlinable': 'Inlinable',
       'is:init': 'Init',
@@ -425,6 +426,7 @@ class Ui extends events.EventEmitter {
       app: `<span>Functions in the code of the application being profiled.</span>`,
       deps: `<span>External modules in the application's node_modules directory.</span>`,
       core: `<span>JS functions in core Node.js APIs.</span>`,
+      wasm: `<span>Compiled WebAssembly code.</span>`,
       'all-v8': `<span>The JavaScript engine used by default in Node.js.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8')}`,
       'all-v8:v8': `<span>Operations in V8's implementation of JS.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-runtime')}`,
       'all-v8:native': `<span>JS compiled into V8, such as prototype methods and eval.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-native')}`,
@@ -561,6 +563,7 @@ class Ui extends events.EventEmitter {
       app: computedStyle.getPropertyValue('--area-color-app').trim(),
       deps: computedStyle.getPropertyValue('--area-color-deps').trim(),
       core: computedStyle.getPropertyValue('--area-color-core').trim(),
+      wasm: computedStyle.getPropertyValue('--area-color-core').trim(),
       'all-v8': computedStyle.getPropertyValue('--area-color-core').trim(),
 
       'opposite-contrast': computedStyle.getPropertyValue('--opposite-contrast').trim(),
