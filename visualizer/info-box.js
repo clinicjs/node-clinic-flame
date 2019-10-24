@@ -1,4 +1,5 @@
 'use strict'
+const d3 = require('./d3.js')
 const HtmlContent = require('./html-content.js')
 const getNoDataNode = require('./no-data-node.js')
 const caretUpIcon = require('@nearform/clinic-common/icons/caret-up')
@@ -7,9 +8,16 @@ const stripTags = html => html.replace(/(<([^>]+)>)/ig, '')
 
 const addResponsiveSpan = str => `<span class="visible-md">${str}</span>`
 
+const wrapTooltipText = text =>
+  d3.create('span')
+    .classed('tooltip-default-message', true)
+    .text(text)
+    .node()
+
 class InfoBox extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
     super(parentContent, contentProperties)
+    this.tooltip = contentProperties.customTooltip
 
     const {
       functionName,
@@ -42,14 +50,26 @@ class InfoBox extends HtmlContent {
     this.d3FrameFunction = this.d3FrameInfo.append('strong')
       .classed('frame-info-item', true)
       .classed('frame-function', true)
+    this.tooltip.attach({
+      msg: () => wrapTooltipText(this.functionText),
+      d3TargetElement: this.d3FrameFunction
+    })
 
     this.d3FramePath = this.d3FrameInfo.append('span')
       .classed('frame-info-item', true)
       .classed('frame-path', true)
+    this.tooltip.attach({
+      msg: () => wrapTooltipText(stripTags(this.pathHtml)),
+      d3TargetElement: this.d3FramePath
+    })
 
     this.d3FrameArea = this.d3FrameInfo.append('span')
       .classed('frame-info-item', true)
       .classed('frame-area', true)
+    this.tooltip.attach({
+      msg: () => wrapTooltipText(stripTags(this.areaHtml)),
+      d3TargetElement: this.d3FrameArea
+    })
 
     this.d3StackInfoTitle = this.d3ContentWrapper
       .append('h2')
@@ -146,15 +166,12 @@ class InfoBox extends HtmlContent {
 
     this.d3FrameFunction
       .text(this.functionText)
-      .attr('title', this.functionText)
 
     this.d3FramePath
       .html(this.pathHtml)
-      .attr('title', stripTags(this.pathHtml))
 
     this.d3FrameArea
       .html(this.areaHtml)
-      .attr('title', stripTags(this.areaHtml))
       .style('color', this.areaHtmlColour)
 
     this.d3CollapseButton
