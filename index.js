@@ -147,7 +147,7 @@ class ClinicFlame extends events.EventEmitter {
       headerText: 'Flame',
       nearFormLogo: nearFormLogoFile,
       uploadId: outputFilename.split('/').pop().split('.html').shift(),
-      body: `<main></main>`
+      body: '<main></main>'
     })
 
     pump(
