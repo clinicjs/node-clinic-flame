@@ -20,6 +20,8 @@
   overflow: hidden;
   background-color: rgba(var(--opposite-color-val), 0.5);
   color: var(--grey-highlight);
+  /* make sure the text has enough space as dictated by `height` */
+  box-sizing: content-box;
 }
 
 #info-box .frame-dropdown {
@@ -117,6 +119,11 @@
   display: none;
 }
 
+#ui-tooltip .frame-tooltip {
+  width: 100vw;
+  max-width: 100vw;
+}
+
 @media (min-width: 680px) {
   #info-box .frame-info {
     flex-direction: row;
@@ -162,6 +169,12 @@
 
   #info-box .frame-line-col span {
     display: inline-block;
+  }
+
+  #ui-tooltip .frame-tooltip {
+    width: 33vw;
+    width: max-content;
+    max-width: none;
   }
 }
 

@@ -10,7 +10,7 @@ const addResponsiveSpan = str => `<span class="visible-md">${str}</span>`
 
 const wrapTooltipText = text =>
   d3.create('span')
-    .classed('tooltip-default-message', true)
+    .classed('tooltip-default-message frame-tooltip', true)
     .text(text)
     .node()
 
