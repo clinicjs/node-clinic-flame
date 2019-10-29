@@ -13,7 +13,7 @@ module.exports = ({ leftLabel, rightLabel, classNames = [], checked = false, dis
         >
         ${leftLabel ? `
         <span class="copy-wrapper">
-          ${leftLabel}
+          <span class="checkbox-copy-label">${leftLabel}</span>
         </span>` : ``}
         
         <span class="icon-wrapper">
@@ -23,7 +23,7 @@ module.exports = ({ leftLabel, rightLabel, classNames = [], checked = false, dis
         </span>
         ${rightLabel ? `
         <span class="copy-wrapper">
-          ${rightLabel}
+          <span class="checkbox-copy-label">${rightLabel}</span>
         </span>` : ``}
     `
   const input = wrappingLabel.querySelector('input')

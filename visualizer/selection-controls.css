@@ -9,19 +9,7 @@
 }
 
 #selection-controls .hotness-selector {
-  padding: 4px 8px;
   margin-right: 4px;
-  background-color: var(--opposite-contrast);
-  color: var(--max-contrast);
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  line-height: 1;
-}
-#selection-controls button.hotness-selector:hover:not(:disabled) {
-  background-color: var(--clickable-bg-hover);
-  outline: 1px dotted var(--light-glare);  
 }
 
 #selection-controls .rank-wrapper {
@@ -38,13 +26,6 @@
   height: 100%;
 }
 
-#selection-controls svg{
-  font-size: 1.5em;
-}
-#selection-controls .next-btn span{
-  margin-right: .5em;
-}
-
 #selection-controls .hotness-selector,
 #selection-controls label {
   font-size: var(--small-text-size);
@@ -55,7 +36,7 @@
 }
 
 .visible-from-bp-1,
-.visible-from-bp-2{
+.visible-from-bp-2 .label{
   display: none;
 }
 
@@ -66,7 +47,7 @@
 }
 
 @media screen and (min-width: 680px) {
-  .visible-from-bp-2 {
+  .visible-from-bp-2 .label{
     display: initial;
   }
 }

@@ -1,4 +1,7 @@
 @import '@nearform/clinic-common/styles/styles.css';
+@import "./common/button.css";
+@import "./common/checkbox.css";
+@import "./common/drop-down.css";
 @import "./toolbar.css";
 @import "./stack-bar.css";
 @import "./key.css";
@@ -6,11 +9,12 @@
 @import "./flame-graph.css";
 @import "./message.css";
 @import "./tooltip.css";
-@import "./options-menu.css";
 @import "./selection-controls.css";
 @import "./info-box.css";
 @import "@nearform/clinic-common/spinner/style.css";
-
+@import "./filters-bar.css";
+@import "./filters-options.css";
+@import "./side-bar.css";
 
 html {
   font-family: sans-serif;
@@ -53,14 +57,15 @@ html {
 
   --clickable-bg-hover : rgb(15, 15, 15);
 
-  --options-menu-bg-color: rgba(0, 0, 0, 0.85);
-  --options-menu-bg-hover: var(--clickable-bg-hover);
+  --dark-grey-val: 25, 26, 30;
 
   --grey-blue: rgb(76, 92, 138);
   --primary-grey: rgb(121, 122, 124);
   --grey-highlight-color-val: 191, 192, 194;
   --grey-highlight: rgb(var(--grey-highlight-color-val));
   --flame-orange: rgb(255, 170, 43);
+
+
 
   --checkbox-border-color: rgba(var(--grey-highlight-color-val), 0.9);
 
@@ -107,7 +112,7 @@ html.presentation-mode {
   --area-color-deps: rgb(145, 210, 255);
   --area-color-core: rgb(160, 155, 215);
 
-  --options-menu-bg-hover: rgb(0, 0, 0);
+  --clickable-bg-hover : rgb(0, 0, 0);
 }
 
 /* Main layout */
@@ -146,19 +151,87 @@ html * {
   display: none;
 }
 
+
+/* breakpoints helpers */
+
+.after-bp-1,
+.after-bp-2 {
+  display: none!important;
+}
+
+
+@media screen and (min-width: 630px) {
+  .after-bp-1 {
+    display: inherit!important;
+  }
+  .checkbox .after-bp-1{
+    display: inline!important;
+  }  
+
+  .before-bp-1 {
+    display: none!important;
+  }
+}
+
+
+@media screen and (min-width: 930px) {
+  .after-bp-2 {
+    display: inherit!important;
+  }
+  .checkbox .after-bp-2{
+    display: inline!important;
+  }  
+
+  .before-bp-2 {
+    display: none!important;
+  }
+}
+
 /* Header */
 
 .nc-header {
   flex-shrink: 0;
 }
 
+div#main-content {
+  display: flex;
+  flex-grow: 1;
+  flex-shrink: 1;
+  overflow: hidden;
+  position: relative;    
+  z-index: 0;
+}
+
+
 /* Footer */
 #footer {
   background-color: var(--opposite-contrast);
   color: var(--footer-color);
   flex-shrink: 0;
-  padding: 0 8px 6px;
+  padding: 0;
   border-top: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+#footer .m-search-box-wrapper {
+  display: flex;
+  width: 100%;
+  padding: 10px;
+  background-color: var(--banner-bg-color);
+  border-bottom: 1px solid var(--light-glare);
+  display: none;
+}
+
+#footer .m-search-box-wrapper.show {
+  display: flex;
+}
+
+#footer #m-search-box input{
+  font-size: 1.6rem;
+}
+
+#footer #m-search-box{
+  width: 100%;
+  margin-right: 10px;
 }
 
 /* Layout definition */
@@ -179,6 +252,7 @@ html * {
   flex-grow: 1;
   flex-shrink: 1;
   overflow: auto;
+  overflow-x: hidden;
   position: relative;
 }
 
