@@ -121,7 +121,7 @@ class Tooltip extends HtmlContent {
 
     clearTimeout(this.tooltipHandler)
 
-    let ttLeft = x + width / 2
+    let ttLeft = x
     const ttTop = y + (verticalAlign === 'bottom' ? height : 0)
 
     if (pointerCoords) {
@@ -151,6 +151,12 @@ class Tooltip extends HtmlContent {
     // then checking the outer element right edge
     if (outerRect) {
       deltaX = (ttLeft - deltaX + ttWidth > outerRect.right) ? alignRight : deltaX
+    }
+
+    // if it doesn't fit either way, attach to the very left edge of the viewport
+    // so it has as much space as possible
+    if (ttLeft - deltaX < 0) {
+      deltaX = ttLeft
     }
 
     this.d3TooltipInner

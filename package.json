@@ -29,7 +29,7 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "0x": "^4.9.1",
-    "@nearform/clinic-common": "^2.0.0",
+    "@nearform/clinic-common": "^2.2.0",
     "copy-to-clipboard": "^3.0.8",
     "d3-array": "^2.0.2",
     "d3-fg": "^6.13.1",

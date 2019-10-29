@@ -30,6 +30,9 @@ class DataTree {
     this.maxRootAboveMean = 0
     this.maxRootBelowMean = 0
 
+    // Set by countTotalFrames
+    this.totalFrames = null
+
     this.setStackTop = shared.setStackTop.bind(this)
     this.isNodeExcluded = shared.isNodeExcluded.bind(this)
   }
