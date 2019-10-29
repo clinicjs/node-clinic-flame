@@ -28,7 +28,7 @@
   "author": "",
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "0x": "^4.7.2",
+    "0x": "^4.9.1",
     "@nearform/clinic-common": "^2.0.0",
     "copy-to-clipboard": "^3.0.8",
     "d3-array": "^2.0.2",
@@ -42,7 +42,8 @@
     "rimraf": "^2.6.3"
   },
   "devDependencies": {
-    "chokidar": "^2.0.4",
+    "chokidar": "^3.0.2",
+    "murmur3hash-wasm": "1.0.1",
     "snazzy": "^8.0.0",
     "standard": "^13.0.0",
     "tap": "^12.0.0"

@@ -6,6 +6,8 @@ const chevronLeft = require('@nearform/clinic-common/icons/chevron-left')
 const chevronRight = require('@nearform/clinic-common/icons/chevron-right')
 const chevronRightLast = require('@nearform/clinic-common/icons/chevron-right-last')
 
+const button = require('@nearform/clinic-common/base/button.js')
+
 class SelectionControls extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
     super(parentContent, contentProperties)
@@ -72,13 +74,12 @@ class SelectionControls extends HtmlContent {
     super.initializeElements()
 
     // Initialize controls
-    this.d3SelectHottest = this.d3Element.append('button')
-      .classed('hotness-selector', true)
-      .html(`${chevronLeftFirst}`)
-      .on('click', () => {
-        this.selectByRank(0)
-      })
 
+    this.d3SelectHottest = this.d3Element.append(() => button({
+      rightIcon: chevronLeftFirst,
+      classNames: ['hotness-selector'],
+      onClick: () => this.selectByRank(0)
+    }))
     this.tooltip.attach({
       msg: 'Select the hottest frame (meaning, most time at the top of the stack)',
       d3TargetElement: this.d3SelectHottest,
@@ -87,13 +88,11 @@ class SelectionControls extends HtmlContent {
       }
     })
 
-    this.d3SelectHotter = this.d3Element.append('button')
-      .classed('hotness-selector', true)
-      .html(`${chevronLeft}`)
-      .on('click', () => {
-        this.selectByRank(this.rankNumber - 1)
-      })
-
+    this.d3SelectHotter = this.d3Element.append(() => button({
+      rightIcon: chevronLeft,
+      classNames: ['hotness-selector'],
+      onClick: () => this.selectByRank(this.rankNumber - 1)
+    }))
     this.tooltip.attach({
       msg: 'Select the frame before the selected frame when ranked from hottest to coldest',
       d3TargetElement: this.d3SelectHotter,
@@ -107,18 +106,17 @@ class SelectionControls extends HtmlContent {
     d3RankWrapper.append('label').text('#')
 
     this.d3SelectNumber = d3RankWrapper.append('input')
-      .classed('hotness-selector', true)
+      .classed('hotness-selector button', true)
       .property('value', this.rankNumber)
 
     this.d3FramesCount = d3RankWrapper.append('label').html('<span class="visible-from-bp-2">hottest frame, </span> ').append('span')
 
-    this.d3SelectCooler = this.d3Element.append('button')
-      .classed('hotness-selector next-btn', true)
-      .html(`<span class="visible-from-bp-2">Next hottest</span>${chevronRight}`)
-      .on('click', () => {
-        this.selectByRank(this.rankNumber + 1)
-      })
-
+    this.d3SelectCooler = this.d3Element.append(() => button({
+      rightIcon: chevronRight,
+      label: `Next hottest`,
+      classNames: ['hotness-selector', 'visible-from-bp-2'],
+      onClick: () => this.selectByRank(this.rankNumber + 1)
+    }))
     this.tooltip.attach({
       msg: 'Select the frame after the selected frame when ranked from hottest to coldest',
       d3TargetElement: this.d3SelectCooler,
@@ -127,13 +125,11 @@ class SelectionControls extends HtmlContent {
       }
     })
 
-    this.d3SelectColdest = this.d3Element.append('button')
-      .classed('hotness-selector', true)
-      .html(`${chevronRightLast}`)
-      .on('click', () => {
-        this.selectByRank('last')
-      })
-
+    this.d3SelectColdest = this.d3Element.append(() => button({
+      rightIcon: chevronRightLast,
+      classNames: ['hotness-selector'],
+      onClick: () => this.selectByRank('last')
+    }))
     this.tooltip.attach({
       msg: 'Select the coldest frame (meaning, least time at the top of the stack)',
       d3TargetElement: this.d3SelectColdest,

@@ -108,3 +108,32 @@ test('cmd - test collect - system info, data files and html', function (t) {
     }
   )
 })
+
+test('cmd - test collect - does not crash on webassembly frames', function (t) {
+  const tool = new ClinicFlame()
+
+  function cleanup (err, dirname) {
+    t.ifError(err)
+    t.match(dirname, /^[0-9]+\.clinic-flame$/)
+    rimraf(dirname, (err) => {
+      t.ifError(err)
+      t.end()
+    })
+  }
+
+  tool.collect(
+    [process.execPath, path.join('test', 'fixtures', 'wasm.js')],
+    function (err, dirname) {
+      if (err) return cleanup(err, dirname)
+
+      const basename = path.basename(dirname)
+      const systeminfo = JSON.parse(fs.readFileSync(path.join(dirname, `${basename}-systeminfo`)))
+      // check that samples data and inlined function data exists and is valid JSON
+      JSON.parse(fs.readFileSync(path.join(dirname, `${basename}-samples`)))
+      JSON.parse(fs.readFileSync(path.join(dirname, `${basename}-inlinedfunctions`)))
+
+      t.ok(fs.statSync(systeminfo.mainDirectory).isDirectory())
+      cleanup(null, dirname)
+    }
+  )
+})

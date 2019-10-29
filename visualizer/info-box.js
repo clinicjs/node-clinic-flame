@@ -14,6 +14,10 @@ class InfoBox extends HtmlContent {
     this.functionText = functionName
     this.pathHtml = fileName
     this.areaText = 'Processing data...'
+    this.stackPercentages = {
+      top: 0,
+      overall: 0
+    }
   }
 
   initializeElements () {
@@ -43,12 +47,20 @@ class InfoBox extends HtmlContent {
       return
     }
 
+    // Todo: Use visibleRootValue when ready
+    const totalValue = this.ui.dataTree.activeTree().value
+
+    this.stackPercentages = {
+      top: Math.round(100 * (node.onStackTop.asViewed / totalValue) * 10) / 10,
+      overall: Math.round(100 * (node.value / totalValue) * 10) / 10
+    }
+
     this.functionText = node.functionName
 
-    this.pathHtml = node.fileName
+    this.pathHtml = node.fileName || ''
     if (node.lineNumber && node.columnNumber) {
       // Two spaces (in <pre> tag) so this is visually linked to but distinct from main path, including when wrapped
-      this.pathHtml += `  <span class="frame-line-col">line:${node.lineNumber} column:${node.columnNumber}</span>`
+      this.pathHtml += `<span class="frame-line-col"><span>  line</span>:${node.lineNumber}<span> column</span>:${node.columnNumber}</span>`
     }
 
     this.rankNumber = this.ui.dataTree.getSortPosition(node)
@@ -75,9 +87,9 @@ class InfoBox extends HtmlContent {
   draw () {
     super.draw()
 
-    this.d3FrameFunction.text(this.functionText)
-    this.d3FramePath.html(this.pathHtml)
-    this.d3FrameArea.text(this.areaText)
+    this.d3FrameFunction.text(this.functionText).attr('title', this.functionText)
+    this.d3FramePath.html(this.pathHtml).attr('title', this.pathHtml.replace(/(<([^>]+)>)/ig, ''))
+    this.d3FrameArea.text(this.areaText).attr('title', this.areaText)
   }
 }
 

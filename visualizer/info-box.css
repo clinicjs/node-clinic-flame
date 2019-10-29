@@ -1,13 +1,18 @@
+#info-box {
+  position: relative;
+}
+
 #info-box .frame-info {
   background-color: rgba(var(--opposite-color-val), 0.5);
   color: var(--grey-highlight);
   display: flex;
+  flex-grow: 1;
   font-size: var(--normal-text-size);
   line-height: 1.1;
   height: 2.9em;
   margin: 0;
   overflow: hidden;
-  padding: 2px 8px;
+  padding: 2px 4px;
   white-space: pre-wrap;
 }
 
@@ -15,6 +20,7 @@
   height: auto;
   min-height: 2.9em;
 }
+
 
 #info-box .frame-info strong {
   color: var(--max-contrast);
@@ -32,7 +38,7 @@
 }
 
 #info-box .frame-info-item {
-  padding: 0 8px;
+  padding: 0 4px;
 }
 
 #info-box .frame-info .frame-path {
@@ -63,9 +69,21 @@
 
 #info-box .frame-line-col {
   color: var(--primary-grey);
-  white-space: nowrap;
 }
 
+#info-box .frame-line-col span {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  #info-box .frame-info {
+    align-items: center;
+  }
+
+  #info-box .frame-line-col span {
+    display: inline-block;
+  }
+}
 
 /* presentation mode */
 .presentation-mode #info-box .frame-info {

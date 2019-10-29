@@ -53,6 +53,18 @@ test('analysis - categorise node names', (t) => {
     isInit: false,
     isInlinable: true
   })
+  t.match(byProps({ name: 'wasm-function[0] [WASM:Opt]' }, linux), {
+    category: 'wasm',
+    type: 'wasm',
+    fileName: null,
+    isOptimized: true
+  })
+  t.match(byProps({ name: 'ressa::Parser<CH>::parse_statement_list_item::ha21ba52d257287dd [WASM:Opt]' }, linux), {
+    category: 'wasm',
+    type: 'wasm',
+    fileName: null,
+    isOptimized: true
+  })
 
   t.equal(byName('/usr/bin/node [SHARED_LIB]', linux), 'cpp')
   t.equal(byName('C:\\Program Files\\nodejs\\node.exe [SHARED_LIB]', windows), 'cpp')
