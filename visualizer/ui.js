@@ -155,6 +155,7 @@ class Ui extends events.EventEmitter {
       this.pushHistory()
     }
     this.scrollSelectedFrameIntoView()
+    this.showNodeInfo(this.selectedNode)
   }
 
   clearSearch ({ pushState = true } = {}) {

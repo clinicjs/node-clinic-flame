@@ -40,10 +40,35 @@
   flex-shrink: 0;
 }
 
+#info-box .frame-zoom-button{
+  background-color: transparent;
+  border: 1px solid rgba(255,255,255,0.5);
+  outline: none;
+  border: none;
+  cursor: pointer;
+  color: var(--max-contrast);
+  padding: 2px 4px;
+}
+
+#info-box .frame-zoom-button .icon-img{
+  font-size: 1.2em;
+  flex-shrink: 0;
+  margin-right: 0.2em;
+}
+
+#info-box .frame-function .text-wrapper {
+  display: flex;
+  align-items: center;
+}
+
 /* Share space, with the file path always starting in a consistent position, */
 /* unless function name is unusually long, in which case it shrinks to fit */
 #info-box .frame-function {
   flex-grow: 0;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  font-size: var(--normal-text-size);
 }
 
 #info-box .frame-path,
