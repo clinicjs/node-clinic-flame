@@ -15,6 +15,13 @@
   flex-wrap: wrap;
 }
 
+#toolbar-side-panel {
+  margin: 8px 8px 0px;
+  flex-grow: 0;
+  display: flex;
+  align-items: stretch;
+}
+
 #helpBtn {
   display: flex;
   align-items: stretch;
@@ -24,4 +31,10 @@
   #info-box .frame-info {
     font-size: var(--small-text-size);
   }
+}
+
+/* presentation mode */
+.presentation-mode #toolbar-side-panel {
+  background-color: transparent;
+  padding: 0px;
 }
