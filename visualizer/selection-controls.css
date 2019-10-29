@@ -2,26 +2,8 @@
   display: flex;
 }
 
-#selection-controls .hotness-selector:disabled {
-  color: var(--primary-grey);
-  cursor: auto;
-  background: rgba(var(--opposite-color-val), 0.5);
-}
-
 #selection-controls .hotness-selector {
-  padding: 4px 8px;
   margin-right: 4px;
-  background-color: var(--opposite-contrast);
-  color: var(--max-contrast);
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  line-height: 1;
-}
-#selection-controls button.hotness-selector:hover:not(:disabled) {
-  background-color: var(--clickable-bg-hover);
-  outline: 1px dotted var(--light-glare);  
 }
 
 #selection-controls .rank-wrapper {
@@ -32,17 +14,13 @@
 }
 
 #selection-controls input.hotness-selector {
-  width: 3.3em;
+  background-color: var(--opposite-contrast);
+  border: none;
+  color: var(--max-contrast);
+  height: 100%;
   padding: 0;
   text-align: center;
-  height: 100%;
-}
-
-#selection-controls svg{
-  font-size: 1.5em;
-}
-#selection-controls .next-btn span{
-  margin-right: .5em;
+  width: 3.3em;
 }
 
 #selection-controls .hotness-selector,
@@ -55,7 +33,7 @@
 }
 
 .visible-from-bp-1,
-.visible-from-bp-2{
+.visible-from-bp-2 .label {
   display: none;
 }
 
@@ -66,7 +44,7 @@
 }
 
 @media screen and (min-width: 680px) {
-  .visible-from-bp-2 {
+  .visible-from-bp-2 .label {
     display: initial;
   }
 }

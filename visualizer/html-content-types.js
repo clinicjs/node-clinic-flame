@@ -10,11 +10,13 @@ module.exports = {
   Key: require('./key.js'),
   FlameGraph: require('./flame-graph.js'),
   Tooltip: require('./tooltip.js'),
-  OptionsMenu: require('./options-menu.js'),
   SearchBox: require('./search-box.js'),
   StackBar: require('./stack-bar.js'),
   SelectionControls: require('./selection-controls.js'),
-  InfoBox: require('./info-box.js')
+  InfoBox: require('./info-box.js'),
+  FiltersContainer: require('./filters-bar.js'),
+  FiltersContent: require('./filters-content.js'),
+  SideBar: require('./side-bar.js')
 
   // TODO: add these ↴
   // FrameInfo: require('./frame-info.js'),

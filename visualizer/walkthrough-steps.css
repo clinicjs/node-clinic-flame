@@ -1,0 +1,23 @@
+.nc-walkthrough-content .scrollable {
+  max-height: 200px;
+  overflow: auto;
+}
+
+.nc-walkthrough-content .welcome-step {
+  display: flex;
+  align-items: center;
+  margin-top: 0;
+}
+
+.nc-walkthrough-content .icon {
+  margin: -4px 8px 0 -4px;
+}
+
+.nc-walkthrough-content ul,
+.nc-walkthrough-content ol {
+  padding-left: 1.5em;
+}
+
+.nc-walkthrough-content li {
+  margin: 0.5em 0;
+}

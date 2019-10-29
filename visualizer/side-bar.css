@@ -1,0 +1,164 @@
+#side-bar {
+  --anim-duration : 0.3s;
+  --min-width     : 300px;
+  --width         : 25vw;
+
+  --height        : 100%;
+  
+  background-color: rgba(var(--dark-grey-val), 0.95);
+  bottom          : 0px;
+  display         : none;
+  left            : 0px;
+  overflow        : hidden;
+  position        : absolute;
+  right           : 0px;
+  height          : var(--height);
+  z-index         : 10;
+  font-size       : 1.4rem;
+
+  border-top      : 1px solid var(--light-glare);
+}
+
+#side-bar .filters-options{
+  overflow: auto;
+  height: 100%;
+}
+
+#side-bar.expand{
+  display: block;
+  animation: var(--anim-duration) sidebar-expand;
+}
+
+
+#side-bar.expand>*{
+  animation: var(--anim-duration) sidebar-slidein;
+}
+
+#side-bar.contract{
+  display: block;
+  animation: var(--anim-duration) side-bar-contract;
+}
+
+#side-bar.contract>*{
+  animation: var(--anim-duration) sidebar-slideout;
+}
+
+
+
+@media screen and (min-width: 630px){
+  #side-bar {
+    border-top : none;
+    flex-shrink: 0;
+    font-size  : 1rem;
+    height     : auto;
+    position   : relative;
+    top        : auto;
+    width      : var(--width);
+  }
+
+  #side-bar.expand{
+    animation: var(--anim-duration) sidebar-expand;
+    min-width: var(--min-width);
+  }
+  
+  #side-bar>*{
+    width: var(--width);
+    min-width: var(--min-width);
+  }  
+}
+
+
+/* side-bar animation */
+@keyframes sidebar-slidein {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes sidebar-slideout {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@media screen and (min-width: 630px){
+  @keyframes sidebar-slidein {
+    0% {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+  
+    100% {
+      transform: translateX(0%);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes sidebar-slideout {
+    0% {
+      transform: translateX(0%);
+      opacity: 1;
+    }
+  
+    100% {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+  }  
+}
+
+
+
+@keyframes sidebar-expand {
+  0% {
+    height: 0%;
+  }
+  
+  100% {
+    height: var(--height);
+  }
+}
+
+@keyframes side-bar-contract {
+  0% {
+    height: var(--height);
+  }
+  
+  100% {
+    height: 0%;
+  }
+}
+
+@media screen and (min-width: 630px){
+  @keyframes sidebar-expand {
+    0% {
+      width: 0%;
+      min-width: 0px;
+    }
+    
+    100% {
+      width: var(--width);
+      min-width: var(--min-width);
+    }
+  }
+
+  @keyframes side-bar-contract {
+    0% {
+      width: var(--width);
+      min-width: var(--min-width);
+    }
+    
+    100% {
+      width: 0%;
+      min-width: 0px;
+    }
+  }
+}

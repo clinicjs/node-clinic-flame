@@ -10,40 +10,21 @@
 
 #toolbar-top-panel {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   margin: 8px;
   flex-wrap: wrap;
 }
 
-#selection-controls,
 #toolbar-side-panel {
   margin: 8px 8px 0px;
-}
-
-#toolbar-side-panel {
   flex-grow: 0;
   display: flex;
-  position: relative;
-  min-width: 25em;
+  align-items: stretch;
 }
 
-#toolbar-side-panel #options-menu{
-  flex-grow: 1;
-}
-
-#toolbar-side-panel #search-box{
-  flex-shrink: 0;
-}
-
-
-@media screen and (min-width: 500px) {
-  #selection-controls,
-  #toolbar-side-panel {
-    margin: 0px;
-  }
-  #toolbar-top-panel {
-    justify-content: space-between;
-  }
+#helpBtn {
+  display: flex;
+  align-items: stretch;
 }
 
 @media screen and (min-width: 720px) {

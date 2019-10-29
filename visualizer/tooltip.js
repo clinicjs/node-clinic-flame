@@ -1,6 +1,7 @@
 'use strict'
 
 const HtmlContent = require('./html-content.js')
+const { toHtml } = require('@nearform/clinic-common/base/helpers.js')
 
 class Tooltip extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {
@@ -66,11 +67,12 @@ class Tooltip extends HtmlContent {
   hide ({ delay = this.hideDelay, callback } = {}) {
     clearTimeout(this.tooltipHandler)
 
-    // Callback will be called on next hide, even if this timeout cleared, e.g. moving mouse from frame to tooltip
+    // Callback will be called next hide, even if this timeout cleared, e.g. moving mouse from frame to tooltip
     if (callback) this.onHideCallback = callback
 
     this.tooltipHandler = setTimeout(() => {
       this.isHidden = true
+
       this.draw()
       if (this.onHideCallback) {
         this.onHideCallback()
@@ -79,7 +81,14 @@ class Tooltip extends HtmlContent {
     }, delay)
   }
 
-  toggle (props, show = !this.isHidden) {
+  toggle (props, show = this.isHidden) {
+    if (this.onHideCallback) {
+      const opt = Object.assign({}, props, { delay: 0 })
+      this.hide(opt)
+    }
+    // Callback will be called next hide, even if this timeout cleared, e.g. moving mouse from frame to tooltip
+    if (props.callback && this.onHideCallback !== props.callback) this.onHideCallback = props.callback
+
     if (show) {
       this.show(props)
     } else {
@@ -91,7 +100,7 @@ class Tooltip extends HtmlContent {
     // returns if the tooltip is hidden
     if (this.isHidden) return
 
-    const msgHtmlNode = getMsgHtml(msg)
+    const msgHtmlNode = toHtml(msg, 'tooltip-default-message')
 
     this.d3TooltipInner.classed('top bottom', false)
     this.d3TooltipInner.classed(verticalAlign, true)
@@ -112,7 +121,7 @@ class Tooltip extends HtmlContent {
 
     clearTimeout(this.tooltipHandler)
 
-    let ttLeft = x + width / 2
+    let ttLeft = x
     const ttTop = y + (verticalAlign === 'bottom' ? height : 0)
 
     if (pointerCoords) {
@@ -144,6 +153,12 @@ class Tooltip extends HtmlContent {
       deltaX = (ttLeft - deltaX + ttWidth > outerRect.right) ? alignRight : deltaX
     }
 
+    // if it doesn't fit either way, attach to the very left edge of the viewport
+    // so it has as much space as possible
+    if (ttLeft - deltaX < 0) {
+      deltaX = ttLeft
+    }
+
     this.d3TooltipInner
       .style('left', `-${deltaX}px`)
       .style('max-width', outerRect ? `${outerRect.width}px` : 'auto')
@@ -152,30 +167,6 @@ class Tooltip extends HtmlContent {
   draw () {
     super.draw()
   }
-}
-
-function getMsgHtml (msg) {
-  switch (typeof msg) {
-    case 'string':
-      var node = document.createElement('DIV')
-      node.className = 'tooltip-default-message'
-      node.textContent = msg
-      return node
-
-    case 'function':
-      return getMsgHtml(msg())
-
-    case 'object':
-      if (msg.nodeType === 1) {
-        // it is an HTMLElement
-        if (msg.classList.length === 0) {
-          msg.className = 'tooltip-default-message'
-        }
-        return msg
-      }
-  }
-
-  throw new TypeError('The provided content is not a String nor an HTMLElement ')
 }
 
 module.exports = Tooltip
