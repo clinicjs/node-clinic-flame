@@ -11,10 +11,11 @@
     "visualize-watch": "node debug/visualize-watch.js",
     "visualize-all": "node debug/visualize-all.js",
     "test": "npm run lint && tap --timeout=50 --100 test/*.test.js",
-    "ci-lint": "npm run lint",
+    "ci-lint": "standard | snazzy && npm run stylelint",
     "ci-test-cov": "tap --timeout=50 --100 test/*.test.js",
     "ci-test-no-cov": "tap --timeout=40 test/*.test.js",
-    "lint": "standard --fix | snazzy"
+    "stylelint": "stylelint --config stylelint-config-standard visualizer/*.css",
+    "lint": "standard --fix | snazzy && npm run stylelint -- --fix"
   },
   "nyc": {
     "exclude": [
@@ -46,6 +47,8 @@
     "murmur3hash-wasm": "1.0.1",
     "snazzy": "^8.0.0",
     "standard": "^13.0.0",
+    "stylelint": "^11.1.1",
+    "stylelint-config-standard": "^19.0.0",
     "tap": "^12.0.0"
   }
 }
