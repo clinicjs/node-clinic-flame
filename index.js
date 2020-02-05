@@ -19,11 +19,13 @@ class ClinicFlame extends events.EventEmitter {
     super()
 
     const {
+      timeoutDelay = 0,
       detectPort = false,
       debug = false,
       dest = null
     } = settings
 
+    this.timeoutDelay = timeoutDelay
     this.detectPort = detectPort
     this.debug = debug
     this.path = dest
