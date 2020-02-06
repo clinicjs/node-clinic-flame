@@ -39,19 +39,21 @@ class ClinicFlame extends events.EventEmitter {
       path: this.path,
       identifier: '{pid}' // replaced with actual pid by 0x
     })
-
-    callbackify(x({
-      argv,
-      onPort: this.detectPort ? onPort : undefined,
-      onProcessExit: () => {
-        this.emit('analysing')
-      },
-      pathToNodeBinary: args[0],
-      collectOnly: true,
-      writeTicks: true,
-      outputDir: paths['/0x-data/'],
-      workingDir: '.' // 0x temporary working files, doesn't support placeholders like {pid}
-    }), done)
+    // allow time delay to be specified before we start collecting data
+    setTimeout(() => {
+      callbackify(x({
+        argv,
+        onPort: this.detectPort ? onPort : undefined,
+        onProcessExit: () => {
+          this.emit('analysing')
+        },
+        pathToNodeBinary: args[0],
+        collectOnly: true,
+        writeTicks: true,
+        outputDir: paths['/0x-data/'],
+        workingDir: '.' // 0x temporary working files, doesn't support placeholders like {pid}
+      }), done)
+    }, this.timeoutDelay)
 
     function done (err, dir) {
       /* istanbul ignore if: currently hard to cause, we can cover this when 0x returns an error on SIGKILL */
