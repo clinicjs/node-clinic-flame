@@ -19,13 +19,13 @@ class ClinicFlame extends events.EventEmitter {
     super()
 
     const {
-      timeoutDelay = 0,
+      collectDelay = 0,
       detectPort = false,
       debug = false,
       dest = null
     } = settings
 
-    this.timeoutDelay = timeoutDelay
+    this.collectDelay = collectDelay
     this.detectPort = detectPort
     this.debug = debug
     this.path = dest
@@ -50,7 +50,7 @@ class ClinicFlame extends events.EventEmitter {
       writeTicks: true,
       outputDir: paths['/0x-data/'],
       workingDir: '.', // 0x temporary working files, doesn't support placeholders like {pid}
-      timeoutDelay: this.timeoutDelay
+      collectDelay: this.collectDelay
     }), done)
 
     function done (err, dir) {
