@@ -16,13 +16,13 @@
     "ci-test-no-cov": "tap --timeout=40 test/*.test.js",
     "lint": "standard --fix | snazzy"
   },
-  "nyc": {
-    "exclude": [
-      "test/*.js",
-      "shared.js",
-      "visualizer/d3.js",
-      "visualizer/data-tree.js",
-      "visualizer/no-data-node.js"
+  "tap": {
+    "nyc-arg": [
+      "--exclude=test/*.js",
+      "--exclude=shared.js",
+      "--exclude=visualizer/d3.js",
+      "--exclude=visualizer/data-tree.js",
+      "--exclude=visualizer/no-data-node.js"
     ]
   },
   "author": "",
@@ -46,6 +46,6 @@
     "murmur3hash-wasm": "1.0.1",
     "snazzy": "^8.0.0",
     "standard": "^13.0.0",
-    "tap": "^12.0.0"
+    "tap": "^14.10.6"
   }
 }
