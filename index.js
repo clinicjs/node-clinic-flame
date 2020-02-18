@@ -1,7 +1,7 @@
 'use strict'
 
 const events = require('events')
-const x = require('https://github.com/DylanC/0x/tree/collect_timeout_feature')
+const x = require('0x')
 const path = require('path')
 const fs = require('fs')
 const rimraf = require('rimraf')
