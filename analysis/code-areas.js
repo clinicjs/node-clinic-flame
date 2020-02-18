@@ -28,24 +28,30 @@ function collectCodeAreas (trees) {
   trees.unmerged.walk(collect)
 
   const codeAreas = [
-    { id: 'app',
+    {
+      id: 'app',
       children: toCodeAreaChildren(appCodeAreas),
       // Only show the "show more" button if there's many code areas
       // at 2 or less the button will take at least as much space as the area labels anyway
-      childrenVisibilityToggle: appCodeAreas.size > 2 },
-    { id: 'deps',
+      childrenVisibilityToggle: appCodeAreas.size > 2
+    },
+    {
+      id: 'deps',
       children: toCodeAreaChildren(depCodeAreas),
-      childrenVisibilityToggle: depCodeAreas.size > 2 },
+      childrenVisibilityToggle: depCodeAreas.size > 2
+    },
     { id: 'wasm' },
     { id: 'core' },
-    { id: 'all-v8',
+    {
+      id: 'all-v8',
       children: [
         { id: 'v8' },
         { id: 'native' },
         { id: 'cpp' },
         { id: 'regexp' }
       ],
-      childrenVisibilityToggle: true }
+      childrenVisibilityToggle: true
+    }
   ]
 
   codeAreas.forEach(area => {

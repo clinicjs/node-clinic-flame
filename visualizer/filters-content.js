@@ -167,7 +167,7 @@ class FiltersContent extends HtmlContent {
     const visibilityAcc = accordion({
       label: 'Visibility by code area',
       isExpanded: true,
-      content: `<ul class="options"></ul>`,
+      content: '<ul class="options"></ul>',
       classNames: ['visibility-acc'],
       onClick: () => {
         this._exclusiveAccordion(visibilityAcc)
@@ -182,7 +182,7 @@ class FiltersContent extends HtmlContent {
 
     const advancedAcc = accordion({
       label: 'Advanced',
-      content: `<ul class="options"></ul>`,
+      content: '<ul class="options"></ul>',
       classNames: ['advanced-acc'],
       onClick: () => {
         this._exclusiveAccordion(advancedAcc)
@@ -196,7 +196,7 @@ class FiltersContent extends HtmlContent {
 
     const preferencesAcc = accordion({
       label: 'Preferences',
-      content: `<ul class="options"></ul>`,
+      content: '<ul class="options"></ul>',
       classNames: ['preferences-acc'],
       onClick: () => {
         this._exclusiveAccordion(preferencesAcc)
@@ -242,14 +242,14 @@ class FiltersContent extends HtmlContent {
       li.appendChild(this._createOptionElement(item))
 
       if (item.children && item.children.length > 0) {
-        const childrenUl = helpers.toHtml(`<ul></ul>`)
+        const childrenUl = helpers.toHtml('<ul></ul>')
         childrenUl.appendChild(this._createListItems(item.children))
         li.appendChild(childrenUl)
 
         if (item.childrenVisibilityToggle) {
           const acc = accordion({
             isExpanded: this.expandedSubAccordions[item.excludeKey] === true,
-            classNames: [`${item.excludeKey}-show-all-acc`, `nc-accordion--secondary`],
+            classNames: [`${item.excludeKey}-show-all-acc`, 'nc-accordion--secondary'],
             label: `Show more (${item.children.length})`,
             content: childrenUl,
             onClick: (expanded) => {
@@ -273,7 +273,7 @@ class FiltersContent extends HtmlContent {
       indeterminate: data.indeterminate,
       rightLabel: `
         <span class="name">${data.label}</span>
-        <description class="description">${data.description ? `- ${data.description}` : ``}</description>
+        <description class="description">${data.description ? `- ${data.description}` : ''}</description>
       `,
       onChange: (event) => {
         data.onChange && data.onChange(data, event)

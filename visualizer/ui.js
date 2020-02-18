@@ -72,7 +72,8 @@ class Ui extends events.EventEmitter {
       walkthroughIndex
     } = data
 
-    this.setUseMergedTree(useMerged, { pushState: false,
+    this.setUseMergedTree(useMerged, {
+      pushState: false,
       selectedNodeId,
       cb: () => {
         this.dataTree.showOptimizationStatus = showOptimizationStatus
@@ -423,10 +424,10 @@ class Ui extends events.EventEmitter {
 
   getDescriptionFromKey (key) {
     const keysToDescriptions = {
-      app: `<span>Functions in the code of the application being profiled.</span>`,
-      deps: `<span>External modules in the application's node_modules directory.</span>`,
-      core: `<span>JS functions in core Node.js APIs.</span>`,
-      wasm: `<span>Compiled WebAssembly code.</span>`,
+      app: '<span>Functions in the code of the application being profiled.</span>',
+      deps: '<span>External modules in the application\'s node_modules directory.</span>',
+      core: '<span>JS functions in core Node.js APIs.</span>',
+      wasm: '<span>Compiled WebAssembly code.</span>',
       'all-v8': `<span>The JavaScript engine used by default in Node.js.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8')}`,
       'all-v8:v8': `<span>Operations in V8's implementation of JS.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-runtime')}`,
       'all-v8:native': `<span>JS compiled into V8, such as prototype methods and eval.</span> ${this.createMoreInfoLink('https://clinicjs.org/documentation/flame/09-advanced-controls/#controls-v8-native')}`,
@@ -508,19 +509,21 @@ class Ui extends events.EventEmitter {
     // ui.selectNode() will be called properly in this.selectHottestNode() or based on selectedNodeId.
     this.selectedNode = null
 
-    this.zoomNode(null, { cb: () => {
+    this.zoomNode(null, {
+      cb: () => {
       // Complete update after any zoom animation is complete
-      this.dataTree.setActiveTree(useMerged)
+        this.dataTree.setActiveTree(useMerged)
 
-      this.draw()
-      if (!selectedNodeId) this.selectHottestNode()
+        this.draw()
+        if (!selectedNodeId) this.selectHottestNode()
 
-      if (pushState) this.pushHistory()
+        if (pushState) this.pushHistory()
 
-      if (cb) cb()
+        if (cb) cb()
 
-      this.emit('updateExclusions')
-    } })
+        this.emit('updateExclusions')
+      }
+    })
   }
 
   setShowOptimizationStatus (showOptimizationStatus) {

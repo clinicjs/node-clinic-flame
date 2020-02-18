@@ -113,7 +113,7 @@ class SelectionControls extends HtmlContent {
 
     this.d3SelectCooler = this.d3Element.append(() => button({
       rightIcon: chevronRight,
-      label: `Next hottest`,
+      label: 'Next hottest',
       classNames: ['hotness-selector', 'visible-from-bp-2'],
       onClick: () => this.selectByRank(this.rankNumber + 1)
     }))
