@@ -41,7 +41,7 @@ const flame = new ClinicFlame()
     **Default**: false
   * dest [`<String>`][] The folder where the collected data is stored.
     **Default**: '.'
-  * collectDelay [`<number>`][] **Default**: 0
+  * collectDelay [`<Number>`][] **Default**: 0
 
 #### `flame.collect(args, callback)`
 
