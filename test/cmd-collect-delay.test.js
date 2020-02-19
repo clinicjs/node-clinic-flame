@@ -1,4 +1,3 @@
-const fs = require('fs')
 const path = require('path')
 const { test } = require('tap')
 const rimraf = require('rimraf')
@@ -7,18 +6,18 @@ const ClinicFlame = require('../index.js')
 test('cmd - test collect - 1s collect delay', (t) => {
   const tool = new ClinicFlame({ debug: true, collectDelay: 1000 })
 
-  function delayOneSecond() {
+  function delayOneSecond () {
     setTimeout(() => {
       console.log('return after one second')
-      return false;
-    }, 1000);
+      return false
+    }, 1000)
   }
 
   function cleanup (err, dirname) {
     t.ifError(err)
-    t.match(dirname, /^test-output-destination[/\\][0-9]+\.clinic-flame$/)
+    t.match(dirname, /^[0-9]+\.clinic-flame$/)
 
-    rimraf('test-output-destination', (err) => {
+    rimraf(dirname, (err) => {
       t.ifError(err)
       t.end()
     })
@@ -28,6 +27,8 @@ test('cmd - test collect - 1s collect delay', (t) => {
     [process.execPath, path.join('test', 'fixtures', 'inspect.js')],
     function (err, dirname) {
       if (err) return cleanup(err, dirname)
+
+      console.log(delayOneSecond())
 
       const getLoggingPaths = require('@nearform/clinic-common').getLoggingPaths('flame')
       const analyse = require('../analysis')
