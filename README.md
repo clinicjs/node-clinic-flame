@@ -9,7 +9,7 @@ Programmable interface to [Clinic.js][clinic-url] Flame. Learn more about Clinic
 
 ## Supported node versions
 
-* Node.js 8 and above
+* Node.js 10 and above
 
 ## Example
 
@@ -41,6 +41,7 @@ const flame = new ClinicFlame()
     **Default**: false
   * dest [`<String>`][] The folder where the collected data is stored.
     **Default**: '.'
+  * collectDelay [`<number>`][] **Default**: 0
 
 #### `flame.collect(args, callback)`
 
