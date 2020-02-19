@@ -28,13 +28,13 @@ test('cmd - test collect - 1s collect delay', (t) => {
     function (err, dirname) {
       if (err) return cleanup(err, dirname)
 
-      console.log(delayOneSecond())
+      delayOneSecond()
 
-      const getLoggingPaths = require('@nearform/clinic-common').getLoggingPaths('flame')
+      const getLoggingPaths = require('../collect/get-logging-paths')
       const analyse = require('../analysis')
       const paths = getLoggingPaths({ path: dirname })
       analyse(paths).then((result) => {
-        console.log(result)
+        console.log('RES', result)
       })
 
       cleanup(null, dirname)
