@@ -13,6 +13,13 @@ test('cmd - test collect - 1s collect delay', (t) => {
     }, 1000)
   }
 
+  function delayTwoSecond () {
+    setTimeout(() => {
+      console.log('return after two seconds')
+      return false
+    }, 2000)
+  }
+
   function cleanup (err, dirname) {
     t.ifError(err)
     t.match(dirname, /^[0-9]+\.clinic-flame$/)
@@ -28,8 +35,6 @@ test('cmd - test collect - 1s collect delay', (t) => {
     function (err, dirname) {
       if (err) return cleanup(err, dirname)
 
-      delayOneSecond()
-
       const getLoggingPaths = require('../collect/get-logging-paths')
       const analyse = require('../analysis')
       const paths = getLoggingPaths({ path: dirname })
@@ -40,4 +45,7 @@ test('cmd - test collect - 1s collect delay', (t) => {
       cleanup(null, dirname)
     }
   )
+
+  delayOneSecond()
+  delayTwoSecond()
 })
