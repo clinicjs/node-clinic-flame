@@ -4,13 +4,16 @@ const syncWait = ms => {
 }
 
 function delayOneSecond () {
-    syncWait(1000)
-    console.log('return after one second')
-    return false
+  syncWait(1000)
+  console.log('return after one second')
+  return false
 }
 
 function delayTwoSecond () {
-    syncWait(2000)
-    console.log('return after two seconds')
-    return false
+  syncWait(2000)
+  console.log('return after two seconds')
+  return false
 }
+
+delayOneSecond()
+delayTwoSecond()
