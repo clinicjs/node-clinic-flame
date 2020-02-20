@@ -16,6 +16,19 @@ test('cmd - test collect - 1s collect delay', (t) => {
     })
   }
 
+  const searchTree = (tree, target) => {
+    if (tree.name.includes(target)) {
+      return tree
+    }
+    for (const child of tree.children) {
+      const res = searchTree(child, target)
+
+      if (res) {
+        return res
+      }
+    }
+  }
+
   tool.collect(
     [process.execPath, path.join('fixtures', 'delay.js')],
     function (err, dirname) {
@@ -25,7 +38,7 @@ test('cmd - test collect - 1s collect delay', (t) => {
       const analyse = require('../analysis')
       const paths = getLoggingPaths({ path: dirname })
       analyse(paths).then((result) => {
-        console.log('RES', result.merged)
+        console.log(searchTree(result.merged, 'delayOneSecond'))
       })
 
       cleanup(null, dirname)
