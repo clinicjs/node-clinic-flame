@@ -6,20 +6,6 @@ const ClinicFlame = require('../index.js')
 test('cmd - test collect - 1s collect delay', (t) => {
   const tool = new ClinicFlame({ debug: true, collectDelay: 1000 })
 
-  function delayOneSecond () {
-    setTimeout(() => {
-      console.log('return after one second')
-      return false
-    }, 1000)
-  }
-
-  function delayTwoSecond () {
-    setTimeout(() => {
-      console.log('return after two seconds')
-      return false
-    }, 2000)
-  }
-
   function cleanup (err, dirname) {
     t.ifError(err)
     t.match(dirname, /^[0-9]+\.clinic-flame$/)
@@ -31,7 +17,7 @@ test('cmd - test collect - 1s collect delay', (t) => {
   }
 
   tool.collect(
-    [process.execPath, path.join('test', 'fixtures', 'inspect.js')],
+    [process.execPath, path.join('test', 'fixtures', 'delay.js')],
     function (err, dirname) {
       if (err) return cleanup(err, dirname)
 
@@ -46,6 +32,4 @@ test('cmd - test collect - 1s collect delay', (t) => {
     }
   )
 
-  delayOneSecond()
-  delayTwoSecond()
 })
