@@ -30,7 +30,7 @@ test('cmd - test collect - 1s collect delay', (t) => {
   }
 
   tool.collect(
-    [process.execPath, path.join('fixtures', 'delay.js')],
+    [process.execPath, path.join('test', 'fixtures', 'delay.js')],
     function (err, dirname) {
       if (err) return cleanup(err, dirname)
 
