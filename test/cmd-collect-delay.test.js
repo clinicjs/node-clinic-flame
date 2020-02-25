@@ -38,7 +38,7 @@ test('cmd - test collect - 1s collect delay', (t) => {
       const analyse = require('../analysis')
       const paths = getLoggingPaths({ path: dirname })
       analyse(paths).then((result) => {
-        t.equal(searchTree(result.merged, 'delayOneSecond'), null)
+        t.equal(searchTree(result.merged, 'delayOneSecond'), undefined)
         t.equal(searchTree(result.merged, 'delayTwoSecond').functionName, 'delayTwoSecond')
         cleanup(null, dirname)
       })
