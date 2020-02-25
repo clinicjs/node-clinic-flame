@@ -4,7 +4,7 @@ const rimraf = require('rimraf')
 const ClinicFlame = require('../index.js')
 
 test('cmd - test collect - 1s collect delay', (t) => {
-  const tool = new ClinicFlame({ debug: true, collectDelay: 1000 })
+  const tool = new ClinicFlame({ debug: true, collectDelay: 1300 })
 
   function cleanup (err, dirname) {
     t.ifError(err)
