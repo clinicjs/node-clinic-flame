@@ -5,12 +5,10 @@ const syncWait = ms => {
 
 function delayOneSecond () {
   syncWait(1000)
-  console.log('return after one second')
 }
 
 function delayTwoSecond () {
   syncWait(2000)
-  console.log('return after two seconds')
 }
 
 delayOneSecond()
