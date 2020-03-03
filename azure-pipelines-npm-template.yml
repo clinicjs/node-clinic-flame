@@ -12,8 +12,9 @@ jobs:
         node_version: 11.x
       node_10_x:
         node_version: 10.x
-      node_8_x:
-        node_version: 8.x
+      # Lowest supported version.
+      node_10_12:
+        node_version: 10.12.0
     maxParallel: 5
   steps:
   - task: NodeTool@0
@@ -26,7 +27,3 @@ jobs:
     displayName: Check linting
   - bash: npm run ci-test-cov
     displayName: Run tests with code coverage
-    condition: ne(variables['node_version'], '8.x')
-  - bash: npm run ci-test-no-cov
-    displayName: Run tests without code coverage
-    condition: eq(variables['node_version'], '8.x')
