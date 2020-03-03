@@ -52,6 +52,7 @@ class ClinicFlame extends events.EventEmitter {
     }), done)
 
     function done (err, dir) {
+      console.log('readdir', fs.readdirSync(process.cwd()))
       /* istanbul ignore if: currently hard to cause, we can cover this when 0x returns an error on SIGKILL */
       if (err) return cb(err)
       const pidMatch = dir.match(/(?:\/|\\)(\d+)\.clinic-flame-0x-data/)
