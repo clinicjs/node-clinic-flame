@@ -16,6 +16,16 @@ test('cmd - test collect - 1s collect delay', (t) => {
     })
   }
 
+  function countFn (tree, name) {
+    let results = 0
+    tree.walk((node) => {
+      if (node.name.includes(name)) {
+        results += 1
+      }
+    })
+    return results
+  }
+
   const searchTree = (tree, target) => {
     if (tree.name.includes(target)) {
       return tree
@@ -38,6 +48,10 @@ test('cmd - test collect - 1s collect delay', (t) => {
       const analyse = require('../analysis')
       const paths = getLoggingPaths({ path: dirname })
       analyse(paths).then((result) => {
+        const c1 = countFn(result.merged, 'delayOneSecond')
+        t.equal(c1, 0, `delayOneSecond showed up ${c1} times`)
+        const c2 = countFn(result.merged, 'delayTwoSecond')
+        t.ok(c2 > 0, `delayTwoSecond showed up ${c2} times`)
         t.equal(searchTree(result.merged, 'delayOneSecond'), undefined)
         t.equal(searchTree(result.merged, 'delayTwoSecond').functionName, 'delayTwoSecond')
         cleanup(null, dirname)
