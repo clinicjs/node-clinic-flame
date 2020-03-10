@@ -47,6 +47,7 @@ async function analyse (paths) {
     appName,
     pathSeparator,
     codeAreas,
+    ticks,
     merged,
     unmerged
   }
