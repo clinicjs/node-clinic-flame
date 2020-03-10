@@ -4,7 +4,7 @@ const rimraf = require('rimraf')
 const ClinicFlame = require('../index.js')
 
 test('cmd - test collect - 1s collect delay', (t) => {
-  const tool = new ClinicFlame({ debug: true, collectDelay: 1500 })
+  const tool = new ClinicFlame({ debug: true, collectDelay: 2000 })
 
   function cleanup (err, dirname) {
     t.ifError(err)
@@ -50,7 +50,7 @@ test('cmd - test collect - 1s collect delay', (t) => {
       const paths = getLoggingPaths({ path: dirname })
       analyse(paths).then((result) => {
         const c1 = countFn(result.ticks, 'delayOneSecond')
-        t.equal(c1, 0, `delayOneSecond showed up ${c1} times`)
+        t.equal(c1, 0, `delayOneSecond showed up ${c1} times out of ${result.ticks.length} ticks`)
         const c2 = countFn(result.ticks, 'delayTwoSecond')
         t.ok(c2 > 0, `delayTwoSecond showed up ${c2} times`)
         t.equal(searchTree(result.merged, 'delayOneSecond'), undefined)
