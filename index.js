@@ -19,6 +19,8 @@ class ClinicFlame extends events.EventEmitter {
     super()
 
     const {
+      sourceMaps = null,
+      relativePath = null,
       detectPort = false,
       debug = false,
       dest = null
