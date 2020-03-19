@@ -1,3 +1,4 @@
+const fs = require('fs')
 const path = require('path')
 const { test } = require('tap')
 const rimraf = require('rimraf')
@@ -14,6 +15,17 @@ test('cmd - test collect - 1s collect delay', (t) => {
       t.ifError(err)
       t.end()
     })
+  }
+
+  function countFn (ticks, name) {
+    return ticks.reduce((total, tick) => {
+      return tick.reduce((acc, frame) => {
+        if (frame.name.includes(name)) {
+          return acc + 1
+        }
+        return acc
+      }, total)
+    }, 0)
   }
 
   const searchTree = (tree, target) => {
@@ -38,6 +50,14 @@ test('cmd - test collect - 1s collect delay', (t) => {
       const analyse = require('../analysis')
       const paths = getLoggingPaths({ path: dirname })
       analyse(paths).then((result) => {
+        const ticks = JSON.parse(fs.readFileSync(paths['/samples'], 'utf8'))
+        t.comment(`first ticks delays are: ${ticks[0].map(frame => frame.tm)}`)
+
+        const c1 = countFn(ticks, 'delayOneSecond')
+        t.equal(c1, 0, `delayOneSecond showed up ${c1} times out of ${ticks.length} ticks`)
+        const c2 = countFn(ticks, 'delayTwoSecond')
+        t.ok(c2 > 0, `delayTwoSecond showed up ${c2} times`)
+
         t.equal(searchTree(result.merged, 'delayOneSecond'), undefined)
         t.equal(searchTree(result.merged, 'delayTwoSecond').functionName, 'delayTwoSecond')
         cleanup(null, dirname)
