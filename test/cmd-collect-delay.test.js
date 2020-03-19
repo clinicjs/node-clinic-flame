@@ -28,19 +28,6 @@ test('cmd - test collect - 1s collect delay', (t) => {
     }, 0)
   }
 
-  const searchTree = (tree, target) => {
-    if (tree.name.includes(target)) {
-      return tree
-    }
-    for (const child of tree.children) {
-      const res = searchTree(child, target)
-
-      if (res) {
-        return res
-      }
-    }
-  }
-
   tool.collect(
     [process.execPath, path.join('test', 'fixtures', 'delay.js')],
     function (err, dirname) {
@@ -58,8 +45,6 @@ test('cmd - test collect - 1s collect delay', (t) => {
         const c2 = countFn(ticks, 'delayTwoSecond')
         t.ok(c2 > 0, `delayTwoSecond showed up ${c2} times`)
 
-        t.equal(searchTree(result.merged, 'delayOneSecond'), undefined)
-        t.equal(searchTree(result.merged, 'delayTwoSecond').functionName, 'delayTwoSecond')
         cleanup(null, dirname)
       })
     }
