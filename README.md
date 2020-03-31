@@ -1,6 +1,6 @@
 # Clinic.js Flame
 
-[![npm version][npm-version]][npm-url] [![Stability Stable][stability-stable]][stability-docs] [![Azure Pipelines build status][azure-status]][azure-url]
+[![npm version][npm-version]][npm-url] [![Stability Stable][stability-stable]][stability-docs] [![Github Actions build status][actions-status]][actions-url]
 [![Downloads][npm-downloads]][npm-url] [![Code style][lint-standard]][lint-standard-url]
 
 Programmable interface to [Clinic.js][clinic-url] Flame. Learn more about Clinic.js: https://clinicjs.org/
@@ -76,5 +76,5 @@ possible error.
 [`<Object>`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
 [`<boolean>`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type
 [`<String>`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
-[azure-status]: https://dev.azure.com/node-clinic/node-clinic/_apis/build/status/nearform.node-clinic-doctor
-[azure-url]: https://dev.azure.com/node-clinic/node-clinic/_apis/build/status/nearform.node-clinic-doctor?branchName=master
+[actions-status]: https://github.com/nearform/node-clinic-flame/workflows/CI/badge.svg
+[actions-url]: https://github.com/nearform/node-clinic-flame/actions
