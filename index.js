@@ -13,6 +13,7 @@ const pump = require('pump')
 const buildJs = require('@nearform/clinic-common/scripts/build-js')
 const buildCss = require('@nearform/clinic-common/scripts/build-css')
 const mainTemplate = require('@nearform/clinic-common/templates/main')
+const semver = require('semver')
 
 class ClinicFlame extends events.EventEmitter {
   constructor (settings = {}) {
@@ -113,6 +114,9 @@ class ClinicFlame extends events.EventEmitter {
     const logoFile = fs.createReadStream(logoPath)
     const nearFormLogoFile = fs.createReadStream(nearFormLogoPath)
     const clinicFaviconBase64 = fs.createReadStream(clinicFaviconPath)
+
+    data.flameVersion = require('./package.json').version
+    data.nodeVersion = semver.parse(process.version).version
 
     // build JS
     const scriptFile = buildJs({
