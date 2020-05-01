@@ -630,7 +630,7 @@ class Ui extends events.EventEmitter {
       title: 'Click to start the step-by-step UI features guide!'
     })
     // Place help button top right
-    d3.select('body').select('.nc-header__inner').append(() => this.helpButton.button)
+    d3.select('.nc-header__inner').append(() => this.helpButton.button)
 
     this.flameWrapperSpinner = spinner.attachTo(document.querySelector('#flame-main'))
   }
