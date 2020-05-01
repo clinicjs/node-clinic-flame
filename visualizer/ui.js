@@ -7,6 +7,7 @@ const debounce = require('lodash.debounce')
 const DataTree = require('./data-tree.js')
 const History = require('./history.js')
 const spinner = require('@nearform/clinic-common/spinner')
+const logo = require(path.join(__dirname, 'nearform-logo.svg'))
 
 const close = require('@nearform/clinic-common/icons/close')
 
@@ -647,17 +648,10 @@ class Ui extends events.EventEmitter {
   }
 
   createLogoLink () {
-    const logo = path.join(__dirname, 'visualizer', 'nearform-logo.svg')
-    return `<a
-      class="nc-header__logo"
-      href="https://github.com/nearform/node-clinic-flame"
-      title="Clinic Flame on GitHub"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      ${logo}
-      <span class="nc-header__logo-text">Flame</span>
-    </a>`
+    const el = document.createElement('div')
+    el.innerHTML = `<a class="nc-header__sponsor" href="https://nearform.com"
+      title="NearForm" target="_blank" rel="noopener noreferrer">${logo}</a>`.trim()
+    return el.firstChild
   }
 
   createMoreInfoLink (href) {
