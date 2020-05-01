@@ -629,7 +629,8 @@ class Ui extends events.EventEmitter {
       label: '<span class="before-bp-1">Guide</span><span class="after-bp-1">Show how to use this</span>',
       title: 'Click to start the step-by-step UI features guide!'
     })
-    this.footer.d3Element.select('#filters-bar .left-col').append(() => this.helpButton.button)
+    // Place help button top right
+    d3.select('.nc-header__inner').append(() => this.helpButton.button)
 
     this.flameWrapperSpinner = spinner.attachTo(document.querySelector('#flame-main'))
   }
