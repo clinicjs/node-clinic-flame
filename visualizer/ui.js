@@ -1,5 +1,6 @@
 'use strict'
 
+const d3 = require('./d3.js')
 const path = require('path')
 const events = require('events')
 const htmlContentTypes = require('./html-content-types.js')
@@ -649,8 +650,9 @@ class Ui extends events.EventEmitter {
 
   createLogoLink () {
     const el = document.createElement('div')
-    el.innerHTML = `<a class="nc-header__sponsor" href="https://nearform.com"
-      title="NearForm" target="_blank" rel="noopener noreferrer">${logo}</a>`.trim()
+    d3.select(el).append('a').classed('nc-header__sponsor', true).attr('href', 'https://nearform.com').attr('title', 'NearForm').attr('target', '_blank').attr('rel', 'noopener noreferrer')
+      .enter()
+      .append(logo)
     return el.firstChild
   }
 
