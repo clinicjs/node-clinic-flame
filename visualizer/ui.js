@@ -1,5 +1,6 @@
 'use strict'
 
+const path = require('path')
 const events = require('events')
 const htmlContentTypes = require('./html-content-types.js')
 const debounce = require('lodash.debounce')
@@ -629,7 +630,7 @@ class Ui extends events.EventEmitter {
       label: '<span class="before-bp-1">Guide</span><span class="after-bp-1">Show how to use this</span>',
       title: 'Click to start the step-by-step UI features guide!'
     })
-    this.footer.d3Element.select('#filters-bar .left-col').append(() => this.helpButton.button)
+    this.footer.d3Element.select('#filters-bar .left-col').append(() => this.createLogoLink())
 
     this.flameWrapperSpinner = spinner.attachTo(document.querySelector('#flame-main'))
   }
@@ -643,6 +644,20 @@ class Ui extends events.EventEmitter {
 
     // setting Presentation Mode
     this.setPresentationMode(this.presentationMode)
+  }
+
+  createLogoLink () {
+    const logo = path.join(__dirname, 'visualizer', 'nearform-logo.svg')
+    return `<a
+      class="nc-header__logo"
+      href="https://github.com/nearform/node-clinic-flame"
+      title="Clinic Flame on GitHub"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      ${logo}
+      <span class="nc-header__logo-text">Flame</span>
+    </a>`
   }
 
   createMoreInfoLink (href) {
