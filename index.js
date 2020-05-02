@@ -19,11 +19,13 @@ class ClinicFlame extends events.EventEmitter {
     super()
 
     const {
+      collectDelay = 0,
       detectPort = false,
       debug = false,
       dest = null
     } = settings
 
+    this.collectDelay = collectDelay
     this.detectPort = detectPort
     this.debug = debug
     this.path = dest
@@ -37,7 +39,6 @@ class ClinicFlame extends events.EventEmitter {
       path: this.path,
       identifier: '{pid}' // replaced with actual pid by 0x
     })
-
     callbackify(x({
       argv,
       onPort: this.detectPort ? onPort : undefined,
@@ -48,7 +49,8 @@ class ClinicFlame extends events.EventEmitter {
       collectOnly: true,
       writeTicks: true,
       outputDir: paths['/0x-data/'],
-      workingDir: '.' // 0x temporary working files, doesn't support placeholders like {pid}
+      workingDir: '.', // 0x temporary working files, doesn't support placeholders like {pid}
+      collectDelay: this.collectDelay
     }), done)
 
     function done (err, dir) {

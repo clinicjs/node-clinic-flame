@@ -9,7 +9,7 @@ Programmable interface to [Clinic.js][clinic-url] Flame. Learn more about Clinic
 
 ## Supported node versions
 
-* Node.js 8 and above
+* Node.js 10 and above
 
 ## Example
 
@@ -41,6 +41,7 @@ const flame = new ClinicFlame()
     **Default**: false
   * dest [`<String>`][] The folder where the collected data is stored.
     **Default**: '.'
+  * collectDelay [`<Number>`][] **Default**: 0
 
 #### `flame.collect(args, callback)`
 
@@ -76,5 +77,6 @@ possible error.
 [`<Object>`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
 [`<boolean>`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type
 [`<String>`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
+[`<Number>`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number
 [azure-status]: https://dev.azure.com/node-clinic/node-clinic/_apis/build/status/nearform.node-clinic-doctor
 [azure-url]: https://dev.azure.com/node-clinic/node-clinic/_apis/build/status/nearform.node-clinic-doctor?branchName=master
