@@ -19,11 +19,15 @@ class ClinicFlame extends events.EventEmitter {
     super()
 
     const {
+      sourceMaps = null,
+      relativePath = null,
       detectPort = false,
       debug = false,
       dest = null
     } = settings
 
+    this.sourceMaps = sourceMaps
+    this.relativePath = relativePath
     this.detectPort = detectPort
     this.debug = debug
     this.path = dest
@@ -40,6 +44,8 @@ class ClinicFlame extends events.EventEmitter {
 
     callbackify(x({
       argv,
+      sourceMaps: this.sourceMaps,
+      relativePath: this.relativePath,
       onPort: this.detectPort ? onPort : undefined,
       onProcessExit: () => {
         this.emit('analysing')
