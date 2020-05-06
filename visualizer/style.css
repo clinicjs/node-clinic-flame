@@ -70,7 +70,7 @@ html {
 
   --area-color-app: var(--max-contrast);
   --area-color-deps: rgb(63, 125, 198);
-  --area-color-core: rgb(156, 170, 159);
+  --area-color-core: rgb(230, 230, 230);
 
   /* scrollbars */
   --scrollbar-primary-color-val: 145, 169, 179;
