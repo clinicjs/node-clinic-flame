@@ -108,7 +108,7 @@ chart > div {
   position: absolute;
   pointer-events: none;
   border-top: 3px solid var(--main-bg-color);
-  background: linear-gradient(to bottom, rgba(var(--opposite-color-val), 0.8), rgba(var(--opposite-color-val), 0));
+  background: linear-gradient(to bottom, rgba(var(--grey-highlight-color-val), 0.3), rgba(var(--grey-highlight-color-val), 0));
 }
 
 .fg-tooltip-actions {
