@@ -114,6 +114,8 @@ class ClinicFlame extends events.EventEmitter {
     const nearFormLogoFile = fs.createReadStream(nearFormLogoPath)
     const clinicFaviconBase64 = fs.createReadStream(clinicFaviconPath)
 
+    const flameVersion = require('./package.json').version
+
     // build JS
     const scriptFile = buildJs({
       basedir: __dirname,
@@ -145,6 +147,7 @@ class ClinicFlame extends events.EventEmitter {
       headerLogoTitle: 'Clinic Flame on Clinicjs.org',
       headerLogo: logoFile,
       headerText: 'Flame',
+      toolVersion: flameVersion,
       nearFormLogo: nearFormLogoFile,
       uploadId: outputFilename.split('/').pop().split('.html').shift(),
       body: '<main></main>'
