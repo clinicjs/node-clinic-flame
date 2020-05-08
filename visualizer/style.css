@@ -69,7 +69,7 @@ html {
   --checkbox-border-color: rgba(var(--grey-highlight-color-val), 0.9);
 
   --area-color-app: var(--max-contrast);
-  --area-color-deps: rgb(63, 125, 198);
+  --area-color-deps: rgb(255, 170, 43);
   --area-color-core: rgb(230, 230, 230);
 
   /* scrollbars */
@@ -134,7 +134,7 @@ html.presentation-mode {
   --grey-highlight: rgb(255, 255, 255);
   --primary-grey: rgb(var(--grey-highlight-color-val));
 
-  --area-color-deps: rgb(145, 210, 255);
+  --area-color-deps: rgb(255, 170, 43);
   --area-color-core: rgb(160, 155, 215);
 
   --clickable-bg-hover : rgb(0, 0, 0);
