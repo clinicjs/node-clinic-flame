@@ -8,7 +8,8 @@ const debounce = require('lodash.debounce')
 const DataTree = require('./data-tree.js')
 const History = require('./history.js')
 const spinner = require('@nearform/clinic-common/spinner')
-const logo = require(path.join(__dirname, 'nearform-logo.svg'))
+const fs = require('fs')
+const logo = fs.readFileSync(path.join(__dirname, 'nearform-logo.svg'), 'utf8')
 
 const close = require('@nearform/clinic-common/icons/close')
 
