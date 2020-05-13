@@ -15,6 +15,8 @@ const getNoDataNode = require('./no-data-node.js')
 const { button, walkthroughButton } = require('@nearform/clinic-common/base/index.js')
 const wtSteps = require('./walkthrough-steps.js')
 
+const d3 = require('d3-selection')
+
 class Ui extends events.EventEmitter {
   constructor (wrapperSelector) {
     super()
