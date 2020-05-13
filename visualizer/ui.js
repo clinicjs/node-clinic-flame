@@ -650,11 +650,18 @@ class Ui extends events.EventEmitter {
   }
 
   createLogoLink () {
-    const el = document.createElement('div')
-    d3.select(el).append('a').classed('nc-header__sponsor', true).attr('href', 'https://nearform.com').attr('title', 'NearForm').attr('target', '_blank').attr('rel', 'noopener noreferrer')
-      .enter()
-      .append(logo)
-    return el.firstChild
+    const el = d3.create('div').attr('id', 'nearform_logo')
+
+    let newel = el.append('a')
+      .classed('nc-header__sponsor', true)
+      .attr('href', 'https://nearform.com')
+      .attr('title', 'NearForm')
+      .attr('target', '_blank')
+      .attr('rel', 'noopener noreferrer')
+      
+    newel.selectAll('a').enter().append(logo)
+
+    return newel
   }
 
   createMoreInfoLink (href) {
