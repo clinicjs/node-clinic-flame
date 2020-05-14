@@ -96,12 +96,6 @@ class FlameGraph extends HtmlContent {
     this.resetOverlayContext()
 
     // creating the component to highlight the hovered node on the flame graph
-    this.d3Highlighter = this.d3Element.append('div')
-      .classed('node-highlighter', true)
-    this.d3HighlighterDownArrow = this.d3Highlighter.append('div')
-      .classed('down-arrow', true)
-    this.d3HighlighterVerticalLine = this.d3Highlighter.append('div')
-      .classed('vertical-line', true)
     this.d3HighlighterBox = this.d3Element.append('div')
       .classed('highlighter-box', true)
 
@@ -285,16 +279,12 @@ class FlameGraph extends HtmlContent {
 
   highlightHoveredNodeOnGraph () {
     if (this.hoveredNodeData === null) {
-      this.d3Highlighter.classed('show', false)
       this.d3HighlighterBox.classed('show', false)
       return
     }
 
     const rect = this.getNodeRect(this.hoveredNodeData)
     if (rect) {
-      this.d3Highlighter.classed('show', true)
-      this.applyRectToDiv(this.d3Highlighter, rect, true)
-
       this.d3HighlighterBox.classed('show', true)
       this.applyRectToDiv(this.d3HighlighterBox, {
         // Align border inside frame so it's visible against borders, heat etc
@@ -304,7 +294,6 @@ class FlameGraph extends HtmlContent {
         height: rect.height - 2
       })
     } else {
-      this.d3Highlighter.classed('show', false)
       this.d3HighlighterBox.classed('show', false)
     }
   }
