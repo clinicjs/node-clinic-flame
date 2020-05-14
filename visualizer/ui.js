@@ -1,5 +1,6 @@
 'use strict'
 
+const d3 = require('./d3.js')
 const events = require('events')
 const htmlContentTypes = require('./html-content-types.js')
 const debounce = require('lodash.debounce')
