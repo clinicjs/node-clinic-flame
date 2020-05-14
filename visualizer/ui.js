@@ -633,7 +633,7 @@ class Ui extends events.EventEmitter {
       label: '<span class="before-bp-1">Guide</span><span class="after-bp-1">Show how to use this</span>',
       title: 'Click to start the step-by-step UI features guide!'
     })
-    this.footer.d3Element.select('#filters-bar .left-col').append(() => this.createLogoLink())
+    this.footer.d3Element.select('#filters-bar .left-col').append(() => this.createLogoLink().node())
 
     this.flameWrapperSpinner = spinner.attachTo(document.querySelector('#flame-main'))
   }
@@ -652,16 +652,15 @@ class Ui extends events.EventEmitter {
   createLogoLink () {
     const el = d3.create('div').attr('id', 'nearform_logo')
 
-    let newel = el.append('a')
+    el.append('a')
       .classed('nc-header__sponsor', true)
       .attr('href', 'https://nearform.com')
       .attr('title', 'NearForm')
       .attr('target', '_blank')
       .attr('rel', 'noopener noreferrer')
-      
-    newel.selectAll('a').enter().append(logo)
+      .html(logo)
 
-    return newel
+    return el
   }
 
   createMoreInfoLink (href) {
