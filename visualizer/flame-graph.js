@@ -118,13 +118,17 @@ class FlameGraph extends HtmlContent {
       this.highlightHoveredNodeOnGraph()
     })
 
+    // this.ui.on('selectNode', node => {
+    //   this.hoveredNodeData = node
+    //   this.highlightHoveredNodeOnGraph()
+
+    //   this.markNodeAsSelected(node)
+    // })
+
     this.ui.on('selectNode', node => {
-      this.hoveredNodeData = node
-      this.highlightHoveredNodeOnGraph()
-
-      this.markNodeAsSelected(node)
+      this.flameGraph.select(node, searchHighlightColor)
     })
-
+    
     // hiding the tooltip on scroll and moving the box
     this.d3Chart.node().addEventListener('scroll', () => {
       this.tooltip.hide({ delay: 0 })
