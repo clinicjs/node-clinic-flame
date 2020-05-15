@@ -54,7 +54,7 @@ chart > div {
 .zoom-underline {
   position: absolute;
   pointer-events: none;
-  border-top: 3px solid var(--main-bg-color);
+  border-top: 3px solid var(--flame-orange);
   background: linear-gradient(to bottom, rgba(var(--grey-highlight-color-val), 0.3), rgba(var(--grey-highlight-color-val), 0));
 }
 
