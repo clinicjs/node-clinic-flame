@@ -28,11 +28,13 @@ class FlameGraph extends HtmlContent {
     this.zoomFactorChanged = true
 
     this.hoveredNodeData = null
-    this.oldSelection = null
     this.isAnimating = false
     this.baseCellHeight = this.ui.presentationMode ? 26 : 24
     this.cellHeight = this.baseCellHeight + this.zoomFactor
     this.sizeChanged = false
+
+    this.isSearching = false
+    this.oldSelection = null
 
     this.tooltip = contentProperties.customTooltip
     this.tooltipHtmlContent = contentProperties.tooltipHtmlContent
@@ -64,7 +66,7 @@ class FlameGraph extends HtmlContent {
         this.tooltip.hide()
         this.hoveredNodeData = null
         this.highlightHoveredNodeOnGraph()
-        this.markNodeAsSelected(null)
+        // this.markNodeAsSelected(null)
         this.markNodeAsZoomed(null)
         this.flameGraph.zoom(node || this.ui.dataTree.activeTree())
       } else {
@@ -77,10 +79,12 @@ class FlameGraph extends HtmlContent {
     })
 
     this.ui.on('clearSearch', () => {
+      this.isSearching = false
       this.flameGraph.clear(searchHighlightColor)
     })
 
     this.ui.on('search', (query) => {
+      this.isSearching = true
       this.flameGraph.search(query, searchHighlightColor)
     })
   }
@@ -100,8 +104,8 @@ class FlameGraph extends HtmlContent {
     this.d3HighlighterBox = this.d3Element.append('div')
       .classed('highlighter-box', true)
 
-    this.d3SelectionMarker = this.d3Element.append('div')
-      .classed('selection-box', true)
+    // this.d3SelectionMarker = this.d3Element.append('div')
+    //   .classed('selection-box', true)
 
     this.d3ZoomMarker = this.d3Element.append('div')
       .classed('zoom-underline', true)
@@ -228,7 +232,7 @@ class FlameGraph extends HtmlContent {
 
     this.flameGraph.on('animationEnd', () => {
       // Update selection marker with new node position and size
-      this.markNodeAsSelected(this.ui.selectedNode)
+      // this.markNodeAsSelected(this.ui.selectedNode)
       this.isAnimating = false
 
       // Show tooltip and highlight box for zoomed node after zoom completes
@@ -300,18 +304,18 @@ class FlameGraph extends HtmlContent {
     }
   }
 
-  markNodeAsSelected (node = null) {
-    this.d3SelectionMarker.classed('hidden', !node)
+  // markNodeAsSelected (node = null) {
+  //   this.d3SelectionMarker.classed('hidden', !node)
 
-    if (node) {
-      const rect = this.getNodeRect(node)
+  //   if (node) {
+  //     const rect = this.getNodeRect(node)
 
-      this.applyRectToDiv(this.d3SelectionMarker, Object.assign({}, {
-        // Ensure marker is visible on tiny frames
-        width: rect.width < 2 ? 2 : rect.width
-      }, rect))
-    }
-  }
+  //     this.applyRectToDiv(this.d3SelectionMarker, Object.assign({}, {
+  //       // Ensure marker is visible on tiny frames
+  //       width: rect.width < 2 ? 2 : rect.width
+  //     }, rect))
+  //   }
+  // }
 
   markNodeAsZoomed (node = null) {
     this.d3ZoomMarker.classed('hidden', !node)
@@ -342,7 +346,7 @@ class FlameGraph extends HtmlContent {
 
   updateMarkerBoxes () {
     this.highlightHoveredNodeOnGraph()
-    this.markNodeAsSelected(this.ui.selectedNode)
+    // this.markNodeAsSelected(this.ui.selectedNode)
     if (this.ui.zoomedNode) this.markNodeAsZoomed(this.ui.zoomedNode)
   }
 
