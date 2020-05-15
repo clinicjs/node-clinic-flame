@@ -119,13 +119,6 @@ class FlameGraph extends HtmlContent {
       this.highlightHoveredNodeOnGraph()
     })
 
-    // this.ui.on('selectNode', node => {
-    //   this.hoveredNodeData = node
-    //   this.highlightHoveredNodeOnGraph()
-
-    //   this.markNodeAsSelected(node)
-    // })
-
     this.ui.on('selectNode', node => {
       this.flameGraph.select(node, searchHighlightColor)
       if (this.oldSelection !== null) {
