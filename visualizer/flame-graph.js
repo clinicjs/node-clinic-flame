@@ -124,11 +124,13 @@ class FlameGraph extends HtmlContent {
     })
 
     this.ui.on('selectNode', node => {
-      this.flameGraph.select(node, searchHighlightColor)
-      if (this.oldSelection !== null) {
-        this.flameGraph.deselect(this.oldSelection)
+      if (this.isSearching === false) {
+        this.flameGraph.select(node, searchHighlightColor)
+        if (this.oldSelection !== null) {
+          this.flameGraph.deselect(this.oldSelection)
+        }
+        this.oldSelection = node
       }
-      this.oldSelection = node
     })
 
     // hiding the tooltip on scroll and moving the box
