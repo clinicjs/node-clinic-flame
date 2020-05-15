@@ -28,6 +28,7 @@ class FlameGraph extends HtmlContent {
     this.zoomFactorChanged = true
 
     this.hoveredNodeData = null
+    this.oldSelection = null
     this.isAnimating = false
     this.baseCellHeight = this.ui.presentationMode ? 26 : 24
     this.cellHeight = this.baseCellHeight + this.zoomFactor
@@ -127,8 +128,12 @@ class FlameGraph extends HtmlContent {
 
     this.ui.on('selectNode', node => {
       this.flameGraph.select(node, searchHighlightColor)
+      if (this.oldSelection !== null) {
+        this.flameGraph.deselect(this.oldSelection)
+      }
+      this.oldSelection = node
     })
-    
+
     // hiding the tooltip on scroll and moving the box
     this.d3Chart.node().addEventListener('scroll', () => {
       this.tooltip.hide({ delay: 0 })
