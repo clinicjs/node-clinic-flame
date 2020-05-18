@@ -634,6 +634,9 @@ class Ui extends events.EventEmitter {
       title: 'Click to start the step-by-step UI features guide!'
     })
     // Place help button top right
+    d3.select('.nc-header__inner').append(() => this.helpButton.button)
+    
+    // Place sponsor logo bottom left
     this.footer.d3Element.select('#filters-bar .left-col').append(() => this.createLogoLink().node())
 
     this.flameWrapperSpinner = spinner.attachTo(document.querySelector('#flame-main'))
