@@ -270,6 +270,7 @@ class FiltersContent extends HtmlContent {
 
     div.appendChild(checkbox({
       checked: data.checked,
+      disabled: data.disabled,
       indeterminate: data.indeterminate,
       rightLabel: `
         <span class="name">${data.label}</span>
