@@ -307,6 +307,11 @@ class FiltersContent extends HtmlContent {
       ul.innerHTML = ''
       ul.appendChild(this._createListItems(this.sections.advanced))
 
+      // "Show optimization status" disabled class by default
+      const showOptStatusId = this.sections.advanced[this.sections.advanced.length-1].id
+      const el = this.d3Advanced.select('#'+showOptStatusId)
+      el.classed('disabled', true)
+
       // Preferences
       ul = this.d3Preferences.select('ul').node()
       ul.innerHTML = ''
