@@ -19,6 +19,7 @@ const WalkthroughSteps = [
       </h4>
       <p>This is a Flamegraph. Each block represents the time spent executing calls to a function. The wider the block, the more time was spent.</p>
       <p>Blocks sit on the function that called them, so the stack below each block shows its stack trace.</p>
+      <p>Double clicking on a block will expand it and its children.</p>
     </div>
     `
   },
