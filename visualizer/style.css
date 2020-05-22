@@ -125,21 +125,6 @@ html.light {
   --nc-colour-header-background: rgba(0, 0, 0, 0.1);
 }
 
-/* Overrides for Presentation mode */
-/* just a poc for now... */
-html.presentation-mode {
-  --banner-bg-color: rgb(120, 122, 128);
-  --main-bg-color: rgb(76, 78, 84);
-
-  --grey-highlight: rgb(255, 255, 255);
-  --primary-grey: rgb(var(--grey-highlight-color-val));
-
-  --area-color-deps: rgb(255, 170, 43);
-  --area-color-core: rgb(160, 155, 215);
-
-  --clickable-bg-hover : rgb(0, 0, 0);
-}
-
 /* Main layout */
 
 html,

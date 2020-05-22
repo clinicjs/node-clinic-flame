@@ -178,12 +178,3 @@
     max-width: none;
   }
 }
-
-/* presentation mode */
-.presentation-mode #info-box .frame-info {
-  background-color: var(--opposite-contrast);
-}
-
-.presentation-mode #info-box .frame-dropdown {
-  border-left: solid var(--banner-bg-color) 1px;
-}
