@@ -102,4 +102,6 @@
   white-space: normal;
 }
 
-
+.filters-content .options #option-showoptimizationstatus.disabled {
+  opacity: 0.5
+}

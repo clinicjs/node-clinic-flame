@@ -134,6 +134,10 @@ class FiltersContent extends HtmlContent {
           checked: useMerged,
           onChange: (datum, event) => {
             this.ui.setUseMergedTree(event.target.checked)
+            // Toggle "Show optimization status" disabled class if Merged enabled/disabled
+            const showOptStatusId = this.sections.advanced[this.sections.advanced.length-1].id
+            const el = this.d3Advanced.select('#'+showOptStatusId)
+            el.classed('disabled', event.target.checked)
           }
         },
         {
@@ -266,10 +270,11 @@ class FiltersContent extends HtmlContent {
   }
 
   _createOptionElement (data) {
-    const div = helpers.toHtml(`<div class="${data.excludeKey ? data.excludeKey.split(':')[0] : ''}"></div>`)
+    const div = helpers.toHtml(`<div id="${data.id ? data.id : ''}" class="${data.excludeKey ? data.excludeKey.split(':')[0] : ''}"></div>`)
 
     div.appendChild(checkbox({
       checked: data.checked,
+      disabled: data.disabled,
       indeterminate: data.indeterminate,
       rightLabel: `
         <span class="name">${data.label}</span>
@@ -299,6 +304,11 @@ class FiltersContent extends HtmlContent {
       ul = this.d3Advanced.select('ul').node()
       ul.innerHTML = ''
       ul.appendChild(this._createListItems(this.sections.advanced))
+
+      // "Show optimization status" disabled class by default
+      const showOptStatusId = this.sections.advanced[this.sections.advanced.length-1].id
+      const el = this.d3Advanced.select('#'+showOptStatusId)
+      el.classed('disabled', true)
 
       // Preferences
       ul = this.d3Preferences.select('ul').node()
