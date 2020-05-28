@@ -134,12 +134,10 @@ class FiltersContent extends HtmlContent {
           checked: useMerged,
           onChange: (datum, event) => {
             this.ui.setUseMergedTree(event.target.checked)
-            // Toggle "Show optimization status" disabled class if Merged enabled
-            if(event.target.checked) {
-              const showOptStatusId = this.sections.advanced[this.sections.advanced.length-1].id
-              const el = this.d3Advanced.select('#'+showOptStatusId)
-              el.classed('disabled', true)
-            }
+            // Toggle "Show optimization status" disabled class if Merged enabled/disabled
+            const showOptStatusId = this.sections.advanced[this.sections.advanced.length-1].id
+            const el = this.d3Advanced.select('#'+showOptStatusId)
+            el.classed('disabled', event.target.checked)
           }
         },
         {
