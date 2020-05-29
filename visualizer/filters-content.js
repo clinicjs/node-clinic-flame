@@ -135,8 +135,8 @@ class FiltersContent extends HtmlContent {
           onChange: (datum, event) => {
             this.ui.setUseMergedTree(event.target.checked)
             // Toggle "Show optimization status" disabled class if Merged enabled/disabled
-            const showOptStatusId = this.sections.advanced[this.sections.advanced.length-1].id
-            const el = this.d3Advanced.select('#'+showOptStatusId)
+            const showOptStatusId = this.sections.advanced[this.sections.advanced.length - 1].id
+            const el = this.d3Advanced.select('#' + showOptStatusId)
             el.classed('disabled', event.target.checked)
           }
         },
@@ -306,8 +306,8 @@ class FiltersContent extends HtmlContent {
       ul.appendChild(this._createListItems(this.sections.advanced))
 
       // "Show optimization status" disabled class by default
-      const showOptStatusId = this.sections.advanced[this.sections.advanced.length-1].id
-      const el = this.d3Advanced.select('#'+showOptStatusId)
+      const showOptStatusId = this.sections.advanced[this.sections.advanced.length - 1].id
+      const el = this.d3Advanced.select('#' + showOptStatusId)
       el.classed('disabled', true)
 
       // Preferences
