@@ -101,8 +101,6 @@ class ClinicFlame extends events.EventEmitter {
   }
 
   writeHtml (data, outputFilename, callback) {
-    // TODO: migrate most of this to clinic-common
-    const fakeDataPath = path.join(__dirname, 'visualizer', 'data.json')
     const stylePath = path.join(__dirname, 'visualizer', 'style.css')
     const scriptPath = path.join(__dirname, 'visualizer', 'main.js')
     const logoPath = path.join(__dirname, 'visualizer/assets', 'flame-logo.svg')
@@ -114,18 +112,14 @@ class ClinicFlame extends events.EventEmitter {
     const nearFormLogoFile = fs.createReadStream(nearFormLogoPath)
     const clinicFaviconBase64 = fs.createReadStream(clinicFaviconPath)
 
+    const dataFile = JSON.stringify(data)
     const flameVersion = require('./package.json').version
 
     // build JS
     const scriptFile = buildJs({
       basedir: __dirname,
       debug: this.debug,
-      fakeDataPath,
       scriptPath,
-      beforeBundle: b => b.require({
-        source: JSON.stringify(data),
-        file: fakeDataPath
-      }),
       env: {
         PRESENTATION_MODE: process.env.PRESENTATION_MODE
       }
@@ -142,6 +136,7 @@ class ClinicFlame extends events.EventEmitter {
       favicon: clinicFaviconBase64,
       title: 'Clinic Flame',
       styles: styleFile,
+      data: dataFile,
       script: scriptFile,
       headerLogoUrl: 'https://clinicjs.org/flame/',
       headerLogoTitle: 'Clinic Flame on Clinicjs.org',
