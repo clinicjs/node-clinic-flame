@@ -635,7 +635,7 @@ class Ui extends events.EventEmitter {
     })
     // Place help button top right
     d3.select('.nc-header__inner').append(() => this.helpButton.button)
-    
+
     // Place sponsor logo bottom left
     this.footer.d3Element.select('#filters-bar .left-col').append(() => this.createLogoLink().node())
 
