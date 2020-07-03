@@ -81,11 +81,11 @@ test('cmd - test visualization - missing data', function (t) {
 })
 
 test('cmd - test collect - system info, data files and html', function (t) {
-  const tool = new ClinicFlame()
+  const tool = new ClinicFlame({ dest: process.env.TAP_CHILD_ID })
 
   function cleanup (err, dirname) {
     t.ifError(err)
-    t.match(dirname, /^[0-9]+\.clinic-flame$/)
+    t.match(dirname, /^[0-9]+\/[0-9]+\.clinic-flame$/)
     rimraf(dirname, (err) => {
       t.ifError(err)
       t.end()
@@ -110,11 +110,11 @@ test('cmd - test collect - system info, data files and html', function (t) {
 })
 
 test('cmd - test collect - does not crash on webassembly frames', function (t) {
-  const tool = new ClinicFlame()
+  const tool = new ClinicFlame({ dest: process.env.TAP_CHILD_ID })
 
   function cleanup (err, dirname) {
     t.ifError(err)
-    t.match(dirname, /^[0-9]+\.clinic-flame$/)
+    t.match(dirname, /^[0-9]+\/[0-9]+\.clinic-flame$/)
     rimraf(dirname, (err) => {
       t.ifError(err)
       t.end()
