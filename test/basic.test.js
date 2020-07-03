@@ -95,7 +95,6 @@ test('cmd - test collect - system info, data files and html', function (t) {
   tool.collect(
     [process.execPath, path.join('test', 'fixtures', 'inspect.js')],
     function (err, dirname) {
-      console.log('tool.collect callback', { err, dirname })
       if (err) return cleanup(err, dirname)
 
       const basename = path.basename(dirname)
