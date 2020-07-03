@@ -13,8 +13,8 @@
     "test": "npm run lint && tap --timeout=50 --100 test/*.test.js",
     "test:file": "standard | snazzy && tap -j1 --no-cov --timeout=50",
     "ci-lint": "npm run lint",
-    "ci-test-cov": "tap --timeout=100 --100 test/*.test.js",
-    "ci-test-no-cov": "tap --timeout=100 test/*.test.js",
+    "ci-test-cov": "tap -j1 --timeout=100 --100 test/*.test.js",
+    "ci-test-no-cov": "tap -j1 --timeout=100 test/*.test.js",
     "lint": "standard --fix | snazzy"
   },
   "tap": {
