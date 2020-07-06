@@ -110,7 +110,6 @@ test('cmd - test collect - system info, data files and html', function (t) {
 })
 
 test('cmd - test collect - does not crash on webassembly frames', function (t) {
-  t.jobs = 2
   const tool = new ClinicFlame()
 
   function cleanup (err, dirname) {
