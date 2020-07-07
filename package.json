@@ -10,10 +10,11 @@
   "scripts": {
     "visualize-watch": "node debug/visualize-watch.js",
     "visualize-all": "node debug/visualize-all.js",
-    "test": "npm run lint && tap --timeout=50 --100 test/*.test.js",
+    "test": "npm run lint && tap",
+    "test:file": "standard | snazzy && tap --no-cov",
     "ci-lint": "npm run lint",
-    "ci-test-cov": "tap --timeout=50 --100 test/*.test.js",
-    "ci-test-no-cov": "tap --timeout=40 test/*.test.js",
+    "ci-test-cov": "tap",
+    "ci-test-no-cov": "tap --no-cov",
     "lint": "standard --fix | snazzy"
   },
   "tap": {
