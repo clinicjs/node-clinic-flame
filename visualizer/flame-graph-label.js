@@ -123,8 +123,10 @@ function renderAreaLabel (locals, rect, priorSiblingWidth, lineWidth, lineAlpha)
   if (availableWidth < fontSize) return
 
   const areaName = (
-    nodeData.category === 'core' ? 'node'
-      : nodeData.category === 'all-v8' ? this.ui.getLabelFromKey(this.ui.dataTree.getTypeKey(nodeData))
+    nodeData.category === 'core'
+      ? 'node'
+      : nodeData.category === 'all-v8'
+        ? this.ui.getLabelFromKey(this.ui.dataTree.getTypeKey(nodeData))
         : nodeData.type
   ).toUpperCase()
   const nameWidth = context.measureText(areaName).width
