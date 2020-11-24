@@ -9,7 +9,7 @@ function setStackTop (node, exclude = this.exclude) {
   let topTotal = node.onStackTop.base
 
   // Will be called many many times in browser, use vanilla for/i for speed
-  for (var i = 0; i < childCount; i++) {
+  for (let i = 0; i < childCount; i++) {
     // Add stack top of excluded children and chains of excluded descendents
     topTotal += setStackTop(node.children[i], exclude)
   }

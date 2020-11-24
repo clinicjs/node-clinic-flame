@@ -169,10 +169,9 @@ class FrameNode {
       return core
     }
 
-    return type ? {
-      type,
-      category: 'all-v8'
-    } : null
+    return type
+      ? { type, category: 'all-v8' }
+      : null
   }
 
   getDepType (name, systemInfo) {
@@ -182,10 +181,9 @@ class FrameNode {
     const depDirRegex = new RegExp(`${nodeModules}(.+?)${escSep}(?!.*${nodeModules})`)
 
     const match = name.match(depDirRegex)
-    return match ? {
-      type: match[1],
-      category: 'deps'
-    } : null
+    return match
+      ? { type: match[1], category: 'deps' }
+      : null
   }
 
   getAppType (name, appName) {

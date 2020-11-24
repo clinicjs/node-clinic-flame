@@ -19,6 +19,6 @@ const obj = {
 }
 obj.circular = obj
 
-for (var i = 0; i < 10000; i += 1) {
+for (let i = 0; i < 10000; i += 1) {
   util.inspect(obj, { depth: Infinity })
 }

@@ -56,7 +56,8 @@ class ClinicFlame extends events.EventEmitter {
       if (err) return cb(err)
       const pidMatch = dir.match(/(?:\/|\\)(\d+)\.clinic-flame-0x-data/)
 
-      const pid = pidMatch ? pidMatch[1]
+      const pid = pidMatch
+        ? pidMatch[1]
         /* istanbul ignore next: can't reliably cause 0x to detect no pid without hacking 0x */
         : 'UNKNOWN_PID' // 0x's fallback if, somehow, no PID was detected
 
