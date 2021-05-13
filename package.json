@@ -1,8 +1,8 @@
 {
   "name": "@nearform/flame",
-  "version": "8.0.1",
+  "version": "9.0.0",
   "engines": {
-    "node": ">= 10.12.0"
+    "node": ">= 12.13.0"
   },
   "description": "Programmable interface to Clinic.js Flame",
   "repository": "nearform/node-clinic-flame",
@@ -29,7 +29,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@nearform/clinic-common": "^5.0.0",
+    "@nearform/clinic-common": "^6.0.0",
     "0x": "^4.10.2",
     "copy-to-clipboard": "^3.0.8",
     "d3-array": "^2.0.2",
