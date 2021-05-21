@@ -72,9 +72,9 @@ possible error.
 [npm-downloads]: http://img.shields.io/npm/dm/@nearform/flame.svg?style=flat-square
 [lint-standard]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square
 [lint-standard-url]: https://github.com/feross/standard
-[clinic-url]: https://github.com/nearform/node-clinic
+[clinic-url]: https://github.com/clinicjs/node-clinic
 [`<Object>`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
 [`<boolean>`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type
 [`<String>`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
-[actions-status]: https://github.com/nearform/node-clinic-flame/workflows/CI/badge.svg
-[actions-url]: https://github.com/nearform/node-clinic-flame/actions
+[actions-status]: https://github.com/clinicjs/node-clinic-flame/workflows/CI/badge.svg
+[actions-url]: https://github.com/clinicjs/node-clinic-flame/actions

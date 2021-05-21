@@ -1,15 +1,12 @@
 'use strict'
 
 const d3 = require('./d3.js')
-const path = require('path')
 const events = require('events')
 const htmlContentTypes = require('./html-content-types.js')
 const debounce = require('lodash.debounce')
 const DataTree = require('./data-tree.js')
 const History = require('./history.js')
 const spinner = require('@nearform/clinic-common/spinner')
-const fs = require('fs')
-const logo = fs.readFileSync(path.join(__dirname, 'nearform-logo.svg'), 'utf8')
 
 const close = require('@nearform/clinic-common/icons/close')
 
@@ -636,9 +633,6 @@ class Ui extends events.EventEmitter {
     // Place help button top right
     d3.select('.nc-header__inner').append(() => this.helpButton.button)
 
-    // Place sponsor logo bottom left
-    this.footer.d3Element.select('#filters-bar .left-col').append(() => this.createLogoLink().node())
-
     this.flameWrapperSpinner = spinner.attachTo(document.querySelector('#flame-main'))
   }
 
@@ -651,20 +645,6 @@ class Ui extends events.EventEmitter {
 
     // setting Presentation Mode
     this.setPresentationMode(this.presentationMode)
-  }
-
-  createLogoLink () {
-    const el = d3.create('div').attr('id', 'nearform_logo')
-
-    el.append('a')
-      .classed('nc-header__sponsor', true)
-      .attr('href', 'https://nearform.com')
-      .attr('title', 'NearForm')
-      .attr('target', '_blank')
-      .attr('rel', 'noopener noreferrer')
-      .html(logo)
-
-    return el
   }
 
   createMoreInfoLink (href) {

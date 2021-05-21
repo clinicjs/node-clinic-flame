@@ -5,7 +5,7 @@
     "node": ">= 12.13.0"
   },
   "description": "Programmable interface to Clinic.js Flame",
-  "repository": "nearform/node-clinic-flame",
+  "repository": "clinicjs/node-clinic-flame",
   "main": "index.js",
   "scripts": {
     "visualize-watch": "node debug/visualize-watch.js",
