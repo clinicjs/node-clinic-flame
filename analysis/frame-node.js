@@ -147,7 +147,7 @@ class FrameNode {
 
     if (/\[CODE:RegExp]$/.test(name)) {
       type = 'regexp'
-    } else if (!/\.m?js/.test(name)) {
+    } else if (!/(\.m?js)|(node:)/.test(name)) {
       if (/\[CODE:.*?]$/.test(name) || /v8::internal::.*\[CPP]$/.test(name)) {
         type = 'v8'
       } else /* istanbul ignore next */ if (/\.$/.test(name)) {
