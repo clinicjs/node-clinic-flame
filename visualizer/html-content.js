@@ -2,7 +2,7 @@
 
 const d3 = require('./d3.js')
 
-// TODO: This could be migrated to https://github.com/nearform/node-clinic-common/ when stable
+// TODO: This could be migrated to https://github.com/clinicjs/node-clinic-common/ when stable
 // and shared with Bubbleprof and also, later, with Doctor
 
 // Base class for HTML content, extended by specific types of UI item

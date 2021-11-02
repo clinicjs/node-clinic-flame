@@ -1,11 +1,11 @@
 {
   "name": "@nearform/flame",
-  "version": "7.0.0",
+  "version": "9.0.0",
   "engines": {
-    "node": ">= 10.12.0"
+    "node": ">= 12.13.0"
   },
   "description": "Programmable interface to Clinic.js Flame",
-  "repository": "nearform/node-clinic-flame",
+  "repository": "clinicjs/node-clinic-flame",
   "main": "index.js",
   "scripts": {
     "visualize-watch": "node debug/visualize-watch.js",
@@ -29,8 +29,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "0x": "^4.9.1",
-    "@nearform/clinic-common": "^4.0.0",
+    "@nearform/clinic-common": "^6.0.0",
+    "0x": "^4.10.2",
     "copy-to-clipboard": "^3.0.8",
     "d3-array": "^2.0.2",
     "d3-fg": "^6.13.1",
@@ -42,10 +42,10 @@
     "rimraf": "^3.0.2"
   },
   "devDependencies": {
-    "chokidar": "^3.0.2",
+    "chokidar": "^3.4.3",
     "murmur3hash-wasm": "1.0.1",
-    "snazzy": "^8.0.0",
-    "standard": "^14.3.1",
+    "snazzy": "^9.0.0",
+    "standard": "^16.0.3",
     "tap": "^15.0.10"
   }
 }

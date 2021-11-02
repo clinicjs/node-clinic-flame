@@ -87,7 +87,8 @@ function renderStackFrame (globals, locals, rect) {
   const thinFrameReducer = Math.min(1, (width || 0.1) / (lineWidth * 2))
 
   // For a narrow right-hand edge of a block of frames of the same code area...
-  const rightEdgeReducer = (thinFrameReducer === 1 || !previousSibling || (!!nextSibling && sameArea(nodeData, nextSibling.data))) ? thinFrameReducer
+  const rightEdgeReducer = (thinFrameReducer === 1 || !previousSibling || (!!nextSibling && sameArea(nodeData, nextSibling.data)))
+    ? thinFrameReducer
     // ...fade as above, but based on the width of these same-area siblings, not just this node, so that
     // something like   [ someFunc    ./file.js ][ f ./file.js ][][]|||   gets a visible right hand edge
     : Math.min(1, visibleSiblings.slice(0, indexPosition).reduce((acc, sibling) => acc + (sameArea(nodeData, sibling.data) ? (sibling.x1 - sibling.x0) * widthRatio : 0), 0) / (lineWidth * 2))

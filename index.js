@@ -56,7 +56,8 @@ class ClinicFlame extends events.EventEmitter {
       if (err) return cb(err)
       const pidMatch = dir.match(/(?:\/|\\)(\d+)\.clinic-flame-0x-data/)
 
-      const pid = pidMatch ? pidMatch[1]
+      const pid = pidMatch
+        ? pidMatch[1]
         /* istanbul ignore next: can't reliably cause 0x to detect no pid without hacking 0x */
         : 'UNKNOWN_PID' // 0x's fallback if, somehow, no PID was detected
 
@@ -106,12 +107,10 @@ class ClinicFlame extends events.EventEmitter {
     const stylePath = path.join(__dirname, 'visualizer', 'style.css')
     const scriptPath = path.join(__dirname, 'visualizer', 'main.js')
     const logoPath = path.join(__dirname, 'visualizer/assets', 'flame-logo.svg')
-    const nearFormLogoPath = path.join(__dirname, 'visualizer', 'nearform-logo.svg')
     const clinicFaviconPath = path.join(__dirname, 'visualizer', 'clinic-favicon.png.b64')
 
     // add logos
     const logoFile = fs.createReadStream(logoPath)
-    const nearFormLogoFile = fs.createReadStream(nearFormLogoPath)
     const clinicFaviconBase64 = fs.createReadStream(clinicFaviconPath)
 
     const flameVersion = require('./package.json').version
@@ -148,7 +147,6 @@ class ClinicFlame extends events.EventEmitter {
       headerLogo: logoFile,
       headerText: 'Flame',
       toolVersion: flameVersion,
-      nearFormLogo: nearFormLogoFile,
       uploadId: outputFilename.split('/').pop().split('.html').shift(),
       body: '<main></main>'
     })
