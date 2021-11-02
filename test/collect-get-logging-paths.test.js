@@ -5,7 +5,7 @@ const getLoggingPaths = require('../collect/get-logging-paths.js')
 test('Collect - logging path - identifier', function (t) {
   const paths = getLoggingPaths({ identifier: 1062 })
 
-  t.strictDeepEqual(paths, {
+  t.strictSame(paths, {
     '/': '1062.clinic-flame',
     '/systeminfo': path.normalize('1062.clinic-flame/1062.clinic-flame-systeminfo'),
     '/samples': path.normalize('1062.clinic-flame/1062.clinic-flame-samples'),
@@ -18,7 +18,7 @@ test('Collect - logging path - identifier', function (t) {
 test('Collect - logging path - path', function (t) {
   const paths = getLoggingPaths({ path: path.normalize('/root/1062.clinic-flame') })
 
-  t.strictDeepEqual(paths, {
+  t.strictSame(paths, {
     '/': path.normalize('/root/1062.clinic-flame'),
     '/systeminfo': path.normalize('/root/1062.clinic-flame/1062.clinic-flame-systeminfo'),
     '/samples': path.normalize('/root/1062.clinic-flame/1062.clinic-flame-samples'),
@@ -30,7 +30,7 @@ test('Collect - logging path - path', function (t) {
 
 test('Collect - logging path - supports 0x path templates', function (t) {
   const paths = getLoggingPaths({ identifier: '{pid}' })
-  t.strictDeepEqual(paths, {
+  t.strictSame(paths, {
     '/': path.normalize('{pid}.clinic-flame'),
     '/systeminfo': path.normalize('{pid}.clinic-flame/{pid}.clinic-flame-systeminfo'),
     '/samples': path.normalize('{pid}.clinic-flame/{pid}.clinic-flame-samples'),

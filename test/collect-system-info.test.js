@@ -19,7 +19,7 @@ test('collect - system info - main directory', function (t) {
   })
   t.on('end', () => rimraf.sync(dataPath))
 
-  t.strictEqual(systemInfo(dataPath).mainDirectory, path.resolve('./test/fixtures'))
+  t.equal(systemInfo(dataPath).mainDirectory, path.resolve('./test/fixtures'))
   t.end()
 })
 
@@ -30,6 +30,6 @@ test('collect - system info - main directory - default to cwd', function (t) {
   })
   t.on('end', () => rimraf.sync(dataPath))
 
-  t.strictEqual(systemInfo(dataPath).mainDirectory, path.resolve('.'))
+  t.equal(systemInfo(dataPath).mainDirectory, path.resolve('.'))
   t.end()
 })
