@@ -8,7 +8,7 @@ test('Collect - system info - check data', function (t) {
   const packageVersion = require('../package.json').version
   const ZeroXVersion = require('0x/package.json').version
 
-  t.strictEqual(
+  t.equal(
     version,
     `${packageVersion} (0x v${ZeroXVersion})`
   )

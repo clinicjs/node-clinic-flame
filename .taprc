@@ -1,3 +1,4 @@
 coverage: true
 timeout: 100
+branches: 98
 jobs: 1
