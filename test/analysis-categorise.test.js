@@ -65,6 +65,14 @@ test('analysis - categorise node names', (t) => {
     fileName: null,
     isOptimized: true
   })
+  t.match(byProps({ name: '(anonymous) node:internal/console/constructor:342:10' }, linux), {
+    category: 'core',
+    type: 'core'
+  })
+  t.match(byProps({ name: '(anonymous) node:internal/console/constructor:342:10' }, windows), {
+    category: 'core',
+    type: 'core'
+  })
 
   t.equal(byName('/usr/bin/node [SHARED_LIB]', linux), 'cpp')
   t.equal(byName('C:\\Program Files\\nodejs\\node.exe [SHARED_LIB]', windows), 'cpp')
