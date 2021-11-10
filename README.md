@@ -7,6 +7,12 @@ Programmable interface to [Clinic.js][clinic-url] Flame. Learn more about Clinic
 
 ![Screenshot](screenshot.png)
 
+## Installation
+
+```
+npm i -S @nearform/flame
+```
+
 ## Supported node versions
 
 * Node.js 8 and above
