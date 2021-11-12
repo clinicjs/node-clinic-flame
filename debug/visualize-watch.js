@@ -4,7 +4,7 @@ const chokidar = require('chokidar')
 const chalk = require('chalk')
 const v = require('./visualize-mod.js')
 
-const buildImg = require('@nearform/clinic-common/scripts/build-images')
+const buildImg = require('@clinic/clinic-common/scripts/build-images')
 // build images
 const path = require('path')
 const imgDestDir = path.join(__dirname, '../visualizer/assets/images')

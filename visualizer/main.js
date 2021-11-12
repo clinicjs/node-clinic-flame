@@ -1,7 +1,7 @@
 'use strict'
-require('@nearform/clinic-common/spinner')
+require('@clinic/clinic-common/spinner')
 const Ui = require('./ui.js')
-const loadFonts = require('@nearform/clinic-common/behaviours/font-loader')
+const loadFonts = require('@clinic/clinic-common/behaviours/font-loader')
 
 // Create UI
 const ui = new Ui('main')

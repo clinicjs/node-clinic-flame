@@ -1,4 +1,4 @@
-const link = require('@nearform/clinic-common/base/link.js')
+const link = require('@clinic/clinic-common/base/link.js')
 
 const docs = link({
   label: 'Clinic Flame Documentation',

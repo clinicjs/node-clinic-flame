@@ -2,10 +2,10 @@
 const d3 = require('./d3.js')
 const Message = require('./message.js')
 const copy = require('copy-to-clipboard')
-const zoomInIcon = require('@nearform/clinic-common/icons/zoom-in')
-const zoomOutIcon = require('@nearform/clinic-common/icons/zoom-out')
-const linkIcon = require('@nearform/clinic-common/icons/link')
-const copyIcon = require('@nearform/clinic-common/icons/copy')
+const zoomInIcon = require('@clinic/clinic-common/icons/zoom-in')
+const zoomOutIcon = require('@clinic/clinic-common/icons/zoom-out')
+const linkIcon = require('@clinic/clinic-common/icons/link')
+const copyIcon = require('@clinic/clinic-common/icons/copy')
 
 class FgTooltipContent {
   constructor (ui) {

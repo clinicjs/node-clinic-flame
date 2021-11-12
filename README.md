@@ -10,7 +10,7 @@ Programmable interface to [Clinic.js][clinic-url] Flame. Learn more about Clinic
 ## Installation
 
 ```
-npm i -S @nearform/flame
+npm i -S @clinic/flame
 ```
 
 ## Supported node versions
@@ -20,7 +20,7 @@ npm i -S @nearform/flame
 ## Example
 
 ```js
-const ClinicFlame = require('@nearform/flame')
+const ClinicFlame = require('@clinic/flame')
 const flame = new ClinicFlame()
 
 flame.collect(['node', './path-to-script.js'], function (err, filepath) {
@@ -35,7 +35,7 @@ flame.collect(['node', './path-to-script.js'], function (err, filepath) {
 ## Documentation
 
 ```js
-const ClinicFlame = require('@nearform/flame')
+const ClinicFlame = require('@clinic/flame')
 const flame = new ClinicFlame()
 ```
 
@@ -73,9 +73,9 @@ possible error.
 
 [stability-stable]: https://img.shields.io/badge/stability-stable-green.svg?style=flat-square
 [stability-docs]: https://nodejs.org/api/documentation.html#documentation_stability_index
-[npm-version]: https://img.shields.io/npm/v/@nearform/flame.svg?style=flat-square
-[npm-url]: https://www.npmjs.org/@nearform/flame
-[npm-downloads]: http://img.shields.io/npm/dm/@nearform/flame.svg?style=flat-square
+[npm-version]: https://img.shields.io/npm/v/@clinic/flame.svg?style=flat-square
+[npm-url]: https://www.npmjs.org/@clinic/flame
+[npm-downloads]: http://img.shields.io/npm/dm/@clinic/flame.svg?style=flat-square
 [lint-standard]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square
 [lint-standard-url]: https://github.com/feross/standard
 [clinic-url]: https://github.com/clinicjs/node-clinic
