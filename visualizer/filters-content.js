@@ -1,7 +1,7 @@
 'use strict'
 
 const HtmlContent = require('./html-content.js')
-const { checkbox, accordion, helpers } = require('@nearform/clinic-common/base')
+const { checkbox, accordion, helpers } = require('@clinic/clinic-common/base')
 
 class FiltersContent extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {

@@ -1,6 +1,6 @@
 {
-  "name": "@nearform/flame",
-  "version": "9.1.0",
+  "name": "@clinic/flame",
+  "version": "10.0.0",
   "engines": {
     "node": ">= 12.13.0"
   },
@@ -29,7 +29,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@nearform/clinic-common": "^6.0.0",
+    "@clinic/clinic-common": "^7.0.0",
     "0x": "^4.10.2",
     "copy-to-clipboard": "^3.0.8",
     "d3-array": "^2.0.2",

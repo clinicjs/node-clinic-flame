@@ -10,9 +10,9 @@ const systemInfo = require('./collect/system-info.js')
 const inlinedFunctions = require('./collect/inlined-functions.js')
 const analyse = require('./analysis/index.js')
 const pump = require('pump')
-const buildJs = require('@nearform/clinic-common/scripts/build-js')
-const buildCss = require('@nearform/clinic-common/scripts/build-css')
-const mainTemplate = require('@nearform/clinic-common/templates/main')
+const buildJs = require('@clinic/clinic-common/scripts/build-js')
+const buildCss = require('@clinic/clinic-common/scripts/build-css')
+const mainTemplate = require('@clinic/clinic-common/templates/main')
 
 class ClinicFlame extends events.EventEmitter {
   constructor (settings = {}) {

@@ -1,12 +1,12 @@
 'use strict'
 
 const HtmlContent = require('./html-content.js')
-const chevronLeftFirst = require('@nearform/clinic-common/icons/chevron-left-first')
-const chevronLeft = require('@nearform/clinic-common/icons/chevron-left')
-const chevronRight = require('@nearform/clinic-common/icons/chevron-right')
-const chevronRightLast = require('@nearform/clinic-common/icons/chevron-right-last')
+const chevronLeftFirst = require('@clinic/clinic-common/icons/chevron-left-first')
+const chevronLeft = require('@clinic/clinic-common/icons/chevron-left')
+const chevronRight = require('@clinic/clinic-common/icons/chevron-right')
+const chevronRightLast = require('@clinic/clinic-common/icons/chevron-right-last')
 
-const button = require('@nearform/clinic-common/base/button.js')
+const button = require('@clinic/clinic-common/base/button.js')
 
 class SelectionControls extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {

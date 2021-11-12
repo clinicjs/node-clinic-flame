@@ -2,7 +2,7 @@
 const d3 = require('./d3.js')
 const HtmlContent = require('./html-content.js')
 const getNoDataNode = require('./no-data-node.js')
-const caretUpIcon = require('@nearform/clinic-common/icons/caret-up')
+const caretUpIcon = require('@clinic/clinic-common/icons/caret-up')
 
 const stripTags = html => html.replace(/(<([^>]+)>)/ig, '')
 

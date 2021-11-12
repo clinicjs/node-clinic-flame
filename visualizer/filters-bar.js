@@ -1,10 +1,10 @@
 'use strict'
 const HtmlContent = require('./html-content.js')
-const sidePanelExpand = require('@nearform/clinic-common/icons/sidepanel-expand')
-const sidePanelCollapse = require('@nearform/clinic-common/icons/sidepanel-collapse')
-const search = require('@nearform/clinic-common/icons/search')
+const sidePanelExpand = require('@clinic/clinic-common/icons/sidepanel-expand')
+const sidePanelCollapse = require('@clinic/clinic-common/icons/sidepanel-collapse')
+const search = require('@clinic/clinic-common/icons/search')
 
-const { button, checkbox, dropdown } = require('@nearform/clinic-common/base')
+const { button, checkbox, dropdown } = require('@clinic/clinic-common/base')
 
 class FiltersContainer extends HtmlContent {
   constructor (parentContent, contentProperties = {}) {

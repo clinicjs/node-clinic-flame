@@ -6,14 +6,14 @@ const htmlContentTypes = require('./html-content-types.js')
 const debounce = require('lodash.debounce')
 const DataTree = require('./data-tree.js')
 const History = require('./history.js')
-const spinner = require('@nearform/clinic-common/spinner')
+const spinner = require('@clinic/clinic-common/spinner')
 
-const close = require('@nearform/clinic-common/icons/close')
+const close = require('@clinic/clinic-common/icons/close')
 
 const TooltipHtmlContent = require('./flame-graph-tooltip-content')
 const getNoDataNode = require('./no-data-node.js')
 
-const { button, walkthroughButton } = require('@nearform/clinic-common/base/index.js')
+const { button, walkthroughButton } = require('@clinic/clinic-common/base/index.js')
 const wtSteps = require('./walkthrough-steps.js')
 
 class Ui extends events.EventEmitter {
