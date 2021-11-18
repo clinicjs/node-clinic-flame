@@ -34,7 +34,7 @@
     "copy-to-clipboard": "^3.0.8",
     "d3-array": "^2.0.2",
     "d3-fg": "^6.13.1",
-    "d3-selection": "^1.3.2",
+    "d3-selection": "^3.0.0",
     "flame-gradient": "^1.0.0",
     "lodash.debounce": "^4.0.8",
     "pump": "^3.0.0",
