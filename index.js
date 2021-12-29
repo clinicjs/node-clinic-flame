@@ -21,12 +21,14 @@ class ClinicFlame extends events.EventEmitter {
     const {
       detectPort = false,
       debug = false,
-      dest = null
+      dest = null,
+      kernelTracing = false
     } = settings
 
     this.detectPort = detectPort
     this.debug = debug
     this.path = dest
+    this.kernelTracing = kernelTracing
   }
 
   collect (args, cb) {
@@ -47,6 +49,7 @@ class ClinicFlame extends events.EventEmitter {
       pathToNodeBinary: args[0],
       collectOnly: true,
       writeTicks: true,
+      kernelTracing: this.kernelTracing,
       outputDir: paths['/0x-data/'],
       workingDir: '.' // 0x temporary working files, doesn't support placeholders like {pid}
     }), done)
