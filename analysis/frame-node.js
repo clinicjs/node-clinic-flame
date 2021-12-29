@@ -1,6 +1,6 @@
 const path = require('path')
 
-const jsFrameRx = /^([~*])?((?:\S+?\(anonymous function\)|\S+)?(?: [a-zA-Z]+)*) (.*?):(\d+):(\d+)( \[INIT])?( \[INLINABLE])?$/
+const jsFrameRx = /^([~*])?((?:\S+?\(anonymous function\)|\S+)?(?: [a-zA-Z]+)*) (.*?):(\d+)?:?(\d+)( \[INIT])?( \[INLINABLE])?$/
 const wasmFrameRx = /^(.*?) \[WASM:(\w+)]$/
 // This one has the /m flag because regexes may contain \n
 const cppFrameRx = /^(.*) (\[CPP]|\[SHARED_LIB]|\[CODE:\w+])( \[INIT])?$/m
@@ -147,7 +147,7 @@ class FrameNode {
 
     if (/\[CODE:RegExp]$/.test(name)) {
       type = 'regexp'
-    } else if (!/(\.m?js)|(node:)/.test(name)) {
+    } else if (!/(\.m?js)|(node:\w)/.test(name)) {
       if (/\[CODE:.*?]$/.test(name) || /v8::internal::.*\[CPP]$/.test(name)) {
         type = 'v8'
       } else /* istanbul ignore next */ if (/\.$/.test(name)) {
