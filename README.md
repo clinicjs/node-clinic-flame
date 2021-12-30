@@ -15,7 +15,7 @@ npm i -S @clinic/flame
 
 ## Supported node versions
 
-* Node.js 8 and above
+* Node.js 12 and above
 
 ## Example
 
@@ -47,6 +47,8 @@ const flame = new ClinicFlame()
     **Default**: false
   * dest [`<String>`][] The folder where the collected data is stored.
     **Default**: '.'
+  * kernelTracing [`<boolean>`][] If set to true, it will use `linux_perf` to profile the application.
+    (available only on linux) **Default**: false
 
 #### `flame.collect(args, callback)`
 
