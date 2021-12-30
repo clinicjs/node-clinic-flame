@@ -30,7 +30,7 @@
   "license": "MIT",
   "dependencies": {
     "@clinic/clinic-common": "^7.0.0",
-    "0x": "^4.10.2",
+    "0x": "^5.0.0",
     "copy-to-clipboard": "^3.0.8",
     "d3-array": "^2.0.2",
     "d3-fg": "^6.13.1",
