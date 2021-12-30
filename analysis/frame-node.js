@@ -1,6 +1,6 @@
 const path = require('path')
 
-const jsFrameRx = /^([~*])?((?:\S+?\(anonymous function\)|\S+)?(?: [a-zA-Z]+)*) (.*?):(\d+)?:?(\d+)( \[INIT])?( \[INLINABLE])?$/
+const jsFrameRx = /^([~*^])?((?:\S+?\(anonymous function\)|\S+)?(?: [a-zA-Z]+)*) (.*?):(\d+)?:?(\d+)( \[INIT])?( \[INLINABLE])?$/
 const wasmFrameRx = /^(.*?) \[WASM:(\w+)]$/
 // This one has the /m flag because regexes may contain \n
 const cppFrameRx = /^(.*) (\[CPP]|\[SHARED_LIB]|\[CODE:\w+])( \[INIT])?$/m
@@ -57,8 +57,8 @@ class FrameNode {
       this.columnNumber = parseInt(columnNumber, 10)
       this.isInit = isInit != null
       this.isInlinable = isInlinable != null
-      this.isOptimized = optimizationFlag === '~'
-      this.isUnoptimized = optimizationFlag === '*'
+      this.isOptimized = optimizationFlag === '*'
+      this.isUnoptimized = optimizationFlag === '~' || optimizationFlag === '^'
     } else if ((m = this.name.match(cppFrameRx))) {
       const [
         input, // eslint-disable-line no-unused-vars
