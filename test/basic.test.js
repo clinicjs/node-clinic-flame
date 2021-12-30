@@ -12,11 +12,11 @@ test('cmd - test collect - data exists, html generated', function (t) {
   const tool = new ClinicFlame()
 
   function cleanup (err, dirname) {
-    t.ifError(err)
+    t.error(err)
 
     let count = 0
     function callback (err) {
-      t.ifError(err)
+      t.error(err)
       if (++count === 2) {
         t.end()
       }
@@ -84,10 +84,10 @@ test('cmd - test collect - system info, data files and html', function (t) {
   const tool = new ClinicFlame()
 
   function cleanup (err, dirname) {
-    t.ifError(err)
+    t.error(err)
     t.match(dirname, /^[0-9]+\.clinic-flame$/)
     rimraf(dirname, (err) => {
-      t.ifError(err)
+      t.error(err)
       t.end()
     })
   }
@@ -113,10 +113,10 @@ test('cmd - test collect - does not crash on webassembly frames', function (t) {
   const tool = new ClinicFlame()
 
   function cleanup (err, dirname) {
-    t.ifError(err)
+    t.error(err)
     t.match(dirname, /^[0-9]+\.clinic-flame$/)
     rimraf(dirname, (err) => {
-      t.ifError(err)
+      t.error(err)
       t.end()
     })
   }
@@ -137,3 +137,40 @@ test('cmd - test collect - does not crash on webassembly frames', function (t) {
     }
   )
 })
+
+test(
+  'cmd - test collect with kernelTracing',
+  // Note: this test will be skipped in most of cases
+  // kernelTracing uses linux_perf under the hood which requires admin privileges
+  // and linux platform. For regular users it display a prompt to give permissions
+  // but in TTY tests is a bit tricky to accomplish it.
+  { skip: process.platform !== 'linux' || process.env.SUDO_UID === undefined },
+  function (t) {
+    const tool = new ClinicFlame({ kernelTracing: true })
+
+    function cleanup (err, dirname) {
+      t.error(err)
+      t.match(dirname, /^[0-9]+\.clinic-flame$/)
+      rimraf(dirname, (err) => {
+        t.error(err)
+        t.end()
+      })
+    }
+
+    tool.collect(
+      [process.execPath, path.join('test', 'fixtures', 'inspect.js')],
+      function (err, dirname) {
+        if (err) return cleanup(err, dirname)
+
+        const basename = path.basename(dirname)
+        // check that samples data and inlined function data exists and is valid JSON
+        const samples = JSON.parse(fs.readFileSync(path.join(dirname, `${basename}-samples`)))
+        const inlined = JSON.parse(fs.readFileSync(path.join(dirname, `${basename}-inlinedfunctions`)))
+
+        t.same(inlined, [], 'currently inlined functions is not recorded')
+        t.ok(samples.length > 0)
+        cleanup(null, dirname)
+      }
+    )
+  }
+)

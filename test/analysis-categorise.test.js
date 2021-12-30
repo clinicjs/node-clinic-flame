@@ -73,6 +73,14 @@ test('analysis - categorise node names', (t) => {
     category: 'core',
     type: 'core'
   })
+  t.match(byProps({ name: 'node::AsyncWrap::MakeCallback [CPP]' }, linux), {
+    category: 'all-v8',
+    type: 'cpp'
+  })
+  t.match(byProps({ name: '^etag /home/username/app/etag.js:26' }, linux), {
+    category: 'app',
+    type: 'some-app'
+  })
 
   t.equal(byName('/usr/bin/node [SHARED_LIB]', linux), 'cpp')
   t.equal(byName('C:\\Program Files\\nodejs\\node.exe [SHARED_LIB]', windows), 'cpp')
@@ -108,8 +116,8 @@ test('analysis - categorise node properties', (t) => {
   t.equal(customNode.type, 'Contains spaces')
   t.equal(customNode.functionName, 'Unexpected multiple customFlags')
   t.equal(customNode.fileName, '.\\sub_dir\\index.js')
-  t.ok(customNode.isOptimized)
-  t.notOk(customNode.isUnoptimized)
+  t.notOk(customNode.isOptimized)
+  t.ok(customNode.isUnoptimized)
   t.notOk(dataTree.isNodeExcluded(customNode))
 
   const depNode = byProps({
@@ -124,8 +132,8 @@ test('analysis - categorise node properties', (t) => {
   t.equal(depNode.fileName, '.\\node_modules\\some-module\\index.js')
   t.equal(depNode.lineNumber, 1)
   t.equal(depNode.columnNumber, 2)
-  t.notOk(depNode.isOptimized)
-  t.ok(depNode.isUnoptimized)
+  t.ok(depNode.isOptimized)
+  t.notOk(depNode.isUnoptimized)
   t.notOk(dataTree.isNodeExcluded(depNode))
   dataTree.exclude.add('deps')
   t.ok(dataTree.isNodeExcluded(depNode))
@@ -173,8 +181,8 @@ test('analysis - categorise node properties', (t) => {
   t.equal(initNode.fileName, './0x/examples/dummy.js')
   t.ok(initNode.isInit)
   t.notOk(initNode.isInlinable)
-  t.notOk(initNode.isOptimized)
-  t.ok(initNode.isUnoptimized)
+  t.ok(initNode.isOptimized)
+  t.notOk(initNode.isUnoptimized)
 
   t.ok(dataTree.isNodeExcluded(initNode))
 
@@ -214,6 +222,19 @@ test('analysis - categorise node properties', (t) => {
   t.equal(builtinInitNode.functionName, 'ArrayFilter')
   t.equal(builtinInitNode.fileName, null)
   t.ok(builtinInitNode.isInit)
+
+  const perfLine = byProps({
+    name: '^etag /home/username/lib/etag.js:9'
+  }, linux)
+
+  perfLine.format(linux)
+
+  t.equal(perfLine.functionName, 'etag')
+  t.equal(perfLine.fileName, '../home/username/lib/etag.js')
+  t.notOk(perfLine.isInlinable)
+  t.notOk(perfLine.isInit)
+  t.notOk(perfLine.isOptimized)
+  t.ok(perfLine.isUnoptimized)
 
   t.end()
 })
