@@ -38,3 +38,48 @@ test('analysis - label nodes', (t) => {
 
   t.end()
 })
+
+test('analysis - name escaped \\', (t) => {
+  const rootNode = new FrameNode({
+    name: '~foo\nhome/clinic/clinic-327.js:2:13',
+  })
+
+  const expected = {
+    name: 'foo /home/clinic/clinic-327.js:2:13',
+    id: 0,
+    children: []
+  }
+
+  labelNodes(rootNode)
+  t.match(rootNode.toJSON(), expected)
+
+  t.end()
+})
+
+test('analysis - children name escaped \\', (t) => {
+  const rootNode = new FrameNode({
+    name: '~(anonymous) /home/clinic/clinic-327.js:1:1 [INIT]',
+    children: [{
+      S: 1,
+      name: '~foo\nhome/rafaelgss/repos/os/tests/clinic-327.js:2:13 [INIT]',
+      value: 22,
+      top: 0,
+      isInit: true,
+      fn: 'foo\nhome/rafaelgss/repos/os/tests/clinic-327.js:2:13 [INIT]',
+      children: []
+    }]
+  })
+
+  const expected = {
+    name: '~(anonymous) /home/clinic/clinic-327.js:1:1 [INIT]',
+    id: 0,
+    children: [{
+      name: 'foo /home/rafaelgss/repos/os/tests/clinic-327.js:2:13 [INIT]'
+    }]
+  }
+
+  labelNodes(rootNode)
+  t.match(rootNode.toJSON(), expected)
+
+  t.end()
+})
