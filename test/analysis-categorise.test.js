@@ -59,6 +59,10 @@ test('analysis - categorise node names', (t) => {
     fileName: null,
     isOptimized: true
   })
+  t.match(byProps({ name: 'wasm-to-js:iii:i [WASM:Builtin]' }, linux), {
+    category: 'wasm',
+    type: 'wasm',
+  })
   t.match(byProps({ name: 'ressa::Parser<CH>::parse_statement_list_item::ha21ba52d257287dd [WASM:Opt]' }, linux), {
     category: 'wasm',
     type: 'wasm',
@@ -222,6 +226,16 @@ test('analysis - categorise node properties', (t) => {
   t.equal(builtinInitNode.functionName, 'ArrayFilter')
   t.equal(builtinInitNode.fileName, null)
   t.ok(builtinInitNode.isInit)
+
+  const builtinInitWASM = byProps({
+    name: 'wasm-to-js:iii:i [WASM:Builtin] [INIT]'
+  }, linux)
+
+  builtinInitWASM.format(linux)
+
+  t.equal(builtinInitWASM.functionName, 'wasm-to-js:iii:i')
+  t.equal(builtinInitWASM.fileName, null)
+  t.ok(builtinInitWASM.isInit)
 
   const perfLine = byProps({
     name: '^etag /home/username/lib/etag.js:9'
