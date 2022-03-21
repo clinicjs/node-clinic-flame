@@ -1,7 +1,7 @@
 const path = require('path')
 
 const jsFrameRx = /^([~*^])?((?:\S+?\(anonymous function\)|\S+)?(?: [a-zA-Z]+)*) (.*?):(\d+)?:?(\d+)( \[INIT])?( \[INLINABLE])?$/
-const wasmFrameRx = /^(.*?) \[WASM:(\w+)]( \[INIT])?$/
+const wasmFrameRx = /^(.*?) \[WASM:?(\w+)?]( \[INIT])?$/
 // This one has the /m flag because regexes may contain \n
 const cppFrameRx = /^(.*) (\[CPP]|\[SHARED_LIB]|\[CODE:\w+])( \[INIT])?$/m
 
@@ -137,7 +137,7 @@ class FrameNode {
   }
 
   getWasmType (name) {
-    if (/\[WASM:\w+]( \[INIT])?$/.test(name)) {
+    if (/\[WASM(:\w+)?]( \[INIT])?$/.test(name)) {
       return { type: 'wasm', category: 'wasm' }
     }
     return null

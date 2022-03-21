@@ -63,6 +63,10 @@ test('analysis - categorise node names', (t) => {
     category: 'wasm',
     type: 'wasm',
   })
+  t.match(byProps({ name: 'wasm-to-js:iiii:i-0-turbofan [WASM]' }, linux), {
+    category: 'wasm',
+    type: 'wasm',
+  })
   t.match(byProps({ name: 'ressa::Parser<CH>::parse_statement_list_item::ha21ba52d257287dd [WASM:Opt]' }, linux), {
     category: 'wasm',
     type: 'wasm',
