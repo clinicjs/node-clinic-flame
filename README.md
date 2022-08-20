@@ -15,7 +15,7 @@ npm i -S @clinic/flame
 
 ## Supported node versions
 
-* Node.js 12 and above
+* Node.js 14 and above
 
 ## Example
 
