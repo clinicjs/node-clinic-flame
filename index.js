@@ -4,6 +4,7 @@ const events = require('events')
 const x = require('0x')
 const path = require('path')
 const fs = require('fs')
+const { performance } = require('perf_hooks')
 const rimraf = require('rimraf')
 const getLoggingPaths = require('./collect/get-logging-paths.js')
 const systemInfo = require('./collect/system-info.js')
@@ -29,6 +30,8 @@ class ClinicFlame extends events.EventEmitter {
     this.debug = debug
     this.path = dest
     this.kernelTracing = kernelTracing
+    this.startTime = 0;
+    this.elapsedTime = 0;
   }
 
   collect (args, cb) {
@@ -40,10 +43,12 @@ class ClinicFlame extends events.EventEmitter {
       identifier: '{pid}' // replaced with actual pid by 0x
     })
 
+    this.startTime = performance.now()
     callbackify(x({
       argv,
       onPort: this.detectPort ? onPort : undefined,
       onProcessExit: () => {
+        this.elapsedTime = Math.round((performance.now() - this.startTime) / 1000)
         this.emit('analysing')
       },
       pathToNodeBinary: args[0],
@@ -145,6 +150,7 @@ class ClinicFlame extends events.EventEmitter {
       title: 'Clinic Flame',
       styles: styleFile,
       script: scriptFile,
+      elapsedTime: `${this.elapsedTime}s`,
       headerLogoUrl: 'https://clinicjs.org/flame/',
       headerLogoTitle: 'Clinic Flame on Clinicjs.org',
       headerLogo: logoFile,
