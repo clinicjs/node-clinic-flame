@@ -23,15 +23,17 @@ class ClinicFlame extends events.EventEmitter {
       detectPort = false,
       debug = false,
       dest = null,
-      kernelTracing = false
+      kernelTracing = false,
+      name,
     } = settings
 
     this.detectPort = detectPort
     this.debug = debug
     this.path = dest
     this.kernelTracing = kernelTracing
-    this.startTime = 0;
-    this.elapsedTime = 0;
+    this.startTime = 0
+    this.elapsedTime = 0
+    this.name = name
   }
 
   collect (args, cb) {
@@ -40,7 +42,8 @@ class ClinicFlame extends events.EventEmitter {
 
     const paths = getLoggingPaths({
       path: this.path,
-      identifier: '{pid}' // replaced with actual pid by 0x
+      identifier: this.name || '{pid}',
+      // '{pid}' is replaced with actual pid by 0x
     })
 
     this.startTime = performance.now()
@@ -84,7 +87,10 @@ class ClinicFlame extends events.EventEmitter {
         })
       }
 
-      const paths = getLoggingPaths({ path: self.path, identifier: pid })
+      // When a name is provided, an override is expected.
+      // So, there's no need to pass the identifier
+      const paths = getLoggingPaths({ path: self.path, identifier: self.name || pid })
+
       fs.writeFile(paths['/systeminfo'], JSON.stringify(systemInfo(paths['/0x-data/']), null, 2), next)
       fs.writeFile(paths['/inlinedfunctions'], JSON.stringify(inlinedFunctions(paths['/0x-data/'])), next)
 
