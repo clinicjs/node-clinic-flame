@@ -7,6 +7,10 @@ Programmable interface to [Clinic.js][clinic-url] Flame. Learn more about Clinic
 
 ![Screenshot](screenshot.png)
 
+## Issues
+
+To open an issue, please use the [main repository](https://github.com/clinicjs/node-clinic) with the `flame` label.
+
 ## Installation
 
 ```
