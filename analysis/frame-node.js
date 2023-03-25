@@ -12,8 +12,8 @@ class FrameNode {
     /* istanbul ignore next: must be a string; can be null but can't replicate in tests */
     // If backslashes have been hard-escaped as their unicode escape char, swap them back in
     this.name = data.name
-        .replace(/\\u005c/g, '\\')
-        .replace('\n', ' /') || ''
+      .replace(/\\u005c/g, '\\')
+      .replace('\n', ' /') || ''
 
     this.onStack = data.value
     this.onStackTop = { base: data.top }
@@ -108,7 +108,8 @@ class FrameNode {
     const {
       category,
       type
-    } = this.getWasmType(name) ||
+    } = this.getESMAppType(name, appName) ||
+      this.getWasmType(name) ||
       this.getCoreOrV8Type(name, systemInfo) ||
       this.getDepType(name, systemInfo) ||
       this.getAppType(name, appName)
@@ -139,6 +140,13 @@ class FrameNode {
   getWasmType (name) {
     if (/\[WASM(:\w+)?]( \[INIT])?$/.test(name)) {
       return { type: 'wasm', category: 'wasm' }
+    }
+    return null
+  }
+
+  getESMAppType (name, appName) {
+    if (/.+file:\/\/.+\.js/.test(name)) {
+      return this.getAppType(name, appName)
     }
     return null
   }
