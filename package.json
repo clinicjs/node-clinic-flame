@@ -1,6 +1,6 @@
 {
   "name": "@clinic/flame",
-  "version": "12.1.0",
+  "version": "12.1.1",
   "description": "Programmable interface to Clinic.js Flame",
   "repository": "clinicjs/node-clinic-flame",
   "main": "index.js",
