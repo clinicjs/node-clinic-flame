@@ -17,6 +17,12 @@ const windows = {
   nodeVersions: { node: '8.13.0' }
 }
 
+const mac = {
+  mainDirectory: '/Users/username/code/repo',
+  pathSeparator: '/',
+  nodeVersions: { node: '16.19.1' }
+}
+
 function byProps (properties, sysinfo, appName = 'some-app') {
   const node = new FrameNode(properties)
   node.categorise(sysinfo, appName)
@@ -61,11 +67,11 @@ test('analysis - categorise node names', (t) => {
   })
   t.match(byProps({ name: 'wasm-to-js:iii:i [WASM:Builtin]' }, linux), {
     category: 'wasm',
-    type: 'wasm',
+    type: 'wasm'
   })
   t.match(byProps({ name: 'wasm-to-js:iiii:i-0-turbofan [WASM]' }, linux), {
     category: 'wasm',
-    type: 'wasm',
+    type: 'wasm'
   })
   t.match(byProps({ name: 'ressa::Parser<CH>::parse_statement_list_item::ha21ba52d257287dd [WASM:Opt]' }, linux), {
     category: 'wasm',
@@ -89,6 +95,14 @@ test('analysis - categorise node names', (t) => {
     category: 'app',
     type: 'some-app'
   })
+  t.match(byProps({ name: '(anonymous) file:///Users/username/code/repo/server.js:7:14' }, mac), {
+    category: 'app',
+    type: 'some-app'
+  })
+  t.match(byProps({ name: 'payload file:///Users/username/code/repo/lib/init.js:3:26' }, mac), {
+    category: 'app',
+    type: 'some-app'
+  })
 
   t.equal(byName('/usr/bin/node [SHARED_LIB]', linux), 'cpp')
   t.equal(byName('C:\\Program Files\\nodejs\\node.exe [SHARED_LIB]', windows), 'cpp')
@@ -100,6 +114,8 @@ test('analysis - categorise node names', (t) => {
   t.equal(byName('(anonymous) C:\\Documents\\Contains spaces\\0x\\examples\\rest-api\\etag.js:1:11', windows), 'some-app')
   t.equal(byName('InnerArraySort native array.js:486:24', linux), 'native')
   t.equal(byName('[\u0000zA-Z\u0000#$%&\'*+.|~]+$ [CODE:RegExp]', linux), 'regexp')
+  t.equal(byName('(anonymous) file:///Users/username/code/repo/server.js:7:14', mac), 'some-app')
+  t.equal(byName('payload file:///Users/username/code/repo/lib/init.js:3:26', mac), 'some-app')
 
   t.end()
 })
