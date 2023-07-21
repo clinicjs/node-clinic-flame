@@ -48,9 +48,3 @@
     display: initial;
   }
 }
-
-/* presentation mode */
-.presentation-mode #selection-controls {
-  background-color: transparent;
-  padding: 0px;
-}

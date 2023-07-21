@@ -32,9 +32,3 @@
     font-size: var(--small-text-size);
   }
 }
-
-/* presentation mode */
-.presentation-mode #toolbar-side-panel {
-  background-color: transparent;
-  padding: 0px;
-}

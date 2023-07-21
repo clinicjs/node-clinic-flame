@@ -204,9 +204,6 @@ class Ui extends events.EventEmitter {
 
   setPresentationMode (mode) {
     this.presentationMode = mode
-    // switching the class on the html element
-    document.documentElement.classList.toggle('presentation-mode', mode)
-    this.setExposedCSS()
     this.emit('presentationMode', mode)
   }
 
