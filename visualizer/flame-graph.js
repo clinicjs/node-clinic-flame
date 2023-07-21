@@ -33,6 +33,9 @@ class FlameGraph extends HtmlContent {
     this.cellHeight = this.baseCellHeight + this.zoomFactor
     this.sizeChanged = false
 
+    this.isSearching = false
+    this.oldSelection = null
+
     this.tooltip = contentProperties.customTooltip
     this.tooltipHtmlContent = contentProperties.tooltipHtmlContent
     this.showOptimizationStatus = contentProperties.showOptimizationStatus
@@ -63,7 +66,6 @@ class FlameGraph extends HtmlContent {
         this.tooltip.hide()
         this.hoveredNodeData = null
         this.highlightHoveredNodeOnGraph()
-        this.markNodeAsSelected(null)
         this.markNodeAsZoomed(null)
         this.flameGraph.zoom(node || this.ui.dataTree.activeTree())
       } else {
@@ -76,10 +78,12 @@ class FlameGraph extends HtmlContent {
     })
 
     this.ui.on('clearSearch', () => {
+      this.isSearching = false
       this.flameGraph.clear(searchHighlightColor)
     })
 
     this.ui.on('search', (query) => {
+      this.isSearching = true
       this.flameGraph.search(query, searchHighlightColor)
     })
   }
@@ -96,17 +100,8 @@ class FlameGraph extends HtmlContent {
     this.resetOverlayContext()
 
     // creating the component to highlight the hovered node on the flame graph
-    this.d3Highlighter = this.d3Element.append('div')
-      .classed('node-highlighter', true)
-    this.d3HighlighterDownArrow = this.d3Highlighter.append('div')
-      .classed('down-arrow', true)
-    this.d3HighlighterVerticalLine = this.d3Highlighter.append('div')
-      .classed('vertical-line', true)
     this.d3HighlighterBox = this.d3Element.append('div')
       .classed('highlighter-box', true)
-
-    this.d3SelectionMarker = this.d3Element.append('div')
-      .classed('selection-box', true)
 
     this.d3ZoomMarker = this.d3Element.append('div')
       .classed('zoom-underline', true)
@@ -128,7 +123,14 @@ class FlameGraph extends HtmlContent {
       this.hoveredNodeData = node
       this.highlightHoveredNodeOnGraph()
 
-      this.markNodeAsSelected(node)
+      if (this.isSearching === false) {
+        this.flameGraph.select(node, searchHighlightColor)
+        if (this.oldSelection !== null) {
+          this.flameGraph.deselect(this.oldSelection)
+        }
+        this.oldSelection = node
+      }
+      this.flameGraph.update()
     })
 
     // hiding the tooltip on scroll and moving the box
@@ -231,8 +233,6 @@ class FlameGraph extends HtmlContent {
     })
 
     this.flameGraph.on('animationEnd', () => {
-      // Update selection marker with new node position and size
-      this.markNodeAsSelected(this.ui.selectedNode)
       this.isAnimating = false
 
       // Show tooltip and highlight box for zoomed node after zoom completes
@@ -285,16 +285,12 @@ class FlameGraph extends HtmlContent {
 
   highlightHoveredNodeOnGraph () {
     if (this.hoveredNodeData === null) {
-      this.d3Highlighter.classed('show', false)
       this.d3HighlighterBox.classed('show', false)
       return
     }
 
     const rect = this.getNodeRect(this.hoveredNodeData)
     if (rect) {
-      this.d3Highlighter.classed('show', true)
-      this.applyRectToDiv(this.d3Highlighter, rect, true)
-
       this.d3HighlighterBox.classed('show', true)
       this.applyRectToDiv(this.d3HighlighterBox, {
         // Align border inside frame so it's visible against borders, heat etc
@@ -304,21 +300,7 @@ class FlameGraph extends HtmlContent {
         height: rect.height - 2
       })
     } else {
-      this.d3Highlighter.classed('show', false)
       this.d3HighlighterBox.classed('show', false)
-    }
-  }
-
-  markNodeAsSelected (node = null) {
-    this.d3SelectionMarker.classed('hidden', !node)
-
-    if (node) {
-      const rect = this.getNodeRect(node)
-
-      this.applyRectToDiv(this.d3SelectionMarker, Object.assign({}, {
-        // Ensure marker is visible on tiny frames
-        width: rect.width < 2 ? 2 : rect.width
-      }, rect))
     }
   }
 
@@ -351,7 +333,6 @@ class FlameGraph extends HtmlContent {
 
   updateMarkerBoxes () {
     this.highlightHoveredNodeOnGraph()
-    this.markNodeAsSelected(this.ui.selectedNode)
     if (this.ui.zoomedNode) this.markNodeAsZoomed(this.ui.zoomedNode)
   }
 

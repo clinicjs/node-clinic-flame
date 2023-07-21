@@ -30,17 +30,6 @@ chart > div {
 }
 
 /* node-highlighter */
-.node-highlighter {
-  pointer-events: none;
-  position: absolute;
-  transition: transform .3s cubic-bezier(0.65, 0.05, 0.36, 1), width .3s cubic-bezier(0.65, 0.05, 0.36, 1);
-  top: 0px;
-  left: 0px;
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  z-index: 10;
-}
 .highlighter-box {
   display: none;
   top: 0px;
@@ -51,48 +40,6 @@ chart > div {
 }
 .highlighter-box.show{
   display: block;
-}
-.node-highlighter.show {
-  display: flex;
-}
-
-.node-highlighter .down-arrow {
-  border-color: transparent;
-  border-top-color: var(--banner-bg-color);
-  border-style: solid;
-  border-width: 10px;
-  filter: drop-shadow(0px 1px 0px var(--light-glare));
-  margin:0 0 -8px;
-  flex-shrink: 0;
-}
-
-.node-highlighter .vertical-line {
-  flex-grow: 1;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.node-highlighter .vertical-line::before {
-  content:"";
-  flex-grow: 1;
-  width: 0px;
-  border-left: 1px dashed rgba(255, 255, 255, 0.5);
-}
-
-.selection-box {
-  position: absolute;
-  pointer-events: none;
-  background: rgba(var(--grey-highlight-color-val), 0.12);
-  background: linear-gradient(to bottom,
-    rgba(var(--grey-highlight-color-val), 0.28) 0%,
-    rgba(var(--grey-highlight-color-val), 0.14) 60%,
-    rgba(var(--grey-highlight-color-val), 0) 100%
-  );
-  border: 1px solid transparent;
-  box-shadow: 0 1px 4px rgba(var(--grey-highlight-color-val), 0.14);
-  z-index: 10;
 }
 
 #flame-main canvas.flame-overlay {
@@ -107,7 +54,7 @@ chart > div {
 .zoom-underline {
   position: absolute;
   pointer-events: none;
-  border-top: 3px solid var(--main-bg-color);
+  border-top: 3px solid var(--flame-orange);
   background: linear-gradient(to bottom, rgba(var(--grey-highlight-color-val), 0.3), rgba(var(--grey-highlight-color-val), 0));
 }
 
@@ -167,7 +114,7 @@ chart > div {
 
 /* presentation-mode */
 
-.presentation-mode .node-highlighter .vertical-line::before {
+.presentation-mode {
   border-left-width: 2px;
 }
 
